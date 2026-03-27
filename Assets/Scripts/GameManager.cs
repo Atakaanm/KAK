@@ -83,22 +83,26 @@ public class GameManager : MonoBehaviour
 
     public void RetryGame()
     {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneLoader.ReloadCurrentScene();
     }
 
     /// <summary>
-    /// Ileride menuden belirli bir level acmak icin kullanilacak.
+    /// Ana menuye doner. Game Over ekranindaki buton buna baglanir.
+    /// </summary>
+    public void GoToMainMenu()
+    {
+        SceneLoader.LoadMenu();
+    }
+
+    /// <summary>
+    /// Belirli bir level'i yukler.
     /// Ornek: GameManager.Instance.LoadLevel(level01Data);
     /// </summary>
     public void LoadLevel(LevelData levelData)
     {
         if (levelData == null) return;
 
-        // Sahneyi yeniden yukle ve LevelManager'a data gonder
-        // Ileride LevelManager sahne gecisite data'yi PlayerPrefs veya static ile tasiyacak
-        PlayerPrefs.SetString("PendingLevelName", levelData.levelName);
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        GameSettings.SelectedLevel = levelData;
+        SceneLoader.LoadGame();
     }
 }

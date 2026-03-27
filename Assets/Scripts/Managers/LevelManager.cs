@@ -40,6 +40,12 @@ public class LevelManager : MonoBehaviour
 
     void Start()
     {
+        // Menueden gelen level datasi varsa onu kullan
+        if (GameSettings.SelectedLevel != null)
+        {
+            currentLevel = GameSettings.SelectedLevel;
+        }
+
         if (currentLevel != null)
         {
             ApplyLevelData(currentLevel);
