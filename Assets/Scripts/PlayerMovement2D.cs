@@ -6,7 +6,10 @@ public class PlayerMovement2D : MonoBehaviour
     public float moveSpeed = 5f;
 
     [Header("Data (opsiyonel)")]
-    public PlayerData playerData; // Atanirsa moveSpeed buradan alinir
+    public PlayerData playerData;
+
+    [Header("Mobil Kontrol")]
+    public VirtualJoystick joystick; // Inspector'dan baglanir
 
     private Rigidbody2D rb;
     private Vector2 movementInput;
@@ -20,7 +23,6 @@ public class PlayerMovement2D : MonoBehaviour
 
     void Start()
     {
-        // Data varsa hizi oradan al
         if (playerData != null)
         {
             moveSpeed = playerData.moveSpeed;
@@ -29,10 +31,18 @@ public class PlayerMovement2D : MonoBehaviour
 
     void Update()
     {
-        float x = Input.GetAxisRaw("Horizontal");
-        float y = Input.GetAxisRaw("Vertical");
-
-        movementInput = new Vector2(x, y).normalized;
+        // Oncelik joystick'te: eger joystick bagli ve input varsa onu kullan
+        if (joystick != null && joystick.Direction.sqrMagnitude > 0.01f)
+        {
+            movementInput = joystick.Direction;
+        }
+        else
+        {
+            // Klavye inputu (editorde test icin)
+            float x = Input.GetAxisRaw("Horizontal");
+            float y = Input.GetAxisRaw("Vertical");
+            movementInput = new Vector2(x, y).normalized;
+        }
     }
 
     void FixedUpdate()
