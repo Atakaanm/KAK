@@ -146,13 +146,17 @@ public class AudioManager : MonoBehaviour
         sfxSource.PlayOneShot(clip);
     }
 
-    /// <summary>
-    /// Buton tiklama sesi calar (kisa yol).
-    /// </summary>
     public void PlayButtonClick()
     {
         PlaySfx(buttonClickSfx);
     }
+
+    public void PlayHitSfx() { PlaySfx(hitSfx); }
+    public void PlayDeathSfx() { PlaySfx(deathSfx); }
+    public void PlayShootSfx() { PlaySfx(shootSfx); }
+    public void PlayScoreSfx() { PlaySfx(scoreSfx); }
+    public void PlayGameMusic() { PlayMusic(gameMusic); }
+    public void PlayMenuMusic() { PlayMusic(menuMusic); }
 
     // ── Titresim ──────────────────────────────────────
 

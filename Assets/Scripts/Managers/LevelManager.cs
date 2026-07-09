@@ -5,9 +5,6 @@ using UnityEngine;
 /// Player'a uygun PlayerData'yi, Arena'ya uygun ArenaData'yi,
 /// Spawner'lara uygun SpawnerData'lari uygular.
 /// Endless modda DifficultyManager'i aktiflestirir.
-///
-/// Kullanim: Sahneye bos bir GameObject koy, bu scripti ekle,
-/// LevelData referansini ata, sahne objelerini baglat.
 /// </summary>
 public class LevelManager : MonoBehaviour
 {
@@ -24,6 +21,11 @@ public class LevelManager : MonoBehaviour
     public CornerShooter[] spawners;
     public SpawnerDirectionAnimator[] spawnerVisuals;
     public DifficultyManager difficultyManager;
+    public PowerupSpawner powerupSpawner;
+    public WaveManager waveManager;
+
+    [Header("Varsayılan Level (Build için)")]
+    public LevelData defaultLevel;
 
     void Awake()
     {
@@ -36,6 +38,47 @@ public class LevelManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+
+        // --- REFERANSLAR EKSİKSE OTOMATİK BUL ---
+        if (playerMovement == null) playerMovement = FindAnyObjectByType<PlayerMovement2D>();
+        if (playerHealth == null) playerHealth = FindAnyObjectByType<PlayerHealth>();
+        if (playerVisual == null) playerVisual = FindAnyObjectByType<PlayerDirectionSprite>();
+        if (arenaLayout == null) arenaLayout = FindAnyObjectByType<ArenaAutoLayout>();
+        if (spawners == null || spawners.Length == 0) spawners = FindObjectsByType<CornerShooter>(FindObjectsSortMode.None);
+        if (spawnerVisuals == null || spawnerVisuals.Length == 0) spawnerVisuals = FindObjectsByType<SpawnerDirectionAnimator>(FindObjectsSortMode.None);
+
+        // PowerupSpawner otomatik bul
+        if (powerupSpawner == null)
+        {
+            powerupSpawner = FindAnyObjectByType<PowerupSpawner>();
+            if (powerupSpawner == null)
+            {
+                GameObject spawnerObj = new GameObject("PowerupSpawner");
+                powerupSpawner = spawnerObj.AddComponent<PowerupSpawner>();
+                spawnerObj.transform.parent = this.transform;
+            }
+        }
+
+        // DifficultyManager otomatik bul
+        if (difficultyManager == null)
+        {
+            difficultyManager = FindAnyObjectByType<DifficultyManager>();
+        }
+
+        // WaveManager otomatik bul
+        if (waveManager == null)
+        {
+            waveManager = FindAnyObjectByType<WaveManager>();
+        }
+
+        // ProjectilePool — sahnede yoksa otomatik yarat
+        if (ProjectilePool.Instance == null)
+        {
+            GameObject poolObj = new GameObject("ProjectilePool");
+            poolObj.AddComponent<ProjectilePool>();
+            poolObj.transform.parent = this.transform;
+            Debug.Log("[LevelManager] ProjectilePool otomatik oluşturuldu.");
+        }
     }
 
     void Start()
@@ -46,15 +89,41 @@ public class LevelManager : MonoBehaviour
             currentLevel = GameSettings.SelectedLevel;
         }
 
+        // Build'de menü atlandıysa defaultLevel'i kullan
+        if (currentLevel == null && defaultLevel != null)
+        {
+            currentLevel = defaultLevel;
+            Debug.Log("[LevelManager] defaultLevel kullanılıyor: " + defaultLevel.levelName);
+        }
+
         if (currentLevel != null)
         {
             ApplyLevelData(currentLevel);
+        }
+        else
+        {
+            Debug.LogError("🚨 [LevelManager] DİKKAT: HİÇBİR LEVEL DATA DOSYASI BULUNAMADI!");
+        }
+
+        SetupProjectileBounds();
+    }
+
+
+
+    /// <summary>
+    /// Arena sınırlarını projectile sistemine bildirir.
+    /// </summary>
+    void SetupProjectileBounds()
+    {
+        if (arenaLayout != null && arenaLayout.arenaSpriteRenderer != null)
+        {
+            Projectile.SetArenaBounds(arenaLayout.arenaSpriteRenderer.bounds);
+            Debug.Log("[LevelManager] Arena sınırları Projectile sistemine bildirildi.");
         }
     }
 
     /// <summary>
     /// Verilen LevelData'yi sahneye uygular.
-    /// Butun oyun elemanlari bu data'ya gore ayarlanir.
     /// </summary>
     public void ApplyLevelData(LevelData level)
     {
@@ -73,65 +142,90 @@ public class LevelManager : MonoBehaviour
         // --- SPAWNER AYARLARI ---
         ApplySpawnerData(level.spawnerDataList);
 
-        // --- ZORLUK SISTEMI ---
+        // --- ZORLUK SISTEMI (Endless mod) ---
         if (level.levelType == LevelType.Endless && level.enableDifficulty)
         {
+            System.Array.Sort(level.difficultyStages, (a, b) => a.minScore.CompareTo(b.minScore));
             SetupDifficulty(level.difficultyStages);
         }
+
+        // --- DALGA SISTEMI (Stage mod) ---
+        if (level.levelType == LevelType.Stage && level.waves != null && level.waves.Length > 0)
+        {
+            SetupWaves(level.waves);
+        }
+
+        // --- GÜÇLENDİRME (POWERUP) SİSTEMİ ---
+        if (powerupSpawner != null && level.availablePowerups != null && level.availablePowerups.Length > 0)
+        {
+            powerupSpawner.Init(level.availablePowerups);
+            // RefreshArenaBounds() Init içinde çağrılıyor — gerçek sprite bounds kullanılıyor
+        }
+
+        // ── KURULUM SIRASI GARANTİSİ ──
+        if (arenaLayout != null)
+            arenaLayout.ApplyLayout();
+
+        var camFit = Object.FindAnyObjectByType<CameraFitWidth>();
+        if (camFit != null) camFit.ForceRecalculate();
+
+        SetupProjectileBounds();
+
+        if (powerupSpawner != null) powerupSpawner.RefreshArenaBounds();
 
         Debug.Log("[LevelManager] Level hazirlandi: " + level.levelName);
     }
 
-    /// <summary>
-    /// PlayerData'yi sahneye uygular.
-    /// Hareket hizi, can, gorsel sprite'lar buradan alinir.
-    /// </summary>
     void ApplyPlayerData(PlayerData data)
     {
         if (data == null) return;
 
-        // Hareket hizi
         if (playerMovement != null)
         {
-            playerMovement.moveSpeed = data.moveSpeed;
+            playerMovement.SetMoveSpeed(data.moveSpeed);
         }
 
-        // Can
         if (playerHealth != null)
         {
             playerHealth.maxHealth = data.maxHealth;
             playerHealth.invincibilityDuration = data.invincibilityDuration;
         }
 
-        // Gorsel — DirectionData yapisini PlayerDirectionSprite'a aktar
         if (playerVisual != null)
         {
-            playerVisual.north.idle      = data.north.idle;
-            playerVisual.south.idle      = data.south.idle;
-            playerVisual.east.idle       = data.east.idle;
-            playerVisual.west.idle       = data.west.idle;
-            playerVisual.northEast.idle  = data.northEast.idle;
-            playerVisual.northWest.idle  = data.northWest.idle;
-            playerVisual.southEast.idle  = data.southEast.idle;
-            playerVisual.southWest.idle  = data.southWest.idle;
+            // SADECE Data içinde bir görsel (en azından South yönü için) atanmışsa üzerine yaz.
+            // Atanmamışsa sahnedeki Player objesinin mevcut animasyonlarını bozma.
+            if (data.south != null && data.south.idle != null)
+            {
+                playerVisual.north.idle      = data.north.idle;
+                playerVisual.south.idle      = data.south.idle;
+                playerVisual.east.idle       = data.east.idle;
+                playerVisual.west.idle       = data.west.idle;
+                playerVisual.northEast.idle  = data.northEast.idle;
+                playerVisual.northWest.idle  = data.northWest.idle;
+                playerVisual.southEast.idle  = data.southEast.idle;
+                playerVisual.southWest.idle  = data.southWest.idle;
 
-            playerVisual.north.runFrames     = data.north.runFrames;
-            playerVisual.south.runFrames     = data.south.runFrames;
-            playerVisual.east.runFrames      = data.east.runFrames;
-            playerVisual.west.runFrames      = data.west.runFrames;
-            playerVisual.northEast.runFrames = data.northEast.runFrames;
-            playerVisual.northWest.runFrames = data.northWest.runFrames;
-            playerVisual.southEast.runFrames = data.southEast.runFrames;
-            playerVisual.southWest.runFrames = data.southWest.runFrames;
+                playerVisual.north.runFrames     = data.north.runFrames;
+                playerVisual.south.runFrames     = data.south.runFrames;
+                playerVisual.east.runFrames      = data.east.runFrames;
+                playerVisual.west.runFrames      = data.west.runFrames;
+                playerVisual.northEast.runFrames = data.northEast.runFrames;
+                playerVisual.northWest.runFrames = data.northWest.runFrames;
+                playerVisual.southEast.runFrames = data.southEast.runFrames;
+                playerVisual.southWest.runFrames = data.southWest.runFrames;
+                
+                Debug.Log("[LevelManager] Player görselleri Data'dan yüklendi: " + data.playerName);
+            }
+            else
+            {
+                Debug.Log("[LevelManager] PlayerData'da görsel yok. Sahnedeki Player görseli kullanılıyor.");
+            }
         }
 
-        Debug.Log("[LevelManager] Player ayarlandi: " + data.playerName);
+        Debug.Log("[LevelManager] Player istatistikleri ayarlandi: " + data.playerName);
     }
 
-    /// <summary>
-    /// ArenaData'yi sahneye uygular.
-    /// Duvar kalinliklari, spawner pozisyonlari, arena sprite'i burada ayarlanir.
-    /// </summary>
     void ApplyArenaData(ArenaData data)
     {
         if (data == null || arenaLayout == null) return;
@@ -142,19 +236,20 @@ public class LevelManager : MonoBehaviour
         arenaLayout.spawnerInsetY = data.spawnerInsetY;
         arenaLayout.spawnerTopDepthOffset = data.spawnerTopDepthOffset;
 
-        // Arena sprite'ini degistir
         if (data.arenaSprite != null && arenaLayout.arenaSpriteRenderer != null)
         {
             arenaLayout.arenaSpriteRenderer.sprite = data.arenaSprite;
         }
 
+        if (playerMovement != null)
+        {
+            playerMovement.arenaFriction = data.floorFriction;
+            playerMovement.arenaSpeedMultiplier = data.movementSpeedMultiplier;
+        }
+
         Debug.Log("[LevelManager] Arena ayarlandi: " + data.arenaName);
     }
 
-    /// <summary>
-    /// SpawnerData listesini spawner'lara uygular.
-    /// Ates araligi, mermi tipi ve gorsel sprite setleri burada kurulur.
-    /// </summary>
     void ApplySpawnerData(SpawnerData[] dataList)
     {
         if (dataList == null || spawners == null) return;
@@ -166,24 +261,20 @@ public class LevelManager : MonoBehaviour
             SpawnerData data = dataList[i];
             if (data == null) continue;
 
-            // Ates ayarlari
             if (spawners[i] != null)
             {
                 spawners[i].shootInterval = data.shootInterval;
 
-                // Mermi prefabini ProjectileData'dan al
                 if (data.projectileData != null && data.projectileData.projectilePrefab != null)
                 {
                     spawners[i].projectilePrefab = data.projectileData.projectilePrefab;
                 }
             }
 
-            // Gorsel sprite'lar
             if (i < spawnerVisuals.Length && spawnerVisuals[i] != null)
             {
                 SpawnerDirectionAnimator vis = spawnerVisuals[i];
 
-                // Idle sprite'lar
                 vis.north.idle = data.idleNorth;
                 vis.south.idle = data.idleSouth;
                 vis.east.idle = data.idleEast;
@@ -193,7 +284,6 @@ public class LevelManager : MonoBehaviour
                 vis.southEast.idle = data.idleSouthEast;
                 vis.southWest.idle = data.idleSouthWest;
 
-                // Attack frame'ler
                 vis.north.attackFrames = data.attackNorth;
                 vis.south.attackFrames = data.attackSouth;
                 vis.east.attackFrames = data.attackEast;
@@ -210,12 +300,64 @@ public class LevelManager : MonoBehaviour
 
     /// <summary>
     /// Zorluk asamalarini DifficultyManager'a aktarir.
+    /// Tüm gerekli referansları da bağlar.
     /// </summary>
     void SetupDifficulty(DifficultyStageData[] stages)
     {
         if (difficultyManager == null || stages == null || stages.Length == 0) return;
 
+        // Stage'leri aktar
         difficultyManager.stages = stages;
+
+        // ÖNEMLİ: Spawner referanslarını DifficultyManager'a bağla
+        if (spawners != null && spawners.Length > 0)
+        {
+            difficultyManager.allSpawners = spawners;
+            Debug.Log("[LevelManager] DifficultyManager'a " + spawners.Length + " spawner referansı bağlandı.");
+        }
+
+        // ScoreManager referansını bağla
+        if (GameManager.Instance != null && GameManager.Instance.scoreManager != null)
+        {
+            difficultyManager.scoreManager = GameManager.Instance.scoreManager;
+            Debug.Log("[LevelManager] DifficultyManager'a ScoreManager referansı bağlandı.");
+        }
+
+        // Spawner'lar yeni ayarlandıktan sonra orijinal interval'leri kaydet
+        // Bu çok önemli: LevelManager spawner interval'lerini set ettikten SONRA
+        // DifficultyManager bunları "orijinal" olarak kaydetmeli
+        difficultyManager.RecordOriginalIntervals();
+
         Debug.Log("[LevelManager] Zorluk sistemi kuruldu: " + stages.Length + " asama.");
+    }
+
+    /// <summary>
+    /// WaveData listesini WaveManager'a aktarır ve dalga sistemini başlatır.
+    /// levelType == Stage olduğunda ApplyLevelData tarafından çağrılır.
+    /// </summary>
+    void SetupWaves(WaveData[] waveList)
+    {
+        // WaveManager yoksa sahnede yarat
+        if (waveManager == null)
+        {
+            waveManager = FindAnyObjectByType<WaveManager>();
+            if (waveManager == null)
+            {
+                GameObject wm = new GameObject("WaveManager");
+                waveManager = wm.AddComponent<WaveManager>();
+                wm.transform.parent = this.transform;
+            }
+        }
+
+        // Spawner referanslarını bağla
+        if (spawners != null && spawners.Length > 0)
+        {
+            waveManager.spawners = spawners;
+        }
+
+        // Dalga listesini ver ve başlat
+        waveManager.Init(waveList);
+
+        Debug.Log("[LevelManager] Dalga sistemi başlatıldı: " + waveList.Length + " dalga.");
     }
 }

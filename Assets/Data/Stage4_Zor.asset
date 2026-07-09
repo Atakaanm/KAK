@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9295def7be6ae44459c01893fb5a6b0a, type: 3}
+  m_Name: Stage4_Zor
+  m_EditorClassIdentifier: Assembly-CSharp::DifficultyStageData
+  stageName: Zor
+  minScore: 350
+  maxScore: 599
+  activeSpawnerCount: 3
+  shootIntervalMultiplier: 0.55
+  projectileSpeedMultiplier: 1.5
+  projectileScaleMultiplier: 1.3
+  playerSpeedMultiplier: 1.15
+  scoreSpeedMultiplier: 1.3
+  availableProjectiles: []

@@ -20,6 +20,15 @@ public class DifficultyStageData : ScriptableObject
     public float shootIntervalMultiplier = 1.0f;  // 1.0 = normal, 0.5 = 2 kat hizli
     public float projectileSpeedMultiplier = 1.0f; // 1.0 = normal, 1.5 = %50 hizli mermi
 
+    [Header("Mermi / Tas Boyut Ayarlari")]
+    public float projectileScaleMultiplier = 1.0f;  // 1.0 = normal, 1.5 = %50 buyuk
+
+    [Header("Oyuncu Hiz Ayari")]
+    public float playerSpeedMultiplier = 1.0f;  // 1.0 = normal, 1.2 = %20 hizli
+
+    [Header("Skor Artisi Ayari")]
+    public float scoreSpeedMultiplier = 1.0f;  // 1.0 = normal, 1.5 = %50 hizli
+
     [Header("Mermi Cesitleri (opsiyonel)")]
     public ProjectileData[] availableProjectiles;
 }

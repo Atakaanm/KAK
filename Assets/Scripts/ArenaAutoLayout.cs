@@ -38,11 +38,14 @@ public class ArenaAutoLayout : MonoBehaviour
     [Header("Player Start")]
     public Vector2 playerLocalOffset = Vector2.zero;
 
-    void Start()
+    private Camera mainCam;
+
+    void Awake()
     {
+        mainCam = Camera.main;
         if (Application.isPlaying)
         {
-            ApplyLayout(); // Oyun başladığı an performans için 1 kez tüm yapıyı diz
+            ApplyLayout(); // Awake'te çalışarak diğer Start()'lardan ÖNCE duvarları yerleştirir
         }
     }
 
@@ -61,7 +64,7 @@ public class ArenaAutoLayout : MonoBehaviour
         ApplyUILayout();
     }
 
-    void ApplyLayout()
+    public void ApplyLayout()
     {
         if (arenaSpriteRenderer == null)
             return;
@@ -107,7 +110,7 @@ public class ArenaAutoLayout : MonoBehaviour
     {
         // UI öğeleri eğer inspector'a sürüklenmişse onları ekran sınırlarına göre değil,
         // arenanın gerçek dünya referanslarına göre hizalayalım.
-        if (arenaSpriteRenderer == null || Camera.main == null)
+        if (arenaSpriteRenderer == null || mainCam == null)
             return;
 
         Bounds arenaBounds = arenaSpriteRenderer.bounds;
@@ -122,14 +125,14 @@ public class ArenaAutoLayout : MonoBehaviour
 
             // Arenanın sol üst köşesi + içeri doğru Inset kadar kaydır
             Vector3 worldPos = center + new Vector3(-halfW + uiWorldHorizontalInset, halfH + uiWorldVerticalOffset + hoverEffect, 0f);
-            healthUI.position = Camera.main.WorldToScreenPoint(worldPos);
+            healthUI.position = mainCam.WorldToScreenPoint(worldPos);
         }
 
         if (scoreUI != null)
         {
             // Arenanın sağ üst köşesi - içeri doğru Inset kadar kaydır
             Vector3 worldPos = center + new Vector3(halfW - uiWorldHorizontalInset, halfH + uiWorldVerticalOffset, 0f);
-            scoreUI.position = Camera.main.WorldToScreenPoint(worldPos);
+            scoreUI.position = mainCam.WorldToScreenPoint(worldPos);
         }
     }
 

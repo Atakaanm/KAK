@@ -24,6 +24,13 @@ public class LevelData : ScriptableObject
     [Header("Firlaticilar")]
     public SpawnerData[] spawnerDataList; // Her kose icin bir SpawnerData
 
+    [Header("Dalgalar (Stage modu)")]
+    [Tooltip("levelType == Stage ise bu dalgalar WaveManager tarafından işlenir")]
+    public WaveData[] waves;
+
+    [Header("Güçlendirmeler (Powerups)")]
+    public PowerupData[] availablePowerups; // Bu levida çıkabilecek poweruplar
+
     [Header("Zorluk Asamalari (Endless mod)")]
     public DifficultyStageData[] difficultyStages;
 

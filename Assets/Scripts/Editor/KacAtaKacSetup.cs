@@ -10,7 +10,6 @@ using System.IO;
 public class KacAtaKacSetup : EditorWindow
 {
     private const string DATA_FOLDER = "Assets/Data";
-    private const string SPAWNER_SPRITE_ROOT = "Assets/Sprites/Spawner";
 
     // ─── Menu Giris Noktalari ──────────────────────────────────────────────
 
@@ -18,6 +17,7 @@ public class KacAtaKacSetup : EditorWindow
     public static void CreateAllDefaults()
     {
         EnsureFolder(DATA_FOLDER);
+        EnsureFolder(DATA_FOLDER + "/Powerups");
 
         CreateDefaultProjectileData();
         CreateDefaultSpawnerData();
@@ -36,54 +36,6 @@ public class KacAtaKacSetup : EditorWindow
             "Simdi her assetin Inspector'unda sprite ve prefab referanslarini doldurun.",
             "Tamam"
         );
-    }
-
-    [MenuItem("KacAtaKac/Spawner Spritelarini Yeniden Adlandir")]
-    public static void RenameSpawnerSprites()
-    {
-        string[] directions = { "North", "South", "East", "West", "North_East", "North_West", "South_East", "South_West" };
-        int totalRenamed = 0;
-
-        foreach (string dir in directions)
-        {
-            string dirPath = Path.Combine(SPAWNER_SPRITE_ROOT, dir);
-            if (!Directory.Exists(dirPath)) continue;
-
-            string[] files = Directory.GetFiles(dirPath, "frame_*_delay-*.gif");
-            System.Array.Sort(files); // Siralı işle
-
-            int frameIndex = 1;
-            foreach (string oldPath in files)
-            {
-                string newName = dir + "_Attack_" + frameIndex + ".gif";
-                string newPath = Path.Combine(dirPath, newName);
-
-                if (File.Exists(newPath))
-                {
-                    frameIndex++;
-                    continue;
-                }
-
-                File.Move(oldPath, newPath);
-
-                // Eski meta dosyasını sil (Unity yeni isimle üretecek)
-                string oldMeta = oldPath + ".meta";
-                if (File.Exists(oldMeta))
-                    File.Delete(oldMeta);
-
-                frameIndex++;
-                totalRenamed++;
-            }
-        }
-
-        AssetDatabase.Refresh();
-
-        string msg = totalRenamed > 0
-            ? totalRenamed + " sprite yeniden adlandirildi!\nReimport tamamlandi."
-            : "Yeniden adlandirilacak dosya bulunamadi.\n(Ya daha once yapildi ya da dosyalar baska formatta.)";
-
-        Debug.Log("[KacAtaKac] Sprite rename: " + msg);
-        EditorUtility.DisplayDialog("Sprite Rename", msg, "Tamam");
     }
 
     // ─── Yardimci: Klasor Olusturma ───────────────────────────────────────
@@ -126,7 +78,6 @@ public class KacAtaKacSetup : EditorWindow
         data.spawnerName = "RockThrower";
         data.shootInterval = 1.5f;
 
-        // ProjectileData referansi — eger daha once olusturulduysa bagla
         ProjectileData proj = AssetDatabase.LoadAssetAtPath<ProjectileData>(DATA_FOLDER + "/Rock_ProjectileData.asset");
         data.projectileData = proj;
 
@@ -136,9 +87,7 @@ public class KacAtaKacSetup : EditorWindow
 
     static void CreateDefaultPlayerData()
     {
-        // Boy
         CreatePlayerDataAsset("Boy", PlayerType.Boy, 3, 5f, DATA_FOLDER + "/Boy_PlayerData.asset");
-        // Girl (ileride farkli degerlerle)
         CreatePlayerDataAsset("Girl", PlayerType.Girl, 3, 6f, DATA_FOLDER + "/Girl_PlayerData.asset");
     }
 
@@ -152,7 +101,7 @@ public class KacAtaKacSetup : EditorWindow
         data.maxHealth = health;
         data.moveSpeed = speed;
         data.invincibilityDuration = 0.35f;
-        data.isLocked = (type != PlayerType.Boy); // Boy baslangicta acik, diger karakterler kilitli
+        data.isLocked = (type != PlayerType.Boy);
 
         AssetDatabase.CreateAsset(data, path);
         Debug.Log("[KacAtaKac] Olusturuldu: " + path);
@@ -177,16 +126,19 @@ public class KacAtaKacSetup : EditorWindow
 
     static void CreateDefaultDifficultyStages()
     {
-        ProjectileData proj = AssetDatabase.LoadAssetAtPath<ProjectileData>(DATA_FOLDER + "/Rock_ProjectileData.asset");
-
-        CreateStage("Stage_Kolay",   0,   200,  2, 1.0f, 1.0f,  proj, DATA_FOLDER + "/Stage_Kolay.asset");
-        CreateStage("Stage_Orta",  200,   500,  3, 0.8f, 1.2f,  proj, DATA_FOLDER + "/Stage_Orta.asset");
-        CreateStage("Stage_Zor",   500,  1000,  4, 0.65f, 1.5f, proj, DATA_FOLDER + "/Stage_Zor.asset");
-        CreateStage("Stage_Cehennem", 1000, -1, 4, 0.5f, 2.0f,  proj, DATA_FOLDER + "/Stage_Cehennem.asset");
+        // 6 asamali yeni zorluk sistemi
+        //                    isim              min   max   spawner  interval  projSpd  projScale  plrSpd  scoreMult
+        CreateStage6("Stage1_Baslangic",    0,    49,  2,   1.0f,    1.0f,    1.0f,     1.0f,   1.0f,  DATA_FOLDER + "/Stage1_Baslangic.asset");
+        CreateStage6("Stage2_Kolay",       50,   149,  2,   0.85f,   1.15f,   1.0f,     1.05f,  1.1f,  DATA_FOLDER + "/Stage2_Kolay.asset");
+        CreateStage6("Stage3_Orta",       150,   349,  3,   0.7f,    1.3f,    1.15f,    1.1f,   1.2f,  DATA_FOLDER + "/Stage3_Orta.asset");
+        CreateStage6("Stage4_Zor",        350,   599,  3,   0.55f,   1.5f,    1.3f,     1.15f,  1.3f,  DATA_FOLDER + "/Stage4_Zor.asset");
+        CreateStage6("Stage5_Cehennem",   600,   999,  4,   0.4f,    1.75f,   1.45f,    1.2f,   1.5f,  DATA_FOLDER + "/Stage5_Cehennem.asset");
+        CreateStage6("Stage6_Imkansiz",  1000,    -1,  4,   0.3f,    2.0f,    1.6f,     1.25f,  1.8f,  DATA_FOLDER + "/Stage6_Imkansiz.asset");
     }
 
-    static void CreateStage(string name, int min, int max, int spawnerCount,
-        float intervalMult, float speedMult, ProjectileData proj, string path)
+    static void CreateStage6(string name, int min, int max, int spawnerCount,
+        float intervalMult, float speedMult, float scaleMult,
+        float playerSpeedMult, float scoreMult, string path)
     {
         if (AssetExists(path)) return;
 
@@ -197,7 +149,9 @@ public class KacAtaKacSetup : EditorWindow
         data.activeSpawnerCount = spawnerCount;
         data.shootIntervalMultiplier = intervalMult;
         data.projectileSpeedMultiplier = speedMult;
-        if (proj != null) data.availableProjectiles = new ProjectileData[] { proj };
+        data.projectileScaleMultiplier = scaleMult;
+        data.playerSpeedMultiplier = playerSpeedMult;
+        data.scoreSpeedMultiplier = scoreMult;
 
         AssetDatabase.CreateAsset(data, path);
         Debug.Log("[KacAtaKac] Olusturuldu: " + path);
@@ -215,7 +169,6 @@ public class KacAtaKacSetup : EditorWindow
         data.enableEndlessScore = true;
         data.enableDifficulty = true;
 
-        // Referanslari bagla
         data.arenaData  = AssetDatabase.LoadAssetAtPath<ArenaData>(DATA_FOLDER + "/Dungeon_ArenaData.asset");
         data.playerData = AssetDatabase.LoadAssetAtPath<PlayerData>(DATA_FOLDER + "/Boy_PlayerData.asset");
 
@@ -223,12 +176,15 @@ public class KacAtaKacSetup : EditorWindow
         if (spawner != null)
             data.spawnerDataList = new SpawnerData[] { spawner, spawner, spawner, spawner };
 
-        DifficultyStageData kolay   = AssetDatabase.LoadAssetAtPath<DifficultyStageData>(DATA_FOLDER + "/Stage_Kolay.asset");
-        DifficultyStageData orta    = AssetDatabase.LoadAssetAtPath<DifficultyStageData>(DATA_FOLDER + "/Stage_Orta.asset");
-        DifficultyStageData zor     = AssetDatabase.LoadAssetAtPath<DifficultyStageData>(DATA_FOLDER + "/Stage_Zor.asset");
-        DifficultyStageData cehennem = AssetDatabase.LoadAssetAtPath<DifficultyStageData>(DATA_FOLDER + "/Stage_Cehennem.asset");
+        // 6 asamali zorluk sistemi
+        DifficultyStageData s1 = AssetDatabase.LoadAssetAtPath<DifficultyStageData>(DATA_FOLDER + "/Stage1_Baslangic.asset");
+        DifficultyStageData s2 = AssetDatabase.LoadAssetAtPath<DifficultyStageData>(DATA_FOLDER + "/Stage2_Kolay.asset");
+        DifficultyStageData s3 = AssetDatabase.LoadAssetAtPath<DifficultyStageData>(DATA_FOLDER + "/Stage3_Orta.asset");
+        DifficultyStageData s4 = AssetDatabase.LoadAssetAtPath<DifficultyStageData>(DATA_FOLDER + "/Stage4_Zor.asset");
+        DifficultyStageData s5 = AssetDatabase.LoadAssetAtPath<DifficultyStageData>(DATA_FOLDER + "/Stage5_Cehennem.asset");
+        DifficultyStageData s6 = AssetDatabase.LoadAssetAtPath<DifficultyStageData>(DATA_FOLDER + "/Stage6_Imkansiz.asset");
 
-        data.difficultyStages = new DifficultyStageData[] { kolay, orta, zor, cehennem };
+        data.difficultyStages = new DifficultyStageData[] { s1, s2, s3, s4, s5, s6 };
 
         AssetDatabase.CreateAsset(data, path);
         Debug.Log("[KacAtaKac] Olusturuldu: " + path);

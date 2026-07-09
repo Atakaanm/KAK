@@ -13,15 +13,22 @@ public class PlayerHealth : MonoBehaviour
     public HealthUI healthUI;
 
     [Header("Data (opsiyonel)")]
-    public PlayerData playerData; // Atanirsa maxHealth ve invincibility buradan alinir
+    public PlayerData playerData;
 
     private Color originalColor;
+    private Vector3 originalScale;
     private bool isInvincible = false;
+    private bool hasShield = false;
+    private bool isGhost = false;
+    public bool IsGhost => isGhost;
     public float invincibilityDuration = 0.35f;
+
+    private Coroutine hitFlashCoroutine;
+    private Coroutine invincibilityCoroutine;
+    private Coroutine ghostCoroutine;
 
     void Start()
     {
-        // Data varsa degerleri oradan al
         if (playerData != null)
         {
             maxHealth = playerData.maxHealth;
@@ -34,6 +41,20 @@ public class PlayerHealth : MonoBehaviour
         {
             originalColor = playerSpriteRenderer.color;
         }
+        originalScale = transform.localScale;
+
+        if (healthUI != null)
+        {
+            healthUI.InitHearts(maxHealth);
+            healthUI.UpdateHearts(currentHealth);
+        }
+    }
+
+    /// <summary>Can verir (Max canı geçemez).</summary>
+    public void Heal(int amount)
+    {
+        currentHealth += amount;
+        if (currentHealth > maxHealth) currentHealth = maxHealth;
 
         if (healthUI != null)
         {
@@ -41,20 +62,66 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
+    /// <summary>1 vuruşluk bloklayan kalkan verir.</summary>
+    public void ActivateShield()
+    {
+        hasShield = true;
+        transform.localScale = originalScale * 1.15f; // %15 büyüt
+        if (playerSpriteRenderer != null && !isGhost)
+        {
+            playerSpriteRenderer.color = Color.cyan;
+        }
+    }
+
+    /// <summary>Mermilerin içinden geçmesini sağlayan hayalet formu.</summary>
+    public void MakeGhost(float duration)
+    {
+        if (ghostCoroutine != null) StopCoroutine(ghostCoroutine);
+        ghostCoroutine = StartCoroutine(GhostRoutine(duration));
+    }
+
+    IEnumerator GhostRoutine(float duration)
+    {
+        isGhost = true;
+        if (playerSpriteRenderer != null)
+        {
+            Color c = originalColor;
+            c.a = 0.5f;
+            playerSpriteRenderer.color = c;
+        }
+
+        yield return new WaitForSeconds(duration);
+
+        isGhost = false;
+        if (playerSpriteRenderer != null)
+        {
+            playerSpriteRenderer.color = hasShield ? Color.cyan : originalColor;
+        }
+        ghostCoroutine = null;
+    }
+
     public void TakeDamage(int damage)
     {
-        if (isInvincible) return;
+        if (isInvincible || isGhost) return;
+
+        if (hasShield)
+        {
+            hasShield = false;
+            transform.localScale = originalScale;
+            if (playerSpriteRenderer != null) playerSpriteRenderer.color = originalColor;
+            if (invincibilityCoroutine != null) StopCoroutine(invincibilityCoroutine);
+            invincibilityCoroutine = StartCoroutine(InvincibilityRoutine());
+            return;
+        }
 
         currentHealth -= damage;
 
-        #if UNITY_ANDROID || UNITY_IOS
-        Handheld.Vibrate();
-        #endif
+        if (AudioManager.Instance != null) AudioManager.Instance.TriggerVibration();
 
         if (playerSpriteRenderer != null)
         {
-            StopAllCoroutines();
-            StartCoroutine(HitFlashRoutine());
+            if (hitFlashCoroutine != null) StopCoroutine(hitFlashCoroutine);
+            hitFlashCoroutine = StartCoroutine(HitFlashRoutine());
         }
 
         if (healthUI != null)
@@ -77,20 +144,59 @@ public class PlayerHealth : MonoBehaviour
             }
         }
 
-        StartCoroutine(InvincibilityRoutine());
+        if (invincibilityCoroutine != null) StopCoroutine(invincibilityCoroutine);
+        invincibilityCoroutine = StartCoroutine(InvincibilityRoutine());
     }
 
     IEnumerator HitFlashRoutine()
     {
         playerSpriteRenderer.color = hitColor;
         yield return new WaitForSeconds(hitFlashDuration);
-        playerSpriteRenderer.color = originalColor;
+        
+        // Rengi mevcut duruma göre doğru geri yükle
+        if (isGhost)
+        {
+            Color c = originalColor; c.a = 0.5f;
+            playerSpriteRenderer.color = c;
+        }
+        else if (hasShield)
+        {
+            playerSpriteRenderer.color = Color.cyan;
+        }
+        else
+        {
+            playerSpriteRenderer.color = originalColor;
+        }
+        hitFlashCoroutine = null;
     }
 
     IEnumerator InvincibilityRoutine()
     {
         isInvincible = true;
-        yield return new WaitForSeconds(invincibilityDuration);
+        float elapsed = 0f;
+        while (elapsed < invincibilityDuration)
+        {
+            if (playerSpriteRenderer != null)
+                playerSpriteRenderer.enabled = !playerSpriteRenderer.enabled;
+            yield return new WaitForSeconds(0.1f);
+            elapsed += 0.1f;
+        }
+        if (playerSpriteRenderer != null) playerSpriteRenderer.enabled = true;
         isInvincible = false;
+        
+        // Renk çakışmasını çöz
+        if (playerSpriteRenderer != null)
+        {
+            if (isGhost)
+            {
+                Color c = originalColor; c.a = 0.5f;
+                playerSpriteRenderer.color = c;
+            }
+            else if (hasShield)
+            {
+                playerSpriteRenderer.color = Color.cyan;
+            }
+        }
+        invincibilityCoroutine = null;
     }
 }

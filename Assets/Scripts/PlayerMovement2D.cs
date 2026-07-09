@@ -11,8 +11,16 @@ public class PlayerMovement2D : MonoBehaviour
     [Header("Mobil Kontrol")]
     public VirtualJoystick joystick; // Inspector'dan baglanir
 
+    [Header("Arena Zemin Fizikleri")]
+    public float arenaFriction = 1.0f;          // 1.0 = Normal zemin, kuculdukce (or. 0.1) kayganlasir
+    public float arenaSpeedMultiplier = 1.0f;   // 1.0 = Normal hiz, kuculdukce bataklik gibi yavaslatir
+
     private Rigidbody2D rb;
     private Vector2 movementInput;
+    private float baseMoveSpeed;
+
+    private float currentSpeedBoostMult = 1f;
+    private Coroutine speedBoostCoroutine;
 
     public Vector2 MovementInput => movementInput;
 
@@ -27,6 +35,7 @@ public class PlayerMovement2D : MonoBehaviour
         {
             moveSpeed = playerData.moveSpeed;
         }
+        baseMoveSpeed = moveSpeed;
     }
 
     void Update()
@@ -45,8 +54,56 @@ public class PlayerMovement2D : MonoBehaviour
         }
     }
 
+    public void ApplySpeedBoost(float multiplier, float duration)
+    {
+        if (speedBoostCoroutine != null) StopCoroutine(speedBoostCoroutine);
+        speedBoostCoroutine = StartCoroutine(SpeedBoostRoutine(multiplier, duration));
+    }
+
+    public void SetMoveSpeed(float speed)
+    {
+        moveSpeed = speed;
+        baseMoveSpeed = speed;
+    }
+
+    private System.Collections.IEnumerator SpeedBoostRoutine(float multiplier, float duration)
+    {
+        currentSpeedBoostMult = multiplier;
+        
+        // Zamanın yavaşlamasına bağımsız sürmesini istersen Realtime kullanabiliriz,
+        // ama normal saniye sayması için yield return new WaitForSeconds daha iyidir.
+        yield return new WaitForSeconds(duration);
+        
+        currentSpeedBoostMult = 1f;
+    }
+
     void FixedUpdate()
     {
-        rb.linearVelocity = movementInput * moveSpeed;
+        float currentSpeed = baseMoveSpeed * arenaSpeedMultiplier * currentSpeedBoostMult;
+        if (DifficultyManager.Instance != null && DifficultyManager.Instance.isActiveAndEnabled)
+        {
+            currentSpeed *= DifficultyManager.Instance.GetPlayerSpeedMultiplier();
+        }
+
+        // Eğer zaman yavaşlatma efekti aktifse, oyuncu mermilerden daha hızlı kaçabilmek için kendi hızını korumalıdır.
+        // Motorun fizik hızını (Time.timeScale) ters orantıyla dengeleyerek gerçek zamanlı hızını sabit tutuyoruz.
+        if (Time.timeScale > 0.01f && Time.timeScale < 1f)
+        {
+            currentSpeed /= Time.timeScale;
+        }
+
+        Vector2 targetVelocity = movementInput * currentSpeed;
+
+        if (arenaFriction >= 0.99f)
+        {
+            // Normal zemin, hicbir takilma olmadan hizlanip durur (Anlik / Direct velocity)
+            rb.linearVelocity = targetVelocity;
+        }
+        else
+        {
+            // Buzlu vb. zemin: ivmelenerek hizlanir, birakinca kaymaya devam eder (Lerp)
+            float lerpSpeed = arenaFriction * 10f; // 0.1 friction -> 1f lerp hizi (guzel bir kayma hissi)
+            rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, targetVelocity, lerpSpeed * Time.fixedDeltaTime);
+        }
     }
 }

@@ -51,4 +51,14 @@ public class CameraFitWidth : MonoBehaviour
         // Böylece Arena her zaman tüm ekranın içine sığar.
         cam.orthographicSize = Mathf.Max(orthoSizeForWidth, orthoSizeForHeight);
     }
+
+    /// <summary>
+    /// Önbelleği geçersiz kılarak kamera boyutunu yeniden hesaplar.
+    /// </summary>
+    public void ForceRecalculate()
+    {
+        lastScreenWidth = -1f;
+        lastScreenHeight = -1f;
+        UpdateCameraSize();
+    }
 }

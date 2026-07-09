@@ -1,12 +1,10 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 /// <summary>
 /// Sonsuz (Endless) modda skora gore zorlugu yoneten manager.
 /// Skoru dinler, esik degerlerine gore aktif DifficultyStageData'yi secer,
 /// spawner hizlarini ve mermi hizlarini carpanla gunceller.
-/// 
-/// Kullanim: Sahneye bos bir GameObject koy, bu scripti ekle,
-/// ScoreManager ve spawner referanslarini ata.
 /// </summary>
 public class DifficultyManager : MonoBehaviour
 {
@@ -21,12 +19,16 @@ public class DifficultyManager : MonoBehaviour
     [Header("Spawner Referanslari")]
     public CornerShooter[] allSpawners; // Sahnedeki tum firlaticilar
 
+    [Header("Etkinlikler (Events)")]
+    public UnityEvent<string> onStageChanged;
+
     private DifficultyStageData currentStage;
     private int currentStageIndex = -1;
     private bool isActive = true;
 
     // Her spawner icin orijinal ates araligi (geri yukleme icin)
     private float[] originalShootIntervals;
+    private bool originalsRecorded = false;
 
     void Awake()
     {
@@ -43,7 +45,45 @@ public class DifficultyManager : MonoBehaviour
 
     void Start()
     {
+        // Referans eksikse otomatik bul
+        AutoFindReferences();
+
         // Orijinal spawner degerlerini kaydet
+        RecordOriginalIntervals();
+
+        // Baslangicta ilk stage'i uygula
+        if (stages != null && stages.Length > 0)
+        {
+            ApplyStage(0);
+        }
+    }
+
+    /// <summary>
+    /// Inspector'dan atanmamış referansları otomatik bulur.
+    /// </summary>
+    void AutoFindReferences()
+    {
+        if (scoreManager == null)
+        {
+            scoreManager = FindAnyObjectByType<ScoreManager>();
+            if (scoreManager != null)
+                Debug.Log("[DifficultyManager] ScoreManager otomatik bulundu.");
+        }
+
+        if (allSpawners == null || allSpawners.Length == 0)
+        {
+            allSpawners = FindObjectsByType<CornerShooter>(FindObjectsSortMode.None);
+            if (allSpawners != null && allSpawners.Length > 0)
+                Debug.Log("[DifficultyManager] " + allSpawners.Length + " spawner otomatik bulundu.");
+        }
+    }
+
+    /// <summary>
+    /// Orijinal ateş aralıklarını kaydeder.
+    /// LevelManager tarafından spawner'lar ayarlandıktan SONRA çağrılabilir.
+    /// </summary>
+    public void RecordOriginalIntervals()
+    {
         if (allSpawners != null && allSpawners.Length > 0)
         {
             originalShootIntervals = new float[allSpawners.Length];
@@ -54,12 +94,8 @@ public class DifficultyManager : MonoBehaviour
                     originalShootIntervals[i] = allSpawners[i].shootInterval;
                 }
             }
-        }
-
-        // Baslangicta ilk stage'i uygula
-        if (stages != null && stages.Length > 0)
-        {
-            ApplyStage(0);
+            originalsRecorded = true;
+            Debug.Log("[DifficultyManager] Orijinal ateş aralıkları kaydedildi (" + allSpawners.Length + " spawner).");
         }
     }
 
@@ -73,7 +109,7 @@ public class DifficultyManager : MonoBehaviour
         // Hangi stage'deyiz kontrol et
         for (int i = stages.Length - 1; i >= 0; i--)
         {
-            if (currentScore >= stages[i].minScore)
+            if (stages[i] != null && currentScore >= stages[i].minScore)
             {
                 if (i != currentStageIndex)
                 {
@@ -93,11 +129,28 @@ public class DifficultyManager : MonoBehaviour
         if (stageIndex < 0 || stageIndex >= stages.Length)
             return;
 
+        if (stages[stageIndex] == null)
+            return;
+
         currentStageIndex = stageIndex;
         currentStage = stages[stageIndex];
 
-        Debug.Log("[DifficultyManager] Stage gecisi: " + currentStage.stageName
-            + " (Skor >= " + currentStage.minScore + ")");
+        Debug.Log("[DifficultyManager] ⚡ STAGE GEÇİŞİ: " + currentStage.stageName
+            + " (Skor >= " + currentStage.minScore + ")"
+            + " | Ateş Çarpanı: " + currentStage.shootIntervalMultiplier
+            + " | Mermi Hız Çarpanı: " + currentStage.projectileSpeedMultiplier
+            + " | Aktif Spawner: " + currentStage.activeSpawnerCount);
+
+        if (onStageChanged != null)
+        {
+            onStageChanged.Invoke(currentStage.stageName);
+        }
+
+        // Orijinaller henüz kaydedilmediyse şimdi kaydet
+        if (!originalsRecorded)
+        {
+            RecordOriginalIntervals();
+        }
 
         // Spawner hizlarini guncelle
         if (allSpawners != null && originalShootIntervals != null)
@@ -112,6 +165,9 @@ public class DifficultyManager : MonoBehaviour
                     allSpawners[i].gameObject.SetActive(true);
                     // Ates araligini carpanla guncelle (dusuk carpan = daha hizli ates)
                     allSpawners[i].shootInterval = originalShootIntervals[i] * currentStage.shootIntervalMultiplier;
+                    
+                    Debug.Log("[DifficultyManager] Spawner " + i + " interval: " 
+                        + originalShootIntervals[i] + " → " + allSpawners[i].shootInterval);
                 }
                 else
                 {
@@ -124,7 +180,6 @@ public class DifficultyManager : MonoBehaviour
 
     /// <summary>
     /// Mevcut zorluk asamasinin mermi hiz carpanini dondurur.
-    /// Projectile scripti bunu okuyup hizini ayarlar.
     /// </summary>
     public float GetProjectileSpeedMultiplier()
     {
@@ -133,8 +188,29 @@ public class DifficultyManager : MonoBehaviour
         return 1.0f;
     }
 
+    public float GetProjectileScaleMultiplier()
+    {
+        if (currentStage != null)
+            return currentStage.projectileScaleMultiplier;
+        return 1.0f;
+    }
+
+    public float GetPlayerSpeedMultiplier()
+    {
+        if (currentStage != null)
+            return currentStage.playerSpeedMultiplier;
+        return 1.0f;
+    }
+
+    public float GetScoreSpeedMultiplier()
+    {
+        if (currentStage != null)
+            return currentStage.scoreSpeedMultiplier;
+        return 1.0f;
+    }
+
     /// <summary>
-    /// Mevcut asamanin ismini dondurur (debug / UI icin).
+    /// Mevcut asamanin ismini dondurur.
     /// </summary>
     public string GetCurrentStageName()
     {
@@ -144,7 +220,7 @@ public class DifficultyManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Zorluk sistemini durdurur (ornegin oyun bitti ekraninda).
+    /// Zorluk sistemini durdurur.
     /// </summary>
     public void StopDifficulty()
     {

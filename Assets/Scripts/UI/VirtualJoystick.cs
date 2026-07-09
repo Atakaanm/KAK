@@ -69,7 +69,7 @@ public class VirtualJoystick : MonoBehaviour, IDragHandler, IPointerDownHandler,
         );
 
         // Background boyutuna göre normalize et (-1 ile 1 arası)
-        Vector2 bgSize = background.sizeDelta;
+        Vector2 bgSize = background.rect.size;
         Vector2 normalizedInput = new Vector2(
             localPoint.x / (bgSize.x * 0.5f),
             localPoint.y / (bgSize.y * 0.5f)

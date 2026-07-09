@@ -17,16 +17,18 @@ public class GameManager : MonoBehaviour
     public TMP_Text bestScoreText;
 
     private bool isGameOver = false;
-
     public bool IsGameOver => isGameOver;
+
+    private float defaultTimeScale = 1f;
+    private Coroutine timeSlowCoroutine;
 
     void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            // Menuden oyuna geciste yok olmamasi icin (ileride kullanilacak)
-            // DontDestroyOnLoad(gameObject);
+            // Menuden oyuna geciste yok olmamasi icin
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -35,6 +37,29 @@ public class GameManager : MonoBehaviour
         }
 
         Time.timeScale = 1f;
+
+        // --- EKSİK MANAGERLARI OTOMATİK YARAT ---
+        if (levelManager == null)
+        {
+            levelManager = FindAnyObjectByType<LevelManager>();
+            if (levelManager == null)
+            {
+                GameObject lmObj = new GameObject("LevelManager");
+                levelManager = lmObj.AddComponent<LevelManager>();
+                Debug.Log("[GameManager] LevelManager sahnede yoktu, otomatik oluşturuldu!");
+            }
+        }
+
+        if (difficultyManager == null)
+        {
+            difficultyManager = FindAnyObjectByType<DifficultyManager>();
+            if (difficultyManager == null)
+            {
+                GameObject dmObj = new GameObject("DifficultyManager");
+                difficultyManager = dmObj.AddComponent<DifficultyManager>();
+                Debug.Log("[GameManager] DifficultyManager sahnede yoktu, otomatik oluşturuldu!");
+            }
+        }
     }
 
     public void GameOver()
@@ -43,6 +68,7 @@ public class GameManager : MonoBehaviour
 
         isGameOver = true;
         Time.timeScale = 0f;
+        if (timeSlowCoroutine != null) StopCoroutine(timeSlowCoroutine);
 
         // Zorluk sistemini durdur
         if (difficultyManager != null)
@@ -91,7 +117,35 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void GoToMainMenu()
     {
+        GameSettings.Reset();
         SceneLoader.LoadMenu();
+    }
+
+    /// <summary>
+    /// Stage modu için bölüm sonu.
+    /// </summary>
+    public void LevelComplete()
+    {
+        isGameOver = true;
+        Time.timeScale = 0f;
+
+        if (scoreManager != null)
+        {
+            int finalScore = scoreManager.ScoreInt;
+            if (finalScore > GameSettings.BestScore)
+                GameSettings.BestScore = finalScore;
+        }
+
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(true);
+            var texts = gameOverPanel.GetComponentsInChildren<TMP_Text>();
+            foreach (var t in texts)
+            {
+                if (t.gameObject.name.Contains("Title") || t.gameObject.name.Contains("GameOver"))
+                    t.text = "TEBRİKLER!";
+            }
+        }
     }
 
     /// <summary>
@@ -104,5 +158,30 @@ public class GameManager : MonoBehaviour
 
         GameSettings.SelectedLevel = levelData;
         SceneLoader.LoadGame();
+    }
+
+    /// <summary>
+    /// Oyun hızını geçici olarak yavaşlatır (Powerup için).
+    /// </summary>
+    public void TimeSlow(float multiplier, float duration)
+    {
+        if (isGameOver) return;
+        if (timeSlowCoroutine != null) StopCoroutine(timeSlowCoroutine);
+        timeSlowCoroutine = StartCoroutine(TimeSlowRoutine(multiplier, duration));
+    }
+
+    private System.Collections.IEnumerator TimeSlowRoutine(float multiplier, float duration)
+    {
+        Time.timeScale = defaultTimeScale * multiplier;
+        Time.fixedDeltaTime = 0.02f * Time.timeScale;
+        
+        // Zaman yavaşlamışken sayacın gerçek zamanda (realTime) sayması gerekir
+        yield return new WaitForSecondsRealtime(duration);
+        
+        if (!isGameOver)
+        {
+            Time.timeScale = defaultTimeScale;
+            Time.fixedDeltaTime = 0.02f * Time.timeScale;
+        }
     }
 }

@@ -22,11 +22,19 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 557963b4f006247edb74ed4312f57ec1, type: 2}
   - {fileID: 11400000, guid: 557963b4f006247edb74ed4312f57ec1, type: 2}
   - {fileID: 11400000, guid: 557963b4f006247edb74ed4312f57ec1, type: 2}
+  availablePowerups:
+  - {fileID: 11400000, guid: 6d8600625ded34c08b6eb9e6aa931872, type: 2}
+  - {fileID: 11400000, guid: 10a4c19648d274f04a79ba148802bedc, type: 2}
+  - {fileID: 11400000, guid: 213464e6299a24c56b8d8f8cb89ac5bd, type: 2}
+  - {fileID: 11400000, guid: 17c08a9bd611b48a7bb2eab073e0c815, type: 2}
+  - {fileID: 11400000, guid: d8efc87cfa8e94633aa11e8b4baa13b0, type: 2}
   difficultyStages:
-  - {fileID: 11400000, guid: 7283703f6bd77401f842ba294f5ad127, type: 2}
-  - {fileID: 11400000, guid: 5fb1f780477ab44f69db5bd12e89b725, type: 2}
-  - {fileID: 11400000, guid: fead8ccb1035e4e79a622784f8d70d6a, type: 2}
-  - {fileID: 11400000, guid: 2bf4c01c002fe4952afa10e14dce09a6, type: 2}
+  - {fileID: 11400000, guid: d826fe0da2f7e490f995e3cad7c2d13a, type: 2}
+  - {fileID: 11400000, guid: 50cbf3058c9824c359b5ea2dab882f88, type: 2}
+  - {fileID: 11400000, guid: 9cce8ef3497ba4a9e90c4b246716276f, type: 2}
+  - {fileID: 11400000, guid: 1ca2b7ea1392a46458b5ed1846784173, type: 2}
+  - {fileID: 11400000, guid: f51b8af597fce469eae3b533a5e17e02, type: 2}
+  - {fileID: 11400000, guid: 1a8d7b4912c524aca87d401feb891df0, type: 2}
   targetScore: 0
   timeLimit: 0
   hasKey: 0

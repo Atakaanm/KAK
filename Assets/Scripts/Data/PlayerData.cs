@@ -12,10 +12,22 @@ public class PlayerData : ScriptableObject
     public string playerName = "Boy";
     public PlayerType playerType = PlayerType.Boy;
 
-    [Header("Istatistikler")]
+    [Header("Base İstatistikler")]
     public int maxHealth = 3;
     public float moveSpeed = 5f;
     public float invincibilityDuration = 0.35f;
+
+    [Header("RPG / Gelişim İstastikleri")]
+    public float powerupDurationMultiplier = 1.0f;  // Örn: Hızlandırma powerup'ı ne kadar sürer?
+    public float powerupSpawnRateMultiplier = 1.0f; // Bu karaktere özel yerden çıkma şansı katsayısı
+
+    [Header("Yetenek (Aktif)")]
+    public AbilityData activeAbility;               // Karakterin kendine has özelliği (örn Dash)
+
+    [Header("Giyili Ekipmanlar (Başlangıç veya Load)")]
+    public EquipmentData equippedHead;              // Kafasına taktığı şapka
+    public EquipmentData equippedBody;              // Üstündeki giysi
+    public EquipmentData equippedFeet;              // Ayakkabı
 
     // ── 8 yonlu animasyon yapisi ──────────────────────────────────────────
     // Her yon icin tek bir blok: 1 idle sprite + istedigin kadar run frame.
