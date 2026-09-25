@@ -220,6 +220,18 @@ def main():
         return 0 if r["ok"] else 1
     if c in ("ping", "state", "refresh", "compile", "play", "stop", "saveScenes"):
         r = send(c, seconds=600 if c in ("refresh", "compile") else 0, timeout=660 if c in ("refresh", "compile") else 240)
+        if c in ("refresh", "compile"):
+            # Unity bazen komuttan önce kendisi derler: son derlemenin sonucunu her zaman göster
+            try:
+                with open(os.path.join(BRIDGE, "compile.json"), encoding="utf-8") as f:
+                    ci = json.load(f)
+                age = time.time() - ci["unixMs"] / 1000.0
+                print("son derleme: %s (%.0f sn önce)%s" % ("BAŞARILI" if ci["success"] else "HATALI", age,
+                      "" if ci["success"] else "\n" + "\n".join(ci["errors"][:20])))
+                if not ci["success"]:
+                    return 1
+            except Exception:
+                pass
         return 0 if r["ok"] else 1
     if c == "pause":
         r = send("pause", arg=a[0] if a else "on")

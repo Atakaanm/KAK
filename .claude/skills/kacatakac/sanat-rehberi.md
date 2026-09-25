@@ -5,13 +5,15 @@
 > Durum: Taslak (Faz 0'da stil, Faz 3'te palet kesinleşecek). Kesinleşen değerler `[KESİN]` ile işaretlenir.
 
 ## 1. Stil
-- **Piksel sanatı** (Faz 0'da onaylanacak). Karakter 32×32 px, **PPU = 32** (1 karakter = 1 dünya birimi).
+- **Piksel sanatı.** Standart yoğunluk **[KESİN]: 1 sanat pikseli = 0,024 dünya birimi** (mevcut 48 px karakterlerle ve arena görselinin sanat pikseliyle aynı). `Assets/Art/**` için PPU 41,667 otomatik (`KakArtImportRules`). 48 px karakterler/fırlatıcılar = görsel ölçeği 2,4 @ PPU 100. Taş 26 px (+kontur).
 - Keskin pikseller: `Filter Mode = Point`, `Compression = None`, mipmap kapalı.
 - **Tek piksel yoğunluğu:** Ekrandaki her şey aynı piksel ızgarasında. Sprite'ları `localScale` ile büyütüp küçültmek yasak (parçacıklar ve kısa efekt animasyonları hariç).
 - Dış hat: karakterler, düşmanlar ve mermilerde 1 px koyu kontur (paletin en koyu tonu, saf siyah değil). Zemin ve duvarlarda kontur yok.
 - Işık yönü: sol üst. Gölge: yarı saydam koyu elips, ayak altında.
 
-## 2. Palet
+## 2. Palet  [KESİN — Endesga 32, 2026-09-25: kullanıcı cevap vermedi, Claude'un önerisi varsayım olarak uygulandı; değiştirilebilir]
+- Palet: **Endesga 32** → `Assets/Art/Palette/kak_palette.png`, kodda `KakPalette` (rol isimleriyle), Python'da `tools/kak_palette.py`.
+- **Uygulama kuralı (Faz 3'te öğrenildi):** Yapay zekayla üretilmiş yüksek çözünürlüklü, yumuşak geçişli görseller (arena, powerup ikonları) palete **zorla indirgenmez** (parlamalar lekeye döner, zemin düzleşir). Bütünlük global renk tonlamasıyla (Volume: kontrast +10, doygunluk +6, gölge soğuk-mor / ışık sıcak split toning, tonemapping yok) sağlanır. Palet, piksel sanatı karakterlere, üretilen karolara, parçacıklara, UI'a ve dış hatlara uygulanır.
 - **Tek ana palet, en fazla 32 renk.** Aday: Lospec'ten "Endesga 32" ya da "Resurrect 64"ün 32 renklik alt kümesi, veya mevcut Dungeon arenasının renklerinden türetilmiş özel bir palet. Faz 3'te 3 aday bana gösterilir, ben seçerim.
 - Palet dosyası: `Assets/Art/Palette/kak_palette.png` (renk başına 1 px) + `KakPalette` ScriptableObject (isimli renkler: `ZeminKoyu`, `TehlikeTuruncu`...).
 - **Palet denetçisi** (editör aracı): Seçili sprite'larda paletin dışındaki pikselleri raporlar ve isteğe bağlı olarak en yakın palet rengine indirger. Her yeni görsel bu kontrolden geçer.

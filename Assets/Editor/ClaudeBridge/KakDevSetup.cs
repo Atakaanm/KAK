@@ -22,6 +22,15 @@ public static class KakDevSetup
         return ViewInfo();
     }
 
+    /// <summary>Game view istatistikleri (Stats paneli ile aynı kaynak, son çizilen oyun karesi).</summary>
+    public static string Stats()
+    {
+        return "batches=" + UnityStats.batches + " drawCalls=" + UnityStats.drawCalls + " setPass=" + UnityStats.setPassCalls
+             + " dynBatched=" + UnityStats.dynamicBatchedDrawCalls + " staticBatched=" + UnityStats.staticBatchedDrawCalls
+             + " tris=" + UnityStats.triangles + " verts=" + UnityStats.vertices
+             + " sceneViews=" + SceneView.sceneViews.Count;
+    }
+
     public static string GodModeOn() => SetGod(true);
     public static string GodModeOff() => SetGod(false);
 

@@ -116,6 +116,7 @@ public class PlayerHealth : MonoBehaviour
 
         if (hasShield)
         {
+            GameEvents.RaiseShieldBlocked(transform.position);
             hasShield = false;
             transform.localScale = originalScale;
             if (playerSpriteRenderer != null) playerSpriteRenderer.color = originalColor;
@@ -125,6 +126,7 @@ public class PlayerHealth : MonoBehaviour
         }
 
         currentHealth -= damage;
+        GameEvents.RaisePlayerDamaged(Mathf.Max(0, currentHealth), transform.position);
 
         if (AudioManager.Instance != null)
         {
@@ -163,6 +165,7 @@ public class PlayerHealth : MonoBehaviour
                 playerSpriteRenderer.color = hitColor;
             }
 
+            GameEvents.RaisePlayerDied(transform.position);
             if (GameManager.Instance != null)
             {
                 GameManager.Instance.GameOver();

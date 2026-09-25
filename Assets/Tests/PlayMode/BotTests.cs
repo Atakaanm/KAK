@@ -46,6 +46,7 @@ public class BotTests
         Assert.IsNotNull(player);
         var bot = player.gameObject.AddComponent<KakAutoPilot>();
         bot.skill = 1f;
+        var perf = player.gameObject.AddComponent<KakPerfProbe>();
 
         float end = Time.realtimeSinceStartup + 60f;
         int maxPool = 0;
@@ -59,6 +60,11 @@ public class BotTests
         Application.logMessageReceived -= onLog;
         int score = KakTestUtil.Score();
         Debug.Log($"[BotTests] Usta bot: {bot.SurvivalTime:F1} sn, vuruş {bot.HitsTaken}, skor {score}, en fazla havuz nesnesi {maxPool}, bitti={bot.Finished}, hata logu {errorCount}" + (firstError != null ? " (ilk: " + firstError + ")" : ""));
+
+        Debug.Log(perf.Report());
+        // Editör ölçümü Scene view ve editör yükünü içerir; kesin bütçe (< 60) cihazda ölçülür (Faz 10).
+        // Burada sadece büyük gerilemeleri yakalayan geniş bir sınır var.
+        Assert.Less(perf.AvgBatches, 200f, "Batch sayısı ciddi şekilde arttı (editör sınırı 200)");
 
         Assert.Greater(bot.SurvivalTime, 20f, "Usta bot 20 sn bile dayanamadı: bot veya denge sorunlu");
         Assert.Less(maxPool, 150, "Mermi havuzu aşırı büyüdü (sızıntı?)");

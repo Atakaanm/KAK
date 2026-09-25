@@ -40,6 +40,10 @@ public class Projectile : MonoBehaviour
     private float spawnTime;
 
     // Trail / iz efekti (opsiyonel — inspector'dan atanır)
+    [Header("Görsel")]
+    [Tooltip("Dönen görsel alt obje (gölge dönmesin diye). Boşsa kök döner.")]
+    public Transform visual;
+
     [Header("Görsel Efektler (Opsiyonel)")]
     [Tooltip("TrailRenderer varsa otomatik bulunur, yoksa dışarıdan atanabilir")]
     public TrailRenderer trailRenderer;
@@ -151,7 +155,7 @@ public class Projectile : MonoBehaviour
 
         if (data.projectileSprite != null)
         {
-            SpriteRenderer sr = GetComponent<SpriteRenderer>();
+            SpriteRenderer sr = visual != null ? visual.GetComponent<SpriteRenderer>() : GetComponentInChildren<SpriteRenderer>();
             if (sr != null) sr.sprite = data.projectileSprite;
         }
     }
@@ -190,9 +194,10 @@ public class Projectile : MonoBehaviour
             return;
         }
 
-        // Arena sınırları dışına çıktıysa iade et / yok et
+        // Duvara ulaştıysa kırılır (efekt) ve havuza döner
         if (boundsInitialized && !IsInsideArenaBounds())
         {
+            GameEvents.RaiseProjectileHitWall(transform.position, Velocity);
             ReturnToPool();
         }
     }
@@ -203,7 +208,8 @@ public class Projectile : MonoBehaviour
         {
             Vector2 newPos = rb.position + (moveDirection.normalized * speed * Time.fixedDeltaTime);
             rb.MovePosition(newPos);
-            rb.rotation += rotationSpeed * Time.fixedDeltaTime;
+            if (visual != null) visual.Rotate(0f, 0f, rotationSpeed * Time.fixedDeltaTime);
+            else rb.rotation += rotationSpeed * Time.fixedDeltaTime;
         }
         else
         {

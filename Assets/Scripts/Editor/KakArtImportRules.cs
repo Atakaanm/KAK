@@ -5,13 +5,13 @@ using UnityEngine;
 /// Assets/Art/ altındaki görseller için otomatik içe aktarma standardı (sanat-rehberi.md §1).
 /// - Piksel sanatı: Point filtre, sıkıştırma yok, mipmap yok, Full Rect mesh (Tiled çizim için)
 /// - Yumuşak efekt dokuları (dosya adında "glow", "vignette", "soft"): Bilinear
-/// - PPU: Tiles/Dungeon geçici karoları arena ölçeğinde 41.667; diğerleri şimdilik 100
-///   (Faz 3'te tüm proje tek PPU standardına geçecek).
+/// - PPU: piksel sanatı 41.667 (1 sanat pikseli = 0.024 dünya birimi; karakter ve arena ile aynı yoğunluk),
+///   yumuşak efektler ve UI 100.
 /// </summary>
 public class KakArtImportRules : AssetPostprocessor
 {
     const string ArtRoot = "Assets/Art/";
-    public const float DungeonTilePPU = 41.6667f;
+    public const float ArtPixelPPU = 41.6667f;
 
     void OnPreprocessTexture()
     {
@@ -34,10 +34,9 @@ public class KakArtImportRules : AssetPostprocessor
         settings.spriteExtrude = 0;
         ti.SetTextureSettings(settings);
 
-        if (assetPath.StartsWith(ArtRoot + "Tiles/Dungeon/") && !soft)
-            ti.spritePixelsPerUnit = DungeonTilePPU;
-        else
-            ti.spritePixelsPerUnit = 100f;
+        // Standart: 1 sanat pikseli = 0.024 dünya birimi (karakterlerle aynı yoğunluk). Yumuşak efektler ve UI 100.
+        bool ui = assetPath.StartsWith(ArtRoot + "UI/");
+        ti.spritePixelsPerUnit = (soft || ui) ? 100f : ArtPixelPPU;
     }
 
     /// <summary>Kurallar değişince veya dosyalar kuraldan önce eklendiyse klasörü yeniden içe aktarır.</summary>

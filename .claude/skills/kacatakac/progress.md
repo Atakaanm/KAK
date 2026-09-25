@@ -46,8 +46,20 @@ Son commit'ler (Temmuz 2026): HD ana menü, altın buton, premium fontlar (Cinze
 
 ## Aktif faz
 
-**Faz 3 — Görsel Temel** (başlıyor; ilk adım palet seçimi → kullanıcı onayı). Faz 0 ✅, 1 ✅, 1.5 ✅ (2026-09-25).
-**Öncelik: Sonsuz Mod.** Sıra: 0 ✅ → 1 ✅ → 1.5 ✅ → 3 → 2A → 5 → 4 → 10.
+**Faz 2A — Sonsuz'un ihtiyacı olan mimari** (başlıyor). 0 ✅ 1 ✅ 1.5 ✅ 3 ✅ (2026-09-25).
+**Öncelik: Sonsuz Mod.** Sıra: 0 ✅ → 1 ✅ → 1.5 ✅ → 3 ✅ → 2A → 5 → 4 → 10 → (2B → 6 → 7 → 8 → 9).
+
+### Faz 3 sonucu (testler: 22/22 yeşil)
+- [x] Palet: Endesga 32 (varsayım, kullanıcı cevap vermedi), `KakPalette`, `tools/kak_palette.py`
+- [x] Sanat geçişi (`tools/kak_art_pass.py`): karakter ve fırlatıcı kareleri palete + 1 px kontur; yeni sıcak taş sprite'ı (26 px, kontur, sıcak rampa)
+- [x] Tek piksel yoğunluğu: 0,024 birim/sanat pikseli (fırlatıcılar 4x → 2,4x, taş 1,0 → 0,67 birim)
+- [x] Taş prefab'ı: dönen Visual + dönmeyen gölge, hitbox 0,26
+- [x] His paketi: `GameEvents`, `FeedbackManager` (sarsıntı, hit-stop, kırıntı/halka parçacıkları), `KakCameraShake`, `PlayerJuice` (zıplama, ezilme, toz), ölüm yavaş çekimi (0,7 sn)
+- [x] `KakTime` katmanları: temel ölçek × pause × hit-stop (SloMo/pause/hit-stop birbirini bozmaz, testli)
+- [x] Renk tonlaması (Volume), `KakArtImportRules` PPU standardı, Sprite Atlas (KAK_PixelArt, KAK_Soft), URP dinamik batching açık
+- [x] `KakPerfProbe` + `KakDevSetup.Stats` (Game view render istatistiği)
+- ⚠️ Performans: Game view'da **138 batch / 64 SetPass**, 1,2k üçgen (hedef < 60 batch). Atlas ve dinamik batching sayıyı düşürmedi (Universal Renderer + SRP Batcher'da sprite birleşmesi zayıf). → Faz 10: cihazda Frame Debugger + 2D Renderer'a geçiş değerlendirmesi. Editör GC ölçümü (~100 KB/kare) editör yükünü içeriyor, anlamlı değil. Cihazda ölçülecek.
+- ↪ Floating text (TMP + havuz) → Faz 4. 2D Renderer + Light2D → Faz 8 (Karanlık) veya Faz 10 performans kararıyla birlikte.
 
 ### Faz 1.5 sonucu (testler: 20/20 yeşil)
 - [x] ScreenComposer (kamera + HUD bandı + kontrol alanı, Safe Area, tablet modu)
@@ -70,10 +82,10 @@ Son commit'ler (Temmuz 2026): HD ana menü, altın buton, premium fontlar (Cinze
 - Varsayım: Kalkan "vurulana kadar" sürer (`ShieldData.duration` kullanılmıyor, davranış korunuyor)
 
 ### Sıradaki adım
-Faz 3.1: 3 palet adayı hazırlandı (bkz. Onay bekleyenler) → kullanıcı seçince `KakPalette` + palet denetçisi. Seçim beklenirken palete bağlı olmayan işler: 3.4 URP 2D Renderer + ışık, 3.5 juice paketi (sarsıntı, hit-stop, parçacık), 3.2 import standardı ve ölçek temizliği.
+Faz 2A: 2.2 tek animatör (DirectionalSpriteAnimator), 2.4 mermi hareket/etki + yükseklik (göktaşı, seken, parçalanan taşlar için), 2.5 durum efektleri (Shield/Ghost/Speed + dash ölümsüzlüğü), 2.8 SaveSystem. (2.1 GameEvents Faz 3'te yapıldı.)
 
 ### Onay bekleyenler
-- **Faz 3 palet seçimi**: A) arenadan türetilmiş özel palet, B) Endesga 32, C) Sweetie 16 (önizleme: `.claude-bridge/screenshots/palet_adaylari.png`)
+- Palet: Endesga 32 varsayımla uygulandı (kullanıcı değiştirmek isterse: `KakPalette` + `tools/kak_palette.py` + `kak_art_pass.py`).
 - Sanat stili: piksel sanatı (32 px, PPU 32). Varsayım: evet, devam.
 - Hedef platform ve test cihazı (Android/iOS?). Faz 10'a kadar engel değil.
 - Kullanıcı tüm izinleri verdi (2026-09-25): faz dallarına push, PR birleştirme, onaysız plan başlatma, test için Unity'yi kullanma.
