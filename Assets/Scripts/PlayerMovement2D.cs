@@ -24,6 +24,11 @@ public class PlayerMovement2D : MonoBehaviour
 
     public Vector2 MovementInput => movementInput;
 
+    /// <summary>
+    /// Dışarıdan hareket girdisi (test botu, ileride öğretici/replay). Null ise joystick/klavye kullanılır.
+    /// </summary>
+    public Vector2? InputOverride { get; set; }
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -40,6 +45,12 @@ public class PlayerMovement2D : MonoBehaviour
 
     void Update()
     {
+        if (InputOverride.HasValue)
+        {
+            movementInput = Vector2.ClampMagnitude(InputOverride.Value, 1f);
+            return;
+        }
+
         // Oncelik joystick'te: eger joystick bagli ve input varsa onu kullan
         if (joystick != null && joystick.Direction.sqrMagnitude > 0.01f)
         {
@@ -58,6 +69,18 @@ public class PlayerMovement2D : MonoBehaviour
     {
         if (speedBoostCoroutine != null) StopCoroutine(speedBoostCoroutine);
         speedBoostCoroutine = StartCoroutine(SpeedBoostRoutine(multiplier, duration));
+    }
+
+    /// <summary>Şu anki gerçek hız (zemin, powerup ve zorluk çarpanları dahil, dünya birimi/sn).</summary>
+    public float CurrentSpeed
+    {
+        get
+        {
+            float s = baseMoveSpeed * arenaSpeedMultiplier * currentSpeedBoostMult;
+            if (DifficultyManager.Instance != null && DifficultyManager.Instance.isActiveAndEnabled)
+                s *= DifficultyManager.Instance.GetPlayerSpeedMultiplier();
+            return s;
+        }
     }
 
     public void SetMoveSpeed(float speed)

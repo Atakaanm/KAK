@@ -40,6 +40,31 @@ Amaç: kaç, hayatta kal, skoru büyüt. Skor zamanla artar (saniyede 10 puan ×
 - VCS: GitHub (`Atakaanm/KAK`, dal `main`) + Unity Version Control (Plastic, `.plastic/`) — Plastic'te kimlik doğrulama hatası var, yok sayılabilir.
 - Sahneler (Build sırası): `0 MainMenu`, `1 SampleScene` (oyun sahnesi). Sabitler: `SceneLoader.MENU_SCENE / GAME_SCENE`.
 
+## 2.5 Otonom test altyapısı (Faz 0'da kuruldu) — Unity'yi Claude kontrol eder
+
+**Köprü:** `Assets/Editor/ClaudeBridge/KakBridge.cs` (kendi asmdef'i, oyun kodu bozulsa da çalışır) ↔ istemci `tools/kak_bridge.py`. Unity açıkken **arka planda da** komut alır. Unity uyursa istemci 45 sn sonra pencereyi öne getirir. Dosyalar `.claude-bridge/` (git dışı).
+
+```bash
+python3 tools/kak_bridge.py hb            # editör canlı mı
+python3 tools/kak_bridge.py refresh       # değişiklikleri içe aktar + derlemeyi bekle (compile.json'daki hataları basar)
+python3 tools/kak_bridge.py tests PlayMode [SinifAdi]   # testler; sonuç ✅/❌ listesi
+python3 tools/kak_bridge.py playfor 20    # Play → 20 sn → hata özeti → Stop
+python3 tools/kak_bridge.py play | stop
+python3 tools/kak_bridge.py shots onek    # Play modunda 5 oranda ekran görüntüsü (9:16, 9:19.5, 9:20, 9:21, 3:4)
+python3 tools/kak_bridge.py menu "KacAtaKac/Dev/Test Botunu Başlat (usta)"
+python3 tools/kak_bridge.py invoke TipAdi MetotAdi [stringArg]   # statik editör metodu çağır
+python3 tools/kak_bridge.py log 80 | errors | clear
+python3 tools/kak_color.py goruntu.png    # gri ton / renk körlüğü / bulanık karşılaştırma + değer dağılımı
+python3 tools/kak_montage.py out.png a.png b.png ...   # yan yana
+```
+
+- **Derleme arka planda yavaş:** assembly değişikliğinde 3-5 dk sürebilir. `refresh` 11 dk bekler, sabırlı ol.
+- **Play'e giriş** domain reload nedeniyle yaklaşık 20 sn sürer.
+- **Assembly'ler:** `KacAtaKac` (Assets/Scripts), `KacAtaKac.Editor` (Assets/Scripts/Editor), `KakBridge.Editor`, `KacAtaKac.Tests.PlayMode` / `.EditMode`. `Assets/Editor/*.cs` hâlâ Assembly-CSharp-Editor'da.
+- **Testler:** `Assets/Tests/PlayMode/SonsuzModSmokeTests.cs` (regresyon: sahne, skor, ölüm, Retry, menü döngüsü, 20 sn hatasız oyun), `BotTests.cs` (60 sn usta bot: kararlılık, havuz). `KakTestUtil.LoadGameWithLevel()` menüdeki gibi LevelData seçip sahneyi açar. Test sırasında `Debug.LogError` testi düşürür.
+- **Test botu:** `Assets/Scripts/Dev/KakAutoPilot.cs` (sadece editör/dev build). `PlayerMovement2D.InputOverride` üzerinden oynar, `Projectile.Active` listesini okur. `skill` 0-1.
+- **Git:** Bu makinede `/usr/bin/git` Xcode yolu yüzünden bozuk olabilir. Komutların başına `export DEVELOPER_DIR=/Library/Developer/CommandLineTools` ekle.
+
 ## 3. Mimari haritası
 
 ```

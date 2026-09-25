@@ -46,16 +46,25 @@ Son commit'ler (Temmuz 2026): HD ana menü, altın buton, premium fontlar (Cinze
 
 ## Aktif faz
 
-**Faz 0 — Karar ve Hazırlık** (başlanmadı). Plan: [roadmap.md](roadmap.md), promptlar: [prompts/](prompts/).
-**Öncelik: Sonsuz Mod.** Sıra: 0 → 1 → 1.5 (ekran kompozisyonu) → 3 → 2A → 5 → 4 → 10. Ayrıntı `roadmap.md` §4 "Güncel öncelik".
+**Faz 1 — Stabilizasyon** (başlıyor). Faz 0 ✅ tamamlandı (2026-09-25).
+**Öncelik: Sonsuz Mod.** Sıra: 0 ✅ → 1 → 1.5 (ekran kompozisyonu) → 3 → 2A → 5 → 4 → 10. Ayrıntı `roadmap.md` §4 "Güncel öncelik".
+
+### Faz 0 sonucu
+- [x] Git: PR #1 (skill) main'e birleşti. Kullanıcının pause sistemi sahne değişikliği `faz-0-altyapi` dalında commit edildi.
+- [x] Köprü (KakBridge) + istemci: ping, refresh/compile, play/stop, ekran görüntüsü (5 oran), testler, menü, invoke. Arka planda çalışıyor.
+- [x] Assembly ayrımı (KacAtaKac, KacAtaKac.Editor) + PlayMode test assembly'si
+- [x] 7 duman testi + 1 bot testi. Başlangıç durumu: **3 ✅ / 4 ❌** (Retry, menü dönüşü, doğrudan sahne, Wall etiketi). Hatalar gerçek, beklendiği gibi.
+- [x] Test botu (usta bot 60 sn: 1 vuruş, havuz en fazla 20 nesne)
+- [x] Renk testi (`kak_color.py`) ve montaj aracı
+- [x] runInBackground açık (editörde Play arka planda sürsün diye)
 
 ### Sıradaki adım
-Faz 0 → 0.1 Git düzeni (SampleScene değişikliğini kullanıcıya sor). Faz planı henüz yazılmadı.
+Faz 1.1: GameManager yaşam döngüsü (DontDestroyOnLoad kaldır) + sahne yöneticilerini kalıcı kur (editör aracı) + defaultLevel → Retry ve menü testleri yeşile.
 
 ### Onay bekleyenler
-- Sanat stili: piksel sanatı (32 px, PPU 32) onayı (Faz 0.4)
-- Otonom çalışma izinleri: faz dallarına push, onaysız plan başlatma (Faz 0.3)
-- Hedef platform ve test cihazı (Faz 0.3)
+- Sanat stili: piksel sanatı (32 px, PPU 32). Varsayım: evet, devam ediliyor (mevcut görseller piksel sanatı).
+- Hedef platform ve test cihazı (Android mi iOS mu?). Faz 10'a kadar engel değil.
+- Kullanıcı tüm izinleri verdi (2026-09-25): faz dallarına push, onaysız plan başlatma, test için Unity'yi kullanma.
 
 ## Bilinen hatalar ve riskler
 
@@ -67,8 +76,8 @@ Faz 0 → 0.1 Git düzeni (SampleScene değişikliğini kullanıcıya sor). Faz 
 
 > Durum: 🔴 kritik · 🟠 orta · 🟡 düşük · ✅ düzeltildi. "Doğrulanmadı" = kod okunarak bulundu, Play modunda test edilmedi.
 
-- 🔴 **Retry / menüye dönüp tekrar oynama bozuk (doğrulanmadı, yüksek olasılık).** `GameManager` `DontDestroyOnLoad` kullanıyor ve `ScoreManager` aynı objede. Sahne yeniden yüklenince eski GameManager `isGameOver = true` ile yaşamaya devam ediyor, yenisi yok ediliyor. Sonuçlar: skor artmaz, ikinci ölümde Game Over açılmaz, powerup çıkmaz, `gameOverPanel/scoreText` referansları ölü. Üstelik `LevelManager/DifficultyManager` sahnede hazır değil, onları GameManager.Awake yaratıyordu, yani LevelData hiç uygulanmaz. **Öneri:** GameManager'dan `DontDestroyOnLoad`'ı kaldır (sahneye özel olsun), `LevelManager` ve `DifficultyManager`'ı sahneye kalıcı obje olarak ekle.
-- 🟠 **SampleScene doğrudan Play'e basılınca LevelData yok.** Runtime'da yaratılan LevelManager'ın `defaultLevel`'ı boş, bu yüzden "HİÇBİR LEVEL DATA" hatası verir. Sadece menüden girince çalışır. **Öneri:** LevelManager sahneye eklenip `defaultLevel = Endless_Level1_LevelData` atanmalı.
+- 🔴 **Retry / menüye dönüp tekrar oynama bozuk (✔ testle doğrulandı: `Retry_IkinciOyunTamamenCalisir`, `GameOver_Menu_TekrarOyna_Calisir`).** `GameManager` `DontDestroyOnLoad` kullanıyor ve `ScoreManager` aynı objede. Sahne yeniden yüklenince eski GameManager `isGameOver = true` ile yaşamaya devam ediyor, yenisi yok ediliyor. Sonuçlar: skor artmaz, ikinci ölümde Game Over açılmaz, powerup çıkmaz, `gameOverPanel/scoreText` referansları ölü. Üstelik `LevelManager/DifficultyManager` sahnede hazır değil, onları GameManager.Awake yaratıyordu, yani LevelData hiç uygulanmaz. **Öneri:** GameManager'dan `DontDestroyOnLoad`'ı kaldır (sahneye özel olsun), `LevelManager` ve `DifficultyManager`'ı sahneye kalıcı obje olarak ekle.
+- 🟠 **SampleScene doğrudan Play'e basılınca LevelData yok** (✔ testle doğrulandı). Runtime'da yaratılan LevelManager'ın `defaultLevel`'ı boş, bu yüzden "HİÇBİR LEVEL DATA" hatası verir. Sadece menüden girince çalışır. **Öneri:** LevelManager sahneye eklenip `defaultLevel = Endless_Level1_LevelData` atanmalı.
 - 🟠 **Joystick scripti `JoystickHandle` üzerinde** (dokümana göre `JoystickBG`'de olmalı). Dokunma alanı sadece küçük topla sınırlı olabilir. Doğrulanmadı.
 - 🟡 `SceneLoader` `timeScale`'i sıfırlıyor ama `fixedDeltaTime`'ı sıfırlamıyor. SloMo sırasında ölünürse sonraki oyunda fizik adımı 0.008 kalır. `PauseManager` ise `fixedDeltaTime = 0` yapıyor.
 - 🟡 Ghost ve Speed süreleri `WaitForSeconds` kullanıyor, bu yüzden SloMo sırasında uzuyorlar.
@@ -77,6 +86,12 @@ Faz 0 → 0.1 Git düzeni (SampleScene değişikliğini kullanıcıya sor). Faz 
 - 🟡 README güncel değil ("Unity 2022+", `CornerShoother`, eksik dosyalar).
 - ℹ️ Input System paketi kurulu ama kod eski Input Manager kullanıyor. Şu an sorun yok (Active Input Handling = Both olmalı).
 - ℹ️ Plastic (Unity Version Control) kimlik doğrulama hatası loglarda görünüyor. Oyunu etkilemiyor.
+
+- 🟠 **`Wall` etiketi projede tanımlı değil** (✔ test buldu): `PowerupSpawner.SpawnRandomPowerup` içindeki `CompareTag("Wall")` her çağrıldığında hata logluyor.
+- 🟠 **HUD oranlara göre bozuk** (✔ ekran görüntüsü): 9:16'da skor pause butonunun altında kalıyor, 3:4'te kalpler ve skor ekran dışında. Faz 1.5'te çözülecek.
+- 🟠 **Karakter çok küçük:** arena genişliğinin yaklaşık 1/20'si, taşlardan küçük (ekran görüntüsü). Faz 3'te ölçek standardı.
+- 🟠 **Taşlar zeminle karışıyor** (renk testi): gri tonlama ve bulanık görünümde neredeyse kayboluyor. En belirgin öğe sarı joystick. Faz 3'te renk rolleri.
+- 🟡 Ölüm anında invincibility coroutine'i timeScale=0'da donarsa oyuncu sprite'ı gizli kalabilir (ekran görüntüsünde Game Over'da oyuncu görünmedi, doğrulanacak).
 
 ## Denge değerleri (referans)
 

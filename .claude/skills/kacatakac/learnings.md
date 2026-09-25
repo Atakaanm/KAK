@@ -4,6 +4,17 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-09-25 — Faz 0: Otonom test altyapısı kuruldu
+
+- Kullanıcı tüm izinleri verdi: "test etmen gerekirse test et, Unity açık, mükemmel hale getir."
+- Hazır Unity MCP eklentisi yerine **projeye özel dosya tabanlı köprü** yazıldı. Gerekçe: üçüncü taraf kod yok, MCP için oturum yeniden başlatma gerekmiyor, tam kontrol. Unity **arka plandayken de** `EditorApplication.update` çalışıyor (heartbeat ile doğrulandı), odak çalmaya gerek yok. Sadece uzun derleme veya reload sonrası uyanma için istemci pencereyi öne getirebiliyor.
+- Tuzak: Derleme arka planda yavaş (assembly değişikliğinde 3-5 dk, Burst ILPostProcess dahil). Play'e giriş ~20 sn (domain reload). "Enter Play Mode Options" ile reload kapatmak **yapılmadı**: kod statik singleton'lara (Instance, Projectile statik sınırları) dayanıyor, önce bunlar temizlenmeli.
+- Tuzak: Test assembly'leri Assembly-CSharp'a referans veremez → oyun kodu `KacAtaKac.asmdef`'e alındı. Sahnelerdeki script referansları GUID ile olduğu için bozulmadı (testlerle doğrulandı).
+- Tuzak: Unity Test Framework, test sırasında `Debug.LogError` görürse testi düşürür. Bot testi hataları sayıp raporluyor (`LogAssert.ignoreFailingMessages`), duman testleri ise temiz log bekliyor.
+- Tuzak: Bu makinede `/usr/bin/git` "xcrun: invalid active developer path" veriyor (Xcode yarım veya güncelleniyor). `DEVELOPER_DIR=/Library/Developer/CommandLineTools` ile çözüldü, sistem ayarına dokunulmadı.
+- `GameViewSizes` reflection'ı Unity 6000.3'te çalışıyor (selectedSizeIndex yazılabilir). Ekran görüntüleri doğru çözünürlükte.
+- Test sonuçları (başlangıç): Retry ❌, menü dönüşü ❌, doğrudan sahne ❌, Wall etiketi ❌; skor, ölüm paneli ve menüden oyna ✅. Usta bot 60 sn'de 1 vuruş aldı. Mevcut zorluk usta bir oyuncu için ilk dakikada kolay.
+
 ## 2026-09-25 — Ekran kompozisyonu kesinleşti, promptlar otonom çalışmaya göre yeniden yazıldı
 
 - Kullanıcı başka bir yapay zekanın önerisini getirdi (kare arenayı koru, üstü HUD duvarı, altı koridor + kontrol alanı). Değerlendirme: kontrollerin arenaya binmemesi, her cihazda aynı oyun alanı ve daha az iş açısından **benim "boyuna uzayan arena" önerimden daha iyi**. O öneri benimsendi. Benimsenmeyenler: "KAÇIŞ 0/3", çıkış kapısı hedefi, devriye ve ışık konileri (bölüm modu fikirleri, Sonsuz'a uymaz), kan izleri (oyunun tonuna ve yaş sınırına uymaz).
