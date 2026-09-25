@@ -27,6 +27,13 @@ public static class KakDevMenu
         if (ps != null) ps.SetSpawnInterval(0.4f, 0.8f);
     }
 
+    [MenuItem("KacAtaKac/Dev/Ölümsüzlük Aç-Kapa")]
+    public static void ToggleGodMode()
+    {
+        PlayerHealth.DevGodMode = !PlayerHealth.DevGodMode;
+        Debug.Log("[KakDevMenu] Ölümsüzlük: " + (PlayerHealth.DevGodMode ? "AÇIK" : "KAPALI"));
+    }
+
     [MenuItem("KacAtaKac/Dev/Bot Raporu")]
     public static void Report()
     {
