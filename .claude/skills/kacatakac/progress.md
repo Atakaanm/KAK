@@ -46,52 +46,57 @@ Son commit'ler (Temmuz 2026): HD ana menü, altın buton, premium fontlar (Cinze
 
 ## Aktif faz
 
-**Faz 1 — Stabilizasyon** (başlıyor). Faz 0 ✅ tamamlandı (2026-09-25).
-**Öncelik: Sonsuz Mod.** Sıra: 0 ✅ → 1 → 1.5 (ekran kompozisyonu) → 3 → 2A → 5 → 4 → 10. Ayrıntı `roadmap.md` §4 "Güncel öncelik".
+**Faz 1.5 — Ekran Kompozisyonu** (başlıyor). Faz 0 ✅, Faz 1 ✅ (2026-09-25).
+**Öncelik: Sonsuz Mod.** Sıra: 0 ✅ → 1 ✅ → 1.5 → 3 → 2A → 5 → 4 → 10. Ayrıntı `roadmap.md` §4.
 
-### Faz 0 sonucu
-- [x] Git: PR #1 (skill) main'e birleşti. Kullanıcının pause sistemi sahne değişikliği `faz-0-altyapi` dalında commit edildi.
-- [x] Köprü (KakBridge) + istemci: ping, refresh/compile, play/stop, ekran görüntüsü (5 oran), testler, menü, invoke. Arka planda çalışıyor.
-- [x] Assembly ayrımı (KacAtaKac, KacAtaKac.Editor) + PlayMode test assembly'si
-- [x] 7 duman testi + 1 bot testi. Başlangıç durumu: **3 ✅ / 4 ❌** (Retry, menü dönüşü, doğrudan sahne, Wall etiketi). Hatalar gerçek, beklendiği gibi.
-- [x] Test botu (usta bot 60 sn: 1 vuruş, havuz en fazla 20 nesne)
-- [x] Renk testi (`kak_color.py`) ve montaj aracı
-- [x] runInBackground açık (editörde Play arka planda sürsün diye)
+### Faz 1 sonucu (testler: 11/11 yeşil)
+- [x] 1.1 Yaşam döngüsü: GameManager sahneye özel, singleton temizliği, yöneticiler sahnede kalıcı (`KakSceneSetup`), `defaultLevel`, deterministik zorluk/spawner sırası, `KakTime`, pause/SloMo hataları, ölümde görünürlük, sesler, `Wall` etiketi, GC (SetText, KakLog), targetFrameRate
+- [x] 1.2 Oynanabilir alan: `ArenaAutoLayout.PlayableWorldRect` tek kaynak; duvarlar, fırlatıcı duruş noktaları, mermi sınırı, powerup alanı, bot. Powerup ikonları saydam ve 256 px.
+- [x] 1.5 Testler: `ArenaTests` (powerup konumu, duvar, mermi sınırı), `BotTests`
+- ↪ 1.3 Joystick BG düzeltmesi → Faz 1.5 (joystick yeniden yazılıyor)
+- ↪ 1.3 Fizik katmanları ve collision matrix → Faz 3 performans turu
+- ↪ 1.4 Diagnose Scene genişletme (filtre modu, eksik referans) → Faz 3 (içe aktarma standardıyla birlikte)
+- Varsayım: Kalkan "vurulana kadar" sürer (`ShieldData.duration` kullanılmıyor, davranış korunuyor)
 
 ### Sıradaki adım
-Faz 1.1: GameManager yaşam döngüsü (DontDestroyOnLoad kaldır) + sahne yöneticilerini kalıcı kur (editör aracı) + defaultLevel → Retry ve menü testleri yeşile.
+Faz 1.5 planı: `ScreenComposer` (kamera + bantlar), skybox → düz renk/dungeon çerçevesi, HUD bandı, kontrol alanı + kayan joystick. Önce mevcut Canvas/HUD yapısını incele.
 
 ### Onay bekleyenler
-- Sanat stili: piksel sanatı (32 px, PPU 32). Varsayım: evet, devam ediliyor (mevcut görseller piksel sanatı).
-- Hedef platform ve test cihazı (Android mi iOS mu?). Faz 10'a kadar engel değil.
-- Kullanıcı tüm izinleri verdi (2026-09-25): faz dallarına push, onaysız plan başlatma, test için Unity'yi kullanma.
+- Sanat stili: piksel sanatı (32 px, PPU 32). Varsayım: evet, devam.
+- Hedef platform ve test cihazı (Android/iOS?). Faz 10'a kadar engel değil.
+- Kullanıcı tüm izinleri verdi (2026-09-25): faz dallarına push, PR birleştirme, onaysız plan başlatma, test için Unity'yi kullanma.
 
 ## Bilinen hatalar ve riskler
 
-- 🔴 **Item'lar ekranın yanlış yerinde çıkıyor** (kullanıcı bildirdi, 2026-09-25). Neden henüz bulunamadı. Hesaplanan spawn alanı kağıt üstünde arenanın içinde görünüyor, Play modunda teşhis gerekli (Faz 1.2).
-- 🟠 **Fizik duvarları görselle hizasız.** Sprite dış kenarından 0.15 birim içerideler, görseldeki iç duvar yaklaşık 0.6 birim içeride. Karakter ve mermiler duvar çiziminin üstüne girebiliyor.
+- ✅ **Item'lar ekranın yanlış yerinde çıkıyor** — Faz 1: asıl sorun powerup ikonlarının opak siyah kare zemini (5 ikonun hepsi RGB) + Retry sonrası bozuk yönetici yapısı. Konumlar artık `PlayableWorldRect` içinde (42/42 test). (kullanıcı bildirdi, 2026-09-25). Neden henüz bulunamadı. Hesaplanan spawn alanı kağıt üstünde arenanın içinde görünüyor, Play modunda teşhis gerekli (Faz 1.2).
+- ✅ (Faz 1) **Fizik duvarları görselle hizasız.** Sprite dış kenarından 0.15 birim içerideler, görseldeki iç duvar yaklaşık 0.6 birim içeride. Karakter ve mermiler duvar çiziminin üstüne girebiliyor.
 - 🟠 **Görsel kalite:** karışık piksel yoğunluğu (karakter 48px/ölçek 0.8, arena 2048px/ölçek 0.4, spawner ölçek 4), sprite'lar Bilinear (bulanık), arena görselinin sağ alt köşesinde yapay zeka filigranı (✦), URP Universal Renderer (2D Light çalışmaz). Faz 3'te çözülecek.
 - 🟠 Menü sahnesinde sadece Oyna butonu var. Faz 4.
 - 🟠 **Arena ekranın sadece ~%46'sını kaplıyor** (kare arena, 9:19.5 telefon). Üstte ve altta ~%54 ölü alan var. Kullanıcı bunu en büyük görsel sorun olarak görüyor. Çözüm Faz 1.5 (onaylı kompozisyon): üstte HUD bandı (duvar yüzü), ortada kare arena (ekran enine ölçekli), altta koridor ve kontrol alanı (sol joystick, sağ aksiyon).
 
 > Durum: 🔴 kritik · 🟠 orta · 🟡 düşük · ✅ düzeltildi. "Doğrulanmadı" = kod okunarak bulundu, Play modunda test edilmedi.
 
-- 🔴 **Retry / menüye dönüp tekrar oynama bozuk (✔ testle doğrulandı: `Retry_IkinciOyunTamamenCalisir`, `GameOver_Menu_TekrarOyna_Calisir`).** `GameManager` `DontDestroyOnLoad` kullanıyor ve `ScoreManager` aynı objede. Sahne yeniden yüklenince eski GameManager `isGameOver = true` ile yaşamaya devam ediyor, yenisi yok ediliyor. Sonuçlar: skor artmaz, ikinci ölümde Game Over açılmaz, powerup çıkmaz, `gameOverPanel/scoreText` referansları ölü. Üstelik `LevelManager/DifficultyManager` sahnede hazır değil, onları GameManager.Awake yaratıyordu, yani LevelData hiç uygulanmaz. **Öneri:** GameManager'dan `DontDestroyOnLoad`'ı kaldır (sahneye özel olsun), `LevelManager` ve `DifficultyManager`'ı sahneye kalıcı obje olarak ekle.
-- 🟠 **SampleScene doğrudan Play'e basılınca LevelData yok** (✔ testle doğrulandı). Runtime'da yaratılan LevelManager'ın `defaultLevel`'ı boş, bu yüzden "HİÇBİR LEVEL DATA" hatası verir. Sadece menüden girince çalışır. **Öneri:** LevelManager sahneye eklenip `defaultLevel = Endless_Level1_LevelData` atanmalı.
+- ✅ (Faz 1) **Retry / menüye dönüp tekrar oynama bozuk (✔ testle doğrulandı: `Retry_IkinciOyunTamamenCalisir`, `GameOver_Menu_TekrarOyna_Calisir`).** `GameManager` `DontDestroyOnLoad` kullanıyor ve `ScoreManager` aynı objede. Sahne yeniden yüklenince eski GameManager `isGameOver = true` ile yaşamaya devam ediyor, yenisi yok ediliyor. Sonuçlar: skor artmaz, ikinci ölümde Game Over açılmaz, powerup çıkmaz, `gameOverPanel/scoreText` referansları ölü. Üstelik `LevelManager/DifficultyManager` sahnede hazır değil, onları GameManager.Awake yaratıyordu, yani LevelData hiç uygulanmaz. **Öneri:** GameManager'dan `DontDestroyOnLoad`'ı kaldır (sahneye özel olsun), `LevelManager` ve `DifficultyManager`'ı sahneye kalıcı obje olarak ekle.
+- ✅ (Faz 1) **SampleScene doğrudan Play'e basılınca LevelData yok** (✔ testle doğrulandı). Runtime'da yaratılan LevelManager'ın `defaultLevel`'ı boş, bu yüzden "HİÇBİR LEVEL DATA" hatası verir. Sadece menüden girince çalışır. **Öneri:** LevelManager sahneye eklenip `defaultLevel = Endless_Level1_LevelData` atanmalı.
 - 🟠 **Joystick scripti `JoystickHandle` üzerinde** (dokümana göre `JoystickBG`'de olmalı). Dokunma alanı sadece küçük topla sınırlı olabilir. Doğrulanmadı.
-- 🟡 `SceneLoader` `timeScale`'i sıfırlıyor ama `fixedDeltaTime`'ı sıfırlamıyor. SloMo sırasında ölünürse sonraki oyunda fizik adımı 0.008 kalır. `PauseManager` ise `fixedDeltaTime = 0` yapıyor.
-- 🟡 Ghost ve Speed süreleri `WaitForSeconds` kullanıyor, bu yüzden SloMo sırasında uzuyorlar.
-- 🟡 `DifficultyManager` aktif spawner'ları dizideki sıraya göre seçiyor, bu sıra da `FindObjectsByType(None)` ile geliyor ve garanti değil. Hangi köşelerin aktif olacağı öngörülemez.
+- ✅ (Faz 1) `SceneLoader` `timeScale`'i sıfırlıyor ama `fixedDeltaTime`'ı sıfırlamıyor. SloMo sırasında ölünürse sonraki oyunda fizik adımı 0.008 kalır. `PauseManager` ise `fixedDeltaTime = 0` yapıyor.
+- ✅ (Faz 1) Ghost ve Speed süreleri `WaitForSeconds` kullanıyor, bu yüzden SloMo sırasında uzuyorlar.
+- ✅ (Faz 1) `DifficultyManager` aktif spawner'ları dizideki sıraya göre seçiyor, bu sıra da `FindObjectsByType(None)` ile geliyor ve garanti değil. Hangi köşelerin aktif olacağı öngörülemez.
 - 🟡 `ShieldData.duration = 10` hiçbir işe yaramıyor, kalkan vurulana kadar sürüyor.
-- 🟡 README güncel değil ("Unity 2022+", `CornerShoother`, eksik dosyalar).
+- ✅ (Faz 1) README güncel değil ("Unity 2022+", `CornerShoother`, eksik dosyalar).
 - ℹ️ Input System paketi kurulu ama kod eski Input Manager kullanıyor. Şu an sorun yok (Active Input Handling = Both olmalı).
 - ℹ️ Plastic (Unity Version Control) kimlik doğrulama hatası loglarda görünüyor. Oyunu etkilemiyor.
 
-- 🟠 **`Wall` etiketi projede tanımlı değil** (✔ test buldu): `PowerupSpawner.SpawnRandomPowerup` içindeki `CompareTag("Wall")` her çağrıldığında hata logluyor.
-- 🟠 **HUD oranlara göre bozuk** (✔ ekran görüntüsü): 9:16'da skor pause butonunun altında kalıyor, 3:4'te kalpler ve skor ekran dışında. Faz 1.5'te çözülecek.
+- ✅ (Faz 1) **`Wall` etiketi projede tanımlı değil** (✔ test buldu): `PowerupSpawner.SpawnRandomPowerup` içindeki `CompareTag("Wall")` her çağrıldığında hata logluyor.
+- ℹ️ ~~HUD oranlara göre bozuk~~ — yanlış alarm: ekran görüntüsü aracının zamanlama hatasıydı (düzeltildi). HUD yine de Faz 1.5'te yeniden kurulacak.
 - 🟠 **Karakter çok küçük:** arena genişliğinin yaklaşık 1/20'si, taşlardan küçük (ekran görüntüsü). Faz 3'te ölçek standardı.
 - 🟠 **Taşlar zeminle karışıyor** (renk testi): gri tonlama ve bulanık görünümde neredeyse kayboluyor. En belirgin öğe sarı joystick. Faz 3'te renk rolleri.
-- 🟡 Ölüm anında invincibility coroutine'i timeScale=0'da donarsa oyuncu sprite'ı gizli kalabilir (ekran görüntüsünde Game Over'da oyuncu görünmedi, doğrulanacak).
+- ✅ (Faz 1) Ölüm anında invincibility coroutine'i timeScale=0'da donarsa oyuncu sprite'ı gizli kalabilir (ekran görüntüsünde Game Over'da oyuncu görünmedi, doğrulanacak).
+
+- 🟠 **Arka plan Unity varsayılan skybox'ı** (üstte mavi, altta gri). Hem çirkin hem gereksiz render maliyeti. Faz 1.5.
+- 🟡 Sahne ölçekleri tutarsız (TopRightSpawner ölçek 1 + Visual 4, diğerleri ölçek 4 + Visual 1; Player 0.8 + Visual 3). Faz 3 ölçek temizliği.
+- 🟡 Powerup geri bildirim yazısı eski `TextMesh` + her seferinde `new GameObject`. Faz 3 (TMP + havuz).
+- 🟡 SloMo sırasında ölünce oyuncu kırmızı tonda kalıyor (ölüm göstergesi olarak bırakıldı, Faz 3 ölüm efektiyle değişecek).
 
 ## Denge değerleri (referans)
 
