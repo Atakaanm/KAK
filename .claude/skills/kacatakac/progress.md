@@ -46,8 +46,17 @@ Son commit'ler (Temmuz 2026): HD ana menü, altın buton, premium fontlar (Cinze
 
 ## Aktif faz
 
-**Faz 2A — Sonsuz'un ihtiyacı olan mimari** (başlıyor). 0 ✅ 1 ✅ 1.5 ✅ 3 ✅ (2026-09-25).
-**Öncelik: Sonsuz Mod.** Sıra: 0 ✅ → 1 ✅ → 1.5 ✅ → 3 ✅ → 2A → 5 → 4 → 10 → (2B → 6 → 7 → 8 → 9).
+**Faz 5 — Sonsuz Mod cilası** (başlıyor). 0 ✅ 1 ✅ 1.5 ✅ 3 ✅ 2A ✅ (2026-09-25).
+Sıra: → 5 → 4 → 10 → (2B → 6 → 7 → 8 → 9).
+
+### Faz 2A sonucu (testler: 26/26 PlayMode + 3/3 EditMode)
+- [x] 2.1 GameEvents (Faz 3'te) + MeteorLanded
+- [x] 2.2 (hafif) `DirectionUtil`: iki animatördeki kopya açı kodu birleşti. Tam `DirectionalSpriteAnimator` → 2B
+- [x] 2.4 Mermi hareketleri: Straight, Bounce, Homing, Split, Meteor (2.5D yükseklik + gölge uyarısı + alan hasarı); `Projectile.Launch/LaunchMeteor` API; `ProjectilePool.GetPrefabOf`
+- [x] Taş türleri (`KakContentSetup`, `Assets/Data/Projectiles/`): Taş, Çakıl, Kaya, Seken, Parçalanan, Göktaşı, Güdümlü + kademe dağılımı (ağırlıklı)
+- [x] 2.5 (hafif) `PlayerHealth.SetInvulnerable` (dash için). Tam durum efekti sistemi (Slow, Stun, kart) → 2B (bölüm dünyaları)
+- [x] 2.8 `SaveSystem` (JSON, atomik yazma, PlayerPrefs'ten taşıma): rekor, en iyi süre, oyun sayısı, toplam süre, powerup sayısı, jeton, karakterler, ayarlar
+- Testler: `ProjectileMotionTests`, `SaveSystemTests` (EditMode)
 
 ### Faz 3 sonucu (testler: 22/22 yeşil)
 - [x] Palet: Endesga 32 (varsayım, kullanıcı cevap vermedi), `KakPalette`, `tools/kak_palette.py`
@@ -82,7 +91,7 @@ Son commit'ler (Temmuz 2026): HD ana menü, altın buton, premium fontlar (Cinze
 - Varsayım: Kalkan "vurulana kadar" sürer (`ShieldData.duration` kullanılmıyor, davranış korunuyor)
 
 ### Sıradaki adım
-Faz 2A: 2.2 tek animatör (DirectionalSpriteAnimator), 2.4 mermi hareket/etki + yükseklik (göktaşı, seken, parçalanan taşlar için), 2.5 durum efektleri (Shield/Ghost/Speed + dash ölümsüzlüğü), 2.8 SaveSystem. (2.1 GameEvents Faz 3'te yapıldı.)
+Faz 5: olay sistemi (taş yağmuru, çapraz ateş, sessizlik, yuvarlanan kaya), near-miss + combo, dash (aksiyon butonu), bot ile denge (20 oyun ortalaması), telegraph (fırlatıcı atış uyarısı).
 
 ### Onay bekleyenler
 - Palet: Endesga 32 varsayımla uygulandı (kullanıcı değiştirmek isterse: `KakPalette` + `tools/kak_palette.py` + `kak_art_pass.py`).

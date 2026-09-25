@@ -10,25 +10,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3d59a3b8c38e54d5aa9aacaeae0297e8, type: 3}
-  m_Name: Rock_ProjectileData
-  m_EditorClassIdentifier: Assembly-CSharp::ProjectileData
-  projectileName: "Ta\u015F"
-  speed: 1.5
+  m_Name: Splitter_Parcalanan
+  m_EditorClassIdentifier: KacAtaKac::ProjectileData
+  projectileName: "Par\xE7alanan Ta\u015F"
+  speed: 1.35
   damage: 1
   lifeTime: 6
   rotationSpeed: 0
-  motion: 0
+  motion: 3
   bounces: 2
   homingTurnRate: 110
   homingDuration: 1.2
   splitAfter: 0.9
   splitCount: 3
-  splitSpread: 50
-  splitInto: {fileID: 0}
+  splitSpread: 55
+  splitInto: {fileID: 11400000, guid: 5d86f6155978a44ef9fbfa89bb440c99, type: 2}
   meteorFallTime: 1.1
   meteorStartHeight: 7
   meteorRadius: 0.55
-  visualScale: 1
-  tint: {r: 1, g: 1, b: 1, a: 1}
+  visualScale: 1.25
+  tint: {r: 1, g: 0.75, b: 0.6, a: 1}
   projectilePrefab: {fileID: 8748514831740309198, guid: ea2cad80380b74603b2cbf6f4f02c450, type: 3}
   projectileSprite: {fileID: 21300000, guid: 5ba4783dbfc6c45d2a38d90715e9033f, type: 3}

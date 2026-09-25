@@ -96,6 +96,10 @@ SampleScene
 **Oynanabilir alan (Faz 1):** `ArenaAutoLayout.PlayableWorldRect` duvarlar, mermi sınırı, powerup alanı ve bot için tek kaynak. `ArenaData.playableAreaNormalized` + fırlatıcı duruş noktaları (`anchorTopLeft`...).
 **Yöneticiler sahnede kalıcı:** `Managers/{LevelManager, DifficultyManager, ProjectilePool, PowerupSpawner}` (`KacAtaKac/Sahne Yöneticilerini Kur`). GameManager sahneye özel (DontDestroyOnLoad değil). Zaman ölçeği sadece `KakTime` üzerinden, bilgi logları `KakLog.Info`.
 
+**Taşlar (Faz 2A):** `Projectile.Launch(prefab, data, from, dir, speedMult, scaleMult)` / `LaunchMeteor(...)`. Davranış `ProjectileData.motion` (Straight/Bounce/Homing/Split/Meteor). Türler `Assets/Data/Projectiles/`, kademe listeleri `DifficultyStageData.availableProjectiles + projectileWeights`, seçim `DifficultyManager.PickProjectile()`.
+**Olaylar:** `GameEvents` (PlayerDamaged, ShieldBlocked, PlayerDied, PowerupCollected, ProjectileHitWall, MeteorLanded, StageChanged). **Zaman:** `KakTime` (temel ölçek × pause × hit-stop). **Kayıt:** `SaveSystem.Data` (+ `Save()`).
+**His:** `FeedbackManager` (Managers altında, tek ParticleSystem `FxChips`), `KakCameraShake` (kamera), `PlayerJuice` (oyuncu).
+
 **Önemli singleton'lar:** `GameManager`, `LevelManager`, `DifficultyManager`, `WaveManager`, `ProjectilePool`, `AudioManager` — hepsi `Instance` statik alanı ile.
 
 **Zorluk nasıl uygulanıyor (DifficultyManager):** skor eşiğine göre stage seçer → her spawner için `shootInterval = orijinal × shootIntervalMultiplier`, `activeSpawnerCount` kadarını aktif eder; mermi hız/boyut, oyuncu hızı ve skor hızı çarpanlarını getter'larla verir (`CornerShooter`, `PlayerMovement2D`, `ScoreManager` okur).

@@ -13,16 +13,14 @@ public static class GameSettings
     // Secili karakter — menu'den atanir (opsiyonel, LevelData icerisinde de olabilir)
     public static PlayerData SelectedPlayer;
 
-    // En iyi skor
-    private const string BEST_SCORE_KEY = "BestScore";
-
+    // En iyi skor (SaveSystem'de tutulur)
     public static int BestScore
     {
-        get => PlayerPrefs.GetInt(BEST_SCORE_KEY, 0);
+        get => SaveSystem.Data.bestScoreEndless;
         set
         {
-            PlayerPrefs.SetInt(BEST_SCORE_KEY, value);
-            PlayerPrefs.Save();
+            SaveSystem.Data.bestScoreEndless = value;
+            SaveSystem.Save();
         }
     }
 

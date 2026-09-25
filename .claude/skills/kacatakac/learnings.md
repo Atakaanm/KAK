@@ -4,6 +4,14 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-09-25 — Faz 2A tamamlandı: mermi davranışları ve kayıt
+
+- Mermi davranışı tek sınıfta (`Projectile`), `ProjectileData.motion` ile seçiliyor. Yeni taş türü = yeni veri dosyası. Kalıtım/strateji SO yerine enum + switch seçildi: 5 davranış için daha basit, tahsissiz, havuzla uyumlu (YAGNI). Davranış sayısı çok artarsa (bölüm düşmanları) strateji SO'ya geçilebilir.
+- Meteor: collider düşerken kapalı, inişte mesafe kontrolü (alan hasarı). Gölge 0.25x → 1.4x büyüyerek uyarı veriyor.
+- Parçalanan taş zorluk çarpanlarını çocuklara aktarıyor (hız oranı, ölçek oranı).
+- SaveSystem: JsonUtility + atomik yazma. `OverridePath` ile testler gerçek kaydı bozmuyor.
+- 4 hareket testi ilk denemede geçti. Testleri yazarken fırlatıcıları ve powerup spawner'ı kapatmak, testi deterministik yapıyor.
+
 ## 2026-09-25 — Faz 3 tamamlandı: görsel temel
 
 - Kullanıcı `/goal` ile "fazlar bitene kadar durma" dedi. Palet seçimine cevap gelmeden Endesga 32 (önerim) varsayımla uygulandı.

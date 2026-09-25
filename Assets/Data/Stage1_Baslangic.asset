@@ -21,4 +21,7 @@ MonoBehaviour:
   projectileScaleMultiplier: 1
   playerSpeedMultiplier: 1
   scoreSpeedMultiplier: 1
-  availableProjectiles: []
+  availableProjectiles:
+  - {fileID: 11400000, guid: c2e7e644fcf354e079d42082c04a0732, type: 2}
+  projectileWeights:
+  - 1

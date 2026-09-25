@@ -79,6 +79,12 @@ public class ProjectilePool : MonoBehaviour
         return obj;
     }
 
+    /// <summary>Havuzdaki bir nesnenin kaynak prefab'ını döndürür (parçalanan taşlar için).</summary>
+    public GameObject GetPrefabOf(GameObject obj)
+    {
+        return obj != null && prefabLookup.TryGetValue(obj, out GameObject prefab) ? prefab : null;
+    }
+
     /// <summary>
     /// Mermiyi pool'a iade et (Destroy yerine çağır).
     /// </summary>

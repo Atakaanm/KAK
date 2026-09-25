@@ -21,4 +21,19 @@ MonoBehaviour:
   projectileScaleMultiplier: 1.45
   playerSpeedMultiplier: 1.2
   scoreSpeedMultiplier: 1.5
-  availableProjectiles: []
+  availableProjectiles:
+  - {fileID: 11400000, guid: c2e7e644fcf354e079d42082c04a0732, type: 2}
+  - {fileID: 11400000, guid: 5d86f6155978a44ef9fbfa89bb440c99, type: 2}
+  - {fileID: 11400000, guid: ab9757d4429b144d6931579d16af25f2, type: 2}
+  - {fileID: 11400000, guid: 7e34c086910264847820cb77eb9c337a, type: 2}
+  - {fileID: 11400000, guid: a0cd115d31084425a9cd895713632be3, type: 2}
+  - {fileID: 11400000, guid: 2b91002100aa341ee8ac70e60416fe5c, type: 2}
+  - {fileID: 11400000, guid: c868304a7c75f460bb60a748e112d812, type: 2}
+  projectileWeights:
+  - 2
+  - 2
+  - 1.2
+  - 1.3
+  - 1.2
+  - 1
+  - 0.8
