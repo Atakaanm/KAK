@@ -21,6 +21,8 @@ public class PlayerHealth : MonoBehaviour
     private bool hasShield = false;
     private bool isGhost = false;
     public bool IsGhost => isGhost;
+    private bool isDead = false;
+    public bool IsDead => isDead;
     public float invincibilityDuration = 0.35f;
 
     private Coroutine hitFlashCoroutine;
@@ -90,7 +92,7 @@ public class PlayerHealth : MonoBehaviour
             playerSpriteRenderer.color = c;
         }
 
-        yield return new WaitForSeconds(duration);
+        yield return KakTime.WaitGameplay(duration);
 
         isGhost = false;
         if (playerSpriteRenderer != null)
@@ -102,7 +104,7 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        if (isInvincible || isGhost) return;
+        if (isDead || isInvincible || isGhost) return;
 
         if (hasShield)
         {
@@ -116,7 +118,11 @@ public class PlayerHealth : MonoBehaviour
 
         currentHealth -= damage;
 
-        if (AudioManager.Instance != null) AudioManager.Instance.TriggerVibration();
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayHitSfx();
+            AudioManager.Instance.TriggerVibration();
+        }
 
         if (playerSpriteRenderer != null)
         {
@@ -132,16 +138,28 @@ public class PlayerHealth : MonoBehaviour
         if (currentHealth <= 0)
         {
             currentHealth = 0;
+            isDead = true;
 
             if (healthUI != null)
             {
                 healthUI.UpdateHearts(currentHealth);
             }
 
+            // Oyun sonu ekranında oyuncu görünür kalsın: yanıp sönme/flaş coroutine'leri
+            // timeScale = 0'da donar, sprite gizli kalabilir.
+            if (invincibilityCoroutine != null) { StopCoroutine(invincibilityCoroutine); invincibilityCoroutine = null; }
+            if (hitFlashCoroutine != null) { StopCoroutine(hitFlashCoroutine); hitFlashCoroutine = null; }
+            if (playerSpriteRenderer != null)
+            {
+                playerSpriteRenderer.enabled = true;
+                playerSpriteRenderer.color = hitColor;
+            }
+
             if (GameManager.Instance != null)
             {
                 GameManager.Instance.GameOver();
             }
+            return;
         }
 
         if (invincibilityCoroutine != null) StopCoroutine(invincibilityCoroutine);

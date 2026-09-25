@@ -25,6 +25,7 @@ public class DifficultyManager : MonoBehaviour
     private DifficultyStageData currentStage;
     private int currentStageIndex = -1;
     private bool isActive = true;
+    private bool initialized = false;
 
     // Her spawner icin orijinal ates araligi (geri yukleme icin)
     private float[] originalShootIntervals;
@@ -43,19 +44,41 @@ public class DifficultyManager : MonoBehaviour
         }
     }
 
+    void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
+    }
+
     void Start()
     {
-        // Referans eksikse otomatik bul
+        // Normal akışta LevelManager, LevelData'yı uyguladıktan sonra Init() çağırır.
+        // LevelManager yoksa (test sahnesi vb.) kendi kendine başla.
+        if (initialized || LevelManager.Instance != null) return;
+
         AutoFindReferences();
+        Init(stages, allSpawners, scoreManager);
+    }
 
-        // Orijinal spawner degerlerini kaydet
+    /// <summary>
+    /// Zorluk sistemini başlatır: aşamaları, spawner'ları (sıralı) ve skoru bağlar,
+    /// orijinal ateş aralıklarını kaydeder ve ilk aşamayı uygular.
+    /// LevelManager tarafından spawner'lar LevelData ile ayarlandıktan SONRA çağrılır.
+    /// </summary>
+    public void Init(DifficultyStageData[] stageList, CornerShooter[] spawners, ScoreManager score)
+    {
+        stages = stageList;
+        if (spawners != null && spawners.Length > 0) allSpawners = spawners;
+        if (score != null) scoreManager = score;
+        if (scoreManager == null) scoreManager = FindAnyObjectByType<ScoreManager>();
+
+        initialized = true;
+        isActive = true;
+        currentStageIndex = -1;
+        currentStage = null;
+
         RecordOriginalIntervals();
-
-        // Baslangicta ilk stage'i uygula
         if (stages != null && stages.Length > 0)
-        {
             ApplyStage(0);
-        }
     }
 
     /// <summary>
@@ -67,14 +90,14 @@ public class DifficultyManager : MonoBehaviour
         {
             scoreManager = FindAnyObjectByType<ScoreManager>();
             if (scoreManager != null)
-                Debug.Log("[DifficultyManager] ScoreManager otomatik bulundu.");
+                KakLog.Info("[DifficultyManager] ScoreManager otomatik bulundu.");
         }
 
         if (allSpawners == null || allSpawners.Length == 0)
         {
             allSpawners = FindObjectsByType<CornerShooter>(FindObjectsSortMode.None);
             if (allSpawners != null && allSpawners.Length > 0)
-                Debug.Log("[DifficultyManager] " + allSpawners.Length + " spawner otomatik bulundu.");
+                KakLog.Info("[DifficultyManager] " + allSpawners.Length + " spawner otomatik bulundu.");
         }
     }
 
@@ -95,7 +118,7 @@ public class DifficultyManager : MonoBehaviour
                 }
             }
             originalsRecorded = true;
-            Debug.Log("[DifficultyManager] Orijinal ateş aralıkları kaydedildi (" + allSpawners.Length + " spawner).");
+            KakLog.Info("[DifficultyManager] Orijinal ateş aralıkları kaydedildi (" + allSpawners.Length + " spawner).");
         }
     }
 
@@ -135,7 +158,7 @@ public class DifficultyManager : MonoBehaviour
         currentStageIndex = stageIndex;
         currentStage = stages[stageIndex];
 
-        Debug.Log("[DifficultyManager] ⚡ STAGE GEÇİŞİ: " + currentStage.stageName
+        KakLog.Info("[DifficultyManager] ⚡ STAGE GEÇİŞİ: " + currentStage.stageName
             + " (Skor >= " + currentStage.minScore + ")"
             + " | Ateş Çarpanı: " + currentStage.shootIntervalMultiplier
             + " | Mermi Hız Çarpanı: " + currentStage.projectileSpeedMultiplier
@@ -166,7 +189,7 @@ public class DifficultyManager : MonoBehaviour
                     // Ates araligini carpanla guncelle (dusuk carpan = daha hizli ates)
                     allSpawners[i].shootInterval = originalShootIntervals[i] * currentStage.shootIntervalMultiplier;
                     
-                    Debug.Log("[DifficultyManager] Spawner " + i + " interval: " 
+                    KakLog.Info("[DifficultyManager] Spawner " + i + " interval: " 
                         + originalShootIntervals[i] + " → " + allSpawners[i].shootInterval);
                 }
                 else

@@ -58,14 +58,19 @@ public class WaveManager : MonoBehaviour
     // -------------------------------------------------------
     void Awake()
     {
-        if (Instance == null) Instance = this;
-        else { Destroy(gameObject); return; }
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+        Instance = this;
 
         // Otomatik spawner bulma
         if (spawners == null || spawners.Length == 0)
         {
             spawners = FindObjectsByType<CornerShooter>(FindObjectsSortMode.None);
         }
+    }
+
+    void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
     }
 
     // -------------------------------------------------------
@@ -132,7 +137,7 @@ public class WaveManager : MonoBehaviour
     {
         waveInProgress = true;
 
-        Debug.Log($"[WaveManager] 🌊 Dalga {currentWaveIndex + 1} başlıyor...");
+        KakLog.Info($"[WaveManager] 🌊 Dalga {currentWaveIndex + 1} başlıyor...");
         onWaveStart?.Invoke(currentWaveIndex);
 
         // Dalga öncesi bekleme süresi
@@ -166,7 +171,7 @@ public class WaveManager : MonoBehaviour
         SetSpawnersActive(false);
         waveInProgress = false;
 
-        Debug.Log($"[WaveManager] ✅ Dalga {currentWaveIndex + 1} tamamlandı.");
+        KakLog.Info($"[WaveManager] ✅ Dalga {currentWaveIndex + 1} tamamlandı.");
         onWaveComplete?.Invoke(currentWaveIndex);
 
         // Bir sonraki dalgaya geçiş gecikmesi
@@ -233,7 +238,7 @@ public class WaveManager : MonoBehaviour
         allWavesComplete = true;
         waveInProgress = false;
 
-        Debug.Log("[WaveManager] 🏆 TÜM DALGALAR TAMAMLANDI!");
+        KakLog.Info("[WaveManager] 🏆 TÜM DALGALAR TAMAMLANDI!");
         onAllWavesComplete?.Invoke();
 
         // Skora göre level kazanma

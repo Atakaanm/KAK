@@ -4,6 +4,17 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-09-25 — Faz 1 tamamlandı: stabilizasyon
+
+- Kullanıcının "item'lar başka yerde çıkıyor" şikayetinin görünür nedeni: **5 powerup ikonunun hepsi saydamlıksız RGB** (siyah kare zemin). Yapay zekayla siyah zemin üzerine üretilmişler. `tools/kak_icon_cleanup.py` ile kenardan flood-fill + siyahtan ön-çarpımı geri alma (parlama yarı saydam korunur). **Kural:** Yapay zeka görselleri içeri alınırken saydamlık ve gömülü yazı kontrolü zorunlu (Ghost ikonunda "INTANGIBILITY POWERUP" yazısı vardı).
+- Arena görseli simetrik: iç zemin her kenardan %7,95 (162 px / 2048). Piksel analiziyle ölçüldü (koyu kontur satır/sütunları). Göz kararı ölçüm yanıltmıştı (asimetrik sanılmıştı). **Ölçüm için piksel analizi kullan.**
+- Kaide duruş noktaları: sol üst (0.138, 0.834), sol alt (0.130, 0.126), sağ taraf simetrik. Fırlatıcı "ayak" konumu = Shadow child'ının konumu.
+- Tuzak: `PowerupSpawner` aralığını değiştirmek mevcut zamanlayıcıyı etkilemiyordu → `SetSpawnInterval`.
+- Tuzak (araç): Game view boyutu değişince Canvas bir kaç OYUN karesi sonra yeniden yerleşiyor. Arka planda editör tick'i oyun karesinden hızlı olabiliyor, bu yüzden ekran görüntüsü artık `Time.frameCount` ile bekliyor. Bu hata yanlış "HUD bozuk" alarmına yol açtı. **Ders:** Görsel bir bulguyu raporlamadan önce aracın doğruluğunu da şüpheyle kontrol et.
+- Tuzak: `ExecuteAlways` ile editörde transform'u değiştirmek sahneyi kirli işaretlemiyor. Kaydedilen sahnede eski konumlar kalabiliyor, runtime'da `Awake` düzeltiyor.
+- Usta bot 60 sn'de 1-2 vuruş alıyor, 40-57 sn arası dayanıyor (powerup sık modunda daha kısa). Ölçümler gürültülü, dengeyi Faz 5'te 20 oyunluk ortalamalarla yap.
+- Git: faz dalı → PR → birleştir (kullanıcı izniyle). PR #2 (Faz 0).
+
 ## 2026-09-25 — Faz 0: Otonom test altyapısı kuruldu
 
 - Kullanıcı tüm izinleri verdi: "test etmen gerekirse test et, Unity açık, mükemmel hale getir."

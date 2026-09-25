@@ -59,14 +59,11 @@ public class KakAutoPilot : MonoBehaviour
     Rect FindPlayableArea()
     {
         var arena = FindAnyObjectByType<ArenaAutoLayout>();
-        if (arena != null && arena.leftWall != null && arena.rightWall != null && arena.topWall != null && arena.bottomWall != null)
+        if (arena != null && arena.arenaSpriteRenderer != null)
         {
-            float half = arena.wallThickness * 0.5f;
-            float xMin = arena.leftWall.position.x + half;
-            float xMax = arena.rightWall.position.x - half;
-            float yMin = arena.bottomWall.position.y + half;
-            float yMax = arena.topWall.position.y - half;
-            return Rect.MinMaxRect(xMin, yMin, xMax, yMax);
+            Rect r = arena.PlayableWorldRect;
+            // Oyuncu merkezi duvara bu kadar yaklaşabilir
+            return Rect.MinMaxRect(r.xMin + playerRadius, r.yMin + playerRadius, r.xMax - playerRadius, r.yMax - playerRadius);
         }
         return new Rect(transform.position.x - 3f, transform.position.y - 3f, 6f, 6f);
     }

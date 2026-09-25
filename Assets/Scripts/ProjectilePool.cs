@@ -31,14 +31,12 @@ public class ProjectilePool : MonoBehaviour
 
     void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
+            return;
         }
+        Instance = this;
     }
 
     // -------------------------------------------------------
@@ -117,7 +115,7 @@ public class ProjectilePool : MonoBehaviour
             pools[prefab].Enqueue(obj);
         }
 
-        Debug.Log($"[ProjectilePool] '{prefab.name}' için {count} mermi ısıtıldı.");
+        KakLog.Info($"[ProjectilePool] '{prefab.name}' için {count} mermi ısıtıldı.");
     }
 
     // -------------------------------------------------------
@@ -145,6 +143,7 @@ public class ProjectilePool : MonoBehaviour
 
     void OnDestroy()
     {
+        if (Instance == this) Instance = null;
         pools.Clear();
         prefabLookup.Clear();
     }

@@ -70,6 +70,7 @@ public static class KakBridge
         public string stage;
         public double start;
         public int frames;
+        public int startFrame;
         public long startUnixMs;
     }
 
@@ -360,6 +361,7 @@ public static class KakBridge
             stage = stage,
             start = EditorApplication.timeSinceStartup,
             frames = 0,
+            startFrame = Time.frameCount,
             startUnixMs = NowMs()
         };
         SessionState.SetString(PendingKey, JsonUtility.ToJson(p));
@@ -408,13 +410,12 @@ public static class KakBridge
                 break;
 
             case "screenshot-wait":
+                // Game view boyutu değiştikten sonra UI (Canvas) yeniden yerleşsin diye
+                // en az 20 OYUN karesi ve 1.5 sn bekle (editör tick'i arka planda oyun karesinden hızlı olabilir)
                 p.frames++;
                 SavePending(p);
-                if (p.frames == 8)
-                {
-                    RepaintGameView();
-                }
-                else if (p.frames == 15)
+                RepaintGameView();
+                if (Time.frameCount - p.startFrame >= 20 && elapsed >= 1.5)
                 {
                     ScreenCapture.CaptureScreenshot(p.c.path);
                     p.stage = "screenshot-file";
@@ -428,7 +429,7 @@ public static class KakBridge
                 if (File.Exists(p.c.path) && new FileInfo(p.c.path).Length > 0)
                 {
                     ClearPending();
-                    Reply(p.c, true, "kaydedildi: " + p.c.path, GameViewInfo());
+                    Reply(p.c, true, "kaydedildi: " + p.c.path, "oyun karesi +" + (Time.frameCount - p.startFrame));
                 }
                 else if (p.frames > 200)
                 {
@@ -486,8 +487,6 @@ public static class KakBridge
         var gv = GetGameView();
         if (gv != null) gv.Repaint();
     }
-
-    static string GameViewInfo() => "Screen=" + Screen.width + "x" + Screen.height;
 
     /// <summary>Game view'a sabit çözünürlük atar (gerekirse özel boyut ekler). Hata varsa mesaj döner.</summary>
     static string SetGameViewSize(int w, int h)

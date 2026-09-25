@@ -1,7 +1,11 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Oyun sahnesinin ana yöneticisi: oyun sonu, bölüm sonu, retry/menü geçişleri, zaman yavaşlatma.
+/// Sahneye özeldir (DontDestroyOnLoad DEĞİL): her sahne yüklemesinde temiz bir örnek oluşur.
+/// Sahneler arası kalıcı veri GameSettings'te, ses AudioManager'da tutulur.
+/// </summary>
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
@@ -19,47 +23,42 @@ public class GameManager : MonoBehaviour
     private bool isGameOver = false;
     public bool IsGameOver => isGameOver;
 
-    private float defaultTimeScale = 1f;
     private Coroutine timeSlowCoroutine;
 
     void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            // Menuden oyuna geciste yok olmamasi icin
-            DontDestroyOnLoad(gameObject);
-        }
-        else
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
         }
+        Instance = this;
 
-        Time.timeScale = 1f;
+        KakTime.ResetAll();
 
-        // --- EKSİK MANAGERLARI OTOMATİK YARAT ---
+        if (scoreManager == null) scoreManager = GetComponent<ScoreManager>();
+        if (scoreManager == null) scoreManager = FindAnyObjectByType<ScoreManager>();
+
+        // Yöneticiler sahnede kalıcı olmalı (KacAtaKac/Sahne Yöneticilerini Kur).
+        // Yoksa yedek olarak yaratılır ve uyarı verilir.
+        if (levelManager == null) levelManager = FindAnyObjectByType<LevelManager>();
         if (levelManager == null)
         {
-            levelManager = FindAnyObjectByType<LevelManager>();
-            if (levelManager == null)
-            {
-                GameObject lmObj = new GameObject("LevelManager");
-                levelManager = lmObj.AddComponent<LevelManager>();
-                Debug.Log("[GameManager] LevelManager sahnede yoktu, otomatik oluşturuldu!");
-            }
+            levelManager = new GameObject("LevelManager").AddComponent<LevelManager>();
+            Debug.LogWarning("[GameManager] LevelManager sahnede yoktu, yedek olarak oluşturuldu. 'KacAtaKac/Sahne Yöneticilerini Kur' aracını çalıştır.");
         }
 
+        if (difficultyManager == null) difficultyManager = FindAnyObjectByType<DifficultyManager>();
         if (difficultyManager == null)
         {
-            difficultyManager = FindAnyObjectByType<DifficultyManager>();
-            if (difficultyManager == null)
-            {
-                GameObject dmObj = new GameObject("DifficultyManager");
-                difficultyManager = dmObj.AddComponent<DifficultyManager>();
-                Debug.Log("[GameManager] DifficultyManager sahnede yoktu, otomatik oluşturuldu!");
-            }
+            difficultyManager = new GameObject("DifficultyManager").AddComponent<DifficultyManager>();
+            Debug.LogWarning("[GameManager] DifficultyManager sahnede yoktu, yedek olarak oluşturuldu.");
         }
+    }
+
+    void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
     }
 
     public void GameOver()
@@ -67,44 +66,23 @@ public class GameManager : MonoBehaviour
         if (isGameOver) return;
 
         isGameOver = true;
-        Time.timeScale = 0f;
         if (timeSlowCoroutine != null) StopCoroutine(timeSlowCoroutine);
+        KakTime.SetTimeScale(0f);
 
-        // Zorluk sistemini durdur
-        if (difficultyManager != null)
-        {
-            difficultyManager.StopDifficulty();
-        }
+        if (difficultyManager != null) difficultyManager.StopDifficulty();
+        if (AudioManager.Instance != null) AudioManager.Instance.PlayDeathSfx();
 
-        int finalScore = 0;
-        if (scoreManager != null)
-        {
-            finalScore = scoreManager.ScoreInt;
-        }
-
-        int bestScore = PlayerPrefs.GetInt("BestScore", 0);
-
+        int finalScore = scoreManager != null ? scoreManager.ScoreInt : 0;
+        int bestScore = GameSettings.BestScore;
         if (finalScore > bestScore)
         {
             bestScore = finalScore;
-            PlayerPrefs.SetInt("BestScore", bestScore);
-            PlayerPrefs.Save();
+            GameSettings.BestScore = bestScore;
         }
 
-        if (gameOverPanel != null)
-        {
-            gameOverPanel.SetActive(true);
-        }
-
-        if (finalScoreText != null)
-        {
-            finalScoreText.text = "SCORE: " + finalScore.ToString();
-        }
-
-        if (bestScoreText != null)
-        {
-            bestScoreText.text = "BEST: " + bestScore.ToString();
-        }
+        if (gameOverPanel != null) gameOverPanel.SetActive(true);
+        if (finalScoreText != null) finalScoreText.SetText("SCORE: {0}", finalScore);
+        if (bestScoreText != null) bestScoreText.SetText("BEST: {0}", bestScore);
     }
 
     public void RetryGame()
@@ -126,8 +104,10 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void LevelComplete()
     {
+        if (isGameOver) return;
         isGameOver = true;
-        Time.timeScale = 0f;
+        if (timeSlowCoroutine != null) StopCoroutine(timeSlowCoroutine);
+        KakTime.SetTimeScale(0f);
 
         if (scoreManager != null)
         {
@@ -161,7 +141,8 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Oyun hızını geçici olarak yavaşlatır (Powerup için).
+    /// Oyun hızını geçici olarak yavaşlatır (SloMo powerup'ı).
+    /// Süre, oyuncunun yaşadığı gerçek zamanla ölçülür; pause sırasında saymaz.
     /// </summary>
     public void TimeSlow(float multiplier, float duration)
     {
@@ -172,16 +153,11 @@ public class GameManager : MonoBehaviour
 
     private System.Collections.IEnumerator TimeSlowRoutine(float multiplier, float duration)
     {
-        Time.timeScale = defaultTimeScale * multiplier;
-        Time.fixedDeltaTime = 0.02f * Time.timeScale;
-        
-        // Zaman yavaşlamışken sayacın gerçek zamanda (realTime) sayması gerekir
-        yield return new WaitForSecondsRealtime(duration);
-        
+        KakTime.SetTimeScale(multiplier);
+        yield return KakTime.WaitGameplay(duration);
+
         if (!isGameOver)
-        {
-            Time.timeScale = defaultTimeScale;
-            Time.fixedDeltaTime = 0.02f * Time.timeScale;
-        }
+            KakTime.SetTimeScale(1f);
+        timeSlowCoroutine = null;
     }
 }

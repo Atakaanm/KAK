@@ -33,8 +33,8 @@ public class Projectile : MonoBehaviour
     private static Bounds arenaBounds;
     private static bool boundsInitialized = false;
 
-    // Sınır dışı tolerans (biraz pay bırak ki tam kenarda patlamasın)
-    private const float BOUNDS_PADDING = 0.5f;
+    // Sınır toleransı: merkez duvar iç yüzünü bu kadar geçince havuza döner (taşın yarıçapı kadar)
+    private const float BOUNDS_PADDING = 0.2f;
 
     // Pool desteği — başlatma zamanı, lifetime hesabı için
     private float spawnTime;
@@ -117,7 +117,8 @@ public class Projectile : MonoBehaviour
         ArenaAutoLayout arena = Object.FindAnyObjectByType<ArenaAutoLayout>();
         if (arena != null && arena.arenaSpriteRenderer != null)
         {
-            arenaBounds = arena.arenaSpriteRenderer.bounds;
+            Rect play = arena.PlayableWorldRect;
+            arenaBounds = new Bounds(play.center, new Vector3(play.width, play.height, 1f));
             boundsInitialized = true;
         }
     }
