@@ -102,6 +102,16 @@ public static class KakUiKit
     {
         var t = rt.GetComponent<TextMeshProUGUI>();
         if (t == null) t = rt.gameObject.AddComponent<TextMeshProUGUI>();
+        // "@anahtar" → yerelleştirilmiş metin (LocText ile dil değişince güncellenir)
+        var lt = rt.GetComponent<LocText>();
+        if (text != null && text.StartsWith("@"))
+        {
+            string key = text.Substring(1);
+            if (lt == null) lt = rt.gameObject.AddComponent<LocText>();
+            lt.key = key;
+            text = global::Loc.T(key);
+        }
+        else if (lt != null) Object.DestroyImmediate(lt);
         t.font = logo ? Cinzel : Nunito;
         if (outline) t.fontSharedMaterial = logo ? CinzelOutline : NunitoOutline;
         t.text = text;
@@ -170,6 +180,22 @@ public static class KakUiKit
     }
 
     /// <summary>Ayar satırı: solda yazı, sağda anahtar.</summary>
+    /// <summary>Dil satırı: solda "Dil", sağda TÜRKÇE/ENGLISH butonu.</summary>
+    public static LanguageButton LanguageRow(RectTransform parent, float y)
+    {
+        var row = Place(Rect(parent, "LanguageRow"), new Vector2(0.5f, 1f), new Vector2(0f, y), new Vector2(640f, 110f));
+        var lbl = Place(Rect(row, "Label"), new Vector2(0f, 0.5f), Vector2.zero, new Vector2(300f, 100f), new Vector2(0f, 0.5f));
+        Text(lbl, "@language", 52, KakPalette.Krem, TextAlignmentOptions.MidlineLeft);
+        var btnRt = Place(Rect(row, "Button"), new Vector2(1f, 0.5f), Vector2.zero, new Vector2(300f, 96f), new Vector2(1f, 0.5f));
+        Img(btnRt, S("btn_stone_9s.png"), true, null, true);
+        var lblT = Text(Stretch(Rect(btnRt, "Label")), "TÜRKÇE", 40, KakPalette.Krem);
+        var lb = btnRt.GetComponent<LanguageButton>();
+        if (lb == null) lb = btnRt.gameObject.AddComponent<LanguageButton>();
+        lb.label = lblT;
+        if (btnRt.GetComponent<ButtonScaleAnimation>() == null) btnRt.gameObject.AddComponent<ButtonScaleAnimation>();
+        return lb;
+    }
+
     public static KakToggle ToggleRow(RectTransform parent, string name, string label, KakToggle.Setting setting, float y)
     {
         var row = Place(Rect(parent, name), new Vector2(0.5f, 1f), new Vector2(0f, y), new Vector2(640f, 110f));

@@ -120,7 +120,7 @@ public class ScoreManager : MonoBehaviour
 
             if (scoreText != null)
             {
-                scoreText.SetText("SCORE: {0}", scoreInt);
+                scoreText.SetText(Loc.T("hud_score"), scoreInt);
             }
 
             onScoreChanged?.Invoke(scoreInt);
@@ -159,6 +159,6 @@ public class ScoreManager : MonoBehaviour
         currentScore = 0f;
         lastDisplayedScore = -1;
         lastMilestone = 0;
-        if (scoreText != null) scoreText.text = "SCORE: 0";
+        if (scoreText != null) scoreText.SetText(Loc.T("hud_score"), 0);
     }
 }

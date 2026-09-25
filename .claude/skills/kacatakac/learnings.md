@@ -4,6 +4,16 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-09-25 — Faz 10 tamamlandı (kullanıcı adımları hariç): yayın hazırlığı
+
+- **Gerçek build ölçümü editörden çok farklı:** GC editörde ~100 KB/kare, build'de ~30 B/kare; batch editörde 138, build'de 82. Performans kararlarını build ölçümüyle ver (`KakBuild.BuildMacDev` + `-kakbench`).
+- 552 ms'lik takılma: TMP dinamik font atlasının ilk kez görülen karakterleri üretmesi. `FontWarmup` ile tüm Loc karakterleri açılışta ekleniyor → en kötü kare 33 ms.
+- **Tuzak:** `PlayerSettings.companyName/productName` değişince `Application.persistentDataPath` ve PlayerPrefs konumu da değişir → kayıt "kaybolmuş" gibi görünür. `SaveSystem` eski konumdan taşıyor.
+- **Tuzak:** Otomatik ekran görüntüsü oturumları kullanıcının gerçek kaydına yazıyordu (sahte rekor 281). Köprü artık Play başlatınca `SaveSystem.OverridePath`'i geçici dosyaya çeviriyor.
+- Kullanıcının Mac'i İngilizce → oyun varsayılan EN açıldı. Kullanıcının kaydında dil TR'ye sabitlendi.
+- Android/iOS modülleri kurulu değil. Birkaç GB'lık indirme kullanıcının onayına bırakıldı (kontrol listesinde).
+- Sesler dış kaynak olmadan numpy ile sentezlendi. Claude sesleri duyamadığı için kullanıcı geri bildirimi gerekiyor.
+
 ## 2026-09-25 — Faz 4 tamamlandı: menü ve arayüz
 
 - Menü önceden resimsel, gerçekçi bir mağara görseliydi (oyunun piksel diliyle çelişiyordu). Artık canlı piksel arena kullanılıyor, tek stil.

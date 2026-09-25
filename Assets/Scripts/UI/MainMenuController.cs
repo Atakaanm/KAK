@@ -37,6 +37,9 @@ public class MainMenuController : MonoBehaviour
 
     bool resetArmed;
 
+    void OnEnable() => Loc.Changed += UpdateStats;
+    void OnDisable() => Loc.Changed -= UpdateStats;
+
     void Start()
     {
         KakTime.ResetAll();
@@ -57,12 +60,12 @@ public class MainMenuController : MonoBehaviour
     void UpdateStats()
     {
         var d = SaveSystem.Data;
-        if (bestScoreText != null) bestScoreText.SetText("EN İYİ  {0}", d.bestScoreEndless);
+        if (bestScoreText != null) bestScoreText.SetText(Loc.T("best"), d.bestScoreEndless);
         if (statsText != null)
         {
             int m = Mathf.FloorToInt(d.bestTimeEndless / 60f), s = Mathf.FloorToInt(d.bestTimeEndless % 60f);
-            if (d.gamesPlayed > 0) statsText.SetText("{0} oyun  •  en uzun {1}:{2:00}", d.gamesPlayed, m, s);
-            else statsText.SetText("Taşlardan kaç, rekoru kır!");
+            if (d.gamesPlayed > 0) statsText.SetText(Loc.T("stats"), d.gamesPlayed, m, s);
+            else statsText.SetText(Loc.T("tagline"));
         }
     }
 
@@ -100,7 +103,7 @@ public class MainMenuController : MonoBehaviour
 
     void RefreshResetLabel()
     {
-        if (resetProgressLabel != null) resetProgressLabel.SetText(resetArmed ? "EMİN MİSİN? TEKRAR DOKUN" : "İLERLEMEYİ SIFIRLA");
+        if (resetProgressLabel != null) resetProgressLabel.SetText(Loc.T(resetArmed ? "reset_confirm" : "reset"));
     }
 
     // ── Panel animasyonu ─────────────────────────────────

@@ -77,10 +77,10 @@ public class EndlessEventManager : MonoBehaviour
         if (Running) return;
         switch (id)
         {
-            case 0: StartCoroutine(Run("TAŞ YAĞMURU!", MeteorShower())); break;
-            case 1: StartCoroutine(Run("ÇAPRAZ ATEŞ!", Crossfire())); break;
-            case 2: StartCoroutine(Run("SESSİZLİK...", Calm())); break;
-            case 3: StartCoroutine(Run("YUVARLANAN KAYA!", Rolling())); break;
+            case 0: StartCoroutine(Run("ev_meteor", MeteorShower())); break;
+            case 1: StartCoroutine(Run("ev_crossfire", Crossfire())); break;
+            case 2: StartCoroutine(Run("ev_calm", Calm())); break;
+            case 3: StartCoroutine(Run("ev_rolling", Rolling())); break;
         }
     }
 

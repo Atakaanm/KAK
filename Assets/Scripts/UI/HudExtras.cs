@@ -47,17 +47,18 @@ public class HudExtras : MonoBehaviour
         }
     }
 
-    void OnEvent(string title) => ShowBanner(title, KakPalette.Tehlike);
+    void OnEvent(string title) => ShowBanner(Loc.Has(title) ? Loc.T(title) : title, KakPalette.Tehlike);
 
     void OnStage(string name, int index)
     {
         if (index <= 0) return;
-        ShowBanner(name.ToUpperInvariant() + "!", KakPalette.Altin);
+        string key = "stage_" + name;
+        ShowBanner(Loc.Has(key) ? Loc.T(key) : name.ToUpperInvariant() + "!", KakPalette.Altin);
     }
 
     void OnNearMiss(Vector3 pos, bool dashing)
     {
-        WorldPopup.Show(dashing ? "SÜPER KAÇIŞ!" : "YAKIN!", pos, dashing ? KakPalette.CamgobegiParlak : KakPalette.Krem, dashing ? 1.1f : 0.85f);
+        WorldPopup.Show(Loc.T(dashing ? "super_dodge" : "near_miss"), pos, dashing ? KakPalette.CamgobegiParlak : KakPalette.Krem, dashing ? 1.1f : 0.85f);
     }
 
     void OnPowerup(PowerupData data, Vector3 pos)
@@ -65,11 +66,11 @@ public class HudExtras : MonoBehaviour
         if (data == null) return;
         string name = data.type switch
         {
-            PowerupType.Heal => "+1 CAN",
-            PowerupType.Shield => "KALKAN",
-            PowerupType.SpeedBoost => "HIZ!",
-            PowerupType.TimeSlow => "YAVAŞ ÇEKİM",
-            PowerupType.Ghost => "HAYALET",
+            PowerupType.Heal => Loc.T("pu_heal"),
+            PowerupType.Shield => Loc.T("pu_shield"),
+            PowerupType.SpeedBoost => Loc.T("pu_speed"),
+            PowerupType.TimeSlow => Loc.T("pu_slow"),
+            PowerupType.Ghost => Loc.T("pu_ghost"),
             _ => data.powerupName
         };
         WorldPopup.Show(name, pos, KakPalette.CamgobegiParlak, 1f);
