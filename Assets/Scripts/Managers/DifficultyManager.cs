@@ -202,6 +202,24 @@ public class DifficultyManager : MonoBehaviour
         }
     }
 
+    /// <summary>Mevcut kademenin taş listesinden ağırlıklı rastgele seçim; liste boşsa null.</summary>
+    public ProjectileData PickProjectile()
+    {
+        if (currentStage == null || currentStage.availableProjectiles == null || currentStage.availableProjectiles.Length == 0)
+            return null;
+        var list = currentStage.availableProjectiles;
+        var w = currentStage.projectileWeights;
+        float total = 0f;
+        for (int i = 0; i < list.Length; i++) total += (w != null && i < w.Length) ? Mathf.Max(0f, w[i]) : 1f;
+        float r = Random.value * total;
+        for (int i = 0; i < list.Length; i++)
+        {
+            r -= (w != null && i < w.Length) ? Mathf.Max(0f, w[i]) : 1f;
+            if (r <= 0f) return list[i];
+        }
+        return list[list.Length - 1];
+    }
+
     /// <summary>
     /// Mevcut zorluk asamasinin mermi hiz carpanini dondurur.
     /// </summary>

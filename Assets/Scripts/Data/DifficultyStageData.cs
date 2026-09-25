@@ -30,5 +30,8 @@ public class DifficultyStageData : ScriptableObject
     public float scoreSpeedMultiplier = 1.0f;  // 1.0 = normal, 1.5 = %50 hizli
 
     [Header("Mermi Cesitleri (opsiyonel)")]
+    [Tooltip("Bu kademede fırlatıcıların atabileceği taş türleri. Boşsa fırlatıcının kendi taşı.")]
     public ProjectileData[] availableProjectiles;
+    [Tooltip("availableProjectiles ile aynı sırada ağırlıklar (boşsa eşit)")]
+    public float[] projectileWeights;
 }

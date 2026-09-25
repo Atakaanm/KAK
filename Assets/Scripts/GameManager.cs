@@ -22,6 +22,8 @@ public class GameManager : MonoBehaviour
 
     private bool isGameOver = false;
     public bool IsGameOver => isGameOver;
+    /// <summary>Son oyun yeni rekor mu (oyun sonu ekranı için).</summary>
+    public bool IsNewBest { get; private set; }
 
     private Coroutine timeSlowCoroutine;
 
@@ -77,12 +79,15 @@ public class GameManager : MonoBehaviour
         if (AudioManager.Instance != null) AudioManager.Instance.PlayDeathSfx();
 
         int finalScore = scoreManager != null ? scoreManager.ScoreInt : 0;
-        int bestScore = GameSettings.BestScore;
-        if (finalScore > bestScore)
-        {
-            bestScore = finalScore;
-            GameSettings.BestScore = bestScore;
-        }
+        float seconds = scoreManager != null ? scoreManager.ElapsedSeconds : 0f;
+        var save = SaveSystem.Data;
+        int bestScore = save.bestScoreEndless;
+        IsNewBest = finalScore > bestScore;
+        if (IsNewBest) bestScore = save.bestScoreEndless = finalScore;
+        if (seconds > save.bestTimeEndless) save.bestTimeEndless = seconds;
+        save.gamesPlayed++;
+        save.totalPlaySeconds += seconds;
+        SaveSystem.Save();
 
         StartCoroutine(DeathSequence(finalScore, bestScore));
     }

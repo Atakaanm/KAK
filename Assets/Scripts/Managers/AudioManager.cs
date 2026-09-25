@@ -3,7 +3,7 @@ using UnityEngine;
 /// <summary>
 /// Oyun genelinde ses yonetimini saglayan singleton manager.
 /// DontDestroyOnLoad ile sahneler arasi hayatta kalir.
-/// Muzik ve efekt ses seviyelerini PlayerPrefs'e kaydeder.
+/// Muzik, efekt ve titreşim ayarları SaveSystem'de tutulur.
 /// </summary>
 public class AudioManager : MonoBehaviour
 {
@@ -24,10 +24,7 @@ public class AudioManager : MonoBehaviour
     public AudioClip shootSfx;
     public AudioClip scoreSfx;
 
-    // PlayerPrefs anahtarlari
-    private const string MUSIC_ON_KEY = "MusicOn";
-    private const string SFX_ON_KEY = "SfxOn";
-    private const string VIBRATION_ON_KEY = "VibrationOn";
+    // Ayarlar SaveSystem.Data.settings'te tutulur (eski PlayerPrefs değerleri ilk açılışta taşınır)
 
     private bool isMusicOn = true;
     private bool isSfxOn = true;
@@ -57,9 +54,10 @@ public class AudioManager : MonoBehaviour
     /// </summary>
     void LoadSettings()
     {
-        isMusicOn = PlayerPrefs.GetInt(MUSIC_ON_KEY, 1) == 1;
-        isSfxOn = PlayerPrefs.GetInt(SFX_ON_KEY, 1) == 1;
-        isVibrationOn = PlayerPrefs.GetInt(VIBRATION_ON_KEY, 1) == 1;
+        var st = SaveSystem.Data.settings;
+        isMusicOn = st.music;
+        isSfxOn = st.sfx;
+        isVibrationOn = st.vibration;
 
         if (musicSource != null)
         {
@@ -68,14 +66,15 @@ public class AudioManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Ayarlari PlayerPrefs'e kaydeder.
+    /// Ayarlari SaveSystem'e kaydeder.
     /// </summary>
     void SaveSettings()
     {
-        PlayerPrefs.SetInt(MUSIC_ON_KEY, isMusicOn ? 1 : 0);
-        PlayerPrefs.SetInt(SFX_ON_KEY, isSfxOn ? 1 : 0);
-        PlayerPrefs.SetInt(VIBRATION_ON_KEY, isVibrationOn ? 1 : 0);
-        PlayerPrefs.Save();
+        var st = SaveSystem.Data.settings;
+        st.music = isMusicOn;
+        st.sfx = isSfxOn;
+        st.vibration = isVibrationOn;
+        SaveSystem.Save();
     }
 
     // ── Muzik Kontrolleri ──────────────────────────────

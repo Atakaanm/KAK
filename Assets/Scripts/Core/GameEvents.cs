@@ -15,6 +15,8 @@ public static class GameEvents
     public static event Action<PowerupData, Vector3> PowerupCollected;
     /// <summary>Mermi duvara çarpıp yok oldu (konum, hız).</summary>
     public static event Action<Vector3, Vector2> ProjectileHitWall;
+    /// <summary>Gökten düşen taş yere indi (konum).</summary>
+    public static event Action<Vector3> MeteorLanded;
     /// <summary>Zorluk kademesi değişti (kademe adı, indeks).</summary>
     public static event Action<string, int> StageChanged;
 
@@ -23,6 +25,7 @@ public static class GameEvents
     public static void RaisePlayerDied(Vector3 pos) => PlayerDied?.Invoke(pos);
     public static void RaisePowerupCollected(PowerupData data, Vector3 pos) => PowerupCollected?.Invoke(data, pos);
     public static void RaiseProjectileHitWall(Vector3 pos, Vector2 vel) => ProjectileHitWall?.Invoke(pos, vel);
+    public static void RaiseMeteorLanded(Vector3 pos) => MeteorLanded?.Invoke(pos);
     public static void RaiseStageChanged(string name, int index) => StageChanged?.Invoke(name, index);
 
     public static void ClearAll()
@@ -33,5 +36,6 @@ public static class GameEvents
         PowerupCollected = null;
         ProjectileHitWall = null;
         StageChanged = null;
+        MeteorLanded = null;
     }
 }

@@ -13,6 +13,9 @@ public class ScoreManager : MonoBehaviour
 
     public int ScoreInt => Mathf.FloorToInt(currentScore);
 
+    /// <summary>Bu oyunda hayatta kalınan süre (oyun zamanı).</summary>
+    public float ElapsedSeconds { get; private set; }
+
     // -------------------------------------------------------
     // Olaylar (Events)
     // -------------------------------------------------------
@@ -42,6 +45,7 @@ public class ScoreManager : MonoBehaviour
     {
         if (GameManager.Instance != null && GameManager.Instance.IsGameOver) return;
 
+        ElapsedSeconds += Time.deltaTime;
         float currentScoreMult = 1f;
         if (DifficultyManager.Instance != null && DifficultyManager.Instance.isActiveAndEnabled)
         {

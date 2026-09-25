@@ -8,12 +8,10 @@ using UnityEngine;
 public class KakCameraShake : MonoBehaviour
 {
     public static KakCameraShake Instance { get; private set; }
-    const string PrefKey = "ScreenShakeOn";
-
     public static bool Enabled
     {
-        get => PlayerPrefs.GetInt(PrefKey, 1) == 1;
-        set { PlayerPrefs.SetInt(PrefKey, value ? 1 : 0); PlayerPrefs.Save(); }
+        get => SaveSystem.Data.settings.screenShake;
+        set { SaveSystem.Data.settings.screenShake = value; SaveSystem.Save(); }
     }
 
     ScreenComposer composer;

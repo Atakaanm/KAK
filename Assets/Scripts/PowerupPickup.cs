@@ -99,6 +99,7 @@ public class PowerupPickup : MonoBehaviour
         
         ShowPickupFeedback(transform.position, powerupData.powerupName + "!");
         GameEvents.RaisePowerupCollected(powerupData, transform.position);
+        SaveSystem.Data.totalPowerups++;
 
         switch (powerupData.type)
         {

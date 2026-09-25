@@ -29,6 +29,14 @@ public class PlayerHealth : MonoBehaviour
     private Coroutine invincibilityCoroutine;
     private Coroutine ghostCoroutine;
 
+    void OnEnable() { Projectile.PlayerTarget = transform; }
+    void OnDisable() { if (Projectile.PlayerTarget == transform) Projectile.PlayerTarget = null; }
+
+    private float invulnerableUntil = -1f;
+    /// <summary>Geçici ölümsüzlük (dash vb.). Oyun zamanıyla ölçülür.</summary>
+    public void SetInvulnerable(float seconds) { invulnerableUntil = Mathf.Max(invulnerableUntil, Time.time + seconds); }
+    public bool IsInvulnerable => Time.time < invulnerableUntil;
+
     void Start()
     {
         if (playerData != null)
@@ -112,7 +120,7 @@ public class PlayerHealth : MonoBehaviour
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         if (DevGodMode) return;
 #endif
-        if (isDead || isInvincible || isGhost) return;
+        if (isDead || isInvincible || isGhost || IsInvulnerable) return;
 
         if (hasShield)
         {

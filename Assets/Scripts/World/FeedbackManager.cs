@@ -32,6 +32,7 @@ public class FeedbackManager : MonoBehaviour
         GameEvents.PowerupCollected += OnPowerup;
         GameEvents.ProjectileHitWall += OnWallHit;
         GameEvents.StageChanged += OnStageChanged;
+        GameEvents.MeteorLanded += OnMeteorLanded;
     }
 
     void OnDisable()
@@ -42,6 +43,13 @@ public class FeedbackManager : MonoBehaviour
         GameEvents.PowerupCollected -= OnPowerup;
         GameEvents.ProjectileHitWall -= OnWallHit;
         GameEvents.StageChanged -= OnStageChanged;
+        GameEvents.MeteorLanded -= OnMeteorLanded;
+    }
+
+    void OnMeteorLanded(Vector3 pos)
+    {
+        Shake(0.1f, 0.18f);
+        Burst(pos, 10, 2.2f, 0.4f, KakPalette.Bakir, KakPalette.KahveKoyu, 0.08f);
     }
 
     void OnPlayerDamaged(int hp, Vector3 pos)

@@ -81,18 +81,6 @@ public class PlayerDirectionSprite : MonoBehaviour
 
     DirectionAnimation GetAnimationForDirection(Vector2 dir)
     {
-        dir.Normalize();
-        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-
-        if (angle >= -22.5f && angle < 22.5f) return east;
-        if (angle >= 22.5f && angle < 67.5f) return northEast;
-        if (angle >= 67.5f && angle < 112.5f) return north;
-        if (angle >= 112.5f && angle < 157.5f) return northWest;
-        if (angle >= 157.5f || angle < -157.5f) return west;
-        if (angle >= -157.5f && angle < -112.5f) return southWest;
-        if (angle >= -112.5f && angle < -67.5f) return south;
-        if (angle >= -67.5f && angle < -22.5f) return southEast;
-
-        return south;
+        return DirectionUtil.Pick(dir, east, northEast, north, northWest, west, southWest, south, southEast);
     }
 }
