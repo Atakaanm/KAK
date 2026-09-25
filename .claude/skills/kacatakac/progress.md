@@ -46,8 +46,19 @@ Son commit'ler (Temmuz 2026): HD ana menü, altın buton, premium fontlar (Cinze
 
 ## Aktif faz
 
-**Faz 10 — Mobil ve yayın hazırlığı** (başlıyor). 0 ✅ 1 ✅ 1.5 ✅ 3 ✅ 2A ✅ 5 ✅ 4 ✅ (2026-09-25).
-Sonra: 2B → 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
+**Faz 2B — Bölüm dünyaları için mimari** (başlıyor). Sonsuz Mod v1.0 hazır: 0 ✅ 1 ✅ 1.5 ✅ 3 ✅ 2A ✅ 5 ✅ 4 ✅ 10 ✅* (2026-09-25).
+Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
+*Faz 10'un mobil build, cihaz testi ve mağaza hesabı adımları kullanıcıya bağlı → `Docs/Yayin-Kontrol-Listesi.md`.
+
+### Faz 10 sonucu (testler: 36/36 PlayMode + 4/4 EditMode)
+- [x] Oyuncu ayarları (`KakBuild.ConfigurePlayer`): "Kaç Ata Kaç", `com.atakaan.kacatakac`, 0.9.0, dikey kilit, Android IL2CPP+ARM64 API24+, iOS 14+, ikon, açılış ekranı
+- [x] macOS development build + `KakAutoBench` (build kendi kendine oynar, rapor yazar): **~60 FPS, GC ~30 B/kare, en kötü kare 33 ms, 82 batch** (Apple M4)
+- [x] `FontWarmup`: TMP dinamik atlas takılması (552 ms) giderildi
+- [x] TR/EN yerelleştirme (`Loc`, `LocText`, `LanguageButton`), cihaz diline göre varsayılan, `LocTests`
+- [x] Ses: prosedürel 8-bit efektler (12) + menü/oyun müziği (`tools/kak_gen_audio.py`), `AudioManager` olayları dinliyor, ton değişimi, tekrar sınırı, her sahnede prefab'dan oluşuyor; `AudioTests`
+- [x] Mağaza metinleri TR/EN, gizlilik politikası taslağı, yayın kontrol listesi, mağaza görüntüleri (`Docs/`)
+- [x] Kayıt: şirket adı değişince eski konumdan taşıma; köprü Play oturumları gerçek kayda yazmıyor
+- 👤 Android/iOS build modülleri kurulu değil (sadece WebGL + Mac). Kurulum ve keystore kullanıcıda.
 
 ### Faz 4 sonucu (testler: 34/34 + denge ayrı)
 - [x] UI görsel seti (`tools/kak_gen_ui.py`): piksel 9-slice altın/taş buton, panel, rozet, anahtar, ikonlar (palet renkleri); `_9s` import kuralı
@@ -113,9 +124,11 @@ Sonra: 2B → 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 - Varsayım: Kalkan "vurulana kadar" sürer (`ShieldData.duration` kullanılmıyor, davranış korunuyor)
 
 ### Sıradaki adım
-Faz 10: Android build ayarları (paket adı, IL2CPP, ARM64, dikey kilit, ikon, açılış), bir development build almayı dene (Android modülü kurulu mu?), cihazda performans (Frame Debugger, 2D Renderer kararı), Input System geçişi değerlendirmesi, yerelleştirme (TR/EN) altyapısı, mağaza materyali listesi.
+Faz 2B: `GameModeData` + `GameModeController` (Endless / TimedSurvival / Football iskeleti), `EnemyData` + hareket desenleri (Stationary, SideLine, Patrol, Charge) + saldırı desenleri, `StatusEffect` (Slow, Stun, SarıKart sayacı), `WorldData` + bölüm seçimi akışı, `ArenaTileSet` (tema değişimi).
 
 ### Onay bekleyenler
+- **Android Build Support modülü** kurulmalı (Unity Hub → 6000.3.8f1 → Add modules). Sonra "Android build al" → cihazda test.
+- **Sesler** prosedürel üretildi, Claude dinleyemedi. Kulağa hoş gelmeyen varsa söyle (`tools/kak_gen_audio.py` ile yeniden üretilir).
 - **Denge hissi:** telefonda birkaç oyun oyna → "çok zor / çok kolay / tam" + hangi taş/olay haksız hissettirdi. Değerler `KakEndlessSetup.SetStage` ve `KakContentSetup` içinde tek yerde.
 - Palet: Endesga 32 varsayımla uygulandı (kullanıcı değiştirmek isterse: `KakPalette` + `tools/kak_palette.py` + `kak_art_pass.py`).
 - Sanat stili: piksel sanatı (32 px, PPU 32). Varsayım: evet, devam.
