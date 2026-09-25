@@ -97,7 +97,8 @@ public class KakAutoPilot : MonoBehaviour
             lastHealth = health.currentHealth;
         }
 
-        decisionTimer -= Time.unscaledDeltaTime;
+        // Karar süresi oyun zamanıyla (testlerde zaman hızlandırılınca bot adil kalsın)
+        decisionTimer -= Time.deltaTime;
         if (decisionTimer > 0f) return;
         decisionTimer = Mathf.Lerp(0.22f, 0.04f, skill);
 
@@ -117,7 +118,16 @@ public class KakAutoPilot : MonoBehaviour
             }
         }
         movement.InputOverride = best;
+
+        // Tehlike yüksekse ve en iyi seçenek bile riskliyse dash (usta bot)
+        if (dash == null) dash = GetComponent<PlayerDash>();
+        if (dash != null && skill > 0.6f && bestCost > dashThreshold && dash.Ready)
+            dash.TryDash();
     }
+
+    PlayerDash dash;
+    [Tooltip("En iyi yönün maliyeti bunu aşarsa dash (usta bot)")]
+    public float dashThreshold = 1.2f;
 
     float Cost(Vector2 dir, Vector2 p, float speed, float horizon)
     {
@@ -137,8 +147,22 @@ public class KakAutoPilot : MonoBehaviour
             {
                 var pr = active[i];
                 if (pr == null) continue;
-                Vector2 q = (Vector2)pr.transform.position + pr.Velocity * t;
-                float r = playerRadius + ProjectileRadius(pr) + 0.15f;
+                Vector2 q;
+                float r;
+                if (pr.Motion == ProjectileMotion.Meteor)
+                {
+                    // Gökten düşen: iniş noktası sabit; iniş anına yakın tahminler daha önemli
+                    q = pr.transform.position;
+                    float landIn = pr.FallRemaining01 * (pr.Data != null ? pr.Data.meteorFallTime : 1f);
+                    if (Mathf.Abs(landIn - t) > 0.35f) continue;
+                    r = playerRadius + (pr.Data != null ? pr.Data.meteorRadius : 0.55f) + 0.1f;
+                }
+                else
+                {
+                    q = (Vector2)pr.transform.position + pr.Velocity * t;
+                    if (pr.Motion == ProjectileMotion.Bounce) q = Reflect(q);
+                    r = playerRadius + ProjectileRadius(pr) + 0.15f;
+                }
                 float d2 = (pp - q).sqrMagnitude;
                 cost += Mathf.Exp(-d2 / (r * r)) * weight * 4f;
             }
@@ -157,8 +181,19 @@ public class KakAutoPilot : MonoBehaviour
 
     static float ProjectileRadius(Projectile pr)
     {
-        // Görsel boyuta göre kaba tahmin (ölçek dahil); collider okumadan tahsissiz
-        return 0.18f * Mathf.Abs(pr.transform.lossyScale.x);
+        // Taş prefab'ının çarpışma yarıçapı (0.26) × ölçek; collider okumadan tahsissiz
+        return 0.26f * Mathf.Abs(pr.transform.lossyScale.x);
+    }
+
+    /// <summary>Seken taş için duvardan yansıyan tahmini konum (oynanabilir alan içinde katlama).</summary>
+    Vector2 Reflect(Vector2 q)
+    {
+        Rect a = area;
+        float w = a.width + 2f * playerRadius, h = a.height + 2f * playerRadius;
+        float x0 = a.xMin - playerRadius, y0 = a.yMin - playerRadius;
+        float fx = Mathf.PingPong(q.x - x0, w) + x0;
+        float fy = Mathf.PingPong(q.y - y0, h) + y0;
+        return new Vector2(fx, fy);
     }
 }
 #endif

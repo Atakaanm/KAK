@@ -209,6 +209,14 @@ def main():
         group = a[1] if len(a) > 1 else ""
         r = send("tests", arg=mode, arg2=group, seconds=600, timeout=660)
         return 0 if r["ok"] else 1
+    if c == "denge":
+        flag = os.path.join(BRIDGE, "run_denge")
+        open(flag, "w").write("1")
+        try:
+            r = send("tests", arg="PlayMode", arg2="DengeTests", seconds=1600, timeout=1700)
+        finally:
+            os.remove(flag)
+        return 0 if r["ok"] else 1
     if c == "scene":
         r = send("openScene", arg=a[0])
         return 0 if r["ok"] else 1

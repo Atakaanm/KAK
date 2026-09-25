@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: Stage5_Cehennem
   m_EditorClassIdentifier: Assembly-CSharp::DifficultyStageData
   stageName: Cehennem
-  minScore: 600
-  maxScore: 999
+  minScore: 1550
+  maxScore: 2599
   activeSpawnerCount: 4
-  shootIntervalMultiplier: 0.4
-  projectileSpeedMultiplier: 1.75
-  projectileScaleMultiplier: 1.45
-  playerSpeedMultiplier: 1.2
+  shootIntervalMultiplier: 0.62
+  projectileSpeedMultiplier: 1.42
+  projectileScaleMultiplier: 1.22
+  playerSpeedMultiplier: 1.16
   scoreSpeedMultiplier: 1.5
   availableProjectiles:
   - {fileID: 11400000, guid: c2e7e644fcf354e079d42082c04a0732, type: 2}

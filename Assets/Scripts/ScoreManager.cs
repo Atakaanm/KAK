@@ -27,6 +27,52 @@ public class ScoreManager : MonoBehaviour
     /// <summary>Belirli bir skor eşiğine ulaşıldığında tetiklenir (pulse efekti için).</summary>
     public UnityEvent<int> onMilestoneReached;
 
+    [Header("Combo (hasar almadan geçen süre)")]
+    public float comboStepSeconds = 10f;
+    public float comboStep = 0.1f;
+    public float comboMax = 2f;
+    [Tooltip("Yakın geçiş combo süresine eklenen saniye")]
+    public float nearMissComboSeconds = 2f;
+
+    [Header("Yakın Geçiş")]
+    public int nearMissBonus = 5;
+    public float dashNearMissMultiplier = 2f;
+
+    public float ComboMultiplier { get; private set; } = 1f;
+    public int NearMissCount { get; private set; }
+    private float comboTimer;
+
+    void OnEnable()
+    {
+        GameEvents.PlayerDamaged += OnPlayerDamaged;
+        GameEvents.NearMiss += OnNearMiss;
+    }
+
+    void OnDisable()
+    {
+        GameEvents.PlayerDamaged -= OnPlayerDamaged;
+        GameEvents.NearMiss -= OnNearMiss;
+    }
+
+    void OnPlayerDamaged(int hp, Vector3 pos)
+    {
+        comboTimer = 0f;
+        if (ComboMultiplier > 1f)
+        {
+            ComboMultiplier = 1f;
+            GameEvents.RaiseComboChanged(ComboMultiplier);
+        }
+    }
+
+    void OnNearMiss(Vector3 pos, bool dashing)
+    {
+        if (GameManager.Instance != null && GameManager.Instance.IsGameOver) return;
+        NearMissCount++;
+        float bonus = nearMissBonus * ComboMultiplier * (dashing ? dashNearMissMultiplier : 1f);
+        AddScore(Mathf.RoundToInt(bonus));
+        comboTimer += nearMissComboSeconds;
+    }
+
     [Header("Milestone Ayarları")]
     [Tooltip("Her kaç puanda bir milestone eventi ateşlensin?")]
     public int milestoneInterval = 50;
@@ -46,10 +92,19 @@ public class ScoreManager : MonoBehaviour
         if (GameManager.Instance != null && GameManager.Instance.IsGameOver) return;
 
         ElapsedSeconds += Time.deltaTime;
-        float currentScoreMult = 1f;
+
+        comboTimer += Time.deltaTime;
+        while (comboTimer >= comboStepSeconds && ComboMultiplier < comboMax - 0.001f)
+        {
+            comboTimer -= comboStepSeconds;
+            ComboMultiplier = Mathf.Min(comboMax, ComboMultiplier + comboStep);
+            GameEvents.RaiseComboChanged(ComboMultiplier);
+        }
+
+        float currentScoreMult = ComboMultiplier;
         if (DifficultyManager.Instance != null && DifficultyManager.Instance.isActiveAndEnabled)
         {
-            currentScoreMult = DifficultyManager.Instance.GetScoreSpeedMultiplier();
+            currentScoreMult *= DifficultyManager.Instance.GetScoreSpeedMultiplier();
         }
 
         currentScore += baseScorePerSecond * currentScoreMult * Time.deltaTime;

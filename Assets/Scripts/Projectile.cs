@@ -34,6 +34,11 @@ public class Projectile : MonoBehaviour
     /// <summary>Merminin anlık hız vektörü (dünya birimi/sn).</summary>
     public Vector2 Velocity => motion == ProjectileMotion.Meteor ? Vector2.zero : moveDirection.normalized * speed;
     public ProjectileMotion Motion => motion;
+
+    // Yakın geçiş takibi (NearMissTracker)
+    [System.NonSerialized] public float NearMissEnterTime = -1f;
+    [System.NonSerialized] public bool NearMissAwarded;
+    [System.NonSerialized] public bool NearMissDisqualified;
     public ProjectileData Data => data;
     /// <summary>Meteor için yere kalan süre oranı (1 = yeni atıldı, 0 = iniş). Diğerlerinde 0.</summary>
     public float FallRemaining01 => motion == ProjectileMotion.Meteor && data != null ? Mathf.Clamp01(1f - age / data.meteorFallTime) : 0f;
@@ -169,6 +174,9 @@ public class Projectile : MonoBehaviour
         age = 0f;
         rotationSpeed = 0f;
         speed = defaultSpeed;
+        NearMissEnterTime = -1f;
+        NearMissAwarded = false;
+        NearMissDisqualified = false;
         data = null;
         motion = ProjectileMotion.Straight;
         splitDone = false;
@@ -331,7 +339,11 @@ public class Projectile : MonoBehaviour
             if (PlayerTarget != null && Vector2.Distance(PlayerTarget.position, transform.position) <= data.meteorRadius)
             {
                 var ph = PlayerTarget.GetComponent<PlayerHealth>();
-                if (ph != null && !ph.IsGhost) ph.TakeDamage(damage);
+                if (ph != null && !ph.IsGhost)
+                {
+                    PlayerHealth.LastHitSource = "Göktaşı";
+                    ph.TakeDamage(damage);
+                }
             }
             GameEvents.RaiseProjectileHitWall(transform.position, Vector2.zero);
             GameEvents.RaiseMeteorLanded(transform.position);
@@ -350,7 +362,11 @@ public class Projectile : MonoBehaviour
         {
             PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
             if (playerHealth != null && playerHealth.IsGhost) return; // hayalet: içinden geçer
-            if (playerHealth != null) playerHealth.TakeDamage(damage);
+            if (playerHealth != null)
+            {
+                PlayerHealth.LastHitSource = data != null ? data.projectileName : "Taş";
+                playerHealth.TakeDamage(damage);
+            }
             ReturnToPool();
         }
     }

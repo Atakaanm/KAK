@@ -17,6 +17,14 @@ public static class GameEvents
     public static event Action<Vector3, Vector2> ProjectileHitWall;
     /// <summary>Gökten düşen taş yere indi (konum).</summary>
     public static event Action<Vector3> MeteorLanded;
+    /// <summary>Taş oyuncunun çok yakınından geçti (konum, dash sırasında mı).</summary>
+    public static event Action<Vector3, bool> NearMiss;
+    /// <summary>Oyuncu dash attı (başlangıç, yön).</summary>
+    public static event Action<Vector3, Vector2> DashUsed;
+    /// <summary>Combo çarpanı değişti (yeni çarpan).</summary>
+    public static event Action<float> ComboChanged;
+    /// <summary>Sonsuz mod olayı başladı (görünen ad).</summary>
+    public static event Action<string> EndlessEventStarted;
     /// <summary>Zorluk kademesi değişti (kademe adı, indeks).</summary>
     public static event Action<string, int> StageChanged;
 
@@ -26,6 +34,10 @@ public static class GameEvents
     public static void RaisePowerupCollected(PowerupData data, Vector3 pos) => PowerupCollected?.Invoke(data, pos);
     public static void RaiseProjectileHitWall(Vector3 pos, Vector2 vel) => ProjectileHitWall?.Invoke(pos, vel);
     public static void RaiseMeteorLanded(Vector3 pos) => MeteorLanded?.Invoke(pos);
+    public static void RaiseNearMiss(Vector3 pos, bool dashing) => NearMiss?.Invoke(pos, dashing);
+    public static void RaiseDashUsed(Vector3 pos, Vector2 dir) => DashUsed?.Invoke(pos, dir);
+    public static void RaiseComboChanged(float mult) => ComboChanged?.Invoke(mult);
+    public static void RaiseEndlessEventStarted(string name) => EndlessEventStarted?.Invoke(name);
     public static void RaiseStageChanged(string name, int index) => StageChanged?.Invoke(name, index);
 
     public static void ClearAll()
@@ -37,5 +49,9 @@ public static class GameEvents
         ProjectileHitWall = null;
         StageChanged = null;
         MeteorLanded = null;
+        NearMiss = null;
+        DashUsed = null;
+        ComboChanged = null;
+        EndlessEventStarted = null;
     }
 }

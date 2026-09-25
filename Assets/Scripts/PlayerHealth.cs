@@ -32,6 +32,9 @@ public class PlayerHealth : MonoBehaviour
     void OnEnable() { Projectile.PlayerTarget = transform; }
     void OnDisable() { if (Projectile.PlayerTarget == transform) Projectile.PlayerTarget = null; }
 
+    /// <summary>Son vuruşun kaynağı (denge analizi ve ileride ölüm ekranı: "Göktaşı seni yakaladı").</summary>
+    public static string LastHitSource = "";
+
     private float invulnerableUntil = -1f;
     /// <summary>Geçici ölümsüzlük (dash vb.). Oyun zamanıyla ölçülür.</summary>
     public void SetInvulnerable(float seconds) { invulnerableUntil = Mathf.Max(invulnerableUntil, Time.time + seconds); }

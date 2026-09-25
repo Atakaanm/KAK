@@ -28,7 +28,7 @@ public static class KakContentSetup
         Configure(rock, "Taş", ProjectileMotion.Straight, 1.5f, 1f, Color.white, prefab, sprite);
 
         var pebble = GetOrCreate("Pebble_Cakil");
-        Configure(pebble, "Çakıl", ProjectileMotion.Straight, 2.3f, 0.65f, new Color(1f, 0.95f, 0.9f), prefab, sprite);
+        Configure(pebble, "Çakıl", ProjectileMotion.Straight, 2.1f, 0.75f, new Color(1f, 0.95f, 0.9f), prefab, sprite);
 
         var boulder = GetOrCreate("Boulder_Kaya");
         Configure(boulder, "Kaya", ProjectileMotion.Straight, 1.05f, 1.55f, new Color(0.85f, 0.8f, 0.8f), prefab, sprite);

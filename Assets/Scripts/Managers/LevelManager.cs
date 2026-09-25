@@ -224,6 +224,10 @@ public class LevelManager : MonoBehaviour
 
         if (powerupSpawner != null) powerupSpawner.RefreshArenaBounds();
 
+        // Oyun sırasında Instantiate olmasın (parçalanan taşlar ve taş yağmuru için pay)
+        if (ProjectilePool.Instance != null && spawners != null && spawners.Length > 0 && spawners[0] != null && spawners[0].projectilePrefab != null)
+            ProjectilePool.Instance.Prewarm(spawners[0].projectilePrefab, 40);
+
         KakLog.Info("[LevelManager] Level hazirlandi: " + level.levelName);
     }
 

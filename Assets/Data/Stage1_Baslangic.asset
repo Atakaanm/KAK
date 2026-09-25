@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DifficultyStageData
   stageName: Baslangic
   minScore: 0
-  maxScore: 49
+  maxScore: 199
   activeSpawnerCount: 2
   shootIntervalMultiplier: 1
   projectileSpeedMultiplier: 1
