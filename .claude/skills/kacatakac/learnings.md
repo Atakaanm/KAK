@@ -4,6 +4,14 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-09-25 — Faz 5 tamamlandı: Sonsuz Mod içeriği ve denge
+
+- Eski denge çok dikti: skor 10/sn ile 15. sn'de Orta, 50. sn'de Cehennem. Eşikler süreye yayıldı, çarpanlar yumuşatıldı. Zorluk artık çeşitlilikten (taş türleri + olaylar) geliyor.
+- **Denge ölçümünde bot sınırı:** Tepkisel, 0,25-0,8 sn ufuklu, 16 yönlü plancı. Seken ve hızlı taşlarda zayıf, usta ile acemi arası fark küçük. Vuran taş türü istatistiği (`PlayerHealth.LastHitSource`) hangi içeriğin öldürdüğünü gösteriyor, bu değerli. Ama "usta insan süresi" için güvenilir değil. **Denge kararları kullanıcı oyun testiyle kesinleşmeli.**
+- `KakTime.TestSpeed`: testlerde oyunu hızlandırır, fizik adımına dokunmaz.
+- Tuzak: `enableWordWrapping` TMP'de eski (Unity 6), `textWrappingMode = TextWrappingModes.NoWrap` kullan.
+- Olaylar fırlatıcıları geçici açıp kapattığı için kademe değişimiyle çakışabiliyordu. `DifficultyManager.RefreshSpawnerActivation()` olay sonunda doğru durumu geri yüklüyor (testli).
+
 ## 2026-09-25 — Faz 2A tamamlandı: mermi davranışları ve kayıt
 
 - Mermi davranışı tek sınıfta (`Projectile`), `ProjectileData.motion` ile seçiliyor. Yeni taş türü = yeni veri dosyası. Kalıtım/strateji SO yerine enum + switch seçildi: 5 davranış için daha basit, tahsissiz, havuzla uyumlu (YAGNI). Davranış sayısı çok artarsa (bölüm düşmanları) strateji SO'ya geçilebilir.

@@ -24,6 +24,20 @@ public class PlayerMovement2D : MonoBehaviour
 
     public Vector2 MovementInput => movementInput;
 
+    // Dash: kısa süre sabit hızlı atılma (girdi ve zemin sürtünmesi yok sayılır)
+    private float dashTimer;
+    private Vector2 dashVelocity;
+    public bool IsDashing => dashTimer > 0f;
+    /// <summary>Son hareket yönü (dururken dash için).</summary>
+    public Vector2 LastDirection { get; private set; } = Vector2.down;
+
+    public void Dash(Vector2 dir, float distance, float duration)
+    {
+        if (dir.sqrMagnitude < 0.0001f) dir = LastDirection;
+        dashVelocity = dir.normalized * (distance / Mathf.Max(0.01f, duration));
+        dashTimer = duration;
+    }
+
     /// <summary>
     /// Dışarıdan hareket girdisi (test botu, ileride öğretici/replay). Null ise joystick/klavye kullanılır.
     /// </summary>
@@ -102,6 +116,14 @@ public class PlayerMovement2D : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (movementInput.sqrMagnitude > 0.01f) LastDirection = movementInput.normalized;
+        if (dashTimer > 0f)
+        {
+            dashTimer -= Time.fixedDeltaTime;
+            rb.linearVelocity = dashVelocity;
+            return;
+        }
+
         float currentSpeed = baseMoveSpeed * arenaSpeedMultiplier * currentSpeedBoostMult;
         if (DifficultyManager.Instance != null && DifficultyManager.Instance.isActiveAndEnabled)
         {

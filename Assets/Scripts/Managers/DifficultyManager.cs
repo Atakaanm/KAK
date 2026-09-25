@@ -230,6 +230,16 @@ public class DifficultyManager : MonoBehaviour
         return 1.0f;
     }
 
+    public int CurrentStageIndex => Mathf.Max(0, currentStageIndex);
+
+    /// <summary>Mevcut kademenin aktif spawner sayısını yeniden uygular (olaylar spawner'ları geçici açıp kapattıktan sonra).</summary>
+    public void RefreshSpawnerActivation()
+    {
+        if (currentStage == null || allSpawners == null) return;
+        for (int i = 0; i < allSpawners.Length; i++)
+            if (allSpawners[i] != null) allSpawners[i].gameObject.SetActive(i < currentStage.activeSpawnerCount);
+    }
+
     public float GetProjectileScaleMultiplier()
     {
         if (currentStage != null)

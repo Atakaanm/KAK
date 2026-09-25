@@ -21,6 +21,12 @@ public class CornerShooter : MonoBehaviour
     [Tooltip("Başlangıçta kaç mermi pool'a eklensin")]
     public int prewarmCount = 5;
 
+    [Header("Uyarı (telegraph)")]
+    [Tooltip("Atıştan önce fırlatıcının sıcak renkle parladığı süre (sn)")]
+    public float telegraphTime = 0.35f;
+    private SpriteRenderer visualRenderer;
+    private Color visualBaseColor = Color.white;
+
     [Header("Meteor")]
     [Tooltip("Meteor hedefinin oyuncu etrafındaki rastgele sapması")]
     public float meteorScatter = 0.9f;
@@ -37,6 +43,8 @@ public class CornerShooter : MonoBehaviour
         }
 
         if (target == null && Projectile.PlayerTarget != null) target = Projectile.PlayerTarget;
+        if (spawnerVisual != null) visualRenderer = spawnerVisual.GetComponent<SpriteRenderer>();
+        if (visualRenderer != null) visualBaseColor = visualRenderer.color;
 
         if (projectilePrefab != null && ProjectilePool.Instance != null)
             ProjectilePool.Instance.Prewarm(projectilePrefab, prewarmCount);
@@ -45,11 +53,36 @@ public class CornerShooter : MonoBehaviour
     void Update()
     {
         timer += Time.deltaTime;
+
+        // Atıştan önce sıcak parlama: oyuncu nereden taş geleceğini okur
+        if (visualRenderer != null)
+        {
+            float t = shootInterval - timer;
+            if (t < telegraphTime)
+            {
+                float k = 1f - Mathf.Clamp01(t / telegraphTime);
+                visualRenderer.color = Color.Lerp(visualBaseColor, KakPalette.Turuncu, k * 0.75f);
+            }
+            else if (visualRenderer.color != visualBaseColor) visualRenderer.color = visualBaseColor;
+        }
+
         if (timer >= shootInterval)
         {
             Shoot();
             timer = 0f;
         }
+    }
+
+    void OnDisable()
+    {
+        if (visualRenderer != null) visualRenderer.color = visualBaseColor;
+    }
+
+    /// <summary>Zamanlayıcıdan bağımsız hemen ateş (olaylar). angleOffset: hedefe göre sapma (derece).</summary>
+    public void FireNow(float angleOffset = 0f)
+    {
+        Shoot(angleOffset);
+        timer = 0f;
     }
 
     ProjectileData PickData()
@@ -59,7 +92,7 @@ public class CornerShooter : MonoBehaviour
         return d;
     }
 
-    void Shoot()
+    void Shoot(float angleOffset = 0f)
     {
         if (target == null) target = Projectile.PlayerTarget;
         if (projectilePrefab == null || target == null) return;
@@ -86,6 +119,8 @@ public class CornerShooter : MonoBehaviour
 
         Vector3 spawnPos = firePoint != null ? firePoint.position : transform.position;
         Vector3 targetPos = target.position;
-        Projectile.Launch(prefab, data, spawnPos, (Vector2)(targetPos - spawnPos), speedMult, scaleMult);
+        Vector2 dir = (Vector2)(targetPos - spawnPos);
+        if (Mathf.Abs(angleOffset) > 0.01f) dir = Quaternion.Euler(0f, 0f, angleOffset) * dir;
+        Projectile.Launch(prefab, data, spawnPos, dir, speedMult, scaleMult);
     }
 }

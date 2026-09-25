@@ -97,7 +97,6 @@ public class PowerupPickup : MonoBehaviour
 
         if (AudioManager.Instance != null) AudioManager.Instance.PlayScoreSfx(); // Geçici powerup sesi
         
-        ShowPickupFeedback(transform.position, powerupData.powerupName + "!");
         GameEvents.RaisePowerupCollected(powerupData, transform.position);
         SaveSystem.Data.totalPowerups++;
 
@@ -125,19 +124,4 @@ public class PowerupPickup : MonoBehaviour
         }
     }
 
-    private void ShowPickupFeedback(Vector3 position, string text)
-    {
-        GameObject feedbackObj = new GameObject("PowerupFeedback");
-        feedbackObj.transform.position = position + Vector3.up * 0.5f;
-        
-        TextMesh tm = feedbackObj.AddComponent<TextMesh>();
-        tm.text = text;
-        tm.characterSize = 0.15f;
-        tm.fontSize = 48;
-        tm.alignment = TextAlignment.Center;
-        tm.anchor = TextAnchor.MiddleCenter;
-        tm.color = Color.yellow;
-        
-        feedbackObj.AddComponent<FloatingText>();
-    }
 }

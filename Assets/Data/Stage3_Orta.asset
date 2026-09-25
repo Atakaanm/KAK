@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: Stage3_Orta
   m_EditorClassIdentifier: Assembly-CSharp::DifficultyStageData
   stageName: Orta
-  minScore: 150
-  maxScore: 349
+  minScore: 475
+  maxScore: 899
   activeSpawnerCount: 3
-  shootIntervalMultiplier: 0.7
-  projectileSpeedMultiplier: 1.3
-  projectileScaleMultiplier: 1.15
-  playerSpeedMultiplier: 1.1
+  shootIntervalMultiplier: 0.82
+  projectileSpeedMultiplier: 1.2
+  projectileScaleMultiplier: 1.08
+  playerSpeedMultiplier: 1.08
   scoreSpeedMultiplier: 1.2
   availableProjectiles:
   - {fileID: 11400000, guid: c2e7e644fcf354e079d42082c04a0732, type: 2}

@@ -13,6 +13,9 @@ public static class KakTime
     const float HitStopScale = 0.02f;
 
     static float baseScale = 1f;
+
+    /// <summary>Sadece test/denge ölçümü: oyunu hızlandırır (fizik adımı değişmez).</summary>
+    public static float TestSpeed = 1f;
     static bool paused;
     static float hitStopEnd = -1f;
 
@@ -57,8 +60,15 @@ public static class KakTime
         baseScale = 1f;
         paused = false;
         hitStopEnd = -1f;
-        Time.timeScale = 1f;
+        Time.timeScale = TestSpeed;
         Time.fixedDeltaTime = DefaultFixedDelta;
+    }
+
+    /// <summary>Test hızını değiştirir ve uygular.</summary>
+    public static void SetTestSpeed(float speed)
+    {
+        TestSpeed = Mathf.Max(0.1f, speed);
+        Apply();
     }
 
     static void Apply()
@@ -66,7 +76,7 @@ public static class KakTime
         float s = baseScale;
         if (hitStopEnd > 0f) s = Mathf.Min(s, HitStopScale);
         if (paused) s = 0f;
-        Time.timeScale = s;
+        Time.timeScale = s * TestSpeed;
         if (baseScale > 0.01f)
             Time.fixedDeltaTime = DefaultFixedDelta * baseScale;
     }

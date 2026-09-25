@@ -46,8 +46,20 @@ Son commit'ler (Temmuz 2026): HD ana menü, altın buton, premium fontlar (Cinze
 
 ## Aktif faz
 
-**Faz 5 — Sonsuz Mod cilası** (başlıyor). 0 ✅ 1 ✅ 1.5 ✅ 3 ✅ 2A ✅ (2026-09-25).
-Sıra: → 5 → 4 → 10 → (2B → 6 → 7 → 8 → 9).
+**Faz 4 — Menü ve UI (Sonsuz odaklı)** (başlıyor). 0 ✅ 1 ✅ 1.5 ✅ 3 ✅ 2A ✅ 5 ✅ (2026-09-25).
+Sıra: → 4 → 10 → (2B → 6 → 7 → 8 → 9).
+
+### Faz 5 sonucu (testler: 31/31 + denge ölçümü ayrı)
+- [x] Fırlatıcı uyarısı (telegraph): atıştan 0,35 sn önce sıcak renge döner
+- [x] 7 taş türü kademelere dağıtıldı (Faz 2A) + çakıl okunurluk ayarı (0,75 ölçek, 2,1 hız)
+- [x] Olaylar (`EndlessEventManager`, ilk 30. sn, sonra 30-45 sn arayla): Taş Yağmuru, Çapraz Ateş, Sessizlik, Yuvarlanan Kaya (şerit uyarısı). Olay bitince fırlatıcı aktifliği geri yüklenir.
+- [x] Yakın geçiş (`NearMissTracker`): +5 × combo (dash'le ×2, "SÜPER KAÇIŞ!"), combo süresine +2 sn
+- [x] Combo: hasarsız her 10 sn +0,1 (en fazla ×2,0), hasarda sıfırlanır; skor hızına çarpan; HUD'da "x1.3"
+- [x] Dash (`PlayerDash` + `DashButton`, Space): 1,7 birim / 0,14 sn, ölümsüz, 2,6 sn bekleme, arkada soluklaşan kopyalar
+- [x] HUD: combo metni, olay/kademe afişi (`HudExtras`), dünya yazıları havuzu (`WorldPopup`, eski TextMesh kaldırıldı)
+- [x] Denge v2: kademe eşikleri süreye yayıldı (≈20/45/80/130/200 sn) ve çarpanlar yumuşatıldı (tablo aşağıda)
+- [x] Denge ölçüm testi (`python3 tools/kak_bridge.py denge`, 2x hız, vuran taş türü analizi), havuz ön ısıtma 40
+- ⚠️ Bot ölçümü: acemi 37-86 sn, usta 54-107 sn (hedef usta 180-300 sn). Bot tepkisel ve kısa ufuklu; usta bir insanı temsil etmiyor. **Gerçek denge kullanıcının telefonda oynamasıyla netleşecek.**
 
 ### Faz 2A sonucu (testler: 26/26 PlayMode + 3/3 EditMode)
 - [x] 2.1 GameEvents (Faz 3'te) + MeteorLanded
@@ -91,9 +103,10 @@ Sıra: → 5 → 4 → 10 → (2B → 6 → 7 → 8 → 9).
 - Varsayım: Kalkan "vurulana kadar" sürer (`ShieldData.duration` kullanılmıyor, davranış korunuyor)
 
 ### Sıradaki adım
-Faz 5: olay sistemi (taş yağmuru, çapraz ateş, sessizlik, yuvarlanan kaya), near-miss + combo, dash (aksiyon butonu), bot ile denge (20 oyun ortalaması), telegraph (fırlatıcı atış uyarısı).
+Faz 4: menü sahnesi (başlık, OYNA, karakter seçimi Boy/Girl, ayarlar: müzik/efekt/titreşim/sarsıntı/sıfırla, istatistik), oyun sonu ekranı (skor sayma, YENİ REKOR, süre/yakın geçiş/combo), pause paneli, piksel font, buton stili, sahne geçişi (kararma).
 
 ### Onay bekleyenler
+- **Denge hissi:** telefonda birkaç oyun oyna → "çok zor / çok kolay / tam" + hangi taş/olay haksız hissettirdi. Değerler `KakEndlessSetup.SetStage` ve `KakContentSetup` içinde tek yerde.
 - Palet: Endesga 32 varsayımla uygulandı (kullanıcı değiştirmek isterse: `KakPalette` + `tools/kak_palette.py` + `kak_art_pass.py`).
 - Sanat stili: piksel sanatı (32 px, PPU 32). Varsayım: evet, devam.
 - Hedef platform ve test cihazı (Android/iOS?). Faz 10'a kadar engel değil.
@@ -142,11 +155,13 @@ Faz 5: olay sistemi (taş yağmuru, çapraz ateş, sessizlik, yuvarlanan kaya), 
 | Powerup çıkma aralığı / yerde kalma | 5–10 sn / 8 sn |
 | Powerup ağırlıkları | Heart 1.0, Speed 0.8, Shield 0.6, SloMo 0.5, Ghost 0.4 |
 
-| Kademe | minSkor | Spawner | Ateş× | MermiHız× | Boyut× | OyuncuHız× | Skor× |
-|---|---|---|---|---|---|---|---|
-| Başlangıç | 0 | 2 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 |
-| Kolay | 50 | 2 | 0.85 | 1.15 | 1.0 | 1.05 | 1.1 |
-| Orta | 150 | 3 | 0.7 | 1.3 | 1.15 | 1.1 | 1.2 |
-| Zor | 350 | 3 | 0.55 | 1.5 | 1.3 | 1.15 | 1.3 |
-| Cehennem | 600 | 4 | 0.4 | 1.75 | 1.45 | 1.2 | 1.5 |
-| İmkansız | 1000 | 4 | 0.3 | 2.0 | 1.6 | 1.25 | 1.8 |
+| Kademe | minSkor (~sn) | Spawner | Aralık× | Hız× | Boyut× | Oyuncu× | Skor× | Taş türleri |
+|---|---|---|---|---|---|---|---|---|
+| Başlangıç | 0 | 2 | 1.00 | 1.00 | 1.00 | 1.00 | 1.0 | Taş |
+| Kolay | 200 (~20) | 2 | 0.90 | 1.10 | 1.00 | 1.05 | 1.1 | + Çakıl, Kaya |
+| Orta | 475 (~45) | 3 | 0.82 | 1.20 | 1.08 | 1.08 | 1.2 | + Seken |
+| Zor | 900 (~80) | 3 | 0.72 | 1.30 | 1.15 | 1.12 | 1.3 | + Parçalanan, Göktaşı |
+| Cehennem | 1550 (~130) | 4 | 0.62 | 1.42 | 1.22 | 1.16 | 1.5 | + Güdümlü |
+| İmkansız | 2600 (~200) | 4 | 0.52 | 1.55 | 1.30 | 1.20 | 1.8 | hepsi, özel ağırlıklı |
+
+Olaylar: Taş Yağmuru ve Çapraz Ateş kademe 2'den, Sessizlik 3'ten, Yuvarlanan Kaya 4'ten itibaren.
