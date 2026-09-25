@@ -45,8 +45,15 @@ public class Projectile : MonoBehaviour
     public TrailRenderer trailRenderer;
 
 
+    /// <summary>Sahnedeki aktif mermiler (bot, near-miss ve debug araçları için; tahsissiz okunur).</summary>
+    public static readonly System.Collections.Generic.List<Projectile> Active = new System.Collections.Generic.List<Projectile>(64);
+
+    /// <summary>Merminin anlık hız vektörü (dünya birimi/sn).</summary>
+    public Vector2 Velocity => moveDirection.normalized * speed;
+
     void OnEnable()
     {
+        Active.Add(this);
         // Pool'dan her alınışta (Instantiate ya da Get) yeniden başlat
         spawnTime = Time.time;
 
@@ -233,6 +240,7 @@ public class Projectile : MonoBehaviour
 
     void OnDisable()
     {
+        Active.Remove(this);
         // Trail'i durdur
         if (trailRenderer != null)
         {

@@ -77,3 +77,6 @@ crashlytics-build.properties
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Claude köprüsü (yerel komut/sonuç dosyaları, ekran görüntüleri)
+/.claude-bridge/
