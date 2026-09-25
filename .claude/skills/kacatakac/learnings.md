@@ -1,0 +1,39 @@
+# KaçAtaKaç — Öğrenme Günlüğü
+
+> En yeni kayıt en üstte. Format: `## YYYY-AA-GG — başlık`, sonra kısa maddeler.
+> Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
+> Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
+
+## 2026-09-25 — Ekran kompozisyonu kesinleşti, promptlar otonom çalışmaya göre yeniden yazıldı
+
+- Kullanıcı başka bir yapay zekanın önerisini getirdi (kare arenayı koru, üstü HUD duvarı, altı koridor + kontrol alanı). Değerlendirme: kontrollerin arenaya binmemesi, her cihazda aynı oyun alanı ve daha az iş açısından **benim "boyuna uzayan arena" önerimden daha iyi**. O öneri benimsendi. Benimsenmeyenler: "KAÇIŞ 0/3", çıkış kapısı hedefi, devriye ve ışık konileri (bölüm modu fikirleri, Sonsuz'a uymaz), kan izleri (oyunun tonuna ve yaş sınırına uymaz).
+- Kullanıcı düzeltmesi: Arena her telefonda aynı piksel boyutunda değil, **telefonun enine göre ölçekleniyor**. Oyun alanı dünya biriminde sabit.
+- Kullanıcı vurguları: **renk uyumu çok önemli**, **optimizasyona dikkat**. `sanat-rehberi.md` oluşturuldu, ana prompta performans bütçesi eklendi.
+- Kullanıcı Claude'u "ultra max effort" ile günlerce kesintisiz çalıştırmak istiyor. Ana prompt otonom döngüye göre yeniden yazıldı: adım başına commit, `progress.md` "Sıradaki adım" ve "Onay bekleyenler" ile kaldığı yerden devam etme. Otomatik doğrulama için Faz 0'a Unity MCP, PlayMode testleri, ekran görüntüsü ve bot aracı eklendi. Bunlar olmadan otonom çalışma her adımda kullanıcı testine takılır.
+- Dash, Sonsuz Mod'a Faz 5'te eklenecek (kontrol alanının sağ yarısı).
+- Faz 2, 2A (Sonsuz için şimdi) ve 2B (bölümlerden önce) olarak bölündü.
+
+## 2026-09-25 — Öncelik Sonsuz Mod, tam ekran arena kararı (kompozisyon kısmı yukarıdaki kayıtla değişti)
+
+- Kullanıcı kararı: **Önce Sonsuz Mod tamamen bitecek.** Bölümler sonra, "görseli ve ayarları değiştir, bitti" yaklaşımıyla gelecek. Futbolun ek mekanik (top, şut, kale) istediği kullanıcıya not edildi.
+- Kullanıcının en büyük görsel şikayeti: kare arena telefonda ekranın ~%46'sını kaplıyor, gerisi ölü alan. "Bu devirde sağı solu kullanamayan oyun olmaz."
+- Önerilen çözüm (Faz 1.5): dikey, tek ekran, **karo tabanlı ve ekran oranına göre boyuna uzayan arena**. Genişlik sabit, yükseklik esnek (9:16–9:21). HUD üst duvarın 2.5D ön yüzünde. 6 fırlatıcı duvar nişlerinde. Kayan joystick. Karo seti değişimi, bölümlerin reskin'ini de kolaylaştırıyor.
+- Önerilen yayın stratejisi: v1.0 sadece Sonsuz Mod, dünyalar güncellemelerle.
+- Faz 0 kararları hâlâ bekliyor (sanat stili, platform). Dikey ekran önerildi, onay bekleniyor.
+
+## 2026-09-25 — Vizyon netleşti, yol haritası ve faz promptları yazıldı
+
+- Kullanıcının vizyonu: Sonsuz mod (sadece taş, gittikçe zor) + bölüm bölüm dünyalar: Buz (kayma, gecikmeli durma), Futbol (topla gol at, futbolcular sarı/kırmızı kart atar), Karanlık arena ve dahası. "Görüntü aşırı iyi olsun, basit ama süper."
+- Kullanıcının şikayetleri: item'lar ekranın başka yerinde çıkıyor, bölüm tasarımı yok, menü "patates".
+- Görsel incelemesi: Arena üstten bakış yapay zeka üretimi piksel sanatı (sağ altta ✦ filigranı). Karakter 48×48, spawner 48px ama 4x ölçekli. Piksel yoğunlukları tutarsız, filtre Bilinear. URP Universal Renderer kullanılıyor, 2D Renderer değil.
+- Önerilen sanat yönü: disiplinli piksel sanatı (32px, tek PPU, palet, 5 yön + aynalama) + 2D ışık + juice. Karar Faz 0'da kullanıcıda. Alternatif: low-poly 3D.
+- 11 fazlık plan (0-10) `roadmap.md` ve `prompts/` altında. Kritik sıra: Faz 1 (hatalar) → Faz 2 (mimari: Enemy, GameMode, ProjectileData etkileri, Arena prefab, Save, Events). Bunlar yapılmadan yeni dünya eklenmemeli.
+
+## 2026-09-25 — Skill oluşturuldu, ilk tam okuma
+
+- Kullanıcı (Atakaan) oyunu Unity'de geliştiriyor ve Claude ile Türkçe çalışıyor. İstediği: Claude projeyi baştan sona anlasın, zamanla öğrendiklerini bu skill'e kaydederek gelişsin.
+- Tüm `Assets/Scripts` (~40 dosya), veri dosyaları, sahne obje listesi, git geçmişi okundu. Editor.log'da derleme hatası yok.
+- Sahne–script eşlemesi (SampleScene): `GameManager` objesinde GameManager + ScoreManager; `Player`'da PlayerMovement2D + PlayerHealth; `Player/Visual`'da PlayerDirectionSprite + YDepthSorter; `ArenaRoot`'ta ArenaAutoLayout; `Main Camera`'da CameraFitWidth; 4 köşe spawner'da CornerShooter, altındaki `Visual`'larda SpawnerDirectionAnimator; `HealthPanel`'de HealthUI; `JoystickHandle`'da VirtualJoystick; ayrı `PauseManager` objesi. **LevelManager, DifficultyManager ve ProjectilePool sahnede yok**, runtime'da yaratılıyorlar.
+- Sahne→script eşlemesini hızlıca çıkarmak için yöntem: `.cs.meta` dosyalarından guid → sınıf adı tablosu kur, `.unity` YAML'ında `--- !u!114` (MonoBehaviour) bloklarının `m_Script guid` ve `m_GameObject fileID` değerlerini `--- !u!1` (GameObject) `m_Name` ile eşle. Python ile 20 satır.
+- Görsellerin asıl kaynağı şu an sahnedeki bileşenler. Veri dosyalarındaki sprite/prefab alanlarının çoğu boş, kod da boşsa sahneyi koruyacak şekilde yazılmış.
+- Kritik şüphe: Retry akışı `GameManager.DontDestroyOnLoad` yüzünden bozuk olabilir (ayrıntı progress.md'de). Kullanıcıya bildirildi, henüz düzeltilmedi.
