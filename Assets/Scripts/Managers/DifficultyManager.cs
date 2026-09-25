@@ -168,6 +168,7 @@ public class DifficultyManager : MonoBehaviour
         {
             onStageChanged.Invoke(currentStage.stageName);
         }
+        GameEvents.RaiseStageChanged(currentStage.stageName, stageIndex);
 
         // Orijinaller henüz kaydedilmediyse şimdi kaydet
         if (!originalsRecorded)

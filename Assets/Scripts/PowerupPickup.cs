@@ -98,6 +98,7 @@ public class PowerupPickup : MonoBehaviour
         if (AudioManager.Instance != null) AudioManager.Instance.PlayScoreSfx(); // Geçici powerup sesi
         
         ShowPickupFeedback(transform.position, powerupData.powerupName + "!");
+        GameEvents.RaisePowerupCollected(powerupData, transform.position);
 
         switch (powerupData.type)
         {

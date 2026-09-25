@@ -61,13 +61,17 @@ public class GameManager : MonoBehaviour
         if (Instance == this) Instance = null;
     }
 
+    [Header("Ölüm Sekansı")]
+    [Tooltip("Ölümden sonra panel açılmadan önceki yavaş çekim süresi (gerçek sn)")]
+    public float deathSlowMoDuration = 0.7f;
+    public float deathSlowMoScale = 0.15f;
+
     public void GameOver()
     {
         if (isGameOver) return;
 
         isGameOver = true;
         if (timeSlowCoroutine != null) StopCoroutine(timeSlowCoroutine);
-        KakTime.SetTimeScale(0f);
 
         if (difficultyManager != null) difficultyManager.StopDifficulty();
         if (AudioManager.Instance != null) AudioManager.Instance.PlayDeathSfx();
@@ -79,6 +83,16 @@ public class GameManager : MonoBehaviour
             bestScore = finalScore;
             GameSettings.BestScore = bestScore;
         }
+
+        StartCoroutine(DeathSequence(finalScore, bestScore));
+    }
+
+    private System.Collections.IEnumerator DeathSequence(int finalScore, int bestScore)
+    {
+        // Kısa yavaş çekim: ölüm anı okunsun, parçacıklar ve sarsıntı görünsün
+        KakTime.SetTimeScale(deathSlowMoScale);
+        yield return new WaitForSecondsRealtime(deathSlowMoDuration);
+        KakTime.SetTimeScale(0f);
 
         if (gameOverPanel != null) gameOverPanel.SetActive(true);
         if (finalScoreText != null) finalScoreText.SetText("SCORE: {0}", finalScore);

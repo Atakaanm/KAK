@@ -4,6 +4,18 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-09-25 — Faz 3 tamamlandı: görsel temel
+
+- Kullanıcı `/goal` ile "fazlar bitene kadar durma" dedi. Palet seçimine cevap gelmeden Endesga 32 (önerim) varsayımla uygulandı.
+- **Palete zorla indirgemek yapay zeka görsellerini bozuyor** (meşale parıltısı sert turuncu leke, zemin düz yeşil, koyulaştırınca gürültü). Çözüm: yüksek çözünürlüklü görseller global renk tonlamasıyla bütünleşir, palet piksel sanatına ve üretilen öğelere uygulanır.
+- Taş için en iyi okunurluk: parlaklığa göre 4 kademeli **sıcak rampa** (kahve → bakır → ten) + lav çatlakları turuncu + 1 px koyu kontur + yumuşak gölge. Yeşil zeminin tamamlayıcısı olduğu için gri tonlamada bile seçiliyor. Palet indirgemeli gri taş benekliydi.
+- Karakterlere 1 px kontur (Endesga 181425) koyu zeminde seçilirliği ciddi artırdı.
+- Tuzak: `GetComponent<T>() ?? AddComponent<T>()` Unity nesnelerinde çalışmaz (sahte null). Açık `if (x == null)` kullan.
+- Tuzak: `Assets/Sprites/Player/Black.png` karakter karesi değil, yumuşak gölge (256 alfa kademesi). Toplu işlemlerde klasördeki özel dosyaları kontrol et.
+- Tuzak: Unity arka planda kendi kendine derleyince köprünün `refresh` cevabı "derlenecek değişiklik yok" diyebilir. İstemci artık son derleme sonucunu her zaman gösteriyor.
+- Performans: 138 batch. Sprite Atlas ve URP dinamik batching sayıyı değiştirmedi. Universal (3D) Renderer'da sprite birleşmesi zayıf. 2D Renderer değerlendirmesi Faz 10'da cihaz ölçümüyle yapılacak.
+- Ölüm sekansı: panel 0,7 sn yavaş çekimden sonra açılıyor. Testler `WaitUntil` ile bekliyor.
+
 ## 2026-09-25 — Faz 1.5 tamamlandı: tek parça dungeon ekranı
 
 - Kompozisyon: HUD bandı + ekran enine sığan kare arena + koridor/kontrol alanı. Sonuç ekran görüntülerinde net: "ortaya yapıştırılmış resim" hissi gitti. Değer dağılımı %78 orta tondan %51 koyu / %47 orta'ya geçti.

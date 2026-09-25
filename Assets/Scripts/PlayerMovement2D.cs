@@ -110,9 +110,10 @@ public class PlayerMovement2D : MonoBehaviour
 
         // Eğer zaman yavaşlatma efekti aktifse, oyuncu mermilerden daha hızlı kaçabilmek için kendi hızını korumalıdır.
         // Motorun fizik hızını (Time.timeScale) ters orantıyla dengeleyerek gerçek zamanlı hızını sabit tutuyoruz.
-        if (Time.timeScale > 0.01f && Time.timeScale < 1f)
+        float slow = KakTime.BaseScale;
+        if (slow > 0.01f && slow < 1f && !KakTime.HitStopping)
         {
-            currentSpeed /= Time.timeScale;
+            currentSpeed /= slow;
         }
 
         Vector2 targetVelocity = movementInput * currentSpeed;

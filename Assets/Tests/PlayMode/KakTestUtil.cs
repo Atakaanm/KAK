@@ -16,8 +16,7 @@ public static class KakTestUtil
     /// </summary>
     public static void ResetWorld()
     {
-        Time.timeScale = 1f;
-        Time.fixedDeltaTime = 0.02f;
+        KakTime.ResetAll();
         GameSettings.Reset();
 
         foreach (var gm in Object.FindObjectsByType<GameManager>(FindObjectsInactive.Include, FindObjectsSortMode.None))

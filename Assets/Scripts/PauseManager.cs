@@ -10,7 +10,6 @@ public class PauseManager : MonoBehaviour
     public Button mainMenuButton;
 
     private bool isPaused = false;
-    private float savedTimeScale = 1f;
 
     public bool IsPaused => isPaused;
 
@@ -50,10 +49,7 @@ public class PauseManager : MonoBehaviour
             return;
 
         isPaused = true;
-        savedTimeScale = Time.timeScale;
-        if (savedTimeScale <= 0f) savedTimeScale = 1f;
-        // fixedDeltaTime'a dokunma: timeScale = 0 iken fizik zaten ilerlemez
-        Time.timeScale = 0f;
+        KakTime.SetPaused(true);
 
         if (pausePanel != null)
             pausePanel.SetActive(true);
@@ -63,7 +59,7 @@ public class PauseManager : MonoBehaviour
     {
         if (!isPaused) return;
         isPaused = false;
-        KakTime.SetTimeScale(savedTimeScale);
+        KakTime.SetPaused(false);
 
         if (pausePanel != null)
             pausePanel.SetActive(false);
@@ -81,6 +77,6 @@ public class PauseManager : MonoBehaviour
     void OnDestroy()
     {
         if (isPaused)
-            KakTime.SetTimeScale(savedTimeScale);
+            KakTime.SetPaused(false);
     }
 }

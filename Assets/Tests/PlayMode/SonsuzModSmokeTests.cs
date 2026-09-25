@@ -74,7 +74,9 @@ public class SonsuzModSmokeTests
 
         Assert.IsTrue(GameManager.Instance.IsGameOver, "Ölüm sonrası IsGameOver false");
         Assert.IsNotNull(GameManager.Instance.gameOverPanel, "gameOverPanel referansı yok");
-        Assert.IsTrue(GameManager.Instance.gameOverPanel.activeInHierarchy, "Game Over paneli açılmadı");
+        // Panel kısa ölüm yavaş çekiminden sonra açılır
+        yield return KakTestUtil.WaitUntil(() => GameManager.Instance.gameOverPanel.activeInHierarchy, 3f, "Game Over paneli açılmadı");
+        Assert.AreEqual(0f, Time.timeScale, "Oyun sonunda zaman durmalı");
     }
 
     /// <summary>
@@ -105,8 +107,8 @@ public class SonsuzModSmokeTests
         KakTestUtil.KillPlayer();
         yield return null;
         Assert.IsTrue(GameManager.Instance.IsGameOver, "İkinci ölümde Game Over tetiklenmedi");
-        Assert.IsTrue(GameManager.Instance.gameOverPanel != null && GameManager.Instance.gameOverPanel.activeInHierarchy,
-            "İkinci ölümde Game Over paneli açılmadı");
+        yield return KakTestUtil.WaitUntil(() => GameManager.Instance.gameOverPanel != null && GameManager.Instance.gameOverPanel.activeInHierarchy,
+            3f, "İkinci ölümde Game Over paneli açılmadı");
     }
 
     [UnityTest]
