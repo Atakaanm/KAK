@@ -37,7 +37,7 @@ public class MainMenuController : MonoBehaviour
     void Start()
     {
         // Zaman olcegini sifirla (oyundan donerken donmus olabilir)
-        Time.timeScale = 1f;
+        KakTime.ResetAll();
 
         // En iyi skoru goster
         UpdateBestScore();
@@ -95,8 +95,9 @@ public class MainMenuController : MonoBehaviour
             GameSettings.SelectedLevel = defaultLevel;
         }
 
-        // Oyun sahnesine gec
-        SceneManager.LoadScene(gameSceneName);
+        // Oyun sahnesine gec (zaman ölçeği SceneLoader'da sıfırlanır)
+        if (gameSceneName == SceneLoader.GAME_SCENE) SceneLoader.LoadGame();
+        else SceneManager.LoadScene(gameSceneName);
     }
 
     /// <summary>
@@ -133,7 +134,7 @@ public class MainMenuController : MonoBehaviour
         PlayButtonSound();
         // Simdilik sadece en iyi skoru guncelle
         UpdateBestScore();
-        Debug.Log("[MainMenu] Leaderboard tiklandi — ileride eklenecek.");
+        KakLog.Info("[MainMenu] Leaderboard tiklandi — ileride eklenecek.");
     }
 
     // ── Panel Kapatma ─────────────────────────────────

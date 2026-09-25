@@ -27,6 +27,8 @@ public class PowerupSpawner : MonoBehaviour
     public int powerupSortingOrder = 20;
 
     private PowerupData[] availablePowerups;
+    private readonly Collider2D[] overlapBuffer = new Collider2D[8];
+    private ContactFilter2D overlapFilter;
     private float timer = 0f;
     private float currentInterval;
     private bool boundsReady = false;
@@ -86,7 +88,7 @@ public class PowerupSpawner : MonoBehaviour
             spawnAreaMax = new Vector2(rightX - padX, topY - padY);
             boundsReady = true;
 
-            Debug.Log($"[PowerupSpawner] Sınırlar DUVARLARDAN alındı: {spawnAreaMin} → {spawnAreaMax}");
+            KakLog.Info($"[PowerupSpawner] Sınırlar DUVARLARDAN alındı: {spawnAreaMin} → {spawnAreaMax}");
         }
         // 2. ÖNCELİK: Sprite Bounds (Yedek)
         else if (arena != null && arena.arenaSpriteRenderer != null)
@@ -100,7 +102,7 @@ public class PowerupSpawner : MonoBehaviour
             spawnAreaMax = new Vector2(b.center.x + padX, b.center.y + padY);
             boundsReady = true;
 
-            Debug.Log($"[PowerupSpawner] Sınırlar SPRITE'TAN alındı: {spawnAreaMin} → {spawnAreaMax}");
+            KakLog.Info($"[PowerupSpawner] Sınırlar SPRITE'TAN alındı: {spawnAreaMin} → {spawnAreaMax}");
         }
         else
         {
@@ -167,11 +169,14 @@ public class PowerupSpawner : MonoBehaviour
             float ry = Random.Range(spawnAreaMin.y, spawnAreaMax.y);
             spawnPos = new Vector3(rx, ry, 0f);
 
-            Collider2D[] hits = Physics2D.OverlapCircleAll(spawnPos, itemWorldSize * 0.5f);
+            overlapFilter.useTriggers = true;
+            int hitCount = Physics2D.OverlapCircle(spawnPos, itemWorldSize * 0.5f, overlapFilter, overlapBuffer);
             bool blocked = false;
-            foreach (var h in hits)
+            for (int h = 0; h < hitCount; h++)
             {
-                if (h.CompareTag("Player") || h.CompareTag("Wall") || h.name.Contains("Spawner"))
+                var other = overlapBuffer[h];
+                // Oyuncu, katı engeller (duvar, spawner) ve başka powerup'lar engeller; mermiler (trigger) engellemez
+                if (other.CompareTag("Player") || !other.isTrigger || other.GetComponent<PowerupPickup>() != null)
                 {
                     blocked = true;
                     break;
@@ -232,6 +237,6 @@ public class PowerupSpawner : MonoBehaviour
 
         floater.SetStartPosition(spawnPos);
 
-        Debug.Log($"[PowerupSpawner] '{selectedPowerup.powerupName}' oluşturuldu → {spawnPos}  scale={obj.transform.localScale.x:F2}");
+        KakLog.Info($"[PowerupSpawner] '{selectedPowerup.powerupName}' oluşturuldu → {spawnPos}  scale={obj.transform.localScale.x:F2}");
     }
 }

@@ -29,15 +29,15 @@ public class LevelManager : MonoBehaviour
 
     void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
         }
+        Instance = this;
+
+        // Önceki sahneden kalan statik mermi sınırlarını sıfırla
+        Projectile.ResetBounds();
 
         // --- REFERANSLAR EKSİKSE OTOMATİK BUL ---
         if (playerMovement == null) playerMovement = FindAnyObjectByType<PlayerMovement2D>();
@@ -45,7 +45,12 @@ public class LevelManager : MonoBehaviour
         if (playerVisual == null) playerVisual = FindAnyObjectByType<PlayerDirectionSprite>();
         if (arenaLayout == null) arenaLayout = FindAnyObjectByType<ArenaAutoLayout>();
         if (spawners == null || spawners.Length == 0) spawners = FindObjectsByType<CornerShooter>(FindObjectsSortMode.None);
-        if (spawnerVisuals == null || spawnerVisuals.Length == 0) spawnerVisuals = FindObjectsByType<SpawnerDirectionAnimator>(FindObjectsSortMode.None);
+        // Deterministik sıra: zorluk kademeleri spawner'ları bu sırayla açar (önce çaprazlar)
+        spawners = SortByCorner(spawners);
+        // Görseller her zaman kendi spawner'ıyla eşleşsin
+        spawnerVisuals = new SpawnerDirectionAnimator[spawners.Length];
+        for (int i = 0; i < spawners.Length; i++)
+            spawnerVisuals[i] = spawners[i] != null ? spawners[i].spawnerVisual : null;
 
         // PowerupSpawner otomatik bul
         if (powerupSpawner == null)
@@ -64,6 +69,12 @@ public class LevelManager : MonoBehaviour
         {
             difficultyManager = FindAnyObjectByType<DifficultyManager>();
         }
+        if (difficultyManager == null)
+        {
+            difficultyManager = new GameObject("DifficultyManager").AddComponent<DifficultyManager>();
+            difficultyManager.transform.parent = this.transform;
+            Debug.LogWarning("[LevelManager] DifficultyManager sahnede yoktu, yedek olarak oluşturuldu.");
+        }
 
         // WaveManager otomatik bul
         if (waveManager == null)
@@ -71,14 +82,47 @@ public class LevelManager : MonoBehaviour
             waveManager = FindAnyObjectByType<WaveManager>();
         }
 
-        // ProjectilePool — sahnede yoksa otomatik yarat
-        if (ProjectilePool.Instance == null)
+        // ProjectilePool — sahnede yoksa yedek olarak yarat
+        if (ProjectilePool.Instance == null && FindAnyObjectByType<ProjectilePool>() == null)
         {
             GameObject poolObj = new GameObject("ProjectilePool");
             poolObj.AddComponent<ProjectilePool>();
             poolObj.transform.parent = this.transform;
-            Debug.Log("[LevelManager] ProjectilePool otomatik oluşturuldu.");
+            Debug.LogWarning("[LevelManager] ProjectilePool sahnede yoktu, yedek olarak oluşturuldu.");
         }
+    }
+
+    void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
+    }
+
+    /// <summary>
+    /// Spawner'ları köşe önceliğine göre sıralar: SolAlt, SağÜst, SolÜst, SağAlt.
+    /// 2 aktif spawner'lı kademede oyuncu çapraz ateş alır; sıra her oyunda aynıdır.
+    /// </summary>
+    public static CornerShooter[] SortByCorner(CornerShooter[] list)
+    {
+        if (list == null || list.Length < 2) return list;
+        Vector3 center = Vector3.zero;
+        int n = 0;
+        foreach (var s in list) if (s != null) { center += s.transform.position; n++; }
+        if (n > 0) center /= n;
+
+        var sorted = (CornerShooter[])list.Clone();
+        System.Array.Sort(sorted, (a, b) => CornerRank(a, center).CompareTo(CornerRank(b, center)));
+        return sorted;
+    }
+
+    static int CornerRank(CornerShooter s, Vector3 center)
+    {
+        if (s == null) return 99;
+        Vector3 d = s.transform.position - center;
+        bool left = d.x < 0f, bottom = d.y < 0f;
+        if (left && bottom) return 0;   // SolAlt
+        if (!left && !bottom) return 1; // SağÜst
+        if (left) return 2;             // SolÜst
+        return 3;                       // SağAlt
     }
 
     void Start()
@@ -93,7 +137,7 @@ public class LevelManager : MonoBehaviour
         if (currentLevel == null && defaultLevel != null)
         {
             currentLevel = defaultLevel;
-            Debug.Log("[LevelManager] defaultLevel kullanılıyor: " + defaultLevel.levelName);
+            KakLog.Info("[LevelManager] defaultLevel kullanılıyor: " + defaultLevel.levelName);
         }
 
         if (currentLevel != null)
@@ -118,7 +162,7 @@ public class LevelManager : MonoBehaviour
         if (arenaLayout != null && arenaLayout.arenaSpriteRenderer != null)
         {
             Projectile.SetArenaBounds(arenaLayout.arenaSpriteRenderer.bounds);
-            Debug.Log("[LevelManager] Arena sınırları Projectile sistemine bildirildi.");
+            KakLog.Info("[LevelManager] Arena sınırları Projectile sistemine bildirildi.");
         }
     }
 
@@ -131,7 +175,7 @@ public class LevelManager : MonoBehaviour
 
         currentLevel = level;
 
-        Debug.Log("[LevelManager] Level yukleniyor: " + level.levelName);
+        KakLog.Info("[LevelManager] Level yukleniyor: " + level.levelName);
 
         // --- PLAYER AYARLARI ---
         ApplyPlayerData(level.playerData);
@@ -173,7 +217,7 @@ public class LevelManager : MonoBehaviour
 
         if (powerupSpawner != null) powerupSpawner.RefreshArenaBounds();
 
-        Debug.Log("[LevelManager] Level hazirlandi: " + level.levelName);
+        KakLog.Info("[LevelManager] Level hazirlandi: " + level.levelName);
     }
 
     void ApplyPlayerData(PlayerData data)
@@ -215,15 +259,15 @@ public class LevelManager : MonoBehaviour
                 playerVisual.southEast.runFrames = data.southEast.runFrames;
                 playerVisual.southWest.runFrames = data.southWest.runFrames;
                 
-                Debug.Log("[LevelManager] Player görselleri Data'dan yüklendi: " + data.playerName);
+                KakLog.Info("[LevelManager] Player görselleri Data'dan yüklendi: " + data.playerName);
             }
             else
             {
-                Debug.Log("[LevelManager] PlayerData'da görsel yok. Sahnedeki Player görseli kullanılıyor.");
+                KakLog.Info("[LevelManager] PlayerData'da görsel yok. Sahnedeki Player görseli kullanılıyor.");
             }
         }
 
-        Debug.Log("[LevelManager] Player istatistikleri ayarlandi: " + data.playerName);
+        KakLog.Info("[LevelManager] Player istatistikleri ayarlandi: " + data.playerName);
     }
 
     void ApplyArenaData(ArenaData data)
@@ -247,7 +291,7 @@ public class LevelManager : MonoBehaviour
             playerMovement.arenaSpeedMultiplier = data.movementSpeedMultiplier;
         }
 
-        Debug.Log("[LevelManager] Arena ayarlandi: " + data.arenaName);
+        KakLog.Info("[LevelManager] Arena ayarlandi: " + data.arenaName);
     }
 
     void ApplySpawnerData(SpawnerData[] dataList)
@@ -295,7 +339,7 @@ public class LevelManager : MonoBehaviour
             }
         }
 
-        Debug.Log("[LevelManager] " + count + " spawner ayarlandi.");
+        KakLog.Info("[LevelManager] " + count + " spawner ayarlandi.");
     }
 
     /// <summary>
@@ -306,29 +350,11 @@ public class LevelManager : MonoBehaviour
     {
         if (difficultyManager == null || stages == null || stages.Length == 0) return;
 
-        // Stage'leri aktar
-        difficultyManager.stages = stages;
+        // Spawner'lar LevelData ile ayarlandıktan SONRA başlat: orijinal aralıklar doğru kaydedilir
+        ScoreManager score = GameManager.Instance != null ? GameManager.Instance.scoreManager : null;
+        difficultyManager.Init(stages, spawners, score);
 
-        // ÖNEMLİ: Spawner referanslarını DifficultyManager'a bağla
-        if (spawners != null && spawners.Length > 0)
-        {
-            difficultyManager.allSpawners = spawners;
-            Debug.Log("[LevelManager] DifficultyManager'a " + spawners.Length + " spawner referansı bağlandı.");
-        }
-
-        // ScoreManager referansını bağla
-        if (GameManager.Instance != null && GameManager.Instance.scoreManager != null)
-        {
-            difficultyManager.scoreManager = GameManager.Instance.scoreManager;
-            Debug.Log("[LevelManager] DifficultyManager'a ScoreManager referansı bağlandı.");
-        }
-
-        // Spawner'lar yeni ayarlandıktan sonra orijinal interval'leri kaydet
-        // Bu çok önemli: LevelManager spawner interval'lerini set ettikten SONRA
-        // DifficultyManager bunları "orijinal" olarak kaydetmeli
-        difficultyManager.RecordOriginalIntervals();
-
-        Debug.Log("[LevelManager] Zorluk sistemi kuruldu: " + stages.Length + " asama.");
+        KakLog.Info("[LevelManager] Zorluk sistemi kuruldu: " + stages.Length + " asama.");
     }
 
     /// <summary>
@@ -358,6 +384,6 @@ public class LevelManager : MonoBehaviour
         // Dalga listesini ver ve başlat
         waveManager.Init(waveList);
 
-        Debug.Log("[LevelManager] Dalga sistemi başlatıldı: " + waveList.Length + " dalga.");
+        KakLog.Info("[LevelManager] Dalga sistemi başlatıldı: " + waveList.Length + " dalga.");
     }
 }

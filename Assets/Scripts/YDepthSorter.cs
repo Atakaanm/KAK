@@ -64,7 +64,7 @@ public class YDepthSorter : MonoBehaviour
             }
             else
             {
-                Debug.Log($"[YDepthSorter] Parent modu: '{gameObject.name}' altında {childRenderers.Length} SpriteRenderer bulundu.");
+                KakLog.Info($"[YDepthSorter] Parent modu: '{gameObject.name}' altında {childRenderers.Length} SpriteRenderer bulundu.");
             }
         }
     }

@@ -59,7 +59,7 @@ public class ScoreManager : MonoBehaviour
 
             if (scoreText != null)
             {
-                scoreText.text = "SCORE: " + scoreInt.ToString();
+                scoreText.SetText("SCORE: {0}", scoreInt);
             }
 
             onScoreChanged?.Invoke(scoreInt);

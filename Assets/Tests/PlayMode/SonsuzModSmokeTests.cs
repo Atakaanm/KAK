@@ -135,10 +135,19 @@ public class SonsuzModSmokeTests
     [UnityTest]
     public IEnumerator Oyun_20Saniye_HataLoguOlmadanCalisir()
     {
+        var problems = new System.Collections.Generic.List<string>();
+        Application.LogCallback onLog = (msg, stack, type) =>
+        {
+            if (type == LogType.Warning || type == LogType.Error || type == LogType.Exception || type == LogType.Assert)
+                problems.Add(type + ": " + msg);
+        };
+        Application.logMessageReceived += onLog;
+
         yield return KakTestUtil.LoadGameWithLevel();
         KakTestUtil.MakePlayerSafe();
-        LogAssert.ignoreFailingMessages = false;
         yield return KakTestUtil.WaitReal(20f);
-        LogAssert.NoUnexpectedReceived();
+
+        Application.logMessageReceived -= onLog;
+        Assert.IsEmpty(problems, "20 sn oyunda uyarı/hata logu:\n" + string.Join("\n", problems));
     }
 }

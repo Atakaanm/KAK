@@ -95,8 +95,8 @@ public class PlayerMovement2D : MonoBehaviour
         
         // Zamanın yavaşlamasına bağımsız sürmesini istersen Realtime kullanabiliriz,
         // ama normal saniye sayması için yield return new WaitForSeconds daha iyidir.
-        yield return new WaitForSeconds(duration);
-        
+        yield return KakTime.WaitGameplay(duration);
+
         currentSpeedBoostMult = 1f;
     }
 
