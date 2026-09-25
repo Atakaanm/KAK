@@ -4,6 +4,23 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-09-25 — Ekran kompozisyonu kesinleşti, promptlar otonom çalışmaya göre yeniden yazıldı
+
+- Kullanıcı başka bir yapay zekanın önerisini getirdi (kare arenayı koru, üstü HUD duvarı, altı koridor + kontrol alanı). Değerlendirme: kontrollerin arenaya binmemesi, her cihazda aynı oyun alanı ve daha az iş açısından **benim "boyuna uzayan arena" önerimden daha iyi**. O öneri benimsendi. Benimsenmeyenler: "KAÇIŞ 0/3", çıkış kapısı hedefi, devriye ve ışık konileri (bölüm modu fikirleri, Sonsuz'a uymaz), kan izleri (oyunun tonuna ve yaş sınırına uymaz).
+- Kullanıcı düzeltmesi: Arena her telefonda aynı piksel boyutunda değil, **telefonun enine göre ölçekleniyor**. Oyun alanı dünya biriminde sabit.
+- Kullanıcı vurguları: **renk uyumu çok önemli**, **optimizasyona dikkat**. `sanat-rehberi.md` oluşturuldu, ana prompta performans bütçesi eklendi.
+- Kullanıcı Claude'u "ultra max effort" ile günlerce kesintisiz çalıştırmak istiyor. Ana prompt otonom döngüye göre yeniden yazıldı: adım başına commit, `progress.md` "Sıradaki adım" ve "Onay bekleyenler" ile kaldığı yerden devam etme. Otomatik doğrulama için Faz 0'a Unity MCP, PlayMode testleri, ekran görüntüsü ve bot aracı eklendi. Bunlar olmadan otonom çalışma her adımda kullanıcı testine takılır.
+- Dash, Sonsuz Mod'a Faz 5'te eklenecek (kontrol alanının sağ yarısı).
+- Faz 2, 2A (Sonsuz için şimdi) ve 2B (bölümlerden önce) olarak bölündü.
+
+## 2026-09-25 — Öncelik Sonsuz Mod, tam ekran arena kararı (kompozisyon kısmı yukarıdaki kayıtla değişti)
+
+- Kullanıcı kararı: **Önce Sonsuz Mod tamamen bitecek.** Bölümler sonra, "görseli ve ayarları değiştir, bitti" yaklaşımıyla gelecek. Futbolun ek mekanik (top, şut, kale) istediği kullanıcıya not edildi.
+- Kullanıcının en büyük görsel şikayeti: kare arena telefonda ekranın ~%46'sını kaplıyor, gerisi ölü alan. "Bu devirde sağı solu kullanamayan oyun olmaz."
+- Önerilen çözüm (Faz 1.5): dikey, tek ekran, **karo tabanlı ve ekran oranına göre boyuna uzayan arena**. Genişlik sabit, yükseklik esnek (9:16–9:21). HUD üst duvarın 2.5D ön yüzünde. 6 fırlatıcı duvar nişlerinde. Kayan joystick. Karo seti değişimi, bölümlerin reskin'ini de kolaylaştırıyor.
+- Önerilen yayın stratejisi: v1.0 sadece Sonsuz Mod, dünyalar güncellemelerle.
+- Faz 0 kararları hâlâ bekliyor (sanat stili, platform). Dikey ekran önerildi, onay bekleniyor.
+
 ## 2026-09-25 — Vizyon netleşti, yol haritası ve faz promptları yazıldı
 
 - Kullanıcının vizyonu: Sonsuz mod (sadece taş, gittikçe zor) + bölüm bölüm dünyalar: Buz (kayma, gecikmeli durma), Futbol (topla gol at, futbolcular sarı/kırmızı kart atar), Karanlık arena ve dahası. "Görüntü aşırı iyi olsun, basit ama süper."

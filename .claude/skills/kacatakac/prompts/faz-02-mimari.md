@@ -5,6 +5,21 @@
 ## Amaç
 Kodu "4 köşeden taş atan fırlatıcı" varsayımından kurtarıp **farklı arenalar, düşmanlar, mermiler ve kazanma koşulları** eklenebilecek hale getirmek. Faz sonunda oyun dışarıdan **aynı** görünmeli: Sonsuz Mod bire bir çalışmalı. Ama altyapı Buz, Futbol ve Karanlık dünyalarını kaldırabilmeli.
 
+## ⭐ Kapsam: Sonsuz öncelikli plan
+Güncel sıra (`roadmap.md` §4) gereği bu faz **ikiye bölündü**:
+
+| Şimdi (Faz 2A — Sonsuz'un ihtiyacı) | Sonra (Faz 2B — bölüm dünyalarından önce) |
+|---|---|
+| 2.1 GameEvents | 2.3 Düşman sistemi (hareket desenleri) — Sonsuz'da sadece `Stationary` + `Aimed/Predictive/Spread/Burst` saldırı desenleri şimdi yazılır |
+| 2.2 Tek animatör | 2.6 Arena prefab ve `EnemyPlacement` (Faz 1.5'teki `ArenaTileSet` + `SpawnPoint` zaten temel olur) |
+| 2.4 Mermi hareket/etki + 2.5D yükseklik (göktaşı, seken ve parçalanan taş için şart) | 2.7 GameMode sistemi (Sonsuz şimdilik tek mod; `GameManager` → `EndlessSurvivalMode` sarmalaması yeterli) |
+| 2.5 Durum efektleri (Shield/Ghost/Speed/SloMo taşıması + Dash'in ölümsüzlüğü) | 2.9 WorldData, bölüm verisi |
+| 2.8 SaveSystem | |
+
+Faz 2A'da 2B'ye ait bir şeyi önceden yazma. Sadece arayüzleri kapatmayacak şekilde tasarla (ör. `AttackPattern` SO'su sonradan yeni desenlerle genişleyebilmeli).
+
+**Performans notları:** Olay sistemi C# `event Action<T>` (UnityEvent değil, GC'siz). Mermi hareket stratejileri `Update` başına tahsis yapmamalı. `ProjectileMotion` her mermide `new` ile değil, SO üzerinden paylaşılan, durumsuz strateji olarak çalışmalı (durum mermide tutulur).
+
 ## İlke
 Kalıtımdan çok **bileşen + veri**. Yeni bir düşman ya da mod çoğunlukla yeni bir SO ve prefab ile eklenmeli. Her adımdan sonra Sonsuz Mod çalışır durumda olmalı (büyük patlama yok, adım adım taşıma).
 

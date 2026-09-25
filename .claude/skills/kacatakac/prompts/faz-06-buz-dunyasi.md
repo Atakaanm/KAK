@@ -2,6 +2,9 @@
 
 **Süre tahmini:** 3-4 oturum · **Dal:** `faz-6-buz` · **Ön koşul:** Faz 2, 3, 4
 
+
+> **Güncel plan notu:** Bu dünya Sonsuz Mod v1.0 yayınından sonra gelir. Ön koşul: Faz 2B. Dünyanın görseli bir `ArenaTileSet` (arena + HUD duvar yüzü + koridor/kontrol alanı teması) ve paletin bu dünyaya ait alt tonlarıyla kurulur (`sanat-rehberi.md`). Kompozisyon değişmez: HUD bandı + kare arena + koridor/kontrol alanı. Performans bütçesi ana prompttaki gibidir.
+
 ## Fantezi
 Donmuş bir göl arenası. Karakter hızlanırken ve dururken kayar, **anında duramaz**. Oyuncu kaymayı hesaba katarak önceden yön vermeyi öğrenir. Düşmanlar kartopu ve buz sarkıtı atar.
 

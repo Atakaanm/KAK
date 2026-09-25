@@ -30,7 +30,10 @@ Sonsuz Mod'un menüden başlayıp ölüp tekrar oynanabildiği, item'ların aren
 
 ### 1.3 Küçük hatalar
 - Ghost ve Speed süreleri: oyun zamanı mı gerçek zaman mı olmalı, bana sor. Öneri: SloMo sırasında uzamasınlar, `WaitForSecondsRealtime` kullanılsın.
-- `VirtualJoystick` `JoystickHandle` üzerinde. `JoystickBG`'ye taşı, dokunma alanını genişlet. İsteğe bağlı: ekranın sol yarısına dokununca joystick orada belirsin (floating joystick). Bunu bana sor.
+- Joystick yeniden tasarımı **Faz 1.5'te** (kontrol alanı). Burada sadece `VirtualJoystick`'in `JoystickHandle` yerine `JoystickBG` üzerinde çalışmasını sağla, dokunma alanı düzgün olsun.
+- **GC ve log temizliği (performans bütçesi):** `ScoreManager` her skor değişiminde `"SCORE: " + int` ile string üretiyor, `TMP_Text.SetText("SCORE: {0}", skor)` kullan. `Projectile`, `DifficultyManager`, `PowerupSpawner` ve `ProjectilePool` içindeki sık `Debug.Log`'lar editöre özel bir sarmalayıcıya taşınsın (`[Conditional("UNITY_EDITOR")]`). `PowerupSpawner`'daki `Physics2D.OverlapCircleAll` → `OverlapCircle` + önceden ayrılmış dizi (NonAlloc) kullansın. `PowerupPickup.ShowPickupFeedback`'teki `new GameObject` Faz 3'te havuza taşınacak, not düş.
+- **Fizik katmanları:** `Projectile`, `Player`, `Wall`, `Pickup` katmanları ve Physics2D collision matrix: mermiler birbirleriyle ve duvarla çarpışmasın.
+- `Application.targetFrameRate = 60` (oyun başında bir kez).
 - `DifficultyManager` spawner sırası rastgele. Köşeleri deterministik sırala (ör. SolAlt, SağÜst, SolÜst, SağAlt; köşegenler önce açılsın ki oyuncu çapraz ateş alsın).
 - Game Over'da `AudioManager.PlayDeathSfx()`, vuruşta `PlayHitSfx()` çağrılmıyor, bağla. Kliplerin atanıp atanmadığını kontrol et, boşsa bana söyle.
 - `ShieldData.duration` kullanılmıyor. Ya kalkana süre ekle ya alanı "0 = vurulana kadar" olarak belgele. Bana sor.
@@ -39,7 +42,11 @@ Sonsuz Mod'un menüden başlayıp ölüp tekrar oynanabildiği, item'ların aren
 ### 1.4 Tanı aracı
 - `KacAtaKac/Diagnose Scene` aracını genişlet: eksik referans, boş Data alanı, yanlış filtre modu (Bilinear piksel sprite) ve tag eksikliği (`Player`, `Wall`) raporlasın.
 
-## Test listesi (bana ver, sonuçlarını iste)
+### 1.5 Otomatik testler
+- Faz 0'da kurulan PlayMode testlerini genişlet: Retry döngüsü (2 kez), menü dönüşü, doğrudan SampleScene başlatma, 50 powerup'ın hepsinin `PlayableWorldRect` içinde doğması, 5 dakikalık bot oyununda havuz boyutunun sınırsız büyümemesi.
+- Faz 1 sonunda tüm testler yeşil olmalı.
+
+## Test listesi (otomatik testlerle çalıştır, çalıştıramadıklarını bana ver)
 1. MainMenu'den Oyna → 60 sn oyna → skor artıyor mu, zorluk log'ları geliyor mu?
 2. Öl → Game Over paneli, skor ve en iyi skor doğru mu? → **Tekrar Dene** → skor 0'dan artıyor mu, powerup çıkıyor mu? → tekrar öl → panel geliyor mu?
 3. Game Over → Menü → Oyna → aynı kontroller.

@@ -2,6 +2,9 @@
 
 **Süre tahmini:** 3 oturum · **Dal:** `faz-8-karanlik` · **Ön koşul:** Faz 3 (2D Renderer ve ışıklar)
 
+
+> **Güncel plan notu:** Bu dünya Sonsuz Mod v1.0 yayınından sonra gelir. Ön koşul: Faz 2B. Dünyanın görseli bir `ArenaTileSet` (arena + HUD duvar yüzü + koridor/kontrol alanı teması) ve paletin bu dünyaya ait alt tonlarıyla kurulur (`sanat-rehberi.md`). Kompozisyon değişmez: HUD bandı + kare arena + koridor/kontrol alanı. Performans bütçesi ana prompttaki gibidir.
+
 ## Fantezi
 Zifiri karanlık bir mahzen. Sadece karakterin etrafı aydınlık. Düşmanlar ancak ateş ederken (namlu parlaması) ve mermiler **parlayarak** görünür. Atmosfer, gerilim ve ses ön planda.
 

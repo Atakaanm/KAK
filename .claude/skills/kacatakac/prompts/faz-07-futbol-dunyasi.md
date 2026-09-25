@@ -2,6 +2,9 @@
 
 **Süre tahmini:** 4-5 oturum · **Dal:** `faz-7-futbol` · **Ön koşul:** Faz 2 (`FootballMode` iskeleti, durum efektleri), Faz 4
 
+
+> **Güncel plan notu:** Bu dünya Sonsuz Mod v1.0 yayınından sonra gelir. Ön koşul: Faz 2B. Dünyanın görseli bir `ArenaTileSet` (arena + HUD duvar yüzü + koridor/kontrol alanı teması) ve paletin bu dünyaya ait alt tonlarıyla kurulur (`sanat-rehberi.md`). Kompozisyon değişmez: HUD bandı + kare arena + koridor/kontrol alanı. Performans bütçesi ana prompttaki gibidir.
+
 ## Fantezi
 Bir futbol sahasındasın, ayağında top var. Kenar çizgisindeki rakip futbolcular sana **sarı ve kırmızı kart** fırlatıyor. Kartlardan kaçarken tek tuşla şut atıp **gol** atmaya çalışıyorsun. Kaçış ve hedef aynı anda.
 

@@ -11,4 +11,6 @@ Bu bir Unity 6 (6000.3.8f1, URP) mobil 2.5D arcade oyun projesi. Kullanıcıyla 
    - Mimari/kural değiştiyse `SKILL.md`
    Soru-cevap gibi hiçbir şey değişmeyen konuşmalarda güncelleme gerekmez, ama kullanıcı yeni bir tercih veya bilgi verdiyse `learnings.md`'ye yaz.
 3. Sahne/prefab YAML dosyalarını elle düzenleme (sadece çok küçük, kesin değişiklikler hariç). `.meta` dosyalarına dokunma.
-4. Derleme hatası kontrolü: `grep -E "error CS|Exception" ~/Library/Logs/Unity/Editor.log`
+4. Görsel işlerde `sanat-rehberi.md` (renk uyumu bir numaralı kriter), her işte ana prompttaki performans bütçesi (`prompts/00-ana-prompt.md`) geçerli.
+5. Uzun ve otonom çalışmada `progress.md` → "Sıradaki adım" ve "Onay bekleyenler" bölümlerini her adımda güncel tut. Oturum kesilirse iş buradan devam eder.
+6. Derleme hatası kontrolü: `grep -E "error CS|Exception" ~/Library/Logs/Unity/Editor.log`

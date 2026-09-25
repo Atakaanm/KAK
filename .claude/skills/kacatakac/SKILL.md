@@ -10,6 +10,7 @@ Bu skill yaşayan bir belgedir. Her oturumda öğrenilenler buraya eklenir.
 - **[progress.md](progress.md):** Nerede kaldık, yol haritası, bilinen hatalar. Her iş sonunda güncellenir.
 - **[learnings.md](learnings.md):** Tarihli günlük: kararlar, keşifler, kullanıcı tercihleri, tuzaklar.
 - **[roadmap.md](roadmap.md):** Vizyon (Sonsuz + Buz/Futbol/Karanlık dünyaları), 2.5D ve görsel değerlendirmesi, Faz 0-10.
+- **[sanat-rehberi.md](sanat-rehberi.md):** Görsel anayasa: palet, renk rolleri, değer hiyerarşisi, **ekran kompozisyonu [KESİN]** (HUD bandı + ekran enine ölçekli kare arena + koridor/kontrol alanı), ışık ve his ölçüleri. Görsel işlerden önce mutlaka oku. Kullanıcı: "renk uyumu çok önemli".
 - **[prompts/](prompts/):** `00-ana-prompt.md` (her oturumun çalışma kuralları) + `faz-XX-*.md` (her fazın detaylı görev promptu). Kullanıcı "faz N'i uygula" dediğinde ana prompt ve ilgili faz dosyasını oku, uygula.
 
 ## 1. Oyunun özü
@@ -23,6 +24,7 @@ Amaç: kaç, hayatta kal, skoru büyüt. Skor zamanla artar (saniyede 10 puan ×
 - **Güçlendirmeler (5):** Heart (+1 can), Shield (1 vuruş bloklar), Speed (x1.5 hız, 6 sn), SloMo (zaman x0.4, 4 sn — oyuncu normal hızda kalır), Ghost (mermiler içinden geçer, 5 sn).
 - **Modlar:** `Endless` (aktif, skor arttıkça 6 kademeli zorluk) ve `Stage` (dalga sistemi — kodda var, henüz kullanılmıyor).
 - **Hedef vizyon:** Sonsuz Mod (sadece taştan kaçış) + Bölüm Modu dünyaları: **Buz** (kaygan, anında duramazsın), **Futbol** (ayağında top, tek tuşla gol; futbolcular sarı/kırmızı kart atar), **Karanlık** (sınırlı görüş, parlayan mermiler) ve daha fazlası. Görsel hedef: "basit ama süper". Ayrıntı: [roadmap.md](roadmap.md).
+- **Güncel öncelik: Sonsuz Mod.** Bölümler sonra ve büyük ölçüde reskin + ayarla gelecek. Sonsuz için yazılan sistemler (mermi etkileri, durum efektleri, spawn noktaları, karo tabanlı arena) genel kurulmalı ki bölümlerde yeniden kullanılsın.
 - **Hedef platform:** Google Play / App Store. Monetizasyon planı: karakter/arena kilidi (`isLocked`, `unlockPrice`), RPG ekipmanı, yetenekler.
 
 **Kullanıcının vizyonu (README + veri yapılarından):** ScriptableObject tabanlı modüler yapı. Yeni karakter, arena, mermi ve bölüm eklemek kod yazmadan, sadece veri dosyası oluşturarak yapılabilmeli. Bu ilkeyi koru.

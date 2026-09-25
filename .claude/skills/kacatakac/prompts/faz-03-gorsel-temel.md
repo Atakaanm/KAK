@@ -1,49 +1,55 @@
-# FAZ 3 — Görsel Temel ("Basit ama Süper")
+# FAZ 3 — Görsel Temel: Renk Uyumu, Piksel Standardı, Işık ve His
 
-**Süre tahmini:** 3-4 oturum · **Dal:** `faz-3-gorsel` · **Ön koşul:** Faz 0 sanat kararı (aşağıdaki metin A: piksel sanatı seçildiğini varsayar)
+**Süre tahmini:** 4-5 oturum · **Dal:** `faz-3-gorsel` · **Ön koşul:** Faz 0 (stil onayı), Faz 1.5 (ekran kompozisyonu, karo sistemi)
 
 ## Amaç
-Mevcut Dungeon arenası ve Sonsuz Mod, telefonda açıldığında "vay" dedirtecek kadar cilalı görünsün. Yeni içerik değil, **standart ve cila**. Burada belirlenen standart sonraki tüm dünyalar için şablon olacak.
+Sonsuz Mod'un tek ekranı telefonda "vay" dedirtecek kadar uyumlu ve cilalı görünsün. Kullanıcının bir numaralı kriteri **renk uyumu**. Bu fazda kurulan standart ve araçlar, sonraki tüm dünyaların şablonu olacak. Anayasa: `sanat-rehberi.md`.
 
-## Görevler
+## Görevler (sırayla)
 
-### 3.1 Sanat standardı belgesi — `SKILL.md` → "Sanat Standardı"
-- PPU, karakter boyutu, referans çözünürlük, palet (hex listesi), yön sayısı ve aynalama, animasyon fps (idle 6, run 10-12, attack 12), dış hat kuralı (1px koyu kontur veya konturu yok), ışık yönü (sol üst), gölge (yarı saydam elips).
-- **Yapay zeka ile sprite üretim prompt şablonu:** Aynı stil, palet ve kamera açısını koruyan, karakter/düşman/mermi/arena için hazır İngilizce promptlar. Üretimden sonra: palete indirgeme, 1:1 piksele küçültme, arka plan temizliği, filigran kontrolü.
-- Çizim listesi: hangi karakter için hangi karelerin gerektiği (5 yön × idle/run/attack/hurt).
+### 3.1 Palet (önce bu, her şey buna bağlı)
+- 3 aday palet hazırla: (a) mevcut Dungeon arenasından türetilmiş özel palet, (b) Endesga 32, (c) Resurrect 64'ün 32 renkli alt kümesi. Her biri için **mevcut ekranın o palete indirgenmiş halini** üret (editör aracıyla ekran görüntüsünü palete indirge) ve yan yana göster.
+- Ben seçeyim. Seçilen paleti `Assets/Art/Palette/kak_palette.png` + `KakPalette` SO olarak kaydet, renk rollerini isimlendir (`sanat-rehberi.md` §3). `sanat-rehberi.md` §2'yi `[KESİN]` yap.
+- **Palet denetçisi** editör aracı: `KacAtaKac/Palet Denetimi`. Seçili klasördeki sprite'larda palet dışı pikselleri say, raporla, isteğe bağlı en yakın renge indirge (orijinalin yedeğini al).
 
-### 3.2 İçe aktarma ve ölçek düzeni
-- Editör aracı `KacAtaKac/Sprite Import Standardı Uygula`: seçili klasördeki sprite'lara `Filter Mode = Point`, `Compression = None`, `PPU = standart`, `Pivot = Bottom Center` (karakterler, ayak altı) uygulasın. Bir `AssetPostprocessor` ile yeni eklenenlere otomatik uygulansın.
-- Sahnedeki tüm `localScale` hilelerini (spawner 4x, arena 0.4x, player 0.8x) kaldır. Ölçek 1 olsun, boyut PPU'dan gelsin.
-- Mevcut görselleri standarda getir: Arena 2048px'lik büyütülmüş görsel. Gerçek piksel boyutuna küçült (örneğin 8'e böl → 256px) ya da yeniden üret. **Sağ alt köşedeki yapay zeka filigranını (✦) temizle.**
-- `Pixel Perfect Camera` bileşeni ekle ve `CameraFitWidth` ile uyumunu çöz (ikisi birlikte zoom yönetmemeli).
+### 3.2 İçe aktarma standardı ve ölçek temizliği
+- `AssetPostprocessor`: `Assets/Art/**` altındaki sprite'lara otomatik `Point`, `Compression None`, mipmap kapalı, PPU 32, karakterlerde pivot alt orta uygula. Mevcut sprite'lar için toplu uygulama aracı yaz.
+- Klasör yapısı: `Assets/Art/{Palette, Characters, Enemies, Projectiles, Pickups, Tiles/Dungeon, UI, VFX}`. Eski `Sprites/` taşınırken referansların kopmaması için taşımayı `AssetDatabase.MoveAsset` ile yap.
+- Sahnedeki ölçek hilelerini kaldır (spawner 4x, arena 0.4x, oyuncu 0.8x ve benzerleri). Boyut PPU'dan gelsin. Çarpışma kutularını yeniden ayarla, oyun hissinin değişmediğini ölç (oyuncu hitbox'ı, taş boyutu).
+- **Pixel Perfect Camera** ekle ve `ScreenComposer` ile birlikte çalışacak şekilde ayarla (referans çözünürlük, yuvarlama, kırpma stratejisi). Farklı oranlarda titreme (jitter) ya da bulanıklık olmamalı.
 
-### 3.3 Render hattı → URP 2D Renderer
-- Yeni `Renderer2D` asset'i oluştur, Mobile ve PC RP asset'lerine ata. Sprite materyallerini `Sprite-Lit-Default`'a çevir.
-- Işık düzeni: Global Light 2D (düşük yoğunluk, hafif mavi-mor), arenadaki meşalelere Point Light 2D (turuncu, titreşen: `FlickerLight` scripti), oyuncunun etrafında hafif ışık.
-- Duvarlar ve heykeller için `ShadowCaster2D` (mobil performansı ölç, gerekirse sadece yüksek kalitede açık olsun).
-- Post-process (Volume): hafif Bloom (meşale ve parlayan mermiler), Vignette, Color Adjustments / renk tonlama, Film Grain yok.
+### 3.3 Kalıcı görsel set (üretim)
+- **Çizim listesi** ve yapay zeka prompt şablonlarını `sanat-rehberi.md` §8'e yaz:
+  - Oyuncu (Boy): 5 yön × (idle 2-4 kare, koşu 6 kare, hasar 2 kare, dash 3 kare). W tarafı aynalama.
+  - Fırlatıcı: 5 yön × (idle 2 kare, saldırı telegraph 3 kare + atış 3 kare).
+  - Taş ve çakıl (+ 3 kırıntı parçası), gölge.
+  - Powerup ikonları (5): aynı çerçeve ve dilde (camgöbeği ve yeşil çerçeve, iç ikon).
+  - Dungeon karo seti: zemin (3 varyasyon + çatlak/yosun dekor), duvar üst yüzü, yan duvar, köşe, kapı, koridor zemini, koridor duvarı, meşale (4 kare animasyon), dekorlar.
+- Üretimde bana yardımcı ol: promptları ver, gelen görselleri 1:1 piksele küçült, palete indirge, filigran kontrol et, sprite sheet'e dilimle, animasyonları ata. Mümkün olan her adımı editör aracıyla otomatikleştir (ör. `KacAtaKac/Sprite Sheet Dilimle ve Ata`).
+- Görsel gelene kadar mevcut görseller palete indirgenmiş halde kullanılır.
 
-### 3.4 His (juice) paketi — `FeedbackManager` + `GameEvents`
-- **Ekran sarsıntısı:** vuruşta güçlü ve kısa, taş duvara çarpınca çok hafif. Ayarlardan kapatılabilsin.
-- **Hit-stop:** vuruşta 50-80 ms zaman durması (gerçek zamanlı).
-- **Vuruş flaşı:** beyaz flaş shader'ı ya da materyali (kırmızı tint yerine).
-- **Squash & stretch:** yürürken hafif zıplama, dururken ezilme, hasar alınca büzülme.
-- **Parçacıklar:** koşarken toz, taş yere çarpınca kırıntı, powerup alınca halka, ölümde patlama ve yavaş çekim.
-- **Gölgeler:** tüm karakter, mermi ve item'ların altında yumuşak elips gölge.
-- **Taş görünümü:** dönen taşa hafif iz (trail), yakın geçişte (near-miss) küçük "whoosh" sesi ve beyaz çizgi.
-- **Sayılar ve yazılar:** `TextMesh` yerine TMP, piksel font, pop animasyonu.
-- **Kamera:** oyuncuyu çok hafif takip (arena ekrandan büyükse) ya da sabit + hafif nefes efekti.
+### 3.4 Render hattı → URP 2D Renderer ve ışık
+- `Renderer2DData` oluştur, Mobile ve PC RP asset'lerine ata. Sprite materyalleri `Sprite-Lit-Default`. UI unlit kalır.
+- Işık planı (`sanat-rehberi.md` §6): soğuk Global Light 2D, sıcak titreşen meşale ışıkları (`FlickerLight`: gürültü tabanlı, GC'siz), oyuncunun çevresinde hafif ışık. Ekranda en fazla 6 ışık (bütçe).
+- Normal map kullanma (piksel sanatında maliyetli ve tutarsız). Işık sadece renk ve yoğunluk olarak.
+- Post-process Volume: Bloom (yüksek eşik), Vignette, Color Adjustments/LUT. Mobil kalite seviyesinde maliyetini ölç.
 
-### 3.5 Ses kimliği (kısa)
-- Taş fırlatma, çarpma, vuruş, powerup, ölüm, UI tıklama, zorluk kademesi geçişi (uyarı sesi) için ses listesi hazırla. Ücretsiz kaynak öner (ör. Kenney, sfxr/jsfxr ile üretim).
-- Müzik: menü ve oyun, kademe arttıkça katman ekleyen dinamik müzik (ileride).
+### 3.5 His (juice) paketi — `FeedbackManager` (`GameEvents` dinler)
+- Ekran sarsıntısı (ayarlanabilir, kapatılabilir), hit-stop (gerçek zamanlı 60 ms), beyaz vuruş flaşı (materyal özelliğiyle, `MaterialPropertyBlock`, GC'siz).
+- Squash & stretch: yürüme zıplaması, durma ezilmesi, hasar büzülmesi.
+- Parçacıklar (havuzlu): koşu tozu, taş duvara ya da yere çarpınca kırıntı, powerup alınca halka, ölüm patlaması + yavaş çekim anı.
+- Taşa sıcak kenar ışığı/kontur + gölge: zemin üzerinde okunurluk (renk rolleri).
+- Tehlike telegraph'ı: fırlatıcı atıştan önce sıcak parlar (0.3-0.5 sn), ses ipucu.
+- Floating text: TMP + piksel font, havuzlu (şu anki `TextMesh` + `new GameObject` kaldırılsın).
 
-## Test
-- Telefon çözünürlüğünde (Game view 1080×1920 ve 1170×2532) ekran görüntüsü al, önce ve sonra olarak bana göster.
-- Profiler: 60 FPS, orta seviye Android hedefi, draw call sayısı raporu.
+### 3.6 Renk doğrulama araçları
+- `KacAtaKac/Renk Testleri`: Game view ekran görüntüsünü al → gri tonlama, deuteranopi, protanopi, bulanıklık versiyonlarını üret → `Screenshots/renk/` klasörüne kaydet. Claude bu görselleri okuyup raporlar: oyuncu ve taş her versiyonda seçilebiliyor mu?
+- Değer histogramı raporu: 60-30-10 dağılımına ne kadar yakın?
+
+## Performans kontrolü
+Profiler'da: batch < 60, 0 GC tahsisi, ışık ve bloom maliyeti. Mobil kalite seviyesi ile yüksek kalite seviyesi arasında fark tablosu. Ölçüm sonuçları `progress.md`'ye.
 
 ## Kabul kriterleri
-- Tüm sprite'lar tek piksel yoğunluğunda ve keskin. Filigran yok.
-- 2D ışık, bloom ve juice paketi aktif. Ayarlarda sarsıntı ve titreşim kapatılabiliyor.
-- Sanat standardı ve yapay zeka prompt şablonları `SKILL.md`'de.
+- Tüm sahne tek palet ve tek piksel yoğunluğunda. Palet denetçisi 0 palet dışı piksel raporluyor (VFX hariç).
+- Renk testleri geçiyor. Kullanıcı önce/sonra ekran görüntülerini onayladı.
+- Performans bütçesi içinde.

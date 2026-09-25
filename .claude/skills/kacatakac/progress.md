@@ -47,6 +47,15 @@ Son commit'ler (Temmuz 2026): HD ana menü, altın buton, premium fontlar (Cinze
 ## Aktif faz
 
 **Faz 0 — Karar ve Hazırlık** (başlanmadı). Plan: [roadmap.md](roadmap.md), promptlar: [prompts/](prompts/).
+**Öncelik: Sonsuz Mod.** Sıra: 0 → 1 → 1.5 (ekran kompozisyonu) → 3 → 2A → 5 → 4 → 10. Ayrıntı `roadmap.md` §4 "Güncel öncelik".
+
+### Sıradaki adım
+Faz 0 → 0.1 Git düzeni (SampleScene değişikliğini kullanıcıya sor). Faz planı henüz yazılmadı.
+
+### Onay bekleyenler
+- Sanat stili: piksel sanatı (32 px, PPU 32) onayı (Faz 0.4)
+- Otonom çalışma izinleri: faz dallarına push, onaysız plan başlatma (Faz 0.3)
+- Hedef platform ve test cihazı (Faz 0.3)
 
 ## Bilinen hatalar ve riskler
 
@@ -54,6 +63,7 @@ Son commit'ler (Temmuz 2026): HD ana menü, altın buton, premium fontlar (Cinze
 - 🟠 **Fizik duvarları görselle hizasız.** Sprite dış kenarından 0.15 birim içerideler, görseldeki iç duvar yaklaşık 0.6 birim içeride. Karakter ve mermiler duvar çiziminin üstüne girebiliyor.
 - 🟠 **Görsel kalite:** karışık piksel yoğunluğu (karakter 48px/ölçek 0.8, arena 2048px/ölçek 0.4, spawner ölçek 4), sprite'lar Bilinear (bulanık), arena görselinin sağ alt köşesinde yapay zeka filigranı (✦), URP Universal Renderer (2D Light çalışmaz). Faz 3'te çözülecek.
 - 🟠 Menü sahnesinde sadece Oyna butonu var. Faz 4.
+- 🟠 **Arena ekranın sadece ~%46'sını kaplıyor** (kare arena, 9:19.5 telefon). Üstte ve altta ~%54 ölü alan var. Kullanıcı bunu en büyük görsel sorun olarak görüyor. Çözüm Faz 1.5 (onaylı kompozisyon): üstte HUD bandı (duvar yüzü), ortada kare arena (ekran enine ölçekli), altta koridor ve kontrol alanı (sol joystick, sağ aksiyon).
 
 > Durum: 🔴 kritik · 🟠 orta · 🟡 düşük · ✅ düzeltildi. "Doğrulanmadı" = kod okunarak bulundu, Play modunda test edilmedi.
 

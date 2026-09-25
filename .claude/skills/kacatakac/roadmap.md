@@ -79,9 +79,29 @@ Bu değişikliklerden sonra yeni bir dünya eklemek yeni kod yazmaktan çok **ye
 | 9 | Meta ilerleme | Jeton, mağaza, karakterler, yetenekler, ekipman | Uzun vadeli motivasyon |
 | 10 | Mobil ve yayın | Android/iOS build, performans, cihaz testi, mağaza | Google Play / App Store |
 
-**Sıralama mantığı:** Önce temel sağlamlaşır (1). Sonra mimari, yeni modları kaldıracak hale gelir (2). Görsel standart erken belirlenir ki sonraki bütün içerik ona göre üretilsin (3). Yeni dünyalar ancak bunlardan sonra gelir. Faz 3 ve 4 bazen yer değiştirebilir. Ama Faz 1 ve 2 atlanmamalı, atlanırsa her yeni mod yamalı kodla yapılır.
+### ⭐ Güncel öncelik: ÖNCE SONSUZ MOD (kullanıcı kararı, 2026-09-25)
+
+Oyunun asıl oynanmaya değer kısmı ve temel mekaniği Sonsuz Mod. Bölümler sonra, büyük ölçüde görsel (karo seti) ve ayar değişikliğiyle gelecek. Bu yüzden uygulama sırası:
+
+| Sıra | Faz | Not |
+|---|---|---|
+| 1 | **0** Karar, hazırlık, otonom test altyapısı | Git, Unity MCP / PlayMode testleri, ekran görüntüsü ve bot aracı, stil onayı |
+| 2 | **1** Stabilizasyon | Retry, item konumu, duvarlar |
+| 3 | **1.5** Ekran kompozisyonu | HUD bandı + kare arena (ekran enine ölçekli) + koridor/kontrol alanı, karo tabanlı çerçeve → [prompt](prompts/faz-1.5-tam-ekran-arena.md) |
+| 4 | **3** Görsel temel | Yeni arena üzerinde piksel standardı, ışık, juice |
+| 5 | **2 (sadece Sonsuz'un ihtiyacı olanlar)** | 2.1 Events, 2.2 tek animatör, 2.4 mermi hareket/etki + yükseklik, 2.5 durum efektleri, 2.8 SaveSystem. GameMode/WorldData/Enemy desenleri ertelenir ama kapı açık bırakılır. |
+| 6 | **5** Sonsuz mod cilası | Taş çeşitleri, göktaşı, olaylar, near-miss, combo, **dash** |
+| 7 | **4 (Sonsuz odaklı)** | Ana menü, oyun sonu, ayarlar, karakter seçimi. Bölüm haritası sonra. |
+| 8 | **10** Yayın (v1.0 = sadece Sonsuz Mod) | Önce Sonsuz ile mağazaya çık, geri bildirim topla |
+| 9+ | 2'nin kalanı → 6, 7, 8, 9 | Dünyalar güncellemelerle gelir |
+
+**Not (bölümler "sadece reskin" mi?):** Buz ve Karanlık büyük ölçüde evet: karo seti + zemin ayarı + ışık ayarı + düşman verisi. Futbol ek olarak top, şut ve kale mekaniği ister (birkaç küçük sistem). Kart etkisi ise durum efektleriyle hallolur. Bu yüzden Sonsuz'u yaparken mermi etkisi, durum efekti ve spawn noktası sistemlerini genel kurmak, sonradan yeniden yazmayı önler.
+
+**Sıralama mantığı (orijinal plan):** Önce temel sağlamlaşır (1). Sonra mimari, yeni modları kaldıracak hale gelir (2). Görsel standart erken belirlenir ki sonraki bütün içerik ona göre üretilsin (3). Yeni dünyalar ancak bunlardan sonra gelir. Faz 3 ve 4 bazen yer değiştirebilir. Ama Faz 1 ve 2 atlanmamalı, atlanırsa her yeni mod yamalı kodla yapılır.
 
 ## 5. Değişmez kurallar (tüm fazlar)
+
+- Görsel anayasa: [sanat-rehberi.md](sanat-rehberi.md) (renk uyumu bir numaralı kriter). Performans bütçesi: [prompts/00-ana-prompt.md](prompts/00-ana-prompt.md).
 
 - Her faz ayrı git dalında yapılır (`faz-1-stabilizasyon` gibi) ve kullanıcı Unity'de test edip onaylayınca birleştirilir.
 - Her fazın sonunda **Sonsuz Mod regresyon testi** yapılır: menü → oyna → öl → tekrar dene → menü → oyna.

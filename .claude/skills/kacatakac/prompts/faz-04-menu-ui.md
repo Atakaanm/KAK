@@ -5,6 +5,13 @@
 ## Amaç
 Mağaza sayfasına konabilecek kalitede, akıcı ve tutarlı bir arayüz. Şu an menüde sadece "Oyna" butonu var.
 
+## ⭐ Kapsam: Sonsuz öncelikli plan
+v1.0 sadece Sonsuz Mod. Bu fazda: **açılış, ana menü, karakter seçimi (Boy/Girl), ayarlar, oyun içi HUD, pause, oyun sonu ekranı**. "Bölümler" butonu menüde durur ama "Yakında" rozetiyle kilitli. Dünya seçimi ve bölüm haritası (4.3) bölüm dünyaları fazına ertelendi.
+
+**Renk ve stil:** Tüm UI `sanat-rehberi.md` paletinden gelir. UI vurgu rengi altın/krem, tehlike ve uyarı sıcak, olumlu durumlar camgöbeği. UI'ın taş/metal levha dili Faz 1.5'teki HUD bandı ve koridor ile aynı dünyaya ait olmalı. Mevcut `GoldPill`, `PremiumGoldButton` ve Cinzel/Nunito fontlarının piksel sanat ve paletle uyumunu değerlendir, uymuyorsa yenisini öner (piksel font + 9-slice piksel butonlar).
+
+**Performans:** Canvas'ları statik ve dinamik diye ayır (sık değişen skor ayrı Canvas). Kullanılmayan `Raycast Target`'ları kapat. Menü arka planındaki canlı arena, oyun sahnesinin hafifletilmiş hali olsun (az mermi, ışık bütçesi).
+
 ## Ekran akışı
 ```
 Açılış (logo + yükleme)

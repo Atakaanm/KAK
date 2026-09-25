@@ -35,13 +35,29 @@ Sonsuz Mod'u "bir el daha" dedirten, okunabilir ama acımasız bir deneyime çev
 - **Combo çarpanı:** Hasar almadan geçen her 10 sn ile x1.1, x1.2... Hasar alınca sıfırlanır. HUD'da görünür.
 - Kademe eşiklerini ve çarpanlarını test oyunlarıyla yeniden ayarla. İlk ölüm ortalama 60-90. saniyede, iyi oyuncu 3-5 dakika. Denge tablosunu `progress.md`'de güncelle.
 
-### 5.4 Denge aracı
+### 5.4 Dash (aksiyon butonu, kontrol alanının sağ yarısı)
+- `AbilityData` (zaten var, `Dash` tipi) kullanılarak: bakılan ya da hareket yönüne kısa atılma, atılma süresince ölümsüzlük (durum efekti), bekleme süresi (öneri 2.5-3 sn) ve buton üzerinde dolan halka.
+- His: atılma izi (afterimage, havuzlu), kısa toz, whoosh sesi, bekleme bitince butonda "hazır" parlaması.
+- **Denge:** Dash kaçışı kolaylaştırır. Kademeleri dash varken bot testiyle yeniden ayarla. Taşlardan dash ile "tam zamanında" geçmek near-miss bonusuna sayılsın (beceri ödülü).
+- Klavye: Space. Tek parmak modu açıksa (Faz 1.5): joystick'e çift dokunma = dash.
+- Dash gücü, süresi ve bekleme süresi hissi için bana 3 değer seti sun, ben seçeyim.
+
+### 5.5 Denge aracı
 - Editörde `KacAtaKac/Denge Simülasyonu`: kademe başına saniyede atılan mermi, ekrandaki ortalama mermi sayısı ve boş alan yüzdesi tablosu. Zorluk eğrisini sayıyla görelim.
 - Oyun içi gizli debug paneli (editör ve development build'de): kademe atla, ölümsüzlük, zaman x2.
+- **Bot testi** (Faz 0'da kurulan): Her denge değişikliğinden sonra 20 bot oyunu. Ortalama ve medyan hayatta kalma süresi, kademe başına ölüm dağılımı ve ölüm nedeni (hangi taş tipi) raporu. Hedef eğri: acemi bot 60-90 sn, iyi bot 3-5 dk.
+
+### 5.6 Performans (yoğun sahne)
+- En zor kademede (4 fırlatıcı + taş yağmuru olayı + parçalanan taşlar) ekrandaki mermi sayısını ölç. Havuz ön ısıtma boyutlarını buna göre ayarla, oyun sırasında hiç `Instantiate` olmasın.
+- Kırıntı parçacıkları için üst sınır, uzak veya küçük efektlerin azaltılması (LOD mantığı).
 
 ## Test
 - 5 deneme oyna, her birinde ölüm saniyesini ve nedenini not et. "Haksız ölüm" hissi olan tehlikeyi işaretle, uyarısını güçlendir.
 
+## Renk notu
+Her yeni taş tipi aynı "sıcak = tehlike" ailesinden, ama **şekil ve animasyonla** ayırt edilmeli (renk körlüğü). Göktaşı gölgesi ve yuvarlanan kaya şeridi gibi telegraph'lar tek tip görsel dil kullanmalı (ör. yanıp sönen sıcak kenarlı koyu alan).
+
 ## Kabul kriterleri
-- 7 taş tipi ve 4 olay çalışıyor, hepsinin uyarısı var.
+- 7 taş tipi, 4 olay ve dash çalışıyor. Hepsinin uyarısı var.
+- Bot testi hedef eğriye uyuyor, performans bütçesi en yoğun anda korunuyor.
 - Near-miss ve combo HUD'da görünüyor, skor tablosu güncel.
