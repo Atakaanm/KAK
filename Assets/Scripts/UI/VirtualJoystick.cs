@@ -3,107 +3,134 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 /// <summary>
-/// Mobil icin sanal joystick (analog cubuk).
-/// Sol alt koseye yerlestirilen bir daire arka plan + hareket eden kucuk top.
+/// Mobil sanal joystick (kayan).
+/// Bu bileşen dokunma bölgesinin (JoystickZone) üzerindedir: bölgede nereye dokunulursa
+/// joystick tabanı orada belirir, sürükleme yönü okunur, parmak kalkınca taban dinlenme
+/// konumuna döner ve soluklaşır. Bölge arenanın altındaki kontrol alanındadır (arenaya binmez).
 ///
-/// Kurulum:
-/// 1. Canvas altina JoystickBG (Image, buyuk daire) olustur.
-/// 2. JoystickBG icine JoystickHandle (Image, kucuk daire) olustur.
-/// 3. Bu scripti JoystickBG objesine ekle.
-/// 4. Handle referansini bagla.
-/// 5. PlayerMovement2D scriptindeki joystick referansini bagla.
+/// PlayerMovement2D, Direction'ı okur (-1..1, normalize).
 /// </summary>
 public class VirtualJoystick : MonoBehaviour, IDragHandler, IPointerDownHandler, IPointerUpHandler
 {
     [Header("Referanslar")]
     public RectTransform handle;           // Hareket eden kucuk top
-    public RectTransform background;       // Buyuk daire (arka plan)
+    public RectTransform background;       // Buyuk daire (taban)
 
     [Header("Ayarlar")]
     [Range(0f, 1f)]
-    public float handleRange = 0.4f;       // Handle'in ne kadar uzağa gidebileceği (0-1)
-    public float deadZone = 0.1f;          // Bu kadar küçük hareketleri yoksay
+    public float handleRange = 0.45f;      // Tutamağın tabandan ne kadar uzağa gidebileceği (0-1)
+    public float deadZone = 0.12f;         // Bu kadar küçük hareketleri yoksay
+    [Tooltip("Açık: dokunulan yerde belirir. Kapalı: sabit konumda durur.")]
+    public bool floating = true;
+
+    [Header("Görünürlük")]
+    public float idleAlpha = 0.22f;        // Dokunulmuyorken (ipucu)
+    public float activeAlpha = 0.85f;
+    public float fadeSpeed = 10f;
 
     private Vector2 inputDirection = Vector2.zero;
-    private Canvas parentCanvas;
+    private Vector2 restPosition;
+    private CanvasGroup group;
+    private int activePointer = int.MinValue;
+    private RectTransform zone;
 
     /// <summary>
     /// Dışarıdan okunacak input yönü (-1 ile 1 arası, normalize).
     /// PlayerMovement2D bu değeri okuyacak.
     /// </summary>
     public Vector2 Direction => inputDirection;
+    public bool IsHeld => activePointer != int.MinValue;
+
+    void Awake()
+    {
+        zone = transform as RectTransform;
+        if (background == null) background = zone;
+        if (background != null)
+        {
+            group = background.GetComponent<CanvasGroup>();
+            if (group == null) group = background.gameObject.AddComponent<CanvasGroup>();
+            group.blocksRaycasts = false; // dokunmayı bölge alır
+            group.alpha = idleAlpha;
+        }
+        // Bölge görünmez ama dokunmayı yakalar
+        var img = GetComponent<Image>();
+        if (img != null) img.raycastTarget = true;
+    }
 
     void Start()
     {
-        // En yakın parent Canvas'ı bul (koordinat hesaplaması için gerekli)
-        parentCanvas = GetComponentInParent<Canvas>();
+        if (background != null) restPosition = background.anchoredPosition;
+        if (handle != null) handle.anchoredPosition = Vector2.zero;
+    }
 
-        if (background == null)
-        {
-            background = GetComponent<RectTransform>();
-        }
-
-        // Handle'ı başlangıçta ortala
-        if (handle != null)
-        {
-            handle.anchoredPosition = Vector2.zero;
-        }
+    void Update()
+    {
+        if (group == null) return;
+        float target = IsHeld ? activeAlpha : idleAlpha;
+        if (!Mathf.Approximately(group.alpha, target))
+            group.alpha = Mathf.MoveTowards(group.alpha, target, fadeSpeed * Time.unscaledDeltaTime);
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
+        if (IsHeld) return;
+        activePointer = eventData.pointerId;
+
+        if (floating && background != null && background != zone)
+        {
+            RectTransform parent = background.parent as RectTransform;
+            if (parent != null && RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                    parent, eventData.position, eventData.pressEventCamera, out Vector2 local))
+            {
+                background.anchoredPosition = local - PivotOffset(background, parent);
+            }
+        }
         OnDrag(eventData);
     }
 
     public void OnDrag(PointerEventData eventData)
     {
+        if (eventData.pointerId != activePointer) return;
         if (background == null || handle == null) return;
 
-        // Dokunulan noktayı background'un local koordinatına çevir
-        Vector2 localPoint;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            background,
-            eventData.position,
-            eventData.pressEventCamera,
-            out localPoint
-        );
+            background, eventData.position, eventData.pressEventCamera, out Vector2 localPoint);
 
-        // Background boyutuna göre normalize et (-1 ile 1 arası)
         Vector2 bgSize = background.rect.size;
+        // Tabanın merkezine göre (-1..1)
+        Vector2 centerOffset = (new Vector2(0.5f, 0.5f) - background.pivot) * bgSize;
         Vector2 normalizedInput = new Vector2(
-            localPoint.x / (bgSize.x * 0.5f),
-            localPoint.y / (bgSize.y * 0.5f)
-        );
+            (localPoint.x - centerOffset.x) / (bgSize.x * 0.5f),
+            (localPoint.y - centerOffset.y) / (bgSize.y * 0.5f));
 
-        // Büyüklüğü 1'i geçmesin (daire dışına çıkmasın)
         if (normalizedInput.magnitude > 1f)
-        {
             normalizedInput = normalizedInput.normalized;
-        }
 
-        // Handle'ı hareket ettir
         float maxOffset = bgSize.x * 0.5f * handleRange;
         handle.anchoredPosition = normalizedInput * maxOffset;
 
-        // Dead zone kontrolü
-        if (normalizedInput.magnitude < deadZone)
-        {
-            inputDirection = Vector2.zero;
-        }
-        else
-        {
-            inputDirection = normalizedInput.normalized;
-        }
+        inputDirection = normalizedInput.magnitude < deadZone ? Vector2.zero : normalizedInput.normalized;
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        // Parmaği kaldirilinca her seyi sifirla
+        if (eventData.pointerId != activePointer) return;
+        activePointer = int.MinValue;
         inputDirection = Vector2.zero;
+        if (handle != null) handle.anchoredPosition = Vector2.zero;
+        if (floating && background != null && background != zone) background.anchoredPosition = restPosition;
+    }
 
-        if (handle != null)
-        {
-            handle.anchoredPosition = Vector2.zero;
-        }
+    void OnDisable()
+    {
+        activePointer = int.MinValue;
+        inputDirection = Vector2.zero;
+    }
+
+    /// <summary>anchoredPosition, ebeveynin anchor noktasına göredir; yerel noktayı buna çevirir.</summary>
+    static Vector2 PivotOffset(RectTransform child, RectTransform parent)
+    {
+        Vector2 anchorCenter = (child.anchorMin + child.anchorMax) * 0.5f;
+        return (anchorCenter - parent.pivot) * parent.rect.size;
     }
 }

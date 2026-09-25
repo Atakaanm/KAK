@@ -4,6 +4,16 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-09-25 — Faz 1.5 tamamlandı: tek parça dungeon ekranı
+
+- Kompozisyon: HUD bandı + ekran enine sığan kare arena + koridor/kontrol alanı. Sonuç ekran görüntülerinde net: "ortaya yapıştırılmış resim" hissi gitti. Değer dağılımı %78 orta tondan %51 koyu / %47 orta'ya geçti.
+- **Büyük tuzak:** Kullanıcının editöründe Play görünümü **Device Simulator**. Simulator açıkken oyun `Screen.width/height`'ı simüle cihazdan alıyor, Game view boyutunu değiştirmek oyunu etkilemiyor. Ama ScreenCapture gizli Game view'dan çekiyor. Önceki çoklu oran görüntüleri bu yüzden kısmen yanıltıcıydı (mantık testleri etkilenmedi). Çözüm: `PlayModeWindow.SetViewType/SetCustomRenderingResolution` (Unity 2022.2+ resmi API) + tüm GameView örneklerine aynı boyut + PNG boyut doğrulaması.
+- **Ders:** Araç ile ölçüm arasındaki tutarsızlığı log ile doğrula (ScreenComposer'ın boyut logu sorunu tek adımda gösterdi).
+- Geçici karolar prosedürel üretildi: arenadan örneklenen renkler, arena sanat pikseline yakın ölçek (PPU 41.667, Point). Arenanın "sanat pikseli" yapay zeka üretimi olduğu için düzensiz (5-6 px).
+- Meşale haleleri 2.2 ölçekte koridoru turuncu lekelere boğdu, 1.3'e indirildi. **Işık/parlama öğeleri ortamı boğmamalı** (renk rehberi 60-30-10).
+- Joystick tabanı ve tutamağı soluk taş/krem: önceki parlak sarı top ekranın en dikkat çekici öğesiydi, hiyerarşi düzeldi.
+- `git checkout main && pull` sırasında Unity eski dosyaları görüp yeniden içe aktarabiliyor. Bundan sonra yeni dalı `git fetch && git checkout -b yeni origin/main` ile aç.
+
 ## 2026-09-25 — Faz 1 tamamlandı: stabilizasyon
 
 - Kullanıcının "item'lar başka yerde çıkıyor" şikayetinin görünür nedeni: **5 powerup ikonunun hepsi saydamlıksız RGB** (siyah kare zemin). Yapay zekayla siyah zemin üzerine üretilmişler. `tools/kak_icon_cleanup.py` ile kenardan flood-fill + siyahtan ön-çarpımı geri alma (parlama yarı saydam korunur). **Kural:** Yapay zeka görselleri içeri alınırken saydamlık ve gömülü yazı kontrolü zorunlu (Ghost ikonunda "INTANGIBILITY POWERUP" yazısı vardı).

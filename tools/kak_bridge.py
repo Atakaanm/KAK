@@ -161,6 +161,9 @@ def main():
     if c == "clear":
         r = send("clearConsole")
         return 0 if r["ok"] else 1
+    if c == "view":
+        r = send("invoke", arg="KakDevSetup", arg2={"game": "UseGameView", "sim": "UseSimulatorView"}.get(a[0] if a else "", "ViewInfo"))
+        return 0 if r["ok"] else 1
     if c == "shot":
         w, h = int(a[0]), int(a[1])
         path = a[2] if len(a) > 2 else os.path.join(SHOTS, "shot_%dx%d.png" % (w, h))
@@ -169,10 +172,24 @@ def main():
     if c == "shots":
         prefix = a[0] if a else time.strftime("%H%M%S")
         ok = True
+        # Device Simulator açıksa oyun Screen boyutunu simüle cihazdan okur → Game view'a geç, sonra geri dön
+        info = send("invoke", arg="KakDevSetup", arg2="ViewInfo", quiet=True)
+        was_sim = "SimulatorView" in (info.get("data") or "")
+        if was_sim:
+            send("invoke", arg="KakDevSetup", arg2="UseGameView", quiet=True)
+        send("invoke", arg="KakDevSetup", arg2="GodModeOn", quiet=True)
         for name, w, h in PHONE_SIZES:
             path = os.path.join(SHOTS, "%s_%s.png" % (prefix, name))
             r = send("screenshot", path=path, width=w, height=h, timeout=60)
             ok = ok and r["ok"]
+        send("invoke", arg="KakDevSetup", arg2="GodModeOff", quiet=True)
+        if was_sim:
+            send("invoke", arg="KakDevSetup", arg2="UseSimulatorView", quiet=True)
+        montage = os.path.join(SHOTS, prefix + "_montaj.png")
+        subprocess.run([sys.executable, os.path.join(ROOT, "tools", "kak_montage.py"), montage] +
+                       [os.path.join(SHOTS, "%s_%s.png" % (prefix, n)) for n, _, _ in PHONE_SIZES] + ["--h", "760"],
+                       check=False, capture_output=True)
+        print("montaj: " + montage)
         return 0 if ok else 1
     if c == "playfor":
         secs = float(a[0]) if a else 10

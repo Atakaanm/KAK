@@ -102,8 +102,16 @@ public class PlayerHealth : MonoBehaviour
         ghostCoroutine = null;
     }
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    /// <summary>Geliştirici ölümsüzlüğü (ekran görüntüleri, görsel testler). Release build'de yok.</summary>
+    public static bool DevGodMode;
+#endif
+
     public void TakeDamage(int damage)
     {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        if (DevGodMode) return;
+#endif
         if (isDead || isInvincible || isGhost) return;
 
         if (hasShield)

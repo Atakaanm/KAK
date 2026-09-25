@@ -429,7 +429,15 @@ public static class KakBridge
                 if (File.Exists(p.c.path) && new FileInfo(p.c.path).Length > 0)
                 {
                     ClearPending();
-                    Reply(p.c, true, "kaydedildi: " + p.c.path, "oyun karesi +" + (Time.frameCount - p.startFrame));
+                    string dims = "";
+                    try
+                    {
+                        var bytes = File.ReadAllBytes(p.c.path);
+                        if (bytes.Length > 24) dims = ((bytes[16] << 24) | (bytes[17] << 16) | (bytes[18] << 8) | bytes[19]) + "x" + ((bytes[20] << 24) | (bytes[21] << 16) | (bytes[22] << 8) | bytes[23]);
+                    }
+                    catch { }
+                    bool sizeOk = p.c.width <= 0 || dims == p.c.width + "x" + p.c.height;
+                    Reply(p.c, sizeOk, (sizeOk ? "kaydedildi: " : "BOYUT UYUŞMUYOR (" + dims + "): ") + p.c.path, "png=" + dims + " oyun karesi +" + (Time.frameCount - p.startFrame));
                 }
                 else if (p.frames > 200)
                 {
@@ -488,8 +496,37 @@ public static class KakBridge
         if (gv != null) gv.Repaint();
     }
 
-    /// <summary>Game view'a sabit çözünürlük atar (gerekirse özel boyut ekler). Hata varsa mesaj döner.</summary>
+    /// <summary>
+    /// Play modu görünümüne sabit çözünürlük atar. Resmi API (PlayModeWindow) kullanılır;
+    /// Device Simulator açıksa önce Game view'a geçilmelidir (Simulator, Screen boyutunu cihaza kilitler).
+    /// Hata varsa mesaj döner.
+    /// </summary>
     static string SetGameViewSize(int w, int h)
+    {
+        try
+        {
+            if (PlayModeWindow.GetViewType() != PlayModeWindow.PlayModeViewTypes.GameView)
+                PlayModeWindow.SetViewType(PlayModeWindow.PlayModeViewTypes.GameView);
+            PlayModeWindow.SetCustomRenderingResolution((uint)w, (uint)h, "KAK " + w + "x" + h);
+
+            // ScreenCapture farklı bir Game view örneğinden okuyabiliyor: hepsini aynı boyuta ayarla
+            int index = FindOrAddSizeIndex(w, h);
+            var prop = GameViewType.GetProperty("selectedSizeIndex", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            foreach (var o in Resources.FindObjectsOfTypeAll(GameViewType))
+            {
+                if (index >= 0 && prop != null && prop.CanWrite) prop.SetValue(o, index);
+                ((EditorWindow)o).Repaint();
+            }
+            return null;
+        }
+        catch (Exception e)
+        {
+            return e.GetType().Name + ": " + (e.InnerException?.Message ?? e.Message);
+        }
+    }
+
+    /// <summary>Geçerli Game view boyut grubunda w×h sabit çözünürlüğün indeksini bulur, yoksa ekler.</summary>
+    static int FindOrAddSizeIndex(int w, int h)
     {
         try
         {
@@ -497,52 +534,29 @@ public static class KakBridge
             var sizesType = asm.GetType("UnityEditor.GameViewSizes");
             var singleton = typeof(ScriptableSingleton<>).MakeGenericType(sizesType);
             var instance = singleton.GetProperty("instance").GetValue(null);
-            var groupType = (GameViewSizeGroupType)sizesType.GetProperty("currentGroupType").GetValue(instance);
+            var groupType = sizesType.GetProperty("currentGroupType").GetValue(instance);
             var group = sizesType.GetMethod("GetGroup").Invoke(instance, new object[] { (int)groupType });
             var groupT = group.GetType();
-
             int total = (int)groupT.GetMethod("GetTotalCount").Invoke(group, null);
             var getSize = groupT.GetMethod("GetGameViewSize");
-            int index = -1;
             for (int i = 0; i < total; i++)
             {
                 var size = getSize.Invoke(group, new object[] { i });
                 var st = size.GetType();
-                int sw = (int)st.GetProperty("width").GetValue(size);
-                int sh = (int)st.GetProperty("height").GetValue(size);
-                int sizeType = Convert.ToInt32(st.GetProperty("sizeType").GetValue(size));
-                if (sw == w && sh == h && sizeType == 1) { index = i; break; }
+                if ((int)st.GetProperty("width").GetValue(size) == w && (int)st.GetProperty("height").GetValue(size) == h
+                    && Convert.ToInt32(st.GetProperty("sizeType").GetValue(size)) == 1)
+                    return i;
             }
-
-            if (index < 0)
-            {
-                var gvsType = asm.GetType("UnityEditor.GameViewSize");
-                var gvsTypeEnum = asm.GetType("UnityEditor.GameViewSizeType");
-                var ctor = gvsType.GetConstructor(new[] { gvsTypeEnum, typeof(int), typeof(int), typeof(string) });
-                var newSize = ctor.Invoke(new object[] { Enum.ToObject(gvsTypeEnum, 1), w, h, "KAK " + w + "x" + h });
-                groupT.GetMethod("AddCustomSize").Invoke(group, new[] { newSize });
-                index = (int)groupT.GetMethod("GetTotalCount").Invoke(group, null) - 1;
-            }
-
-            var gv = GetGameView();
-            var gvT = GameViewType;
-            var prop = gvT.GetProperty("selectedSizeIndex", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            if (prop != null && prop.CanWrite)
-            {
-                prop.SetValue(gv, index);
-            }
-            else
-            {
-                var method = gvT.GetMethod("SizeSelectionCallback", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                if (method == null) return "selectedSizeIndex/SizeSelectionCallback bulunamadı";
-                method.Invoke(gv, new object[] { index, null });
-            }
-            gv.Repaint();
-            return null;
+            var gvsType = asm.GetType("UnityEditor.GameViewSize");
+            var gvsTypeEnum = asm.GetType("UnityEditor.GameViewSizeType");
+            var ctor = gvsType.GetConstructor(new[] { gvsTypeEnum, typeof(int), typeof(int), typeof(string) });
+            groupT.GetMethod("AddCustomSize").Invoke(group, new[] { ctor.Invoke(new object[] { Enum.ToObject(gvsTypeEnum, 1), w, h, "KAK " + w + "x" + h }) });
+            return (int)groupT.GetMethod("GetTotalCount").Invoke(group, null) - 1;
         }
         catch (Exception e)
         {
-            return e.GetType().Name + ": " + (e.InnerException?.Message ?? e.Message);
+            AppendLog("BRIDGE", "boyut indeksi bulunamadı: " + e.Message);
+            return -1;
         }
     }
 

@@ -212,8 +212,13 @@ public class LevelManager : MonoBehaviour
         if (arenaLayout != null)
             arenaLayout.ApplyLayout();
 
-        var camFit = Object.FindAnyObjectByType<CameraFitWidth>();
-        if (camFit != null) camFit.ForceRecalculate();
+        var composer = Object.FindAnyObjectByType<ScreenComposer>();
+        if (composer != null) composer.ForceRecalculate();
+        else
+        {
+            var camFit = Object.FindAnyObjectByType<CameraFitWidth>();
+            if (camFit != null) camFit.ForceRecalculate();
+        }
 
         SetupProjectileBounds();
 
