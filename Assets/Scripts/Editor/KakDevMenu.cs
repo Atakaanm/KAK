@@ -20,6 +20,13 @@ public static class KakDevMenu
             Object.Destroy(bot);
     }
 
+    [MenuItem("KacAtaKac/Dev/Powerup'lar Sık Çıksın")]
+    public static void FastPowerups()
+    {
+        var ps = Object.FindAnyObjectByType<PowerupSpawner>();
+        if (ps != null) ps.SetSpawnInterval(0.4f, 0.8f);
+    }
+
     [MenuItem("KacAtaKac/Dev/Bot Raporu")]
     public static void Report()
     {

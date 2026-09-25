@@ -22,12 +22,19 @@ public class PowerupSpawner : MonoBehaviour
     public Vector2 spawnAreaMin = new Vector2(-4f, -4f);
     public Vector2 spawnAreaMax = new Vector2(4f,  4f);
 
+    [Header("Yerleşim Payları")]
+    [Tooltip("Duvar iç yüzünden içeri pay (dünya birimi)")]
+    public float edgeMargin = 0.35f;
+    [Tooltip("Fırlatıcıların etrafında powerup çıkmayacak yarıçap")]
+    public float spawnerClearance = 1.4f;
+
     [Header("Sorting")]
     [Tooltip("Powerup sprite'ının arena ve karakter üzerinde çıkması için sorting order")]
     public int powerupSortingOrder = 20;
 
     private PowerupData[] availablePowerups;
     private readonly Collider2D[] overlapBuffer = new Collider2D[8];
+    private readonly System.Collections.Generic.List<Vector3> spawnerPositions = new System.Collections.Generic.List<Vector3>(4);
     private ContactFilter2D overlapFilter;
     private float timer = 0f;
     private float currentInterval;
@@ -68,46 +75,44 @@ public class PowerupSpawner : MonoBehaviour
     /// ArenaAutoLayout'tan arena sınırlarını okuyarak spawnAreaMin/Max'ı günceller.
     /// LevelManager veya SceneAutoWire tarafından da çağrılabilir.
     /// </summary>
+    /// <summary>Çıkma aralığını değiştirir ve zamanlayıcıyı yeniden kurar (olaylar, test, debug paneli).</summary>
+    public void SetSpawnInterval(float min, float max)
+    {
+        spawnIntervalMin = min;
+        spawnIntervalMax = max;
+        timer = 0f;
+        currentInterval = Random.Range(min, max);
+    }
+
     public void RefreshArenaBounds()
     {
         var arena = FindAnyObjectByType<ArenaAutoLayout>();
-        
-        // 1. ÖNCELİK: Fiziksel Duvarlardan (Kusursuz Koordinat)
-        if (arena != null && arena.topWall != null && arena.bottomWall != null && arena.leftWall != null && arena.rightWall != null)
+        if (arena != null && arena.arenaSpriteRenderer != null)
         {
-            float topY = arena.topWall.position.y;
-            float bottomY = arena.bottomWall.position.y;
-            float leftX = arena.leftWall.position.x;
-            float rightX = arena.rightWall.position.x;
-
-            // Güvenli bölge (Duvarlardan %15-20 içeri)
-            float padX = (rightX - leftX) * 0.15f;
-            float padY = (topY - bottomY) * 0.15f;
-
-            spawnAreaMin = new Vector2(leftX + padX, bottomY + padY);
-            spawnAreaMax = new Vector2(rightX - padX, topY - padY);
+            Rect play = arena.PlayableWorldRect;
+            float m = itemWorldSize * 0.5f + edgeMargin;
+            spawnAreaMin = new Vector2(play.xMin + m, play.yMin + m);
+            spawnAreaMax = new Vector2(play.xMax - m, play.yMax - m);
             boundsReady = true;
 
-            KakLog.Info($"[PowerupSpawner] Sınırlar DUVARLARDAN alındı: {spawnAreaMin} → {spawnAreaMax}");
-        }
-        // 2. ÖNCELİK: Sprite Bounds (Yedek)
-        else if (arena != null && arena.arenaSpriteRenderer != null)
-        {
-            Bounds b = arena.arenaSpriteRenderer.bounds;
+            spawnerPositions.Clear();
+            foreach (var t in new[] { arena.topLeftSpawner, arena.topRightSpawner, arena.bottomLeftSpawner, arena.bottomRightSpawner })
+                if (t != null) spawnerPositions.Add(t.position);
 
-            float padX = b.extents.x * 0.75f;
-            float padY = b.extents.y * 0.75f;
-
-            spawnAreaMin = new Vector2(b.center.x - padX, b.center.y - padY);
-            spawnAreaMax = new Vector2(b.center.x + padX, b.center.y + padY);
-            boundsReady = true;
-
-            KakLog.Info($"[PowerupSpawner] Sınırlar SPRITE'TAN alındı: {spawnAreaMin} → {spawnAreaMax}");
+            KakLog.Info($"[PowerupSpawner] Sınırlar oynanabilir alandan: {spawnAreaMin} → {spawnAreaMax}");
         }
         else
         {
             Debug.LogWarning("[PowerupSpawner] ArenaAutoLayout bulunamadı, yedek sınırlar kullanılıyor.");
         }
+    }
+
+    bool NearSpawner(Vector2 p)
+    {
+        float r2 = spawnerClearance * spawnerClearance;
+        for (int i = 0; i < spawnerPositions.Count; i++)
+            if (((Vector2)spawnerPositions[i] - p).sqrMagnitude < r2) return true;
+        return false;
     }
 
     // -------------------------------------------------------
@@ -163,11 +168,12 @@ public class PowerupSpawner : MonoBehaviour
         // Çakışma kontrolü — oyuncu/spawner üstüne düşmesin
         Vector3 spawnPos = Vector3.zero;
         bool validPosition = false;
-        for (int attempt = 0; attempt < 5; attempt++)
+        for (int attempt = 0; attempt < 10; attempt++)
         {
             float rx = Random.Range(spawnAreaMin.x, spawnAreaMax.x);
             float ry = Random.Range(spawnAreaMin.y, spawnAreaMax.y);
             spawnPos = new Vector3(rx, ry, 0f);
+            if (NearSpawner(spawnPos)) continue;
 
             overlapFilter.useTriggers = true;
             int hitCount = Physics2D.OverlapCircle(spawnPos, itemWorldSize * 0.5f, overlapFilter, overlapBuffer);
@@ -191,7 +197,7 @@ public class PowerupSpawner : MonoBehaviour
         if (!validPosition)
         {
             Debug.LogWarning($"[PowerupSpawner] Uygun spawn noktası bulunamadı! Son denenen yer: {spawnPos}. Duvar/Player/Spawner çakışması olabilir.");
-            return; // 5 denemede uygun yer bulunamadı, bu turu atla
+            return; // 10 denemede uygun yer bulunamadı, bu turu atla
         }
 
         GameObject obj = Instantiate(selectedPowerup.visualPrefab, spawnPos, Quaternion.identity);

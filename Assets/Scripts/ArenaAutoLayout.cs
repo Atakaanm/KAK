@@ -1,5 +1,11 @@
 using UnityEngine;
 
+/// <summary>
+/// Arenanın fiziksel yerleşimi için tek kaynak.
+/// Arena görselinin içindeki oynanabilir zemini (playableAreaNormalized) dünya koordinatına çevirir
+/// ve duvar colliderlarını, fırlatıcı duruş noktalarını buna göre yerleştirir.
+/// Powerup alanı, mermi sınırları ve test botu PlayableWorldRect'i okur.
+/// </summary>
 [ExecuteAlways]
 public class ArenaAutoLayout : MonoBehaviour
 {
@@ -20,25 +26,62 @@ public class ArenaAutoLayout : MonoBehaviour
 
     public Transform player;
 
+    [Header("Oynanabilir Alan (arena görseli içinde, 0-1 normalize)")]
+    [Tooltip("ArenaData'dan kopyalanır. Görseldeki iç zemin: x,y sol-alt; width,height boyut.")]
+    public Rect playableAreaNormalized = new Rect(0.0795f, 0.0795f, 0.841f, 0.841f);
+
     [Header("Bounds Settings")]
     public float wallThickness = 0.5f;
+    [Tooltip("Eski ayar: sadece playableAreaNormalized boşsa (genişlik 0) kullanılır")]
     public float wallInset = 0.15f;
 
-    [Header("Spawner Settings")]
-    public float spawnerInsetX = 1.0f; // Köşelerden biraz daha içeri alındı
+    [Header("Fırlatıcı Duruş Noktaları (0-1 normalize, ayak konumu)")]
+    public bool useSpawnerAnchors = true;
+    public Vector2 anchorTopLeft = new Vector2(0.138f, 0.834f);
+    public Vector2 anchorTopRight = new Vector2(0.862f, 0.834f);
+    public Vector2 anchorBottomLeft = new Vector2(0.130f, 0.126f);
+    public Vector2 anchorBottomRight = new Vector2(0.870f, 0.126f);
+
+    [Header("Spawner Settings (anchor kapalıysa)")]
+    public float spawnerInsetX = 1.0f;
     public float spawnerInsetY = 1.0f;
-    public float spawnerTopDepthOffset = 0.35f; // Üstteki fırlatıcıları bir miktar yukarı aldım (Ayakları daha iyi bassın diye)
+    public float spawnerTopDepthOffset = 0.35f;
 
     [Header("UI Düzeni")]
     public RectTransform healthUI;
     public RectTransform scoreUI;
-    public float uiWorldVerticalOffset = 0.85f; // Arenanın üst kenarından yukarı pay (azaltıldı)
-    public float uiWorldHorizontalInset = 1.25f; // Köşelerden içeri doğru girme payı (arttırıldı, eksi değil artı kullanıyoruz)
+    public float uiWorldVerticalOffset = 0.85f;
+    public float uiWorldHorizontalInset = 1.25f;
 
     [Header("Player Start")]
     public Vector2 playerLocalOffset = Vector2.zero;
 
     private Camera mainCam;
+
+    /// <summary>Oyuncunun yürüyebildiği iç zemin (dünya koordinatı). Duvarların iç yüzleri bu dikdörtgenin kenarlarıdır.</summary>
+    public Rect PlayableWorldRect
+    {
+        get
+        {
+            if (arenaSpriteRenderer == null) return new Rect(-4f, -4f, 8f, 8f);
+            Bounds b = arenaSpriteRenderer.bounds;
+            Rect n = playableAreaNormalized;
+            if (n.width <= 0f || n.height <= 0f)
+            {
+                float inner = wallInset + wallThickness * 0.5f;
+                return Rect.MinMaxRect(b.min.x + inner, b.min.y + inner, b.max.x - inner, b.max.y - inner);
+            }
+            return new Rect(b.min.x + n.x * b.size.x, b.min.y + n.y * b.size.y, n.width * b.size.x, n.height * b.size.y);
+        }
+    }
+
+    /// <summary>Arena görseli içindeki normalize noktayı dünya koordinatına çevirir.</summary>
+    public Vector3 NormalizedToWorld(Vector2 n)
+    {
+        if (arenaSpriteRenderer == null) return transform.position;
+        Bounds b = arenaSpriteRenderer.bounds;
+        return new Vector3(b.min.x + n.x * b.size.x, b.min.y + n.y * b.size.y, 0f);
+    }
 
     void Awake()
     {
@@ -53,13 +96,12 @@ public class ArenaAutoLayout : MonoBehaviour
     {
         if (Application.isPlaying)
         {
-            // Oyundayken duvar formlarını hesaplamayalım (eski isteğin doğrultusunda)
-            // ANCAK adam telefonu çevirirse skor ve kalpler kaymasın diye sadece UI'ın yerini canlı güncel tutalım:
+            // Oyunda duvarlar sabit; sadece UI (cihaz dönmesi vb.) güncel tutulur
             ApplyUILayout();
             return;
         }
 
-        // Editörde geliştirme yaparken ise duvarları, oyuncuyu vs. anlık canlı gösterebiliriz
+        // Editörde canlı önizleme
         ApplyLayout();
         ApplyUILayout();
     }
@@ -70,46 +112,50 @@ public class ArenaAutoLayout : MonoBehaviour
             return;
 
         Bounds arenaBounds = arenaSpriteRenderer.bounds;
-
         Vector3 centerWorld = arenaBounds.center;
-        float width = arenaBounds.size.x;
-        float height = arenaBounds.size.y;
+        Rect play = PlayableWorldRect;
+        float t = wallThickness;
 
-        float halfW = width * 0.5f;
-        float halfH = height * 0.5f;
-
-        // Bounds root merkezde dursun
         if (boundsRoot != null)
             boundsRoot.position = centerWorld;
 
-        // Duvarlar
-        SetupHorizontalWall(topWall, centerWorld + new Vector3(0f, halfH - wallInset, 0f), width, wallThickness);
-        SetupHorizontalWall(bottomWall, centerWorld + new Vector3(0f, -halfH + wallInset, 0f), width, wallThickness);
-        SetupVerticalWall(leftWall, centerWorld + new Vector3(-halfW + wallInset, 0f, 0f), wallThickness, height);
-        SetupVerticalWall(rightWall, centerWorld + new Vector3(halfW - wallInset, 0f, 0f), wallThickness, height);
+        // Duvarlar: iç yüzleri oynanabilir alanın kenarında, kalınlık dışarı doğru
+        float outerW = play.width + 2f * t;
+        float outerH = play.height + 2f * t;
+        SetupWall(topWall, new Vector3(play.center.x, play.yMax + t * 0.5f, 0f), new Vector2(outerW, t));
+        SetupWall(bottomWall, new Vector3(play.center.x, play.yMin - t * 0.5f, 0f), new Vector2(outerW, t));
+        SetupWall(leftWall, new Vector3(play.xMin - t * 0.5f, play.center.y, 0f), new Vector2(t, outerH));
+        SetupWall(rightWall, new Vector3(play.xMax + t * 0.5f, play.center.y, 0f), new Vector2(t, outerH));
 
-        // Spawners root merkezde dursun
         if (spawnersRoot != null)
             spawnersRoot.position = centerWorld;
 
-        // Spawnerlar - arenanın köşelerinden içeri doğru
-        // NOT: 2.5D yüzünden top fırlatıcıları daha aşağıya çekildi
-        SetupSpawner(topLeftSpawner, centerWorld + new Vector3(-halfW + spawnerInsetX, halfH - spawnerInsetY - spawnerTopDepthOffset, 0f));
-        SetupSpawner(topRightSpawner, centerWorld + new Vector3(halfW - spawnerInsetX, halfH - spawnerInsetY - spawnerTopDepthOffset, 0f));
-        SetupSpawner(bottomLeftSpawner, centerWorld + new Vector3(-halfW + spawnerInsetX, -halfH + spawnerInsetY, 0f));
-        SetupSpawner(bottomRightSpawner, centerWorld + new Vector3(halfW - spawnerInsetX, -halfH + spawnerInsetY, 0f));
+        if (useSpawnerAnchors)
+        {
+            PlaceSpawnerFeet(topLeftSpawner, NormalizedToWorld(anchorTopLeft));
+            PlaceSpawnerFeet(topRightSpawner, NormalizedToWorld(anchorTopRight));
+            PlaceSpawnerFeet(bottomLeftSpawner, NormalizedToWorld(anchorBottomLeft));
+            PlaceSpawnerFeet(bottomRightSpawner, NormalizedToWorld(anchorBottomRight));
+        }
+        else
+        {
+            float halfW = arenaBounds.size.x * 0.5f;
+            float halfH = arenaBounds.size.y * 0.5f;
+            SetupSpawner(topLeftSpawner, centerWorld + new Vector3(-halfW + spawnerInsetX, halfH - spawnerInsetY - spawnerTopDepthOffset, 0f));
+            SetupSpawner(topRightSpawner, centerWorld + new Vector3(halfW - spawnerInsetX, halfH - spawnerInsetY - spawnerTopDepthOffset, 0f));
+            SetupSpawner(bottomLeftSpawner, centerWorld + new Vector3(-halfW + spawnerInsetX, -halfH + spawnerInsetY, 0f));
+            SetupSpawner(bottomRightSpawner, centerWorld + new Vector3(halfW - spawnerInsetX, -halfH + spawnerInsetY, 0f));
+        }
 
         // Player başlangıcı (Sadece Editor'deyken merkeze kilitle)
         if (!Application.isPlaying && player != null)
         {
-            player.position = centerWorld + new Vector3(playerLocalOffset.x, playerLocalOffset.y, 0f);
+            player.position = new Vector3(play.center.x + playerLocalOffset.x, play.center.y + playerLocalOffset.y, 0f);
         }
     }
 
     void ApplyUILayout()
     {
-        // UI öğeleri eğer inspector'a sürüklenmişse onları ekran sınırlarına göre değil,
-        // arenanın gerçek dünya referanslarına göre hizalayalım.
         if (arenaSpriteRenderer == null || mainCam == null)
             return;
 
@@ -120,53 +166,62 @@ public class ArenaAutoLayout : MonoBehaviour
 
         if (healthUI != null)
         {
-            // Sadece oyun oynanırken süzülme efekti aktif olsun
             float hoverEffect = Application.isPlaying ? Mathf.Sin(Time.time * 3.5f) * 0.12f : 0f;
-
-            // Arenanın sol üst köşesi + içeri doğru Inset kadar kaydır
             Vector3 worldPos = center + new Vector3(-halfW + uiWorldHorizontalInset, halfH + uiWorldVerticalOffset + hoverEffect, 0f);
             healthUI.position = mainCam.WorldToScreenPoint(worldPos);
         }
 
         if (scoreUI != null)
         {
-            // Arenanın sağ üst köşesi - içeri doğru Inset kadar kaydır
             Vector3 worldPos = center + new Vector3(halfW - uiWorldHorizontalInset, halfH + uiWorldVerticalOffset, 0f);
             scoreUI.position = mainCam.WorldToScreenPoint(worldPos);
         }
     }
 
-    void SetupHorizontalWall(Transform wall, Vector3 worldPos, float width, float thickness)
+    static void SetupWall(Transform wall, Vector3 worldPos, Vector2 size)
     {
         if (wall == null) return;
-
         wall.position = worldPos;
-
         BoxCollider2D col = wall.GetComponent<BoxCollider2D>();
         if (col != null)
         {
-            col.size = new Vector2(width, thickness);
+            // Duvar objesinin ölçeği 1 değilse collider boyutunu ölçeğe göre düzelt
+            Vector3 s = wall.lossyScale;
+            col.size = new Vector2(size.x / Mathf.Max(Mathf.Abs(s.x), 0.0001f), size.y / Mathf.Max(Mathf.Abs(s.y), 0.0001f));
             col.offset = Vector2.zero;
         }
     }
 
-    void SetupVerticalWall(Transform wall, Vector3 worldPos, float thickness, float height)
+    /// <summary>Fırlatıcıyı, ayakları (Shadow child'ı varsa onun konumu) duruş noktasına gelecek şekilde yerleştirir.</summary>
+    static void PlaceSpawnerFeet(Transform spawner, Vector3 feetWorld)
     {
-        if (wall == null) return;
-
-        wall.position = worldPos;
-
-        BoxCollider2D col = wall.GetComponent<BoxCollider2D>();
-        if (col != null)
-        {
-            col.size = new Vector2(thickness, height);
-            col.offset = Vector2.zero;
-        }
+        if (spawner == null) return;
+        Vector3 feetOffset = Vector3.zero;
+        Transform shadow = spawner.Find("Shadow");
+        if (shadow != null) feetOffset = shadow.position - spawner.position;
+        feetOffset.z = 0f;
+        spawner.position = feetWorld - feetOffset;
     }
 
     void SetupSpawner(Transform spawner, Vector3 worldPos)
     {
         if (spawner == null) return;
         spawner.position = worldPos;
+    }
+
+    void OnDrawGizmos()
+    {
+        if (arenaSpriteRenderer == null) return;
+        Rect r = PlayableWorldRect;
+        Gizmos.color = new Color(0.2f, 1f, 0.3f, 0.9f);
+        Gizmos.DrawWireCube(r.center, new Vector3(r.width, r.height, 0f));
+        if (useSpawnerAnchors)
+        {
+            Gizmos.color = new Color(1f, 0.5f, 0.1f, 0.9f);
+            Gizmos.DrawWireSphere(NormalizedToWorld(anchorTopLeft), 0.15f);
+            Gizmos.DrawWireSphere(NormalizedToWorld(anchorTopRight), 0.15f);
+            Gizmos.DrawWireSphere(NormalizedToWorld(anchorBottomLeft), 0.15f);
+            Gizmos.DrawWireSphere(NormalizedToWorld(anchorBottomRight), 0.15f);
+        }
     }
 }

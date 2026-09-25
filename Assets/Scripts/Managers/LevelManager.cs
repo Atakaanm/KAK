@@ -161,7 +161,9 @@ public class LevelManager : MonoBehaviour
     {
         if (arenaLayout != null && arenaLayout.arenaSpriteRenderer != null)
         {
-            Projectile.SetArenaBounds(arenaLayout.arenaSpriteRenderer.bounds);
+            // Mermiler duvarın iç yüzüne ulaşınca havuza döner (duvarın/HUD'ın üstünden uçmaz)
+            Rect play = arenaLayout.PlayableWorldRect;
+            Projectile.SetArenaBounds(new Bounds(play.center, new Vector3(play.width, play.height, 1f)));
             KakLog.Info("[LevelManager] Arena sınırları Projectile sistemine bildirildi.");
         }
     }
@@ -276,6 +278,12 @@ public class LevelManager : MonoBehaviour
 
         arenaLayout.wallThickness = data.wallThickness;
         arenaLayout.wallInset = data.wallInset;
+        arenaLayout.playableAreaNormalized = data.playableAreaNormalized;
+        arenaLayout.useSpawnerAnchors = data.useSpawnerAnchors;
+        arenaLayout.anchorTopLeft = data.anchorTopLeft;
+        arenaLayout.anchorTopRight = data.anchorTopRight;
+        arenaLayout.anchorBottomLeft = data.anchorBottomLeft;
+        arenaLayout.anchorBottomRight = data.anchorBottomRight;
         arenaLayout.spawnerInsetX = data.spawnerInsetX;
         arenaLayout.spawnerInsetY = data.spawnerInsetY;
         arenaLayout.spawnerTopDepthOffset = data.spawnerTopDepthOffset;

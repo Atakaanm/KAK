@@ -44,8 +44,8 @@ Assets/
 │   ├── PlayerMovement2D.cs
 │   ├── PlayerHealth.cs
 │   ├── PlayerDirectionSprite.cs
-│   ├── CornerShoother.cs
-│   ├── SpawnerAimAndVisual.cs
+│   ├── CornerShooter.cs
+│   ├── SpawnerDirectionAnimator.cs
 │   ├── Projectile.cs
 │   ├── ArenaAutoLayout.cs
 │   ├── CameraFitWidth.cs
@@ -65,7 +65,7 @@ Assets/
 
 ## Setup (After Cloning)
 
-1. Open project in **Unity 2022+**
+1. Open project in **Unity 6 (6000.3.8f1)**
 2. In the top menu: **KacAtaKac → Spawner Sprite'larını Yeniden Adlandır**
 3. Then: **KacAtaKac → Setup - Tüm Default Dataları Oluştur**
 4. All default `ScriptableObject` assets will be generated in `Assets/Data/`
@@ -82,10 +82,18 @@ Assets/
 
 ---
 
+## Development
+
+- Plan and phases: [`.claude/skills/kacatakac/roadmap.md`](.claude/skills/kacatakac/roadmap.md)
+- Current status, known issues, balance tables: [`.claude/skills/kacatakac/progress.md`](.claude/skills/kacatakac/progress.md)
+- Art & color guide: [`.claude/skills/kacatakac/sanat-rehberi.md`](.claude/skills/kacatakac/sanat-rehberi.md)
+- Automated tests: `Assets/Tests/PlayMode` (Unity Test Runner → PlayMode). Editor bridge for automation: `tools/kak_bridge.py`
+- Scene setup tool: **KacAtaKac → Sahne Yöneticilerini Kur**
+
 ## Roadmap
 
-- [ ] Mobile touch joystick
-- [ ] Main menu scene
+- [x] Mobile touch joystick
+- [x] Main menu scene (basic)
 - [ ] Character selection screen
 - [ ] Store / unlock system
 - [ ] New arena themes
