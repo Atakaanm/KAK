@@ -118,6 +118,19 @@ public class PlayerHealth : MonoBehaviour
     public static bool DevGodMode;
 #endif
 
+    /// <summary>Kalkan varsa bir vuruşu engelleyip tüketir (durum efektleri için). Engellendiyse true.</summary>
+    public bool ConsumeShield()
+    {
+        if (!hasShield) return false;
+        GameEvents.RaiseShieldBlocked(transform.position);
+        hasShield = false;
+        transform.localScale = originalScale;
+        if (playerSpriteRenderer != null) playerSpriteRenderer.color = originalColor;
+        if (invincibilityCoroutine != null) StopCoroutine(invincibilityCoroutine);
+        invincibilityCoroutine = StartCoroutine(InvincibilityRoutine());
+        return true;
+    }
+
     public void TakeDamage(int damage)
     {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD

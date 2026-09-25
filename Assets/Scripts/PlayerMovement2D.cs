@@ -16,6 +16,7 @@ public class PlayerMovement2D : MonoBehaviour
     public float arenaSpeedMultiplier = 1.0f;   // 1.0 = Normal hiz, kuculdukce bataklik gibi yavaslatir
 
     private Rigidbody2D rb;
+    private PlayerStatus status;
     private Vector2 movementInput;
     private float baseMoveSpeed;
 
@@ -124,7 +125,8 @@ public class PlayerMovement2D : MonoBehaviour
             return;
         }
 
-        float currentSpeed = baseMoveSpeed * arenaSpeedMultiplier * currentSpeedBoostMult;
+        if (status == null) status = GetComponent<PlayerStatus>();
+        float currentSpeed = baseMoveSpeed * arenaSpeedMultiplier * currentSpeedBoostMult * (status != null ? status.SpeedMultiplier : 1f);
         if (DifficultyManager.Instance != null && DifficultyManager.Instance.isActiveAndEnabled)
         {
             currentSpeed *= DifficultyManager.Instance.GetPlayerSpeedMultiplier();

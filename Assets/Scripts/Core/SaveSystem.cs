@@ -125,15 +125,53 @@ public class SaveData
     public string selectedCharacter = "Boy";
     public List<string> unlockedCharacters = new List<string> { "Boy" };
 
+    public List<LevelProgress> levels = new List<LevelProgress>();
+
     public SettingsData settings = new SettingsData();
+
+    public LevelProgress Level(string id)
+    {
+        if (levels == null) levels = new List<LevelProgress>();
+        foreach (var l in levels) if (l.id == id) return l;
+        return null;
+    }
+
+    public int Stars(string id) { var l = Level(id); return l != null ? l.stars : 0; }
+
+    public int TotalStars
+    {
+        get { int n = 0; if (levels != null) foreach (var l in levels) n += l.stars; return n; }
+    }
+
+    /// <summary>Bölüm sonucunu kaydeder (daha iyi yıldız/süre korunur). Yeni rekor yıldızsa true.</summary>
+    public bool RecordLevel(string id, int stars, float seconds)
+    {
+        var l = Level(id);
+        if (l == null) { l = new LevelProgress { id = id }; levels.Add(l); }
+        bool better = stars > l.stars;
+        if (better) l.stars = stars;
+        if (l.bestTime <= 0f || seconds < l.bestTime) l.bestTime = seconds;
+        l.completed = true;
+        return better;
+    }
 
     public void Upgrade()
     {
         if (settings == null) settings = new SettingsData();
+        if (levels == null) levels = new List<LevelProgress>();
         if (unlockedCharacters == null || unlockedCharacters.Count == 0) unlockedCharacters = new List<string> { "Boy" };
         if (string.IsNullOrEmpty(selectedCharacter)) selectedCharacter = "Boy";
         version = SaveSystem.CurrentVersion;
     }
+}
+
+[Serializable]
+public class LevelProgress
+{
+    public string id;
+    public int stars;
+    public float bestTime;
+    public bool completed;
 }
 
 [Serializable]

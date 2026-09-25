@@ -51,7 +51,7 @@ Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 *Faz 10'un mobil build, cihaz testi ve mağaza hesabı adımları kullanıcıya bağlı → `Docs/Yayin-Kontrol-Listesi.md`.
 
 ### Faz 10 sonucu (testler: 36/36 PlayMode + 4/4 EditMode)
-- [x] Oyuncu ayarları (`KakBuild.ConfigurePlayer`): "Kaç Ata Kaç", `com.atakaan.kacatakac`, 0.9.0, dikey kilit, Android IL2CPP+ARM64 API24+, iOS 14+, ikon, açılış ekranı
+- [x] Oyuncu ayarları (`KakBuild.ConfigurePlayer`): "Kaç Ata Kaç", `com.atakaan.kacatakac`, 0.9.0, dikey kilit, Android IL2CPP+ARM64 API25+, iOS 14+, ikon, açılış ekranı
 - [x] macOS development build + `KakAutoBench` (build kendi kendine oynar, rapor yazar): **~60 FPS, GC ~30 B/kare, en kötü kare 33 ms, 82 batch** (Apple M4)
 - [x] `FontWarmup`: TMP dinamik atlas takılması (552 ms) giderildi
 - [x] TR/EN yerelleştirme (`Loc`, `LocText`, `LanguageButton`), cihaz diline göre varsayılan, `LocTests`

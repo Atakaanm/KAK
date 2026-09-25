@@ -160,7 +160,8 @@ public class Projectile : MonoBehaviour
         damage = d.damage;
         lifeTime = d.lifeTime;
         bouncesLeft = d.bounces;
-        rotationSpeed = Mathf.Abs(d.rotationSpeed) > 0.01f ? d.rotationSpeed : Random.Range(-180f, 180f);
+        rotationSpeed = d.noSpin ? 0f : (Mathf.Abs(d.rotationSpeed) > 0.01f ? d.rotationSpeed : Random.Range(-180f, 180f));
+        if (d.noSpin && visual != null) visual.localRotation = Quaternion.identity;
 
         if (d.projectileSprite != null && visualRenderer != null) visualRenderer.sprite = d.projectileSprite;
         if (visualRenderer != null) visualRenderer.color = baseTint * d.tint;
@@ -274,7 +275,9 @@ public class Projectile : MonoBehaviour
         if (rb != null) rb.MovePosition(rb.position + delta);
         else transform.position += (Vector3)delta;
 
-        if (visual != null) visual.Rotate(0f, 0f, rotationSpeed * Time.fixedDeltaTime);
+        if (data != null && data.noSpin && visual != null)
+            visual.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg);
+        else if (visual != null) visual.Rotate(0f, 0f, rotationSpeed * Time.fixedDeltaTime);
         else if (rb != null) rb.rotation += rotationSpeed * Time.fixedDeltaTime;
     }
 
@@ -362,11 +365,12 @@ public class Projectile : MonoBehaviour
         {
             PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
             if (playerHealth != null && playerHealth.IsGhost) return; // hayalet: içinden geçer
-            if (playerHealth != null)
-            {
-                PlayerHealth.LastHitSource = data != null ? data.projectileName : "Taş";
+            PlayerHealth.LastHitSource = data != null ? data.projectileName : "Taş";
+            var status = other.GetComponent<PlayerStatus>();
+            if (status != null && data != null && data.effect != ProjectileEffect.Damage)
+                status.Apply(data.effect, data.effectDuration, data.effectStrength, damage);
+            else if (playerHealth != null)
                 playerHealth.TakeDamage(damage);
-            }
             ReturnToPool();
         }
     }

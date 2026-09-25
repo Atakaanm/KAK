@@ -83,9 +83,13 @@ public class GameManager : MonoBehaviour
         float seconds = scoreManager != null ? scoreManager.ElapsedSeconds : 0f;
         var save = SaveSystem.Data;
         int bestScore = save.bestScoreEndless;
-        IsNewBest = finalScore > bestScore;
-        if (IsNewBest) bestScore = save.bestScoreEndless = finalScore;
-        if (seconds > save.bestTimeEndless) save.bestTimeEndless = seconds;
+        IsNewBest = false;
+        if (!IsLevelMode)
+        {
+            IsNewBest = finalScore > bestScore;
+            if (IsNewBest) bestScore = save.bestScoreEndless = finalScore;
+            if (seconds > save.bestTimeEndless) save.bestTimeEndless = seconds;
+        }
         save.gamesPlayed++;
         save.totalPlaySeconds += seconds;
         SaveSystem.Save();
@@ -131,35 +135,49 @@ public class GameManager : MonoBehaviour
         SceneLoader.LoadMenu();
     }
 
+    /// <summary>Bölüm modunda mıyız (hedefli bölüm)?</summary>
+    public bool IsLevelMode => LevelModeController.Instance != null && LevelModeController.Instance.Active;
+
     /// <summary>
-    /// Stage modu için bölüm sonu.
+    /// Bölüm (Stage) başarıyla bitti: yıldızlar hesaplandı ve kaydedildi (LevelModeController).
     /// </summary>
-    public void LevelComplete()
+    public void LevelComplete(int stars, bool newBestStars)
     {
         if (isGameOver) return;
         isGameOver = true;
         if (timeSlowCoroutine != null) StopCoroutine(timeSlowCoroutine);
+        if (difficultyManager != null) difficultyManager.StopDifficulty();
+        GameEvents.RaiseLevelCompleted(stars);
+        StartCoroutine(LevelCompleteSequence(stars, newBestStars));
+    }
+
+    private System.Collections.IEnumerator LevelCompleteSequence(int stars, bool newBestStars)
+    {
+        KakTime.SetTimeScale(0.3f);
+        yield return new WaitForSecondsRealtime(0.5f);
         KakTime.SetTimeScale(0f);
-
-        if (scoreManager != null)
+        if (gameOverPanel != null) gameOverPanel.SetActive(true);
+        if (gameOverScreen != null)
         {
-            int finalScore = scoreManager.ScoreInt;
-            if (finalScore > GameSettings.BestScore)
-                GameSettings.BestScore = finalScore;
-        }
-
-        if (gameOverPanel != null)
-        {
-            gameOverPanel.SetActive(true);
-            var texts = gameOverPanel.GetComponentsInChildren<TMP_Text>();
-            foreach (var t in texts)
-            {
-                if (t.gameObject.name.Contains("Title") || t.gameObject.name.Contains("GameOver"))
-                    t.text = "TEBRİKLER!";
-            }
+            var lvl = LevelModeController.Instance != null ? LevelModeController.Instance.Level : null;
+            var catalog = WorldCatalog.Load();
+            bool hasNext = catalog != null && catalog.Next(lvl) != null;
+            gameOverScreen.ShowLevelComplete(stars, newBestStars, hasNext, lastSeconds > 0 ? lastSeconds : (scoreManager != null ? scoreManager.ElapsedSeconds : 0f));
         }
     }
 
+    /// <summary>Bir sonraki bölüme geç (bölüm sonu ekranındaki SONRAKİ butonu).</summary>
+    public void NextLevel()
+    {
+        var lvl = LevelModeController.Instance != null ? LevelModeController.Instance.Level : null;
+        var catalog = WorldCatalog.Load();
+        var next = catalog != null ? catalog.Next(lvl) : null;
+        if (next == null) { GoToMainMenu(); return; }
+        GameSettings.SelectedLevel = next;
+        SceneLoader.LoadGame();
+    }
+
+    /// <summary>Bölümü tekrar oyna / sonsuz modu yeniden başlat (seçili bölüm korunur).</summary>
     /// <summary>
     /// Belirli bir level'i yukler.
     /// Ornek: GameManager.Instance.LoadLevel(level01Data);

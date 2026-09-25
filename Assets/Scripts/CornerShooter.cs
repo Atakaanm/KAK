@@ -27,6 +27,10 @@ public class CornerShooter : MonoBehaviour
     private SpriteRenderer visualRenderer;
     private Color visualBaseColor = Color.white;
 
+    [Header("Bölüm")]
+    [Tooltip("Bölüm modunda bu taş kullanılır (zorluk listesi yerine)")]
+    public ProjectileData overrideProjectile;
+
     [Header("Meteor")]
     [Tooltip("Meteor hedefinin oyuncu etrafındaki rastgele sapması")]
     public float meteorScatter = 0.9f;
@@ -87,6 +91,7 @@ public class CornerShooter : MonoBehaviour
 
     ProjectileData PickData()
     {
+        if (overrideProjectile != null) return overrideProjectile;
         ProjectileData d = DifficultyManager.Instance != null ? DifficultyManager.Instance.PickProjectile() : null;
         if (d == null && spawnerData != null) d = spawnerData.projectileData;
         return d;
