@@ -46,8 +46,19 @@ Son commit'ler (Temmuz 2026): HD ana menü, altın buton, premium fontlar (Cinze
 
 ## Aktif faz
 
-**Faz 1.5 — Ekran Kompozisyonu** (başlıyor). Faz 0 ✅, Faz 1 ✅ (2026-09-25).
-**Öncelik: Sonsuz Mod.** Sıra: 0 ✅ → 1 ✅ → 1.5 → 3 → 2A → 5 → 4 → 10. Ayrıntı `roadmap.md` §4.
+**Faz 3 — Görsel Temel** (başlıyor; ilk adım palet seçimi → kullanıcı onayı). Faz 0 ✅, 1 ✅, 1.5 ✅ (2026-09-25).
+**Öncelik: Sonsuz Mod.** Sıra: 0 ✅ → 1 ✅ → 1.5 ✅ → 3 → 2A → 5 → 4 → 10.
+
+### Faz 1.5 sonucu (testler: 20/20 yeşil)
+- [x] ScreenComposer (kamera + HUD bandı + kontrol alanı, Safe Area, tablet modu)
+- [x] DungeonFrame (skybox yerine karanlık dünya, koridor, meşaleler, vinyet), geçici karolar
+- [x] Kayan joystick (kontrol alanında, arenaya binmez), soluk taş temalı görünüm
+- [x] HUD bandı yerleşimi, CanvasScaler genişliğe göre
+- [x] Arena filigranı temizlendi, Art import kuralları
+- [x] ScreenLayoutTests
+- ↪ Aksiyon butonu yuvası → Faz 5 (dash ile birlikte)
+- ↪ Pause butonu ve skor fontu stili → Faz 4 (UI), geçici olarak eski halinde
+- Renk testi (9:19.5): koyu %51 / orta %47 / açık %2 (önce: %19 / %78 / %4)
 
 ### Faz 1 sonucu (testler: 11/11 yeşil)
 - [x] 1.1 Yaşam döngüsü: GameManager sahneye özel, singleton temizliği, yöneticiler sahnede kalıcı (`KakSceneSetup`), `defaultLevel`, deterministik zorluk/spawner sırası, `KakTime`, pause/SloMo hataları, ölümde görünürlük, sesler, `Wall` etiketi, GC (SetText, KakLog), targetFrameRate
@@ -59,9 +70,10 @@ Son commit'ler (Temmuz 2026): HD ana menü, altın buton, premium fontlar (Cinze
 - Varsayım: Kalkan "vurulana kadar" sürer (`ShieldData.duration` kullanılmıyor, davranış korunuyor)
 
 ### Sıradaki adım
-Faz 1.5 planı: `ScreenComposer` (kamera + bantlar), skybox → düz renk/dungeon çerçevesi, HUD bandı, kontrol alanı + kayan joystick. Önce mevcut Canvas/HUD yapısını incele.
+Faz 3.1: 3 palet adayı hazırlandı (bkz. Onay bekleyenler) → kullanıcı seçince `KakPalette` + palet denetçisi. Seçim beklenirken palete bağlı olmayan işler: 3.4 URP 2D Renderer + ışık, 3.5 juice paketi (sarsıntı, hit-stop, parçacık), 3.2 import standardı ve ölçek temizliği.
 
 ### Onay bekleyenler
+- **Faz 3 palet seçimi**: A) arenadan türetilmiş özel palet, B) Endesga 32, C) Sweetie 16 (önizleme: `.claude-bridge/screenshots/palet_adaylari.png`)
 - Sanat stili: piksel sanatı (32 px, PPU 32). Varsayım: evet, devam.
 - Hedef platform ve test cihazı (Android/iOS?). Faz 10'a kadar engel değil.
 - Kullanıcı tüm izinleri verdi (2026-09-25): faz dallarına push, PR birleştirme, onaysız plan başlatma, test için Unity'yi kullanma.

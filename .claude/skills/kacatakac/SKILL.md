@@ -63,6 +63,8 @@ python3 tools/kak_montage.py out.png a.png b.png ...   # yan yana
 - **Assembly'ler:** `KacAtaKac` (Assets/Scripts), `KacAtaKac.Editor` (Assets/Scripts/Editor), `KakBridge.Editor`, `KacAtaKac.Tests.PlayMode` / `.EditMode`. `Assets/Editor/*.cs` hâlâ Assembly-CSharp-Editor'da.
 - **Testler:** `Assets/Tests/PlayMode/SonsuzModSmokeTests.cs` (regresyon: sahne, skor, ölüm, Retry, menü döngüsü, 20 sn hatasız oyun), `BotTests.cs` (60 sn usta bot: kararlılık, havuz). `KakTestUtil.LoadGameWithLevel()` menüdeki gibi LevelData seçip sahneyi açar. Test sırasında `Debug.LogError` testi düşürür.
 - **Test botu:** `Assets/Scripts/Dev/KakAutoPilot.cs` (sadece editör/dev build). `PlayerMovement2D.InputOverride` üzerinden oynar, `Projectile.Active` listesini okur. `skill` 0-1.
+- **Device Simulator tuzağı:** Kullanıcının editöründe Play görünümü **Simulator** (1080×2280, üst güvenli alan 116 px). Simulator açıkken oyun `Screen` boyutunu simüle cihazdan okur. `shots` komutu otomatik olarak Game view'a geçer, bitince Simulator'a döner. Tek `shot` için önce `python3 tools/kak_bridge.py view game`, sonra `view sim`.
+- **Geliştirici ölümsüzlüğü:** `PlayerHealth.DevGodMode` (menü: KacAtaKac/Dev/Ölümsüzlük Aç-Kapa; `shots` otomatik açar).
 - **Git:** Bu makinede `/usr/bin/git` Xcode yolu yüzünden bozuk olabilir. Komutların başına `export DEVELOPER_DIR=/Library/Developer/CommandLineTools` ekle.
 
 ## 3. Mimari haritası
@@ -89,6 +91,10 @@ SampleScene
   PauseManager (timeScale 0, uygulama arka plana gidince otomatik durur)
   HUD: HealthUI (kalp animasyonları), ScoreText, Joystick, GameOverPanel, PausePanel
 ```
+
+**Ekran kompozisyonu (Faz 1.5):** `Main Camera` üzerinde `ScreenComposer` (CameraFitWidth kaldırıldı) → kamera boyutu/konumu + `HUDCanvas/HudBand/HudContent` (kalpler, skor, pause) + `HUDCanvas/ControlArea/ControlContent/JoystickZone` (kayan `VirtualJoystick`, bileşen artık zone üzerinde) + `DungeonFrame` (arena dışı dünya: Backdrop, koridor, duvarlar, Ledge, Vignette, 8 meşale). Kurulum aracı: `KacAtaKac/Ekran Kompozisyonunu Kur` (`KakScreenSetup`). Sıralama: DungeonFrame -300…-260, arena -100, oyun nesneleri ≥ 0.
+**Oynanabilir alan (Faz 1):** `ArenaAutoLayout.PlayableWorldRect` duvarlar, mermi sınırı, powerup alanı ve bot için tek kaynak. `ArenaData.playableAreaNormalized` + fırlatıcı duruş noktaları (`anchorTopLeft`...).
+**Yöneticiler sahnede kalıcı:** `Managers/{LevelManager, DifficultyManager, ProjectilePool, PowerupSpawner}` (`KacAtaKac/Sahne Yöneticilerini Kur`). GameManager sahneye özel (DontDestroyOnLoad değil). Zaman ölçeği sadece `KakTime` üzerinden, bilgi logları `KakLog.Info`.
 
 **Önemli singleton'lar:** `GameManager`, `LevelManager`, `DifficultyManager`, `WaveManager`, `ProjectilePool`, `AudioManager` — hepsi `Instance` statik alanı ile.
 
