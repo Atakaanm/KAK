@@ -37,6 +37,13 @@ public class KakArtImportRules : AssetPostprocessor
         // Standart: 1 sanat pikseli = 0.024 dünya birimi (karakterlerle aynı yoğunluk). Yumuşak efektler ve UI 100.
         bool ui = assetPath.StartsWith(ArtRoot + "UI/");
         ti.spritePixelsPerUnit = (soft || ui) ? 100f : ArtPixelPPU;
+
+        // 9-slice UI parçaları: dosya adında "_9s" → kenarlar (küçük görsellerde 6, anahtarlarda 3 piksel)
+        if (file.Contains("_9s"))
+        {
+            int b = file.StartsWith("toggle") ? 3 : 6;
+            ti.spriteBorder = new Vector4(b, b, b, b);
+        }
     }
 
     /// <summary>Kurallar değişince veya dosyalar kuraldan önce eklendiyse klasörü yeniden içe aktarır.</summary>

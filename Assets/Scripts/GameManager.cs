@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Game Over UI")]
     public GameObject gameOverPanel;
+    public GameOverScreen gameOverScreen;
     public TMP_Text finalScoreText;
     public TMP_Text bestScoreText;
 
@@ -90,7 +91,10 @@ public class GameManager : MonoBehaviour
         SaveSystem.Save();
 
         StartCoroutine(DeathSequence(finalScore, bestScore));
+        lastSeconds = seconds;
     }
+
+    private float lastSeconds;
 
     private System.Collections.IEnumerator DeathSequence(int finalScore, int bestScore)
     {
@@ -100,8 +104,17 @@ public class GameManager : MonoBehaviour
         KakTime.SetTimeScale(0f);
 
         if (gameOverPanel != null) gameOverPanel.SetActive(true);
-        if (finalScoreText != null) finalScoreText.SetText("SCORE: {0}", finalScore);
-        if (bestScoreText != null) bestScoreText.SetText("BEST: {0}", bestScore);
+        if (gameOverScreen != null)
+        {
+            int near = scoreManager != null ? scoreManager.NearMissCount : 0;
+            float combo = scoreManager != null ? scoreManager.MaxCombo : 1f;
+            gameOverScreen.Show(finalScore, bestScore, IsNewBest, lastSeconds, near, combo);
+        }
+        else
+        {
+            if (finalScoreText != null) finalScoreText.SetText("SCORE: {0}", finalScore);
+            if (bestScoreText != null) bestScoreText.SetText("BEST: {0}", bestScore);
+        }
     }
 
     public void RetryGame()

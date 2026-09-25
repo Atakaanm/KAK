@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 /// <summary>
 /// Sahne gecislerini yoneten yardimci sinif.
 /// Her yerden cagrilabilir, MonoBehaviour degildir.
-/// Her geçişte zaman ölçeği ve fizik adımı varsayılana döner (SloMo/pause kalıntısı kalmaz).
+/// Geçişler kısa kararmayla (SceneFader) yapılır; zaman ölçeği ve fizik adımı varsayılana döner.
 /// </summary>
 public static class SceneLoader
 {
@@ -15,8 +15,7 @@ public static class SceneLoader
     /// </summary>
     public static void LoadGame()
     {
-        KakTime.ResetAll();
-        SceneManager.LoadScene(GAME_SCENE);
+        SceneFader.Load(GAME_SCENE);
     }
 
     /// <summary>
@@ -24,8 +23,7 @@ public static class SceneLoader
     /// </summary>
     public static void LoadMenu()
     {
-        KakTime.ResetAll();
-        SceneManager.LoadScene(MENU_SCENE);
+        SceneFader.Load(MENU_SCENE);
     }
 
     /// <summary>
@@ -33,7 +31,6 @@ public static class SceneLoader
     /// </summary>
     public static void ReloadCurrentScene()
     {
-        KakTime.ResetAll();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneFader.Load(SceneManager.GetActiveScene().buildIndex);
     }
 }

@@ -46,8 +46,18 @@ Son commit'ler (Temmuz 2026): HD ana menü, altın buton, premium fontlar (Cinze
 
 ## Aktif faz
 
-**Faz 4 — Menü ve UI (Sonsuz odaklı)** (başlıyor). 0 ✅ 1 ✅ 1.5 ✅ 3 ✅ 2A ✅ 5 ✅ (2026-09-25).
-Sıra: → 4 → 10 → (2B → 6 → 7 → 8 → 9).
+**Faz 10 — Mobil ve yayın hazırlığı** (başlıyor). 0 ✅ 1 ✅ 1.5 ✅ 3 ✅ 2A ✅ 5 ✅ 4 ✅ (2026-09-25).
+Sonra: 2B → 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
+
+### Faz 4 sonucu (testler: 34/34 + denge ayrı)
+- [x] UI görsel seti (`tools/kak_gen_ui.py`): piksel 9-slice altın/taş buton, panel, rozet, anahtar, ikonlar (palet renkleri); `_9s` import kuralı
+- [x] `KakUiKit` + `KakUiSetup` (Arayüzü Kur): tüm UI kod ile tekrarlanabilir üretiliyor
+- [x] Fontlar: Nunito ExtraBold (UI, Türkçe tam) + Cinzel Decorative (sadece logo), konturlu materyaller. Piksel font indirilmedi (dış kaynak gerekmesin diye)
+- [x] Ana menü: canlı arena arka planı (`MenuBackdrop` + DungeonFrame prefab + süzülen taşlar), logo, rekor ve istatistik, OYNA / KARAKTER / AYARLAR / BÖLÜMLER (yakında), Ayarlar paneli (müzik, efekt, titreşim, sarsıntı, iki dokunuşla sıfırlama), Karakter paneli (tek karakter + 2 kilitli)
+- [x] Oyun içi: taş levha pause butonu, pause paneli (ayarlar + Devam/Yeniden Başla/Ana Menü), oyun sonu ekranı (`GameOverScreen`: skor sayma, YENİ REKOR rozeti, süre/yakın geçiş/combo)
+- [x] Sahne geçişi: `SceneFader` (kararma, sıraya alma), `SafeAreaFitter`
+- [x] Testlerin gerçek kayda yazması düzeltildi (`KakTestUtil` geçici kayıt). Kullanıcının kaydından test istatistikleri temizlendi, rekor 4775 korundu.
+- ↪ Karakter seçimi gerçek değil: ikinci karakterin görselleri yok (Faz 9)
 
 ### Faz 5 sonucu (testler: 31/31 + denge ölçümü ayrı)
 - [x] Fırlatıcı uyarısı (telegraph): atıştan 0,35 sn önce sıcak renge döner
@@ -103,7 +113,7 @@ Sıra: → 4 → 10 → (2B → 6 → 7 → 8 → 9).
 - Varsayım: Kalkan "vurulana kadar" sürer (`ShieldData.duration` kullanılmıyor, davranış korunuyor)
 
 ### Sıradaki adım
-Faz 4: menü sahnesi (başlık, OYNA, karakter seçimi Boy/Girl, ayarlar: müzik/efekt/titreşim/sarsıntı/sıfırla, istatistik), oyun sonu ekranı (skor sayma, YENİ REKOR, süre/yakın geçiş/combo), pause paneli, piksel font, buton stili, sahne geçişi (kararma).
+Faz 10: Android build ayarları (paket adı, IL2CPP, ARM64, dikey kilit, ikon, açılış), bir development build almayı dene (Android modülü kurulu mu?), cihazda performans (Frame Debugger, 2D Renderer kararı), Input System geçişi değerlendirmesi, yerelleştirme (TR/EN) altyapısı, mağaza materyali listesi.
 
 ### Onay bekleyenler
 - **Denge hissi:** telefonda birkaç oyun oyna → "çok zor / çok kolay / tam" + hangi taş/olay haksız hissettirdi. Değerler `KakEndlessSetup.SetStage` ve `KakContentSetup` içinde tek yerde.

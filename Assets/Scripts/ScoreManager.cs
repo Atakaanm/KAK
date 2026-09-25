@@ -39,6 +39,7 @@ public class ScoreManager : MonoBehaviour
     public float dashNearMissMultiplier = 2f;
 
     public float ComboMultiplier { get; private set; } = 1f;
+    public float MaxCombo { get; private set; } = 1f;
     public int NearMissCount { get; private set; }
     private float comboTimer;
 
@@ -98,6 +99,7 @@ public class ScoreManager : MonoBehaviour
         {
             comboTimer -= comboStepSeconds;
             ComboMultiplier = Mathf.Min(comboMax, ComboMultiplier + comboStep);
+            if (ComboMultiplier > MaxCombo) MaxCombo = ComboMultiplier;
             GameEvents.RaiseComboChanged(ComboMultiplier);
         }
 
