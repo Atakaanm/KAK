@@ -8,6 +8,7 @@ public class PauseManager : MonoBehaviour
     public Button pauseButton;
     public Button resumeButton;
     public Button mainMenuButton;
+    public Button restartButton;
 
     private bool isPaused = false;
 
@@ -24,6 +25,8 @@ public class PauseManager : MonoBehaviour
             resumeButton.onClick.AddListener(Resume);
         if (mainMenuButton != null)
             mainMenuButton.onClick.AddListener(GoToMainMenu);
+        if (restartButton != null)
+            restartButton.onClick.AddListener(Restart);
     }
 
     // Cihazda uygulama arka plana gidince otomatik duraklat.
@@ -63,6 +66,13 @@ public class PauseManager : MonoBehaviour
 
         if (pausePanel != null)
             pausePanel.SetActive(false);
+    }
+
+    void Restart()
+    {
+        Resume();
+        if (GameManager.Instance != null) GameManager.Instance.RetryGame();
+        else SceneLoader.ReloadCurrentScene();
     }
 
     void GoToMainMenu()

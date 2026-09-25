@@ -4,6 +4,15 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-09-25 — Faz 4 tamamlandı: menü ve arayüz
+
+- Menü önceden resimsel, gerçekçi bir mağara görseliydi (oyunun piksel diliyle çelişiyordu). Artık canlı piksel arena kullanılıyor, tek stil.
+- Tüm UI editör koduyla üretiliyor (`KakUiKit`/`KakUiSetup`). Elle sahne düzenleme yok, tekrar çalıştırınca aynı sonuç.
+- **Tuzak tekrarı:** `GetComponent<T>() ?? AddComponent<T>()` yine kullanıldı ve patladı. Artık `KakUiKit.GetOrAdd<T>(go)` var. Yeni kodda `??` + Unity nesnesi görürsen düzelt (`grep -rn "?? .*AddComponent"`).
+- **Test kirliliği:** PlayMode testleri gerçek `save.json`'a yazıyordu (menüde "37 oyun"). Artık `KakTestUtil.ResetWorld` geçici kayıt kullanıyor. Kural: testler kullanıcı verisine dokunmaz.
+- **Test zayıflığı:** CanvasGroup varsayılan olarak etkileşimli olduğu için "butonlar aktifleşti" koşulu panel açılmadan sağlanmıştı. Koşulu anlamlı bir önkoşulla (panel açıldı, sonra etkileşim) bekle, süreyi sorgula.
+- `SceneFader` meşgulken gelen yükleme istekleri sıraya alınıyor (test bu hatayı yakaladı).
+
 ## 2026-09-25 — Faz 5 tamamlandı: Sonsuz Mod içeriği ve denge
 
 - Eski denge çok dikti: skor 10/sn ile 15. sn'de Orta, 50. sn'de Cehennem. Eşikler süreye yayıldı, çarpanlar yumuşatıldı. Zorluk artık çeşitlilikten (taş türleri + olaylar) geliyor.

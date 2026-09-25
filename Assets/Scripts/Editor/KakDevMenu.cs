@@ -34,6 +34,29 @@ public static class KakDevMenu
         Debug.Log("[KakDevMenu] Ölümsüzlük: " + (PlayerHealth.DevGodMode ? "AÇIK" : "KAPALI"));
     }
 
+    [MenuItem("KacAtaKac/Dev/UI - Ayarları Aç")]
+    public static void OpenSettings() { var m = Object.FindAnyObjectByType<MainMenuController>(); if (m != null) m.OnSettingsClicked(); }
+
+    [MenuItem("KacAtaKac/Dev/UI - Karakterleri Aç")]
+    public static void OpenCharacters() { var m = Object.FindAnyObjectByType<MainMenuController>(); if (m != null) m.OnCharactersClicked(); }
+
+    [MenuItem("KacAtaKac/Dev/UI - Duraklat")]
+    public static void PauseGame() { var p = Object.FindAnyObjectByType<PauseManager>(); if (p != null) p.Pause(); }
+
+    [MenuItem("KacAtaKac/Dev/Oyuncuyu Öldür")]
+    public static void KillPlayer()
+    {
+        PlayerHealth.DevGodMode = false;
+        var ph = Object.FindAnyObjectByType<PlayerHealth>();
+        if (ph == null) return;
+        ph.currentHealth = 1;
+        ph.SetInvulnerable(0f);
+        typeof(PlayerHealth).GetField("isInvincible", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(ph, false);
+        typeof(PlayerHealth).GetField("isGhost", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(ph, false);
+        typeof(PlayerHealth).GetField("hasShield", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(ph, false);
+        ph.TakeDamage(1);
+    }
+
     [MenuItem("KacAtaKac/Dev/Bot Raporu")]
     public static void Report()
     {
