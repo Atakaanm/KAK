@@ -45,9 +45,28 @@ public static class SaveSystem
         {
             Debug.LogWarning("[SaveSystem] Kayıt okunamadı, yeni kayıt açılıyor: " + e.Message);
         }
+        // Şirket/ürün adı değişince persistentDataPath değişir: eski konumdaki kaydı taşı (geliştirme makinesi)
+        if (string.IsNullOrEmpty(OverridePath) && TryLoadLegacy()) { Save(); return; }
+
         data = new SaveData();
         MigrateFromPlayerPrefs(data);
         Save();
+    }
+
+    static bool TryLoadLegacy()
+    {
+        try
+        {
+            string root = Path.GetDirectoryName(Path.GetDirectoryName(Application.persistentDataPath));
+            string legacy = Path.Combine(root, "DefaultCompany", "KacAtaKac", "save.json");
+            if (!File.Exists(legacy) || legacy == FilePath) return false;
+            data = JsonUtility.FromJson<SaveData>(File.ReadAllText(legacy));
+            if (data == null) return false;
+            data.Upgrade();
+            Debug.Log("[SaveSystem] Eski konumdaki kayıt taşındı: " + legacy);
+            return true;
+        }
+        catch { return false; }
     }
 
     public static void Save()
@@ -124,4 +143,5 @@ public class SettingsData
     public bool sfx = true;
     public bool vibration = true;
     public bool screenShake = true;
+    public string language = ""; // "" = cihaz dili, "TR" / "EN"
 }

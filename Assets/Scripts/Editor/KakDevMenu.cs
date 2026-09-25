@@ -57,6 +57,9 @@ public static class KakDevMenu
         ph.TakeDamage(1);
     }
 
+    [MenuItem("KacAtaKac/Dev/UI - Dili Değiştir (TR-EN)")]
+    public static void ToggleLanguage() { Loc.Current = Loc.Current == Loc.Lang.TR ? Loc.Lang.EN : Loc.Lang.TR; }
+
     [MenuItem("KacAtaKac/Dev/Bot Raporu")]
     public static void Report()
     {

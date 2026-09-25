@@ -401,7 +401,7 @@ public static class KakBridge
                 {
                     p.frames++;
                     SavePending(p);
-                    if (p.frames > 5) { ClearPending(); Reply(p.c, true, "Play modunda"); }
+                    if (p.frames > 5) { ClearPending(); UseScratchSave(); Reply(p.c, true, "Play modunda (kayıt yazmaları geçici dosyaya)"); }
                 }
                 break;
 
@@ -459,6 +459,27 @@ public static class KakBridge
             SessionState.EraseString(TestCmdKey);
             Reply(p.c, false, "zaman aşımı (" + p.stage + ", " + (int)elapsed + " sn)");
         }
+    }
+
+    /// <summary>
+    /// Köprünün başlattığı Play oturumları kullanıcının gerçek kaydına yazmasın:
+    /// SaveSystem.OverridePath geçici dosyaya çevrilir (okunan veri gerçek kalır, yazmalar geçiciye gider).
+    /// </summary>
+    static void UseScratchSave()
+    {
+        try
+        {
+            foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                var t = asm.GetType("SaveSystem", false);
+                var f = t?.GetField("OverridePath", BindingFlags.Public | BindingFlags.Static);
+                if (f == null) continue;
+                f.SetValue(null, Path.Combine(Root, "scratch_save.json"));
+                AppendLog("BRIDGE", "kayıt yazmaları geçici dosyaya yönlendirildi");
+                return;
+            }
+        }
+        catch (Exception e) { AppendLog("BRIDGE", "scratch save hatası: " + e.Message); }
     }
 
     // -------------------------------------------------------

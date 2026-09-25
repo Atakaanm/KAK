@@ -30,10 +30,10 @@ public class GameOverScreen : MonoBehaviour
         if (statsText != null)
         {
             int m = Mathf.FloorToInt(seconds / 60f), s = Mathf.FloorToInt(seconds % 60f);
-            statsText.SetText("SÜRE {0}:{1:00}   YAKIN {2}   COMBO x{3:1}", m, s, nearMiss, maxCombo);
+            statsText.SetText(Loc.T("run_stats"), m, s, nearMiss, maxCombo);
             statsText.alpha = 0f;
         }
-        if (bestText != null) bestText.SetText("EN İYİ {0}", best);
+        if (bestText != null) bestText.SetText(Loc.T("best_short"), best);
         if (scoreText != null) scoreText.SetText("0");
 
         // Panel girişi

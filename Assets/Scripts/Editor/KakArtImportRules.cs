@@ -17,6 +17,14 @@ public class KakArtImportRules : AssetPostprocessor
     {
         if (!assetPath.StartsWith(ArtRoot)) return;
         var ti = (TextureImporter)assetImporter;
+        if (assetPath.StartsWith(ArtRoot + "Icon/"))
+        {
+            ti.textureType = TextureImporterType.Default;
+            ti.mipmapEnabled = false;
+            ti.textureCompression = TextureImporterCompression.Uncompressed;
+            ti.isReadable = true;
+            return;
+        }
         string file = System.IO.Path.GetFileNameWithoutExtension(assetPath).ToLowerInvariant();
         bool soft = file.Contains("glow") || file.Contains("vignette") || file.Contains("soft");
 

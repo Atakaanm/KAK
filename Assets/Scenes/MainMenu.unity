@@ -469,6 +469,7 @@ GameObject:
   - component: {fileID: 119139548}
   - component: {fileID: 119139550}
   - component: {fileID: 119139549}
+  - component: {fileID: 119139551}
   m_Layer: 0
   m_Name: Label
   m_TagString: Untagged
@@ -515,7 +516,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "B\xD6L\xDCMLER \u2022 YAKINDA"
+  m_text: "LEVELS \u2022 SOON"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 22c41778943bf420796e8128d792907b, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: d693eaf6e34ef493ab1c27e70ea21350, type: 2}
@@ -595,6 +596,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 119139547}
   m_CullTransparentMesh: 1
+--- !u!114 &119139551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 119139547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 545d53ac3726345fa8a6577641577a8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KacAtaKac::LocText
+  key: levels_soon
 --- !u!1 &165386608
 GameObject:
   m_ObjectHideFlags: 0
@@ -1193,12 +1207,13 @@ RectTransform:
   - {fileID: 949106960}
   - {fileID: 194906565}
   - {fileID: 375464171}
+  - {fileID: 1769577727}
   m_Father: {fileID: 1831544296}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 860, y: 1300}
+  m_SizeDelta: {x: 860, y: 1400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &400668453
 MonoBehaviour:
@@ -1463,6 +1478,157 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 434118883}
   m_CullTransparentMesh: 1
+--- !u!1 &468786167
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 468786168}
+  - component: {fileID: 468786171}
+  - component: {fileID: 468786170}
+  - component: {fileID: 468786169}
+  m_Layer: 0
+  m_Name: Label
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &468786168
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 468786167}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1769577727}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 300, y: 100}
+  m_Pivot: {x: 0, y: 0.5}
+--- !u!114 &468786169
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 468786167}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 545d53ac3726345fa8a6577641577a8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KacAtaKac::LocText
+  key: language
+--- !u!114 &468786170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 468786167}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: Language
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 22c41778943bf420796e8128d792907b, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: d693eaf6e34ef493ab1c27e70ea21350, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontColor: {r: 0.91764706, g: 0.83137256, b: 0.6666667, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: 0
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 52
+  m_fontSizeBase: 52
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 0
+  m_fontSizeMax: 0
+  m_fontStyle: 0
+  m_HorizontalAlignment: 1
+  m_VerticalAlignment: 4096
+  m_textAlignment: 65535
+  m_characterSpacing: 2
+  m_characterHorizontalScale: 1
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_TextWrappingMode: 0
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 0
+  m_ActiveFontFeatures: 00000000
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_EmojiFallbackSupport: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 0
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &468786171
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 468786167}
+  m_CullTransparentMesh: 1
 --- !u!1 &495557089
 GameObject:
   m_ObjectHideFlags: 0
@@ -1474,6 +1640,7 @@ GameObject:
   - component: {fileID: 495557090}
   - component: {fileID: 495557092}
   - component: {fileID: 495557091}
+  - component: {fileID: 495557093}
   m_Layer: 0
   m_Name: Label
   m_TagString: Untagged
@@ -1520,7 +1687,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: OYNA
+  m_text: PLAY
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 22c41778943bf420796e8128d792907b, type: 2}
   m_sharedMaterial: {fileID: -5299897921805173848, guid: 22c41778943bf420796e8128d792907b, type: 2}
@@ -1600,6 +1767,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 495557089}
   m_CullTransparentMesh: 1
+--- !u!114 &495557093
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 495557089}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 545d53ac3726345fa8a6577641577a8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KacAtaKac::LocText
+  key: play
 --- !u!1 &503953103
 GameObject:
   m_ObjectHideFlags: 0
@@ -2143,6 +2323,7 @@ GameObject:
   - component: {fileID: 669723497}
   - component: {fileID: 669723499}
   - component: {fileID: 669723498}
+  - component: {fileID: 669723500}
   m_Layer: 0
   m_Name: Label
   m_TagString: Untagged
@@ -2189,7 +2370,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Ekran Sars\u0131nt\u0131s\u0131"
+  m_text: Screen Shake
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 22c41778943bf420796e8128d792907b, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: d693eaf6e34ef493ab1c27e70ea21350, type: 2}
@@ -2269,6 +2450,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 669723496}
   m_CullTransparentMesh: 1
+--- !u!114 &669723500
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 669723496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 545d53ac3726345fa8a6577641577a8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KacAtaKac::LocText
+  key: shake
 --- !u!1 &739332069
 GameObject:
   m_ObjectHideFlags: 0
@@ -2429,6 +2623,7 @@ GameObject:
   - component: {fileID: 794811894}
   - component: {fileID: 794811896}
   - component: {fileID: 794811895}
+  - component: {fileID: 794811897}
   m_Layer: 0
   m_Name: Label
   m_TagString: Untagged
@@ -2475,7 +2670,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Titre\u015Fim"
+  m_text: Vibration
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 22c41778943bf420796e8128d792907b, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: d693eaf6e34ef493ab1c27e70ea21350, type: 2}
@@ -2555,6 +2750,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 794811893}
   m_CullTransparentMesh: 1
+--- !u!114 &794811897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 794811893}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 545d53ac3726345fa8a6577641577a8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KacAtaKac::LocText
+  key: vibration
 --- !u!1 &823447298
 GameObject:
   m_ObjectHideFlags: 0
@@ -2566,6 +2774,7 @@ GameObject:
   - component: {fileID: 823447301}
   - component: {fileID: 823447300}
   - component: {fileID: 823447299}
+  - component: {fileID: 823447302}
   m_Layer: 0
   m_Name: Label
   m_TagString: Untagged
@@ -2593,7 +2802,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u0130LERLEMEY\u0130 SIFIRLA"
+  m_text: RESET PROGRESS
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 22c41778943bf420796e8128d792907b, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: d693eaf6e34ef493ab1c27e70ea21350, type: 2}
@@ -2692,6 +2901,19 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &823447302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 823447298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 545d53ac3726345fa8a6577641577a8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KacAtaKac::LocText
+  key: reset
 --- !u!1 &867730663
 GameObject:
   m_ObjectHideFlags: 0
@@ -2703,6 +2925,7 @@ GameObject:
   - component: {fileID: 867730664}
   - component: {fileID: 867730666}
   - component: {fileID: 867730665}
+  - component: {fileID: 867730667}
   m_Layer: 0
   m_Name: Label
   m_TagString: Untagged
@@ -2749,7 +2972,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: KAPAT
+  m_text: CLOSE
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 22c41778943bf420796e8128d792907b, type: 2}
   m_sharedMaterial: {fileID: -5299897921805173848, guid: 22c41778943bf420796e8128d792907b, type: 2}
@@ -2829,6 +3052,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 867730663}
   m_CullTransparentMesh: 1
+--- !u!114 &867730667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 867730663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 545d53ac3726345fa8a6577641577a8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KacAtaKac::LocText
+  key: close
 --- !u!1 &897058133
 GameObject:
   m_ObjectHideFlags: 0
@@ -3166,6 +3402,7 @@ GameObject:
   - component: {fileID: 904641743}
   - component: {fileID: 904641745}
   - component: {fileID: 904641744}
+  - component: {fileID: 904641746}
   m_Layer: 0
   m_Name: Subtitle
   m_TagString: Untagged
@@ -3212,7 +3449,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "SONSUZ TA\u015E YA\u011EMURU"
+  m_text: ENDLESS ROCK STORM
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 22c41778943bf420796e8128d792907b, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: d693eaf6e34ef493ab1c27e70ea21350, type: 2}
@@ -3292,6 +3529,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 904641742}
   m_CullTransparentMesh: 1
+--- !u!114 &904641746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 904641742}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 545d53ac3726345fa8a6577641577a8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KacAtaKac::LocText
+  key: subtitle
 --- !u!1 &939107914
 GameObject:
   m_ObjectHideFlags: 0
@@ -3785,6 +4035,7 @@ GameObject:
   - component: {fileID: 1184240544}
   - component: {fileID: 1184240546}
   - component: {fileID: 1184240545}
+  - component: {fileID: 1184240547}
   m_Layer: 0
   m_Name: Name
   m_TagString: Untagged
@@ -3831,7 +4082,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: YAKINDA
+  m_text: SOON
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 22c41778943bf420796e8128d792907b, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: d693eaf6e34ef493ab1c27e70ea21350, type: 2}
@@ -3911,6 +4162,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1184240543}
   m_CullTransparentMesh: 1
+--- !u!114 &1184240547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1184240543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 545d53ac3726345fa8a6577641577a8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KacAtaKac::LocText
+  key: soon
 --- !u!1 &1201176934
 GameObject:
   m_ObjectHideFlags: 0
@@ -4129,6 +4393,7 @@ GameObject:
   - component: {fileID: 1331102780}
   - component: {fileID: 1331102782}
   - component: {fileID: 1331102781}
+  - component: {fileID: 1331102783}
   m_Layer: 0
   m_Name: Label
   m_TagString: Untagged
@@ -4175,7 +4440,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Efektler
+  m_text: Sound FX
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 22c41778943bf420796e8128d792907b, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: d693eaf6e34ef493ab1c27e70ea21350, type: 2}
@@ -4255,6 +4520,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1331102779}
   m_CullTransparentMesh: 1
+--- !u!114 &1331102783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1331102779}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 545d53ac3726345fa8a6577641577a8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KacAtaKac::LocText
+  key: sfx
 --- !u!1 &1350767139
 GameObject:
   m_ObjectHideFlags: 0
@@ -4531,6 +4809,7 @@ GameObject:
   - component: {fileID: 1401544433}
   - component: {fileID: 1401544435}
   - component: {fileID: 1401544434}
+  - component: {fileID: 1401544436}
   m_Layer: 0
   m_Name: Name
   m_TagString: Untagged
@@ -4577,7 +4856,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: YAKINDA
+  m_text: SOON
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 22c41778943bf420796e8128d792907b, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: d693eaf6e34ef493ab1c27e70ea21350, type: 2}
@@ -4657,6 +4936,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1401544432}
   m_CullTransparentMesh: 1
+--- !u!114 &1401544436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1401544432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 545d53ac3726345fa8a6577641577a8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KacAtaKac::LocText
+  key: soon
 --- !u!1 &1416643696
 GameObject:
   m_ObjectHideFlags: 0
@@ -4805,6 +5097,7 @@ GameObject:
   - component: {fileID: 1446967272}
   - component: {fileID: 1446967274}
   - component: {fileID: 1446967273}
+  - component: {fileID: 1446967275}
   m_Layer: 0
   m_Name: Label
   m_TagString: Untagged
@@ -4851,7 +5144,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: AYARLAR
+  m_text: SETTINGS
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 22c41778943bf420796e8128d792907b, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: d693eaf6e34ef493ab1c27e70ea21350, type: 2}
@@ -4931,6 +5224,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1446967271}
   m_CullTransparentMesh: 1
+--- !u!114 &1446967275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1446967271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 545d53ac3726345fa8a6577641577a8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KacAtaKac::LocText
+  key: settings
 --- !u!1 &1476288157
 GameObject:
   m_ObjectHideFlags: 0
@@ -5105,6 +5411,143 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &1601245064
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1601245065}
+  - component: {fileID: 1601245067}
+  - component: {fileID: 1601245066}
+  m_Layer: 0
+  m_Name: Label
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1601245065
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1601245064}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1958288503}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1601245066
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1601245064}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: "T\xDCRK\xC7E"
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 22c41778943bf420796e8128d792907b, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: d693eaf6e34ef493ab1c27e70ea21350, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontColor: {r: 0.91764706, g: 0.83137256, b: 0.6666667, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: 0
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 40
+  m_fontSizeBase: 40
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 0
+  m_fontSizeMax: 0
+  m_fontStyle: 0
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
+  m_characterSpacing: 2
+  m_characterHorizontalScale: 1
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_TextWrappingMode: 0
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 0
+  m_ActiveFontFeatures: 00000000
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_EmojiFallbackSupport: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 0
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &1601245067
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1601245064}
+  m_CullTransparentMesh: 1
 --- !u!1 &1636038109
 GameObject:
   m_ObjectHideFlags: 0
@@ -5191,6 +5634,7 @@ GameObject:
   - component: {fileID: 1640019503}
   - component: {fileID: 1640019505}
   - component: {fileID: 1640019504}
+  - component: {fileID: 1640019506}
   m_Layer: 0
   m_Name: Label
   m_TagString: Untagged
@@ -5237,7 +5681,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: KAPAT
+  m_text: CLOSE
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 22c41778943bf420796e8128d792907b, type: 2}
   m_sharedMaterial: {fileID: -5299897921805173848, guid: 22c41778943bf420796e8128d792907b, type: 2}
@@ -5317,6 +5761,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1640019502}
   m_CullTransparentMesh: 1
+--- !u!114 &1640019506
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1640019502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 545d53ac3726345fa8a6577641577a8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KacAtaKac::LocText
+  key: close
 --- !u!1 &1668169159
 GameObject:
   m_ObjectHideFlags: 0
@@ -5602,6 +6059,7 @@ GameObject:
   - component: {fileID: 1703766073}
   - component: {fileID: 1703766075}
   - component: {fileID: 1703766074}
+  - component: {fileID: 1703766076}
   m_Layer: 0
   m_Name: Title
   m_TagString: Untagged
@@ -5648,7 +6106,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: KARAKTER
+  m_text: HERO
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 22c41778943bf420796e8128d792907b, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: d693eaf6e34ef493ab1c27e70ea21350, type: 2}
@@ -5728,6 +6186,56 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1703766072}
   m_CullTransparentMesh: 1
+--- !u!114 &1703766076
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1703766072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 545d53ac3726345fa8a6577641577a8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KacAtaKac::LocText
+  key: character
+--- !u!1 &1769577726
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1769577727}
+  m_Layer: 0
+  m_Name: LanguageRow
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1769577727
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1769577726}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 468786168}
+  - {fileID: 1958288503}
+  m_Father: {fileID: 400668452}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -740}
+  m_SizeDelta: {x: 640, y: 110}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1824611024
 GameObject:
   m_ObjectHideFlags: 0
@@ -5887,6 +6395,7 @@ GameObject:
   - component: {fileID: 1825037352}
   - component: {fileID: 1825037354}
   - component: {fileID: 1825037353}
+  - component: {fileID: 1825037355}
   m_Layer: 0
   m_Name: Name
   m_TagString: Untagged
@@ -5933,7 +6442,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "SE\xC7\u0130L\u0130"
+  m_text: SELECTED
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 22c41778943bf420796e8128d792907b, type: 2}
   m_sharedMaterial: {fileID: -5299897921805173848, guid: 22c41778943bf420796e8128d792907b, type: 2}
@@ -6013,6 +6522,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1825037351}
   m_CullTransparentMesh: 1
+--- !u!114 &1825037355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1825037351}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 545d53ac3726345fa8a6577641577a8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KacAtaKac::LocText
+  key: selected
 --- !u!1 &1831544295
 GameObject:
   m_ObjectHideFlags: 0
@@ -6136,6 +6658,7 @@ GameObject:
   - component: {fileID: 1907772897}
   - component: {fileID: 1907772899}
   - component: {fileID: 1907772898}
+  - component: {fileID: 1907772900}
   m_Layer: 0
   m_Name: Title
   m_TagString: Untagged
@@ -6182,7 +6705,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: AYARLAR
+  m_text: SETTINGS
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 22c41778943bf420796e8128d792907b, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: d693eaf6e34ef493ab1c27e70ea21350, type: 2}
@@ -6262,6 +6785,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1907772896}
   m_CullTransparentMesh: 1
+--- !u!114 &1907772900
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1907772896}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 545d53ac3726345fa8a6577641577a8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KacAtaKac::LocText
+  key: settings
 --- !u!1 &1939734468
 GameObject:
   m_ObjectHideFlags: 0
@@ -6273,6 +6809,7 @@ GameObject:
   - component: {fileID: 1939734469}
   - component: {fileID: 1939734471}
   - component: {fileID: 1939734470}
+  - component: {fileID: 1939734472}
   m_Layer: 0
   m_Name: Label
   m_TagString: Untagged
@@ -6319,7 +6856,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "M\xFCzik"
+  m_text: Music
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 22c41778943bf420796e8128d792907b, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: d693eaf6e34ef493ab1c27e70ea21350, type: 2}
@@ -6399,6 +6936,124 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1939734468}
   m_CullTransparentMesh: 1
+--- !u!114 &1939734472
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1939734468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 545d53ac3726345fa8a6577641577a8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KacAtaKac::LocText
+  key: music
+--- !u!1 &1958288502
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1958288503}
+  - component: {fileID: 1958288507}
+  - component: {fileID: 1958288506}
+  - component: {fileID: 1958288505}
+  - component: {fileID: 1958288504}
+  m_Layer: 0
+  m_Name: Button
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1958288503
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1958288502}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1601245065}
+  m_Father: {fileID: 1769577727}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 1, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 300, y: 96}
+  m_Pivot: {x: 1, y: 0.5}
+--- !u!114 &1958288504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1958288502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a3dc7f52e66f4e5f9f0faa84938d6db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KacAtaKac::ButtonScaleAnimation
+  pressedScale: 0.9
+  animationSpeed: 10
+--- !u!114 &1958288505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1958288502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11eb994197f314352a6035e10f0bf58f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KacAtaKac::LanguageButton
+  label: {fileID: 1601245066}
+--- !u!114 &1958288506
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1958288502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 606136fa3429d4af8a2ce6b120db4206, type: 3}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 0.2
+--- !u!222 &1958288507
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1958288502}
+  m_CullTransparentMesh: 1
 --- !u!1 &2028244514
 GameObject:
   m_ObjectHideFlags: 0
@@ -6468,6 +7123,7 @@ GameObject:
   - component: {fileID: 2034634463}
   - component: {fileID: 2034634465}
   - component: {fileID: 2034634464}
+  - component: {fileID: 2034634466}
   m_Layer: 0
   m_Name: Label
   m_TagString: Untagged
@@ -6514,7 +7170,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: KARAKTER
+  m_text: HERO
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 22c41778943bf420796e8128d792907b, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: d693eaf6e34ef493ab1c27e70ea21350, type: 2}
@@ -6594,6 +7250,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2034634462}
   m_CullTransparentMesh: 1
+--- !u!114 &2034634466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2034634462}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 545d53ac3726345fa8a6577641577a8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KacAtaKac::LocText
+  key: character
 --- !u!1 &2099822980
 GameObject:
   m_ObjectHideFlags: 0
