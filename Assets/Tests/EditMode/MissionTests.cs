@@ -21,6 +21,20 @@ public class MissionTests
     public void TearDown() { SaveSystem.OverridePath = null; SaveSystem.Unload(); if (File.Exists(path)) File.Delete(path); }
 
     [Test]
+    public void Describe_HedefBirse_TekilBicim()
+    {
+        try
+        {
+            Loc.Current = Loc.Lang.EN;
+            var m = new MissionState { type = MissionType.ShieldBlocks, target = 1 };
+            Assert.AreEqual("Block 1 rock with a shield", MissionSystem.Describe(m));
+            m.target = 3;
+            Assert.AreEqual("Block 3 rocks with a shield", MissionSystem.Describe(m));
+        }
+        finally { Loc.ResetCache(); }
+    }
+
+    [Test]
     public void Ensure_UcFarkliGorev()
     {
         var list = MissionSystem.Ensure();

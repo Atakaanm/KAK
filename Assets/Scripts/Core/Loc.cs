@@ -84,6 +84,7 @@ public static class Loc
         { "mission_CoinsInRun", new[] { "Tek oyunda {0} altın topla", "Grab {0} gold in one run" } },
         { "mission_ReachStage", new[] { "{0} kademesine ulaş", "Reach {0}" } },
         { "mission_ShieldBlocks", new[] { "Kalkanla {0} taş engelle", "Block {0} rocks with a shield" } },
+        { "mission_ShieldBlocks_1", new[] { "Kalkanla {0} taş engelle", "Block {0} rock with a shield" } },
         { "mission_PlayGames", new[] { "{0} oyun oyna", "Play {0} games" } },
         // Pet'ler (Faz 3c.5)
         { "pets_title", new[] { "PETLER", "PETS" } },

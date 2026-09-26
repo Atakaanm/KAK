@@ -168,14 +168,19 @@ public static class KakUiKit
         UnityEventTools.AddPersistentListener(b.onClick, action);
     }
 
-    /// <summary>Ekranı kaplayan karartma + ortada panel. Döner: (kök, panel).</summary>
+    /// <summary>Ekranı kaplayan karartma + ortada panel (kök/Dim, kök/Fit/Panel). Fit katmanı kısa ekranda paneli
+    /// sığdırır (UiFitToScreen). Döner: (kök, panel).</summary>
     public static (RectTransform root, RectTransform panel) Modal(Transform parent, string name, Vector2 panelSize, float dimAlpha = 0.72f)
     {
         var root = Stretch(Rect(parent, name));
         var dim = Stretch(Rect(root, "Dim"));
         Img(dim, S("white_ui.png"), false, KakPalette.WithAlpha(KakPalette.Murekkep, dimAlpha), true).preserveAspect = false;
-        var panel = Place(Rect(root, "Panel"), new Vector2(0.5f, 0.5f), Vector2.zero, panelSize);
+        var fit = Stretch(Rect(root, "Fit"));
+        var legacy = root.Find("Panel"); // eski kurulum (Fit'ten önce): içeriğiyle birlikte taşı
+        if (legacy != null) Undo.SetTransformParent(legacy, fit, "Modal Fit");
+        var panel = Place(Rect(fit, "Panel"), new Vector2(0.5f, 0.5f), Vector2.zero, panelSize);
         Img(panel, S("panel_9s.png"), true, null, true);
+        GetOrAdd<UiFitToScreen>(fit.gameObject).content = panel;
         return (root, panel);
     }
 
