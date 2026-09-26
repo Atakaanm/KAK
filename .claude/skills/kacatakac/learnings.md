@@ -4,6 +4,17 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-09-26 — Denetim D0-D1: editör kilidi ve adil çarpışma
+
+- **Tuzak (editörü 10 dk kilitledi):** `EditorSceneManager.SaveOpenScenes()` aktif sahne adsızsa (Untitled) modal "Farklı Kaydet" penceresi açar. Arka planda çalışan editörde köprü donar, kalp atışı durur. Kural: otomasyonda asla `SaveOpenScenes`; `KakEditorUtil.SaveNamedScenes()` (editör asm) / köprüde `SaveNamedScenes()`.
+- **Tuzak:** PlayMode testlerinden sonra test aracı sahne düzenini geri yükleyemeyebiliyor ("InitTestScene... doesn't exist"). Editör geçici sahnede kalır, sonraki kaydetme adsız sahneye denk gelir. Köprü artık testten önce gerçek sahneyi açıyor, sonra geri yüklüyor.
+- Kilit sırasında AppleScript/System Events zaman aşımına uğradı (-1712, erişilebilirlik izni yok). Modal pencereyi Claude kapatamıyor, kullanıcıya haber ver.
+- **Çarpışma kararı (2.5D):** iki collider. Ayak izi (katı, ayaklarda) duvarlar için, gövde kapsülü (trigger, çocuk "Hurtbox", etiket Player) taşlar için. Taş `PlayerHitbox.Hurt` dışındaki Player collider'larını yok sayar. Trigger-trigger teması 2D'de çalışıyor (kinematik taş rb + dinamik oyuncu rb), testle doğrulandı.
+- Ölçü kaynağı: karakter idle kareleri 17×40 opak px → 0,41×0,96 birim; taş görseli ~28 px (0,336 yarıçap), collider 0,26. Hedef: temas mesafesi görsel temastan biraz küçük (cömert).
+- Kalkan gibi durumlar karakteri boyamamalı/ölçeklememeli: okunurluk + çarpışma değişmez. Durum = ayrı katman (balon, ikon).
+- Arena kaideleri görselin parçası, collider'ları oyun sırasında `ArenaAutoLayout` kurar (normalize ölçüler, tema ile kapatılabilir: `solidPedestals`).
+- Near-miss bandı genişledi (temas 0,66 → ~0,44-0,66): yakın geçişler daha sık olacak. Denge etkisini D5'te ölç.
+
 ## 2026-09-25 — Faz 10 tamamlandı (kullanıcı adımları hariç): yayın hazırlığı
 
 - **Gerçek build ölçümü editörden çok farklı:** GC editörde ~100 KB/kare, build'de ~30 B/kare; batch editörde 138, build'de 82. Performans kararlarını build ölçümüyle ver (`KakBuild.BuildMacDev` + `-kakbench`).

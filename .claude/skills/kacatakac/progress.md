@@ -1,6 +1,6 @@
 # KaçAtaKaç — İlerleme ve Durum
 
-> Her iş sonunda güncellenir. En son güncelleme: **2026-09-25**
+> Her iş sonunda güncellenir. En son güncelleme: **2026-09-26**
 
 ## Son durum (özet)
 
@@ -46,7 +46,15 @@ Son commit'ler (Temmuz 2026): HD ana menü, altın buton, premium fontlar (Cinze
 
 ## Aktif faz
 
-**Faz 2B — Bölüm dünyaları için mimari** (başlıyor). Sonsuz Mod v1.0 hazır: 0 ✅ 1 ✅ 1.5 ✅ 3 ✅ 2A ✅ 5 ✅ 4 ✅ 10 ✅* (2026-09-25).
+**Kapsamlı denetim ve düzeltme (D0–D6)** → ardından **Faz 3c (bağlılık + meta ilerleme, odak Sonsuz Mod)**. Bulgular ve yol haritası: `denetim.md`.
+Faz 2B altyapısı yarım (kod var, sahne/UI yok, commit 6f1618f), 3c'den sonra bitirilecek.
+
+### Denetim sonucu (sürüyor)
+- [x] **D0 Hijyen:** Plastic/Visual Scripting/AI Navigation/Multiplayer Center paketleri kaldırıldı; `.plastic/` ve `.slnx` git dışı; Faz 10 oyuncu ayarları commit edildi. **Editör kilidi çözüldü:** `SaveOpenScenes` adsız sahnede "Farklı Kaydet" penceresi açıyordu (köprü + tüm Kak*Setup araçları → `SaveNamedScenes`); PlayMode testlerinden sonra editör geçici InitTestScene'de kalıyordu → köprü sahneyi geri açıyor.
+- [x] **D1 Adil çarpışma:** `PlayerHitbox` (ayak izi r=0,2 duvarlar için + gövde kapsülü 0,36×0,80 taşlar için; eski tek daire r=0,40 gövdenin 2 katıydı), `ShieldBubble` (ölçek/renk yerine piksel balon), katı köşe kaideleri, bot gerçek ölçüleri okuyor. Testler 40/40 + 4/4.
+- [ ] D2 Temizlik → D3 Performans → D4 Oyuncu bilgisi (HUD powerup göstergesi, ilk oyun ipuçları) → D5 Doğrulama (sahne denetimi testi, denge ölçümü) → D6 Belgeler
+
+**Önceki: Faz 2B — Bölüm dünyaları için mimari** (yarım). Sonsuz Mod v1.0 hazır: 0 ✅ 1 ✅ 1.5 ✅ 3 ✅ 2A ✅ 5 ✅ 4 ✅ 10 ✅* (2026-09-25).
 Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 *Faz 10'un mobil build, cihaz testi ve mağaza hesabı adımları kullanıcıya bağlı → `Docs/Yayin-Kontrol-Listesi.md`.
 
@@ -124,7 +132,7 @@ Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 - Varsayım: Kalkan "vurulana kadar" sürer (`ShieldData.duration` kullanılmıyor, davranış korunuyor)
 
 ### Sıradaki adım
-Faz 2B: `GameModeData` + `GameModeController` (Endless / TimedSurvival / Football iskeleti), `EnemyData` + hareket desenleri (Stationary, SideLine, Patrol, Charge) + saldırı desenleri, `StatusEffect` (Slow, Stun, SarıKart sayacı), `WorldData` + bölüm seçimi akışı, `ArenaTileSet` (tema değişimi).
+**D2 Temizlik** (dal `denetim-d2`): eski editör araçlarını kaldır (SceneAutoWire, Phase4AutoSetup, DifficultyStageGenerator, PowerupGenerator, KacAtaKacSetup, AutoAssignSpawnerSprites, CopyPlayerVisualsToData, InitializeOnLoad AutoAssignPowerups, ButtonGenerator, JoystickSpriteGenerator), ölü kod (FloatingText, CameraFitWidth, TutorialInfo), kullanılmayan eski UI sprite'ları (önce referans taraması), SampleScene → Game adı (EditorBuildSettings + SceneLoader + testler). Her silmeden önce `grep` ile referans ara, sonra derle + tüm testler.
 
 ### Onay bekleyenler
 - **Android Build Support modülü** kurulmalı (Unity Hub → 6000.3.8f1 → Add modules). Sonra "Android build al" → cihazda test.
@@ -154,7 +162,7 @@ Faz 2B: `GameModeData` + `GameModeController` (Endless / TimedSurvival / Footbal
 - 🟡 `ShieldData.duration = 10` hiçbir işe yaramıyor, kalkan vurulana kadar sürüyor.
 - ✅ (Faz 1) README güncel değil ("Unity 2022+", `CornerShoother`, eksik dosyalar).
 - ℹ️ Input System paketi kurulu ama kod eski Input Manager kullanıyor. Şu an sorun yok (Active Input Handling = Both olmalı).
-- ℹ️ Plastic (Unity Version Control) kimlik doğrulama hatası loglarda görünüyor. Oyunu etkilemiyor.
+- ✅ (D0) Plastic (Unity Version Control) paketi kaldırıldı (proje git kullanıyor; `.plastic/` diskte duruyor, git dışı).
 
 - ✅ (Faz 1) **`Wall` etiketi projede tanımlı değil** (✔ test buldu): `PowerupSpawner.SpawnRandomPowerup` içindeki `CompareTag("Wall")` her çağrıldığında hata logluyor.
 - ℹ️ ~~HUD oranlara göre bozuk~~ — yanlış alarm: ekran görüntüsü aracının zamanlama hatasıydı (düzeltildi). HUD yine de Faz 1.5'te yeniden kurulacak.
