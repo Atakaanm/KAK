@@ -4,6 +4,14 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-09-26 — Denetim D2: temizlik
+
+- Silmeden önce üç tarama: (1) tip adı kodda (`grep -rlw`), (2) script GUID'i sahne/prefab/asset'te (`.meta` guid → `grep -rl`), (3) sprite GUID'i. Hepsi boşsa sil. Unity kapalı derleme (hata) varken editör asm'si yüklenemez → köprü `invoke` yeni kodu göremez; o durumda `git rm dosya dosya.meta` + refresh.
+- zsh'te `for f in $files` boşlukla bölmez; dizi kullan: `files=(a b); for f in $files`.
+- Sahne/asset yeniden adlandırma: `KakEditorUtil.MoveAssets` (AssetDatabase.MoveAsset, GUID korunur, Build Settings güncellenir). Sonra açık sahneyi yeni yolundan yeniden aç: bellekteki sahne eski yolu tutabiliyor, kaydedilirse eski dosya geri gelir.
+- **Tuzak:** editör aracında TMP `outlineWidth/outlineColor` ayarlamak `fontMaterial` örneği üretir ve sahneye gömer (hem batch bozar hem yanlış atlasla kalabilir). Konturu paylaşılan materyalden ver (`KakUiKit.NunitoOutline`), gerekiyorsa `m_fontMaterial`'ı SerializedObject ile boşalt.
+- Sahne denetimi (`KakSceneAudit`) boş font alanı gibi "sessiz" görsel hataları buluyor → D5'te test haline getir.
+
 ## 2026-09-26 — Denetim D0-D1: editör kilidi ve adil çarpışma
 
 - **Tuzak (editörü 10 dk kilitledi):** `EditorSceneManager.SaveOpenScenes()` aktif sahne adsızsa (Untitled) modal "Farklı Kaydet" penceresi açar. Arka planda çalışan editörde köprü donar, kalp atışı durur. Kural: otomasyonda asla `SaveOpenScenes`; `KakEditorUtil.SaveNamedScenes()` (editör asm) / köprüde `SaveNamedScenes()`.

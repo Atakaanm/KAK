@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 /// <summary>
 /// Faz 1.5 ekran kompozisyonunu oyun sahnesine kurar (tekrar çalıştırılabilir):
-///  - Kamera: CameraFitWidth kaldırılır, ScreenComposer eklenir, arka plan düz koyu renk
+///  - Kamera: ScreenComposer eklenir, arka plan düz koyu renk
 ///  - HUD: HudBand/HudContent (üst), kalpler solda, skor sağda, pause en sağda
 ///  - Kontrol: ControlArea/ControlContent/JoystickZone (alt), kayan joystick
 ///  - Dünya: DungeonFrame (arka plan, koridor, duvarlar, korniş, vinyet, meşaleler)
@@ -18,7 +18,7 @@ using UnityEngine.UI;
 /// </summary>
 public static class KakScreenSetup
 {
-    const string GameScenePath = "Assets/Scenes/SampleScene.unity";
+    const string GameScenePath = KakEditorUtil.GameScenePath;
     const string TileDir = "Assets/Art/Tiles/Dungeon/";
 
     [MenuItem("KacAtaKac/Ekran Kompozisyonunu Kur")]
@@ -43,8 +43,6 @@ public static class KakScreenSetup
         var canvas = canvasGo.GetComponent<Canvas>();
 
         // ── Kamera ─────────────────────────────────────────────
-        var fit = cam.GetComponent<CameraFitWidth>();
-        if (fit != null) { Undo.DestroyObjectImmediate(fit); log.Append("CameraFitWidth kaldırıldı. "); }
         var composer = cam.GetComponent<ScreenComposer>();
         if (composer == null) composer = Undo.AddComponent<ScreenComposer>(cam.gameObject);
         composer.arena = arena;
@@ -96,11 +94,6 @@ public static class KakScreenSetup
             Reparent(pause, hudContent);
             SetRect(pause, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-32f, 0f), new Vector2(96f, 96f));
         }
-
-        // Eski dünya→ekran UI takibini kapat
-        Undo.RecordObject(arena, "arena ui");
-        arena.healthUI = null;
-        arena.scoreUI = null;
 
         // ── Kontrol alanı + kayan joystick ─────────────────────
         var control = GetOrCreateRect(canvasGo.transform, "ControlArea", 1);

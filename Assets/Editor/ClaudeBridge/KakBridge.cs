@@ -41,7 +41,7 @@ public static class KakBridge
     const string PendingKey = "KakBridge.Pending";
     const string TestCmdKey = "KakBridge.TestCmdId";
     const string RestoreSceneKey = "KakBridge.RestoreScene";
-    const string DefaultScene = "Assets/Scenes/SampleScene.unity";
+    const string DefaultScene = "Assets/Scenes/Game.unity";
 
     static double lastPoll;
     static double lastBeat;

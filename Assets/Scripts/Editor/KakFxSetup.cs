@@ -16,7 +16,7 @@ using UnityEngine.Rendering.Universal;
 /// </summary>
 public static class KakFxSetup
 {
-    const string GameScenePath = "Assets/Scenes/SampleScene.unity";
+    const string GameScenePath = KakEditorUtil.GameScenePath;
     const string ProjectilePrefab = "Assets/Prefabs/Projectile.prefab";
     const string RockSprite = "Assets/Art/Projectiles/rock.png";
     const string ShadowSprite = "Assets/Sprites/Player/Black.png";

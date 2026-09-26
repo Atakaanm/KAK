@@ -14,10 +14,13 @@ public class WorldPopup : MonoBehaviour
     public float life = 0.8f;
     public float fontSize = 3.2f;
     public TMP_FontAsset font;
+    [Tooltip("Konturlu paylaşılan materyal (UI ile aynı). Boşsa her yazıya ayrı kontur verilir (materyal kopyası)")]
+    public Material fontMaterial;
 
     TextMeshPro[] items;
     float[] age;
     Vector3[] start;
+    float[] scaleOf;
     int next;
 
     void Awake()
@@ -26,6 +29,7 @@ public class WorldPopup : MonoBehaviour
         items = new TextMeshPro[poolSize];
         age = new float[poolSize];
         start = new Vector3[poolSize];
+        scaleOf = new float[poolSize];
         for (int i = 0; i < poolSize; i++)
         {
             var go = new GameObject("Popup" + i);
@@ -34,9 +38,13 @@ public class WorldPopup : MonoBehaviour
             if (font != null) t.font = font;
             t.alignment = TextAlignmentOptions.Center;
             t.fontSize = fontSize;
-            t.fontStyle = FontStyles.Bold;
-            t.outlineWidth = 0.25f;
-            t.outlineColor = KakPalette.Murekkep;
+            if (font != null && fontMaterial != null) t.fontSharedMaterial = fontMaterial; // tek materyal: batch'lenir
+            else
+            {
+                t.fontStyle = FontStyles.Bold;
+                t.outlineWidth = 0.25f;
+                t.outlineColor = KakPalette.Murekkep;
+            }
             t.sortingOrder = 300;
             t.textWrappingMode = TextWrappingModes.NoWrap;
             go.SetActive(false);
@@ -60,6 +68,7 @@ public class WorldPopup : MonoBehaviour
         t.gameObject.SetActive(true);
         t.SetText(text);
         t.color = color;
+        scaleOf[i] = scale;
         t.transform.localScale = Vector3.one * scale;
         start[i] = pos + new Vector3(0f, 0.45f, 0f);
         t.transform.position = start[i];
@@ -80,7 +89,7 @@ public class WorldPopup : MonoBehaviour
             float ease = 1f - (1f - k) * (1f - k);
             t.transform.position = start[i] + new Vector3(0f, rise * ease, 0f);
             float pop = k < 0.15f ? Mathf.Lerp(0.6f, 1.15f, k / 0.15f) : Mathf.Lerp(1.15f, 1f, (k - 0.15f) / 0.2f);
-            t.transform.localScale = Vector3.one * pop;
+            t.transform.localScale = Vector3.one * (pop * scaleOf[i]);
             Color c = t.color; c.a = k < 0.6f ? 1f : 1f - (k - 0.6f) / 0.4f; t.color = c;
         }
     }

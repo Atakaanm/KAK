@@ -75,6 +75,18 @@ public static class KakDevMenu
         }
     }
 
+    /// <summary>Oyuncunun üstünde örnek dünya yazıları (5 sn kalır; ekran görüntüsü için).</summary>
+    [MenuItem("KacAtaKac/Dev/Dünya Yazısı Göster")]
+    public static void ShowPopups()
+    {
+        var p = Projectile.PlayerTarget;
+        if (WorldPopup.Instance == null || p == null) return;
+        WorldPopup.Instance.life = 5f;
+        WorldPopup.Show(Loc.T("super_dodge"), p.position + new Vector3(0f, 0.6f, 0f), KakPalette.CamgobegiParlak, 1.3f);
+        WorldPopup.Show(Loc.T("near_miss"), p.position + new Vector3(-1.2f, -0.6f, 0f), KakPalette.Krem, 1f);
+        WorldPopup.Show("+10", p.position + new Vector3(1.2f, -0.6f, 0f), KakPalette.AltinAcik, 1f);
+    }
+
     [MenuItem("KacAtaKac/Dev/UI - Dili Değiştir (TR-EN)")]
     public static void ToggleLanguage() { Loc.Current = Loc.Current == Loc.Lang.TR ? Loc.Lang.EN : Loc.Lang.TR; }
 

@@ -52,7 +52,8 @@ Faz 2B altyapısı yarım (kod var, sahne/UI yok, commit 6f1618f), 3c'den sonra 
 ### Denetim sonucu (sürüyor)
 - [x] **D0 Hijyen:** Plastic/Visual Scripting/AI Navigation/Multiplayer Center paketleri kaldırıldı; `.plastic/` ve `.slnx` git dışı; Faz 10 oyuncu ayarları commit edildi. **Editör kilidi çözüldü:** `SaveOpenScenes` adsız sahnede "Farklı Kaydet" penceresi açıyordu (köprü + tüm Kak*Setup araçları → `SaveNamedScenes`); PlayMode testlerinden sonra editör geçici InitTestScene'de kalıyordu → köprü sahneyi geri açıyor.
 - [x] **D1 Adil çarpışma:** `PlayerHitbox` (ayak izi r=0,2 duvarlar için + gövde kapsülü 0,36×0,80 taşlar için; eski tek daire r=0,40 gövdenin 2 katıydı), `ShieldBubble` (ölçek/renk yerine piksel balon), katı köşe kaideleri, bot gerçek ölçüleri okuyor. Testler 40/40 + 4/4.
-- [ ] D2 Temizlik → D3 Performans → D4 Oyuncu bilgisi (HUD powerup göstergesi, ilk oyun ipuçları) → D5 Doğrulama (sahne denetimi testi, denge ölçümü) → D6 Belgeler
+- [x] **D2 Temizlik:** 10 eski editör aracı + 3 InitializeOnLoad üretici silindi; ölü kod (FloatingText, CameraFitWidth, WaveManager/WaveData, TutorialInfo, Readme) ve 6 kullanılmayan UI sprite'ı; LevelData/MainMenuController/ArenaAutoLayout ölü alanları; **SampleScene → Game**, SampleSceneProfile → GameVolumeProfile (GUID korunarak). WorldPopup artık Nunito (önce LiberationSans), `Show(scale)` hatası, afişte gömülü materyal kopyası. Testler 40/40 + 4/4.
+- [ ] D3 Performans → D4 Oyuncu bilgisi (HUD powerup göstergesi, ilk oyun ipuçları) → D5 Doğrulama (sahne denetimi testi, denge ölçümü) → D6 Belgeler
 
 **Önceki: Faz 2B — Bölüm dünyaları için mimari** (yarım). Sonsuz Mod v1.0 hazır: 0 ✅ 1 ✅ 1.5 ✅ 3 ✅ 2A ✅ 5 ✅ 4 ✅ 10 ✅* (2026-09-25).
 Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
@@ -132,7 +133,7 @@ Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 - Varsayım: Kalkan "vurulana kadar" sürer (`ShieldData.duration` kullanılmıyor, davranış korunuyor)
 
 ### Sıradaki adım
-**D2 Temizlik** (dal `denetim-d2`): eski editör araçlarını kaldır (SceneAutoWire, Phase4AutoSetup, DifficultyStageGenerator, PowerupGenerator, KacAtaKacSetup, AutoAssignSpawnerSprites, CopyPlayerVisualsToData, InitializeOnLoad AutoAssignPowerups, ButtonGenerator, JoystickSpriteGenerator), ölü kod (FloatingText, CameraFitWidth, TutorialInfo), kullanılmayan eski UI sprite'ları (önce referans taraması), SampleScene → Game adı (EditorBuildSettings + SceneLoader + testler). Her silmeden önce `grep` ile referans ara, sonra derle + tüm testler.
+**D3 Performans** (dal `denetim-d3`): (1) powerup havuzu (PowerupSpawner Instantiate/Destroy → havuz), (2) coroutine tahsisleri (EndlessEventManager `new WaitForSeconds`/`new List`), PlayerMovement2D GetComponent önbelleği, HitFlash WaitForSeconds, (3) TMP statik font atlası kararı (FontWarmup + dinamik atlas git gürültüsü), (4) 2D Renderer deneyi: ayrı dalda dene, `KakBuild.BuildMacDev` + `-kakbench` ile batch/SetPass/FPS karşılaştır (şimdi 82 batch). Ölçmeden karar verme.
 
 ### Onay bekleyenler
 - **Android Build Support modülü** kurulmalı (Unity Hub → 6000.3.8f1 → Add modules). Sonra "Android build al" → cihazda test.

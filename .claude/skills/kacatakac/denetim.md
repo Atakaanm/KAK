@@ -14,8 +14,8 @@
 | K3 ✅ | Test botu oyuncu yarıçapını 0,25 sanıyor (gerçek 0,40) | Denge ölçümleri yanlış (bot beklenenden kötü) | D1 |
 | K4 ✅ | Faz 10 oyuncu ayarları (`ProjectSettings.asset`: paket adı, dikey kilit, IL2CPP) **commit edilmemiş** | Başka makinede/klonda ayarlar yok | D0 |
 | K5 | ✅ Editör 10+ dk kilitlendi. **Gerçek neden:** `SaveOpenScenes` adsız sahnede "Farklı Kaydet" penceresi açtı (testlerden sonra editör geçici sahnede kalıyordu). Plastic eklentisi de kullanılmıyordu, kaldırıldı | Otomasyon ve kullanıcı akışı kilitlenir | D0 |
-| K6 | **Eski, tehlikeli editör araçları** menüde: Auto-Wire Scene (Ctrl+Shift+W), Fix Sorting Orders, Fix Player Visibility, "Faz 4 Hatalarını Düzelt", Generate Difficulty Stages / Powerups, Setup Default Data | Yanlışlıkla çalıştırılırsa kurulumu, dengeyi ve powerup'ları eski hale döndürür | D2 |
-| K7 | `AutoAssignPowerups` her derlemede sessizce çalışıp powerup'ı boş LevelData'ları dolduruyor; `ButtonGenerator` / `JoystickSpriteGenerator` eski görselleri yeniden üretiyor | Bölümler (Faz 6+) bozulur, gereksiz dosyalar | D2 |
+| K6 ✅ | **Eski, tehlikeli editör araçları** menüde: Auto-Wire Scene (Ctrl+Shift+W), Fix Sorting Orders, Fix Player Visibility, "Faz 4 Hatalarını Düzelt", Generate Difficulty Stages / Powerups, Setup Default Data | Yanlışlıkla çalıştırılırsa kurulumu, dengeyi ve powerup'ları eski hale döndürür | D2 |
+| K7 ✅ | `AutoAssignPowerups` her derlemede sessizce çalışıp powerup'ı boş LevelData'ları dolduruyor; `ButtonGenerator` / `JoystickSpriteGenerator` eski görselleri yeniden üretiyor | Bölümler (Faz 6+) bozulur, gereksiz dosyalar | D2 |
 
 ### 🟠 Yüksek
 | # | Bulgu | Faz |
@@ -35,8 +35,8 @@
 |---|---|---|
 | O1 | Denge ölçümü K3 yüzünden yanlış → düzeltme sonrası yeniden ölç | D5 |
 | O2 | Eski Input (`Input.GetAxisRaw`, `GetKeyDown`) + Input System birlikte ("Both") | ileride |
-| O3 | Ölü dosyalar: `FloatingText.cs`, `CameraFitWidth.cs` (yedek), `TutorialInfo/` (Unity şablonu), eski UI sprite'ları (GoldPill, PremiumGoldButton, PremiumPill, MenuBackground_HD, eski JoystickBG/Handle) | D2 |
-| O4 | Oyun sahnesinin adı hâlâ şablon adı "SampleScene" | D2 |
+| O3 ✅ | Ölü dosyalar: `FloatingText.cs`, `CameraFitWidth.cs` (yedek), `TutorialInfo/` (Unity şablonu), eski UI sprite'ları (GoldPill, PremiumGoldButton, PremiumPill, MenuBackground_HD, eski JoystickBG/Handle) | D2 |
+| O4 ✅ | Oyun sahnesinin adı hâlâ şablon adı "SampleScene" | D2 |
 | O5 ✅ | IDE dosyası `KacAtaKac.slnx` ve `.plastic/` git'te | D0 |
 | O6 | Coroutine döngülerinde `new WaitForSeconds` (PlayerHealth, EndlessEventManager), olay seçiminde `new List` → küçük tahsisler | D3 |
 | O7 | `PlayerMovement2D.FixedUpdate` tembel `GetComponent<PlayerStatus>` (bileşen yoksa her adımda) | D3 |
@@ -57,7 +57,7 @@
 |---|---|---|
 | ✅ **D0 Hijyen** | Plastic eklentisini ve `.plastic/`'i kaldır, `.slnx` git dışı, kullanılmayan paketleri kaldır, ProjectSettings'i commit et, UnityConnect kararı | Derleme temiz, testler yeşil, editör kilitlenmiyor |
 | ✅ **D1 Adil çarpışma** | Oyuncu yarıçapı ~0,24 (temas < görsel), kalkan ölçek yerine balon efekti, hayalet görünümü, bot yarıçapı, kopya kod | Yeni test: görsel temas mesafesi ≥ çarpışma mesafesi; bot testi |
-| **D2 Temizlik** | Eski editör araçları ve InitializeOnLoad jeneratörleri kaldırılır; ölü dosyalar; sahne adı "Game" | Menüde sadece güncel araçlar, testler yeşil |
+| ✅ **D2 Temizlik** | Eski editör araçları ve InitializeOnLoad jeneratörleri kaldırılır; ölü dosyalar; sahne adı "Game" | Menüde sadece güncel araçlar, testler yeşil |
 | **D3 Performans** | Powerup havuzu, coroutine tahsisleri, GetComponent önbelleği, statik font atlası, 2D Renderer deneyi + build ölçümü | Build bench: batch, GC, en kötü kare |
 | **D4 Oyuncu bilgisi** | HUD'da aktif powerup ikonları ve süre halkaları, kalkan/hayalet görselleri, ilk oyun ipuçları | Ekran görüntüleri, UI testleri |
 | **D5 Doğrulama** | Sahne denetimi testi (EditMode), yeniden denge ölçümü, tam regresyon | Tüm testler yeşil |
@@ -69,4 +69,7 @@
 - ✅ Tüm `Kak*Setup` editör araçları da `SaveOpenScenes` kullanıyordu → `KakEditorUtil.SaveNamedScenes`
 - ✅ Köşe kaidelerinde collider yoktu: oyuncu fırlatıcının üstüne çıkabiliyordu (taş namluda vuruyordu)
 - ✅ Kalkan dışında hayalet/vuruş renkleri 3 ayrı yerde elle geri yükleniyordu → `RefreshTint`
-- ⬜ Sahne denetimi: SampleScene 28, MainMenu 2 boş alan (çoğu opsiyonel; 2B alanları bağlanmadı: GameOverScreen yıldız/başlık, LevelManager tema alanları; `WorldPopup.font` boş; `PlayerData` atanmamış) → D5/3c
+- ✅ (D2) `WorldPopup.font` boştu → uçan yazılar LiberationSans ile çıkıyordu; artık Nunito + paylaşılan konturlu materyal. `Show(scale)` parametresi Update'te eziliyordu (düzeltildi)
+- ✅ (D2) `KakEndlessSetup` afişte `outlineWidth` ayarlayıp sahneye gömülü, yanlış atlaslı materyal kopyası üretiyordu (Faz 4 aracı sonradan düzeltiyordu: araç sırasına bağlı gizli hata)
+- ✅ (D2) Ölü alanlar: MainMenuController (leaderboardButton, menuAnimator, gameSceneName), ArenaAutoLayout eski HUD takibi (healthUI/scoreUI), LevelData (waves, targetScore, timeLimit, hasKey/Coins/Boss, isLocked/unlockPrice, enableEndlessScore)
+- ⬜ Sahne denetimi: Game (eski SampleScene) 28, MainMenu 2 boş alan (çoğu opsiyonel; 2B alanları bağlanmadı: GameOverScreen yıldız/başlık, LevelManager tema alanları; `WorldPopup.font` boş; `PlayerData` atanmamış) → D5/3c
