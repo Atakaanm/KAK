@@ -16,6 +16,8 @@ public class GameOverScreen : MonoBehaviour
     [Tooltip("Altın satırı: '+12' ve cüzdan toplamı (altın kilitliyse gizli)")]
     public RectTransform coinsRow;
     public TMP_Text coinsText;
+    [Tooltip("Ödüllü reklamla bu oyunun altınını 2 katına çıkar (Faz Y3; reklam hazırsa görünür)")]
+    public Button doubleCoinsButton;
     [Tooltip("Bu oyunla yeni açılan özellik afişi (panelin üstünde)")]
     public RectTransform unlockBanner;
     public TMP_Text unlockText;
@@ -117,6 +119,7 @@ public class GameOverScreen : MonoBehaviour
     IEnumerator Run(int score, int best, bool newBest, float seconds, int nearMiss, float maxCombo, int coins = -1, int wallet = 0, string unlock = null)
     {
         if (coinsRow != null) coinsRow.gameObject.SetActive(false);
+        if (doubleCoinsButton != null) doubleCoinsButton.gameObject.SetActive(false);
         if (unlockBanner != null) unlockBanner.gameObject.SetActive(false);
         if (goalRow != null) goalRow.gameObject.SetActive(false);
         // Sonsuz/başarısız düzen: yıldızlar ve SONRAKİ gizli, başlık "OYUN BİTTİ"
@@ -189,6 +192,8 @@ public class GameOverScreen : MonoBehaviour
             }
             coinsText.SetText(Loc.T("coins_run"), coins, wallet);
             coinsRow.localScale = Vector3.one;
+            lastCoins = coins;
+            if (doubleCoinsButton != null) doubleCoinsButton.gameObject.SetActive(coins > 0 && AdService.CanShow(AdPlacement.DoubleCoins));
         }
 
         // Sıradaki hedef: kazanılanla dolan çubuk (hedefe yaklaşma etkisi)
@@ -277,5 +282,25 @@ public class GameOverScreen : MonoBehaviour
             yield return null;
         }
         row.localScale = Vector3.one;
+    }
+
+    int lastCoins;
+
+    /// <summary>2× ALTIN: ödüllü reklam izlenince bu oyunun altını bir kez daha eklenir.</summary>
+    public void OnDoubleCoins()
+    {
+        int extra = lastCoins;
+        if (extra <= 0) return;
+        AdService.ShowRewarded(AdPlacement.DoubleCoins, () =>
+        {
+            var d = SaveSystem.Data;
+            d.coins += extra;
+            d.totalCoins += extra;
+            SaveSystem.Save();
+            if (coinsText != null) coinsText.SetText(Loc.T("coins_run"), extra * 2, d.coins);
+            if (doubleCoinsButton != null) doubleCoinsButton.gameObject.SetActive(false);
+            if (AudioManager.Instance != null) AudioManager.Instance.PlaySfx(AudioManager.Instance.stageSfx);
+            if (coinsRow != null) StartCoroutine(PopRow(coinsRow, 0f));
+        }, null);
     }
 }

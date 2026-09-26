@@ -78,6 +78,34 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
+    /// <summary>Reklamla canlanma: ölü durumdan çıkar, can verir, kısa süre dokunulmaz (taşların içinden çıkabilsin).</summary>
+    public void Revive(int health, float invulnerableSeconds)
+    {
+        isDead = false;
+        isInvincible = false;
+        currentHealth = Mathf.Clamp(health, 1, maxHealth);
+        if (hitFlashCoroutine != null) { StopCoroutine(hitFlashCoroutine); hitFlashCoroutine = null; }
+        if (invincibilityCoroutine != null) { StopCoroutine(invincibilityCoroutine); invincibilityCoroutine = null; }
+        if (playerSpriteRenderer != null) playerSpriteRenderer.enabled = true;
+        RefreshTint();
+        if (healthUI != null) healthUI.UpdateHearts(currentHealth);
+        SetInvulnerable(invulnerableSeconds);
+        invincibilityCoroutine = StartCoroutine(InvincibilityBlink(invulnerableSeconds));
+    }
+
+    IEnumerator InvincibilityBlink(float seconds)
+    {
+        float t = 0f;
+        while (t < seconds)
+        {
+            if (playerSpriteRenderer != null) playerSpriteRenderer.enabled = !playerSpriteRenderer.enabled;
+            yield return BlinkWait;
+            t += 0.1f;
+        }
+        if (playerSpriteRenderer != null) playerSpriteRenderer.enabled = true;
+        invincibilityCoroutine = null;
+    }
+
     /// <summary>Can verir (Max canı geçemez).</summary>
     public void Heal(int amount)
     {

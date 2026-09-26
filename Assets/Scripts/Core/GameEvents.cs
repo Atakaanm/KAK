@@ -12,6 +12,8 @@ public static class GameEvents
     /// <summary>Kalkan bir vuruşu engelledi (konum).</summary>
     public static event Action<Vector3> ShieldBlocked;
     public static event Action<Vector3> PlayerDied;
+    /// <summary>Oyuncu reklamla canlandı (konum).</summary>
+    public static event Action<Vector3> PlayerRevived;
     public static event Action<PowerupData, Vector3> PowerupCollected;
     /// <summary>Süreli etki başladı (veri, gerçek süre sn; 0 = vurulana kadar, ör. kalkan). Anlık etkilerde (can) çağrılmaz.</summary>
     public static event Action<PowerupData, float> PowerupActivated;
@@ -43,6 +45,7 @@ public static class GameEvents
     public static void RaisePlayerDamaged(int hp, Vector3 pos) => PlayerDamaged?.Invoke(hp, pos);
     public static void RaiseShieldBlocked(Vector3 pos) => ShieldBlocked?.Invoke(pos);
     public static void RaisePlayerDied(Vector3 pos) => PlayerDied?.Invoke(pos);
+    public static void RaisePlayerRevived(Vector3 pos) => PlayerRevived?.Invoke(pos);
     public static void RaisePowerupCollected(PowerupData data, Vector3 pos) => PowerupCollected?.Invoke(data, pos);
     public static void RaisePowerupActivated(PowerupData data, float seconds) => PowerupActivated?.Invoke(data, seconds);
     public static void RaiseCoinCollected(int runTotal, Vector3 pos) => CoinCollected?.Invoke(runTotal, pos);
@@ -63,6 +66,7 @@ public static class GameEvents
         PlayerDamaged = null;
         ShieldBlocked = null;
         PlayerDied = null;
+        PlayerRevived = null;
         PowerupCollected = null;
         PowerupActivated = null;
         ProjectileHitWall = null;

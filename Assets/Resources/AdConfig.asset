@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 415e7364cd6e44065bc896235c6a97cc, type: 3}
+  m_Name: AdConfig
+  m_EditorClassIdentifier: KacAtaKac::AdConfig
+  enabled: 0
+  provider: 0
+  reviveEnabled: 1
+  maxRevivesPerRun: 1
+  continueSeconds: 5
+  doubleCoinsEnabled: 1
+  androidAppId: ca-app-pub-3940256099942544~3347511713
+  iosAppId: ca-app-pub-3940256099942544~1458002511
+  androidRewardedUnit: ca-app-pub-3940256099942544/5224354917
+  iosRewardedUnit: ca-app-pub-3940256099942544/1712485313
+  trackingDescription: "Reklamlar\u0131 sana daha uygun g\xF6stermek i\xE7in bu izin
+    kullan\u0131l\u0131r. \u0130zin vermesen de oyun ve \xF6d\xFCll\xFC reklamlar
+    \xE7al\u0131\u015F\u0131r."
+  skAdNetworkIds:
+  - cstr6suwn9.skadnetwork

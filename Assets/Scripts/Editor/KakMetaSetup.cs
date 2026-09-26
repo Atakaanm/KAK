@@ -71,6 +71,7 @@ public static class KakMetaSetup
             KakUiSetup.BuildUnlockBanner(gos.panel, gos);
             KakUiSetup.BuildMissionsBlock(gos.panel, gos);
             KakUiSetup.BuildPolish(gos.panel, gos);
+            KakUiSetup.BuildContinuePanel(canvas.transform, Object.FindAnyObjectByType<GameManager>());
             log.Append("Oyun sonu altın satırı + açılış afişi. ");
         }
 
@@ -280,5 +281,18 @@ public static class KakMetaSetup
         pd.frames = new[] { AssetDatabase.LoadAssetAtPath<Sprite>(string.Format(framePattern, 0)), AssetDatabase.LoadAssetAtPath<Sprite>(string.Format(framePattern, 1)) };
         EditorUtility.SetDirty(pd);
         return pd;
+    }
+
+    /// <summary>Resources/AdConfig (varsayılan KAPALI, Google test kimlikleri). Docs/Reklam-Hazirlik.md</summary>
+    public static string SetupAds()
+    {
+        const string path = "Assets/Resources/AdConfig.asset";
+        if (AssetDatabase.LoadAssetAtPath<AdConfig>(path) == null)
+        {
+            AssetDatabase.CreateAsset(ScriptableObject.CreateInstance<AdConfig>(), path);
+            AssetDatabase.SaveAssets();
+            return "[KakMetaSetup] AdConfig oluşturuldu (kapalı).";
+        }
+        return "[KakMetaSetup] AdConfig zaten var.";
     }
 }

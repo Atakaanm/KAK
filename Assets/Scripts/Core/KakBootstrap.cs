@@ -10,6 +10,7 @@ public static class KakBootstrap
     {
         FontWarmup.Run();
         SaveSystem.TouchPlayDay(); // farklı günlerde oynama sayısı (günlük ödül açılması)
+        AdService.Initialize();    // reklam (varsayılan kapalı: AdConfig)
     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]

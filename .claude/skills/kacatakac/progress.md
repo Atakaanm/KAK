@@ -46,6 +46,7 @@ Son commit'ler (Temmuz 2026): HD ana menü, altın buton, premium fontlar (Cinze
 
 ## Aktif faz
 
+**Yayın hazırlığı sürüyor (yayin.md):** Y1-Y3 ✅ (Play/App Store gereksinimleri, API 36, iPhone-only, gizlilik, reklam altyapısı kapalı). Y4 kız karakter, Y5 mağaza görselleri.
 **Faz 3c tamamlandı (2026-09-26):** altın, adım adım açılma, karakterler, görevler, petler, günlük ödül, cila (`3c.md`). Denetim D0-D6 da tamam (`denetim.md`). Sıradaki büyük iş: kullanıcının cihaz testi + denge geri bildirimi, sonra Faz 2B'nin bitirilmesi (bölüm seçimi) → Buz / Futbol / Karanlık dünyaları.
 Faz 2B altyapısı yarım (kod var, sahne/UI yok, commit 6f1618f), 3c'den sonra bitirilecek.
 
@@ -147,7 +148,7 @@ Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 - Varsayım: Kalkan "vurulana kadar" sürer (`ShieldData.duration` kullanılmıyor, davranış korunuyor)
 
 ### Sıradaki adım
-**Faz 2B'yi bitir (bölüm modu arayüzü)** (dal `faz-2b-arayuz`): WorldCatalog/World asset'leri (ilk dünya: Zindan, 3 bölüm), menüde BÖLÜMLER butonu (FeatureGate'e yeni özellik: Levels, ör. 8. oyun veya rekor ≥ 1500), bölüm seçim ekranı (dünya kartı + bölüm düğümleri + yıldızlar), bölüm içi hedef HUD'u (süre/gol sayacı), `GameOverScreen` bölüm sonu (yıldızlar, SONRAKİ; `SahneDenetimTests.BilincliBos` listesinden GameOverScreen alanlarını çıkar), PlayerStatus ikonları. Önce kullanıcıya Faz 3c özetini sun; kullanıcı öncelik değiştirirse ona göre.
+**Yayın hazırlığı (yayin.md):** Y1-Y3 tamam (gereksinim listesi, teknik ayarlar, reklam altyapısı kapalı). Sıradaki **Y4 kız karakter ADA** (dal `yayin-ada`): `tools/kak_gen_girl.py` ile Ata'nın kareleri tabanlı esmer, uzun saçlı, zayıf kız; 8 yön idle + her yön 4 koşu karesi; önizlemelerle yinele; karakter kataloğuna ekle; sonra Y5 mağaza görselleri.
 
 ### Onay bekleyenler
 - **Android Build Support modülü** kurulmalı (Unity Hub → 6000.3.8f1 → Add modules). Sonra "Android build al" → cihazda test.

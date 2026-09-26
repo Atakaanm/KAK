@@ -4,6 +4,15 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-09-26 — Yayın hazırlığı Y1-Y3
+
+- Mağaza kuralları hızla değişiyor: her yayın öncesi yeniden araştır (API 36 zorunluluğu 31.08.2026'da başladı; Xcode 26 zorunlu 28.04.2026; iPadOS 26 UIRequiresFullScreen'i yok sayıyor; Apple yeni yaş anketi).
+- Projedeki mevcut değeri körlemesine ezme: iOS min sürüm 15.0'dı (Unity 6.3 varsayılanı), 14.0'a düşürüyordum → farkı görüp geri aldım. ConfigurePlayer sonrası ProjectSettings farkını her zaman oku.
+- Reklamla devam: kayıt (altın/görev/rekor) teklif kararından sonra bir kez yapılmalı; yoksa canlanma çift sayar. Reklam kapalıyken akış eskisiyle birebir (testler değişmedi).
+- Platforma özel editör kodu (UnityEditor.Android / UnityEditor.iOS.Xcode) `#if UNITY_ANDROID/UNITY_IOS` içinde: modül kurulu değilken derleme bozulmasın.
+- Gerçek SDK kodu (AdMob) `#if KAK_ADMOB` içinde, test edilemediği açıkça belgelendi.
+- Kullanıcının kişisel e-postasını herkese açık gizlilik politikasına kendiliğinden yazma: yer tutucu bırak, kullanıcıya sor.
+
 ## 2026-09-26 — Faz 3c.4-3c.5: görevler ve petler
 
 - Kalkan veren pet `ShieldBlocked` olayını tetiklememeli: o olay "vuruş engellendi" demek (görev sayacı, HUD çipi, parçacık). Olay anlamını koru, yan etkiye başka yoldan (ses) ulaş.

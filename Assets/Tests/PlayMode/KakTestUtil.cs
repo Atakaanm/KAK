@@ -24,6 +24,7 @@ public static class KakTestUtil
         SaveSystem.Unload();
         KakTime.ResetAll();
         GameSettings.Reset();
+        AdService.ResetForTests();
 
         foreach (var gm in Object.FindObjectsByType<GameManager>(FindObjectsInactive.Include, FindObjectsSortMode.None))
             Object.DestroyImmediate(gm.gameObject);
@@ -87,6 +88,7 @@ public static class KakTestUtil
         typeof(PlayerHealth).GetField("isGhost", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(ph, false);
         typeof(PlayerHealth).GetField("isInvincible", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(ph, false);
         typeof(PlayerHealth).GetField("hasShield", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(ph, false);
+        typeof(PlayerHealth).GetField("invulnerableUntil", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(ph, -1f);
         ph.TakeDamage(1);
     }
 

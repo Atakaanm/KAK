@@ -127,6 +127,7 @@ public static class KakUiSetup
         BuildUnlockBanner(gpanel, gos);
         BuildMissionsBlock(gpanel, gos);
         BuildPolish(gpanel, gos);
+        BuildContinuePanel(canvas, gm);
         if (gm != null)
         {
             OnClick(retry, gm.RetryGame);
@@ -236,6 +237,7 @@ public static class KakUiSetup
         ToggleRow(spanel, "ShakeRow", "@shake", KakToggle.Setting.ScreenShake, -610f);
         LanguageRow(spanel, -740f);
         var reset = Button(Place(Rect(spanel, "ResetButton"), new Vector2(0.5f, 0f), new Vector2(0f, 330f), new Vector2(700f, 120f)), "@reset", Style.Stone, 40);
+        var privacy = Button(Place(Rect(spanel, "PrivacyButton"), new Vector2(0.5f, 0f), new Vector2(0f, 480f), new Vector2(560f, 96f)), "@privacy", Style.Stone, 34);
         var closeS = Button(Place(Rect(spanel, "CloseButton"), new Vector2(0.5f, 0f), new Vector2(0f, 150f), new Vector2(620f, 150f)), "@close", Style.Gold, 64);
 
         // Karakter paneli (Faz 3c.3): katalogdaki karakterler, satın al / seç
@@ -266,6 +268,7 @@ public static class KakUiSetup
             mmc.resetProgressLabel = reset.transform.Find("Label").GetComponent<TMP_Text>();
             if (mmc.defaultLevel == null) mmc.defaultLevel = AssetDatabase.LoadAssetAtPath<LevelData>("Assets/Data/Endless_Level1_LevelData.asset");
             OnClick(closeS, mmc.CloseSettingsPanel);
+            OnClick(privacy, mmc.OnPrivacyClicked);
             OnClick(closeC, mmc.CloseCharactersPanel);
             EditorUtility.SetDirty(mmc);
         }
@@ -306,6 +309,11 @@ public static class KakUiSetup
                        AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Pickups/coin_0.png"), false);
         var text = Text(Place(Rect(row, "Text"), new Vector2(0.5f, 0.5f), new Vector2(40f, 0f), new Vector2(620f, 64f)),
                         "+0", 40, KakPalette.AltinAcik, TextAlignmentOptions.MidlineLeft);
+        var dbl = Button(Place(Rect(row, "DoubleCoins"), new Vector2(1f, 0.5f), new Vector2(-8f, 0f), new Vector2(150f, 60f), new Vector2(1f, 0.5f)),
+                         "@double_coins", Style.Gold, 34, "icon_play.png");
+        OnClick(dbl, gos.OnDoubleCoins);
+        dbl.gameObject.SetActive(false);
+        gos.doubleCoinsButton = dbl;
         gos.coinsRow = row;
         gos.coinsText = text;
         row.gameObject.SetActive(false); // GameOverScreen altın açıksa gösterir
@@ -562,5 +570,32 @@ public static class KakUiSetup
         c.sprite = white;
         gos.confetti = c;
         EditorUtility.SetDirty(gos);
+    }
+
+    /// <summary>"Devam et?" paneli (reklamla canlanma, Faz Y3). GameManager.continuePanel'e bağlanır, kapalı başlar.</summary>
+    public static ContinuePanel BuildContinuePanel(Transform canvas, GameManager gm)
+    {
+        var old = canvas.Find("ContinuePanel");
+        if (old != null) Object.DestroyImmediate(old.gameObject);
+        var (root, panel) = Modal(canvas, "ContinuePanel", new Vector2(780f, 860f));
+        Text(Place(Rect(panel, "Title"), new Vector2(0.5f, 1f), new Vector2(0f, -100f), new Vector2(740f, 110f)), "@continue_title", 78, KakPalette.Altin);
+        Text(Place(Rect(panel, "Sub"), new Vector2(0.5f, 1f), new Vector2(0f, -180f), new Vector2(740f, 50f)), "@continue_sub", 32, KakPalette.Krem,
+             TextAlignmentOptions.Center, false, false);
+        var ringBg = Img(Place(Rect(panel, "RingBg"), new Vector2(0.5f, 1f), new Vector2(0f, -340f), new Vector2(200f, 200f)), S("ring_soft.png"), false,
+                         KakPalette.WithAlpha(KakPalette.Murekkep, 0.8f));
+        var ring = Img(Place(Rect(panel, "Ring"), new Vector2(0.5f, 1f), new Vector2(0f, -340f), new Vector2(200f, 200f)), S("ring_soft.png"), false, KakPalette.Altin);
+        ring.type = Image.Type.Filled; ring.fillMethod = Image.FillMethod.Radial360; ring.fillOrigin = (int)Image.Origin360.Top; ring.fillClockwise = false;
+        Img(Place(Rect(panel, "Heart"), new Vector2(0.5f, 1f), new Vector2(0f, -340f), new Vector2(96f, 96f)),
+            AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/UI/Kalp.png"), false);
+        var count = Text(Place(Rect(panel, "Count"), new Vector2(0.5f, 1f), new Vector2(0f, -470f), new Vector2(200f, 60f)), "5", 48, KakPalette.AltinAcik);
+        var watch = Button(Place(Rect(panel, "WatchButton"), new Vector2(0.5f, 0f), new Vector2(0f, 250f), new Vector2(560f, 140f)), "@continue_watch", Style.Gold, 64, "icon_play.png");
+        var no = Button(Place(Rect(panel, "DeclineButton"), new Vector2(0.5f, 0f), new Vector2(0f, 100f), new Vector2(420f, 100f)), "@continue_no", Style.Stone, 40);
+        var cp = GetOrAdd<ContinuePanel>(root.gameObject);
+        cp.ring = ring; cp.countText = count; cp.watchButton = watch; cp.declineButton = no; cp.panel = panel;
+        EditorUtility.SetDirty(cp);
+        if (gm != null) { Undo.RecordObject(gm, "continue"); gm.continuePanel = cp; EditorUtility.SetDirty(gm); }
+        root.SetAsLastSibling();
+        root.gameObject.SetActive(false);
+        return cp;
     }
 }
