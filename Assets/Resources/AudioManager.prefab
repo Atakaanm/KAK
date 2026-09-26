@@ -257,5 +257,6 @@ MonoBehaviour:
   shieldSfx: {fileID: 8300000, guid: 0f28b466785f64bab8f3e64f4a095523, type: 3}
   stageSfx: {fileID: 8300000, guid: 6f031da7e0f8b4e60b0e6526125357b9, type: 3}
   eventSfx: {fileID: 8300000, guid: 4b4b6e3927c6741d498caa5b71129ef6, type: 3}
+  coinSfx: {fileID: 8300000, guid: 73bc9ef1a5773409e9364d4ad0a619e3, type: 3}
   pitchJitter: 0.06
   minRepeat: 0.05

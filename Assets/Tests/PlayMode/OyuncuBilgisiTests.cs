@@ -100,6 +100,17 @@ public class OyuncuBilgisiTests
     }
 
     [UnityTest]
+    public IEnumerator YuksekRekorluOyuncuya_TemelIpucuGosterilmez()
+    {
+        SaveSystem.Data.gamesPlayed = 2;
+        SaveSystem.Data.bestScoreEndless = 4775;
+        yield return KakTestUtil.LoadGameWithLevel();
+        var hints = Object.FindAnyObjectByType<OnboardingHints>(FindObjectsInactive.Include);
+        yield return null;
+        Assert.IsNull(hints.Current, "Rekoru yüksek oyuncuya hareket ipucu gösterildi");
+    }
+
+    [UnityTest]
     public IEnumerator DeneyimliOyuncuya_IpucuGosterilmez()
     {
         SaveSystem.Data.gamesPlayed = 10;

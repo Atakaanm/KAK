@@ -12,6 +12,9 @@ public class GameOverScreen : MonoBehaviour
     public TMP_Text scoreText;
     public TMP_Text bestText;
     public TMP_Text statsText;
+    [Tooltip("Altın satırı: '+12' ve cüzdan toplamı (altın kilitliyse gizli)")]
+    public RectTransform coinsRow;
+    public TMP_Text coinsText;
     public RectTransform newBestBadge;
     public CanvasGroup buttons;
     public CanvasGroup dim;
@@ -82,15 +85,18 @@ public class GameOverScreen : MonoBehaviour
         if (buttons != null) { buttons.alpha = 1f; buttons.interactable = true; }
     }
 
-    public void Show(int score, int best, bool newBest, float seconds, int nearMiss, float maxCombo)
+    /// <param name="coins">Bu oyunda kazanılan altın (-1: altın kilitli, satır gizli)</param>
+    /// <param name="wallet">Cüzdandaki toplam altın (kazanılan dahil)</param>
+    public void Show(int score, int best, bool newBest, float seconds, int nearMiss, float maxCombo, int coins = -1, int wallet = 0)
     {
         gameObject.SetActive(true);
         StopAllCoroutines();
-        StartCoroutine(Run(score, best, newBest, seconds, nearMiss, maxCombo));
+        StartCoroutine(Run(score, best, newBest, seconds, nearMiss, maxCombo, coins, wallet));
     }
 
-    IEnumerator Run(int score, int best, bool newBest, float seconds, int nearMiss, float maxCombo)
+    IEnumerator Run(int score, int best, bool newBest, float seconds, int nearMiss, float maxCombo, int coins = -1, int wallet = 0)
     {
+        if (coinsRow != null) coinsRow.gameObject.SetActive(false);
         // Sonsuz/başarısız düzen: yıldızlar ve SONRAKİ gizli, başlık "OYUN BİTTİ"
         if (titleText != null) { titleText.text = Loc.T("game_over"); titleText.color = KakPalette.Tehlike; }
         if (scoreLabel != null) scoreLabel.text = Loc.T("score");
@@ -143,6 +149,22 @@ public class GameOverScreen : MonoBehaviour
                 yield return null;
             }
             newBestBadge.localScale = Vector3.one;
+        }
+
+        // Altın: satır belirir, kazanç sayılır, cüzdan toplamı gösterilir
+        if (coins >= 0 && coinsRow != null && coinsText != null)
+        {
+            coinsRow.gameObject.SetActive(true);
+            float cd = Mathf.Clamp(coins / 40f, 0.3f, 0.9f);
+            for (float t = 0f; t < cd; t += Time.unscaledDeltaTime)
+            {
+                float k = 1f - Mathf.Pow(1f - t / cd, 2f);
+                coinsText.SetText(Loc.T("coins_run"), Mathf.RoundToInt(coins * k), wallet - coins + Mathf.RoundToInt(coins * k));
+                coinsRow.localScale = Vector3.one * (1f + 0.08f * Mathf.Sin(t * 30f) * (1f - k));
+                yield return null;
+            }
+            coinsText.SetText(Loc.T("coins_run"), coins, wallet);
+            coinsRow.localScale = Vector3.one;
         }
 
         for (float t = 0f; t < 0.25f; t += Time.unscaledDeltaTime)

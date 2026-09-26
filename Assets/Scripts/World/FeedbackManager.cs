@@ -26,6 +26,7 @@ public class FeedbackManager : MonoBehaviour
 
     void OnEnable()
     {
+        GameEvents.CoinCollected += OnCoin;
         GameEvents.PlayerDamaged += OnPlayerDamaged;
         GameEvents.ShieldBlocked += OnShieldBlocked;
         GameEvents.PlayerDied += OnPlayerDied;
@@ -37,6 +38,7 @@ public class FeedbackManager : MonoBehaviour
 
     void OnDisable()
     {
+        GameEvents.CoinCollected -= OnCoin;
         GameEvents.PlayerDamaged -= OnPlayerDamaged;
         GameEvents.ShieldBlocked -= OnShieldBlocked;
         GameEvents.PlayerDied -= OnPlayerDied;
@@ -86,6 +88,12 @@ public class FeedbackManager : MonoBehaviour
             }
         }
         Ring(pos, 18, 2.4f, 0.5f, a, b, 0.08f);
+    }
+
+    void OnCoin(int total, Vector3 pos)
+    {
+        // Küçük altın parıltısı (sık olur: az parçacık, sarsıntı yok)
+        Burst(pos, 6, 1.6f, 0.3f, KakPalette.Altin, KakPalette.AltinAcik, 0.06f);
     }
 
     void OnWallHit(Vector3 pos, Vector2 vel)

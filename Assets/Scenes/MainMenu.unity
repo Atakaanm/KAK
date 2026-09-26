@@ -6837,7 +6837,6 @@ MonoBehaviour:
   playButton: {fileID: 1416643701}
   charactersButton: {fileID: 1483104227}
   settingsButton: {fileID: 503953108}
-  leaderboardButton: {fileID: 0}
   levelsButton: {fileID: 2099822985}
   settingsPanel: {fileID: 1831544295}
   charactersPanel: {fileID: 783398044}
@@ -6846,8 +6845,6 @@ MonoBehaviour:
   resetProgressButton: {fileID: 194906569}
   resetProgressLabel: {fileID: 823447299}
   defaultLevel: {fileID: 11400000, guid: 59b6cc49688864d0dba08a1e32eedf26, type: 2}
-  gameSceneName: SampleScene
-  menuAnimator: {fileID: 0}
 --- !u!4 &2028244516
 Transform:
   m_ObjectHideFlags: 0

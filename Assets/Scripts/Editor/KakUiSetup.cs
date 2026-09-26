@@ -123,6 +123,7 @@ public static class KakUiSetup
         var gos = KakUiKit.GetOrAdd<GameOverScreen>(groot.gameObject);
         gos.panel = gpanel; gos.scoreText = scoreT; gos.bestText = bestT; gos.statsText = statsT;
         gos.newBestBadge = badge; gos.buttons = cg; gos.dim = dimGroup;
+        BuildCoinsRow(gpanel, gos);
         if (gm != null)
         {
             OnClick(retry, gm.RetryGame);
@@ -286,5 +287,19 @@ public static class KakUiSetup
     {
         foreach (var t in root.GetComponentsInChildren<Transform>(true)) if (t.name == name) return t;
         return null;
+    }
+
+    /// <summary>Oyun sonu paneline altın satırı (ikon + "+12 ALTIN • TOPLAM 340"). KakMetaSetup da çağırır.</summary>
+    public static void BuildCoinsRow(RectTransform gpanel, GameOverScreen gos)
+    {
+        var row = Place(Rect(gpanel, "CoinsRow"), new Vector2(0.5f, 1f), new Vector2(0f, -765f), new Vector2(760f, 64f));
+        var icon = Img(Place(Rect(row, "Icon"), new Vector2(0.5f, 0.5f), new Vector2(-300f, 0f), new Vector2(52f, 52f)),
+                       AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Pickups/coin_0.png"), false);
+        var text = Text(Place(Rect(row, "Text"), new Vector2(0.5f, 0.5f), new Vector2(40f, 0f), new Vector2(620f, 64f)),
+                        "+0", 40, KakPalette.AltinAcik, TextAlignmentOptions.MidlineLeft);
+        gos.coinsRow = row;
+        gos.coinsText = text;
+        row.gameObject.SetActive(false); // GameOverScreen altın açıksa gösterir
+        EditorUtility.SetDirty(gos);
     }
 }

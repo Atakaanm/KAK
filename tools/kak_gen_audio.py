@@ -159,6 +159,8 @@ def sfx():
         parts.append(osc(note(69 if i % 2 == 0 else 64), dd, "square", 0.5) * env(int(SR * dd), 0.003, 0.1))
     write(os.path.join(SFX, "event.wav"), np.concatenate(parts), 0.5)
 
+    coin()
+
 
 def music(path, bpm, bars, prog, arp_pattern, lead=None, drums=True, vol=0.6):
     beat = 60.0 / bpm
@@ -202,7 +204,21 @@ def music(path, bpm, bars, prog, arp_pattern, lead=None, drums=True, vol=0.6):
     write(path, out, vol)
 
 
+def coin():
+    # Altın: klasik iki notalı parlak "bling" (Si5 → Mi6); ardışık toplamada oyunda ton yükseltilir
+    parts = [osc(note(83), 0.045, "square", 0.25) * env(int(SR * 0.045), 0.001, 0.04),
+             osc(note(88), 0.2, "square", 0.25) * env(int(SR * 0.2), 0.001, 0.19)]
+    write(os.path.join(SFX, "coin.wav"), np.concatenate(parts), 0.4)
+
+
 def main():
+    import sys
+    if len(sys.argv) > 1:
+        # Tek ses üret (diğerleri rastgele gürültü içerdiği için yeniden üretilince değişir): python3 kak_gen_audio.py coin
+        for name in sys.argv[1:]:
+            globals()[name]()
+            print(name)
+        return
     print("Efektler:")
     sfx()
     print("Müzik:")

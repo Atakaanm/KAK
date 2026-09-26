@@ -41,6 +41,14 @@ public class ScoreManager : MonoBehaviour
     public float ComboMultiplier { get; private set; } = 1f;
     public float MaxCombo { get; private set; } = 1f;
     public int NearMissCount { get; private set; }
+    /// <summary>Bu oyunda toplanan altın (oyun sonunda cüzdana eklenir).</summary>
+    public int Coins { get; private set; }
+
+    public void AddCoins(int amount, Vector3 pos)
+    {
+        Coins += amount;
+        GameEvents.RaiseCoinCollected(Coins, pos);
+    }
     private float comboTimer;
 
     void OnEnable()

@@ -6,17 +6,19 @@ using UnityEngine;
 ///  - hint_move: ilk oyunun başında; oyuncu ~1 sn hareket edince biter
 ///  - hint_dash: hareket öğrenildikten sonra, oyunun 10. sn'sinde dash hazırsa; ilk dash'te biter (dash butonu parlar)
 ///  - hint_near: ilk yakın geçişte kısa açıklama
-/// Deneyimli kayıtlarda (en az 5 oyun) hiç gösterilmez. Faz 3c'de adım adım açılan özelliklerin de temeli.
+/// Deneyimli kayıtlarda (en az 5 oyun ya da rekor ≥ 1000) temel ipuçları gösterilmez; yeni özellik ipuçları (altın) bir kez gösterilir. Faz 3c'de adım adım açılan özelliklerin de temeli.
 /// Kurulum: KakEndlessSetup (ControlArea/ControlContent/HintText).
 /// </summary>
 public class OnboardingHints : MonoBehaviour
 {
-    public const string Move = "hint_move", Dash = "hint_dash", Near = "hint_near";
+    public const string Move = "hint_move", Dash = "hint_dash", Near = "hint_near", CoinHint = "hint_coin";
 
     public TMP_Text hintText;
     public DashButton dashButton;
     public float dashHintAfter = 10f;
     public int veteranGames = 5;
+    [Tooltip("Bu rekorun üstündeki oyuncu da deneyimli sayılır (eski PlayerPrefs rekorları oyun sayısı taşımıyor)")]
+    public int veteranBestScore = 1000;
     public float nearHintTime = 2.8f;
 
     PlayerMovement2D move;
@@ -32,7 +34,7 @@ public class OnboardingHints : MonoBehaviour
         // Not: bileşen yazıyla aynı nesnede; nesneyi kapatmak Update'i de durdurur → sadece yazıyı gizle
         if (hintText != null) hintText.enabled = false;
         var d = SaveSystem.Data;
-        if (d.gamesPlayed >= veteranGames) { d.MarkSeen(Move); d.MarkSeen(Dash); d.MarkSeen(Near); }
+        if (d.gamesPlayed >= veteranGames || d.bestScoreEndless >= veteranBestScore) { d.MarkSeen(Move); d.MarkSeen(Dash); d.MarkSeen(Near); }
         if (!d.HasSeen(Move)) Show(Move);
     }
 
@@ -41,6 +43,7 @@ public class OnboardingHints : MonoBehaviour
         GameEvents.DashUsed += OnDash;
         GameEvents.NearMiss += OnNearMiss;
         GameEvents.PlayerDied += OnDied;
+        GameEvents.CoinClusterSpawned += OnCoinsSpawned;
     }
 
     void OnDisable()
@@ -48,6 +51,7 @@ public class OnboardingHints : MonoBehaviour
         GameEvents.DashUsed -= OnDash;
         GameEvents.NearMiss -= OnNearMiss;
         GameEvents.PlayerDied -= OnDied;
+        GameEvents.CoinClusterSpawned -= OnCoinsSpawned;
         if (dashButton != null) dashButton.highlight = false;
     }
 
@@ -73,7 +77,7 @@ public class OnboardingHints : MonoBehaviour
             moveAccum += dt;
             if (moveAccum >= 1.2f) Complete();
         }
-        else if (current == Near && shownFor >= nearHintTime) Complete();
+        else if ((current == Near || current == CoinHint) && shownFor >= nearHintTime) Complete();
 
         if (hintText != null)
         {
@@ -104,7 +108,7 @@ public class OnboardingHints : MonoBehaviour
             rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.68f);
             rt.anchoredPosition = Vector2.zero;
         }
-        hintText.color = id == Dash ? KakPalette.CamgobegiParlak : id == Near ? KakPalette.AltinAcik : KakPalette.Krem;
+        hintText.color = id == Dash ? KakPalette.CamgobegiParlak : (id == Near || id == CoinHint) ? KakPalette.AltinAcik : KakPalette.Krem;
         hintText.enabled = true;
     }
 
@@ -128,6 +132,13 @@ public class OnboardingHints : MonoBehaviour
     {
         if (SaveSystem.Data.HasSeen(Near) || current == Near) return;
         if (current == null) Show(Near); else nearPending = true;
+    }
+
+    /// <summary>İlk altın kümesi: "Altınları topla!" (deneyimli oyuncuya da bir kez: yeni özellik).</summary>
+    void OnCoinsSpawned(Vector3 pos)
+    {
+        if (SaveSystem.Data.HasSeen(CoinHint) || current != null) return;
+        Show(CoinHint);
     }
 
     void OnDied(Vector3 pos)

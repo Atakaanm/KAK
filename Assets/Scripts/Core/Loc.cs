@@ -48,6 +48,9 @@ public static class Loc
         { "hud_score", new[] { "SKOR: {0}", "SCORE: {0}" } },
         { "near_miss", new[] { "YAKIN!", "CLOSE!" } },
         { "super_dodge", new[] { "SÜPER KAÇIŞ!", "SUPER DODGE!" } },
+        // Altın (Faz 3c.1)
+        { "coins_run", new[] { "+{0} ALTIN   •   TOPLAM {1}", "+{0} GOLD   •   TOTAL {1}" } },
+        { "hint_coin", new[] { "Altınları topla!", "Grab the gold!" } },
         // İlk oyun ipuçları (OnboardingHints)
         { "hint_move", new[] { "Parmağını sürükle,\ntaşlardan kaç!", "Drag your finger,\ndodge the rocks!" } },
         { "hint_dash", new[] { "DASH ile taşların\niçinden geç!", "DASH straight\nthrough rocks!" } },
