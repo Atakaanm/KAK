@@ -90,3 +90,6 @@ Thumbs.db
 # Python önbelleği
 __pycache__/
 *.pyc
+
+# Unity Android build araçlarının geçici klasörü
+/.utmp/

@@ -148,7 +148,7 @@ Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 - Varsayım: Kalkan "vurulana kadar" sürer (`ShieldData.duration` kullanılmıyor, davranış korunuyor)
 
 ### Sıradaki adım
-**Yayın hazırlığı Y1-Y5 tamam.** Sıradaki iş kullanıcıda: `Docs/Yayin-Kontrol-Listesi.md` adımları (Android/iOS modülleri, Xcode 26, keystore, Play Console + 12 test kullanıcısı, Apple Developer). Modüller kurulunca Claude: `KacAtaKac/Yayın/Android Release (.aab)` ve `iOS Xcode Projesi`. Sonra cihaz testi + denge geri bildirimi → Faz 2B (bölüm seçimi) → Buz / Futbol / Karanlık dünyaları.
+**Yayın hazırlığı Y1-Y6 tamam** (Y6: Xcode 26.6 + iOS/Android modülleri; oyun iPhone simülatöründe çalıştı, Android test APK'sı API 36 / 16 KB uyumlu). Sıradaki iş kullanıcıda: keystore, Play Console + 12 test kullanıcısı, Apple Developer. İsterse kendi iPhone'unda ücretsiz Personal Team ile deneme (Xcode → Accounts) veya Android telefona test APK (`adb install Builds/Android/KacAtaKac-test.apk`). Sonra cihaz testi + denge geri bildirimi → Faz 2B (bölüm seçimi) → Buz / Futbol / Karanlık dünyaları.
 
 ### Onay bekleyenler
 - **Android Build Support modülü** kurulmalı (Unity Hub → 6000.3.8f1 → Add modules). Sonra "Android build al" → cihazda test.
@@ -162,6 +162,7 @@ Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 - **Destek e-postası** gizlilik politikasına ve mağazaya (kişisel e-posta kendiliğinden yazılmadı).
 - **Hedef kitle** (Play: 13+ önerildi) ve **reklam** açılacak mı (`Docs/Reklam-Hazirlik.md`).
 - **Mağaza görselleri** onayı (`Docs/Magaza/`; değişiklik için `tools/kak_store_shots.py`).
+- (İsteğe bağlı) **Metal araç zinciri** indirilsin mi (`xcodebuild -downloadComponent MetalToolchain`, Xcode 26'da ayrı; Unity log'undaki "metal" hatalarını giderir, build'i engellemiyor).
 
 ## Bilinen hatalar ve riskler
 

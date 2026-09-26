@@ -21,12 +21,18 @@ public class KakAutoBench : MonoBehaviour
     {
         var args = System.Environment.GetCommandLineArgs();
         int i = System.Array.IndexOf(args, "-kakbench");
-        if (i < 0) return;
+        // iOS: simctl launch argümanları C#'a ulaşmıyor → ortam değişkeni
+        // (SIMCTL_CHILD_KAK_BENCH=60 xcrun simctl launch ... ; rapor persistentDataPath/bench.txt)
+        string env = System.Environment.GetEnvironmentVariable("KAK_BENCH");
+        if (i < 0 && string.IsNullOrEmpty(env)) return;
         var go = new GameObject("KakAutoBench");
         DontDestroyOnLoad(go);
         var b = go.AddComponent<KakAutoBench>();
-        if (i + 1 < args.Length && float.TryParse(args[i + 1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float s)) b.seconds = s;
-        b.outFile = i + 2 < args.Length ? args[i + 2] : Path.Combine(Application.persistentDataPath, "bench.txt");
+        var inv = System.Globalization.CultureInfo.InvariantCulture;
+        string sec = i >= 0 ? (i + 1 < args.Length ? args[i + 1] : null) : env;
+        if (sec != null && float.TryParse(sec, System.Globalization.NumberStyles.Float, inv, out float s)) b.seconds = s;
+        b.outFile = i >= 0 && i + 2 < args.Length ? args[i + 2] : Path.Combine(Application.persistentDataPath, "bench.txt");
+        Debug.Log("[KakAutoBench] başladı: " + b.seconds + " sn → " + b.outFile);
     }
 
     IEnumerator Start()

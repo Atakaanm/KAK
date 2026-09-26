@@ -4,6 +4,16 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-09-26 — Xcode 26.6, iOS simülatörü ve Android build hattı
+
+- **Disk dar:** Unity Hub "ERROR_NOT_ENOUGH_SPACE_TO_DOWNLOAD" verdi. Asıl sebep, Claude masaüstü uygulamasının VM görüntüsü güncellenirken geçici olarak kullandığı ~10 GB'tı; `df` birkaç dakika içinde 20 GB → 2 GB → 37 GB oynadı. Büyük iş öncesi `df` ve `diskutil info /` (Container Free) bak. Silme kararı kullanıcının: yeniden indirilebilir kalemleri boyutlarıyla listeleyip sor (WebGL modülü 4,8 GB, eski simülatör 7,8 GB).
+- **Yarım kalan Hub kurulumu** klasörü bırakır (AndroidPlayer 3,4 GB, SDK/NDK yok) → yeniden denemeden önce sil. Hub CLI'da modül kaldırma yok: klasörü sil + `modules.json` içinde `selected: false`.
+- **Modül editör açıkken kurulursa** Unity yeniden başlatılana kadar görmez. `osascript quit` AppleEvent zaman aşımına düşebiliyor → `KakEditorUtil.RestartEditor` (EditorApplication.OpenProject).
+- **iOS'ta `simctl launch` argümanları C#'a (`GetCommandLineArgs`) ulaşmıyor** → ortam değişkeni: `SIMCTL_CHILD_KAK_BENCH=60 xcrun simctl launch ...` (uygulama `KAK_BENCH` görür). `--console-pty` ile başlatılan süreci öldürmek uygulamayı da kapatır: ölçüm bitene kadar bekle.
+- Simülatör paneli (MCP) kullanıcı izni ister; izin yoksa `xcrun simctl install/launch/io screenshot` ile devam et ve bunu kullanıcıya açıkça söyle.
+- Xcode 26 Metal araç zincirini ayrıca indiriyor: Unity log'unda "cannot execute tool 'metal'… MetalToolchain" görünür; build yine başarılı. İsteğe bağlı: `xcodebuild -downloadComponent MetalToolchain`.
+- Platform geçişi `.meta` dosyalarına varsayılan platform satırları (overridden: 0) ve ProjectSettings'e platform başına batching ekler; bunlar commit edilebilir. `app_icon.png.meta` Sprite → Default: Unity ikon için istiyor, ikon yalnız PlayerSettings'te kullanılıyor.
+
 ## 2026-09-26 — Y5: mağaza görselleri
 
 - **Mağaza görüntüsünü tam telefon ekranından küçültme:** karakter 20 px'e iner. Oyunu, başlık bandının altındaki alanın boyutunda render et (köprü `shot W H`): arayüz o orana yerleşir, ölçekleme yok.
