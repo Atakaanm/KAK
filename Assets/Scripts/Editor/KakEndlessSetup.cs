@@ -13,7 +13,7 @@ using UnityEngine.UI;
 /// </summary>
 public static class KakEndlessSetup
 {
-    const string GameScenePath = "Assets/Scenes/SampleScene.unity";
+    const string GameScenePath = KakEditorUtil.GameScenePath;
 
     [MenuItem("KacAtaKac/Sonsuz Mod İçeriğini Kur (Faz 5)")]
     public static void SetupMenu() => Debug.Log(Setup());
@@ -49,7 +49,11 @@ public static class KakEndlessSetup
         EditorUtility.SetDirty(em);
 
         // ── Dünya yazıları ─────────────────────────────
-        Child<WorldPopup>(managers.transform, "WorldPopup");
+        var popup = Child<WorldPopup>(managers.transform, "WorldPopup");
+        Undo.RecordObject(popup, "WorldPopup font");
+        popup.font = KakUiKit.Nunito;               // UI ile aynı font (boşken TMP varsayılanı LiberationSans çıkıyordu)
+        popup.fontMaterial = KakUiKit.NunitoOutline;
+        EditorUtility.SetDirty(popup);
 
         // ── Oyuncu: dash + yakın geçiş ─────────────────
         var move = Object.FindAnyObjectByType<PlayerMovement2D>();
@@ -71,7 +75,7 @@ public static class KakEndlessSetup
         var extras = canvas.GetComponent<HudExtras>();
         if (extras == null) extras = Undo.AddComponent<HudExtras>(canvas);
         var scoreText = FindDeep(canvas.transform, "ScoreText")?.GetComponent<TMP_Text>();
-        TMP_FontAsset font = scoreText != null ? scoreText.font : null;
+        TMP_FontAsset font = KakUiKit.Nunito;
 
         var combo = Text(hudContent, "ComboText", font, 44, TextAlignmentOptions.MidlineRight);
         SetRect(combo.rectTransform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-150f, -6f), new Vector2(240f, 60f));
@@ -79,8 +83,7 @@ public static class KakEndlessSetup
 
         var banner = Text(hudBand, "EventBanner", font, 64, TextAlignmentOptions.Center);
         SetRect(banner.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 1f), new Vector2(0f, -40f), new Vector2(1000f, 110f));
-        banner.outlineWidth = 0.25f;
-        banner.outlineColor = KakPalette.Murekkep;
+        // Kontur paylaşılan materyalden: outlineWidth ayarlamak sahneye gömülü materyal kopyası üretir (batch bozulur)
         extras.bannerText = banner;
         EditorUtility.SetDirty(extras);
 
@@ -166,6 +169,11 @@ public static class KakEndlessSetup
         }
         else tmp = t.GetComponent<TextMeshProUGUI>();
         if (font != null) tmp.font = font;
+        tmp.fontSharedMaterial = KakUiKit.NunitoOutline;
+        // Eski outlineWidth çağrılarından kalan gömülü materyal kopyasını bırak (sahneden silinsin)
+        var so = new SerializedObject(tmp);
+        var inst = so.FindProperty("m_fontMaterial");
+        if (inst != null && inst.objectReferenceValue != null) { inst.objectReferenceValue = null; so.ApplyModifiedPropertiesWithoutUndo(); }
         tmp.fontSize = size;
         tmp.fontStyle = FontStyles.Bold;
         tmp.alignment = align;

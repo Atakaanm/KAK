@@ -22,7 +22,6 @@ public class LevelManager : MonoBehaviour
     public SpawnerDirectionAnimator[] spawnerVisuals;
     public DifficultyManager difficultyManager;
     public PowerupSpawner powerupSpawner;
-    public WaveManager waveManager;
 
     [Header("Bölüm modu")]
     [Tooltip("Düşman gölgesi ve varsayılan mermi prefab'ı")]
@@ -85,12 +84,6 @@ public class LevelManager : MonoBehaviour
             difficultyManager = new GameObject("DifficultyManager").AddComponent<DifficultyManager>();
             difficultyManager.transform.parent = this.transform;
             Debug.LogWarning("[LevelManager] DifficultyManager sahnede yoktu, yedek olarak oluşturuldu.");
-        }
-
-        // WaveManager otomatik bul
-        if (waveManager == null)
-        {
-            waveManager = FindAnyObjectByType<WaveManager>();
         }
 
         // ProjectilePool — sahnede yoksa yedek olarak yarat
@@ -207,12 +200,6 @@ public class LevelManager : MonoBehaviour
             SetupDifficulty(level.difficultyStages);
         }
 
-        // --- DALGA SISTEMI (Stage mod) ---
-        if (level.levelType == LevelType.Stage && level.waves != null && level.waves.Length > 0)
-        {
-            SetupWaves(level.waves);
-        }
-
         // --- GÜÇLENDİRME (POWERUP) SİSTEMİ ---
         if (powerupSpawner != null && level.availablePowerups != null && level.availablePowerups.Length > 0)
         {
@@ -224,13 +211,8 @@ public class LevelManager : MonoBehaviour
         if (arenaLayout != null)
             arenaLayout.ApplyLayout();
 
-        var composer = Object.FindAnyObjectByType<ScreenComposer>();
+        var composer = screenComposer != null ? screenComposer : Object.FindAnyObjectByType<ScreenComposer>();
         if (composer != null) composer.ForceRecalculate();
-        else
-        {
-            var camFit = Object.FindAnyObjectByType<CameraFitWidth>();
-            if (camFit != null) camFit.ForceRecalculate();
-        }
 
         SetupProjectileBounds();
 
@@ -453,35 +435,5 @@ public class LevelManager : MonoBehaviour
         difficultyManager.Init(stages, spawners, score);
 
         KakLog.Info("[LevelManager] Zorluk sistemi kuruldu: " + stages.Length + " asama.");
-    }
-
-    /// <summary>
-    /// WaveData listesini WaveManager'a aktarır ve dalga sistemini başlatır.
-    /// levelType == Stage olduğunda ApplyLevelData tarafından çağrılır.
-    /// </summary>
-    void SetupWaves(WaveData[] waveList)
-    {
-        // WaveManager yoksa sahnede yarat
-        if (waveManager == null)
-        {
-            waveManager = FindAnyObjectByType<WaveManager>();
-            if (waveManager == null)
-            {
-                GameObject wm = new GameObject("WaveManager");
-                waveManager = wm.AddComponent<WaveManager>();
-                wm.transform.parent = this.transform;
-            }
-        }
-
-        // Spawner referanslarını bağla
-        if (spawners != null && spawners.Length > 0)
-        {
-            waveManager.spawners = spawners;
-        }
-
-        // Dalga listesini ver ve başlat
-        waveManager.Init(waveList);
-
-        KakLog.Info("[LevelManager] Dalga sistemi başlatıldı: " + waveList.Length + " dalga.");
     }
 }

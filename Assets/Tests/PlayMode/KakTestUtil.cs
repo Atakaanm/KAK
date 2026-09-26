@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public static class KakTestUtil
 {
-    public const string GameScene = "SampleScene";
+    public const string GameScene = SceneLoader.GAME_SCENE;
     public const string MenuScene = "MainMenu";
 
     /// <summary>

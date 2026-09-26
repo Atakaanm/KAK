@@ -4,7 +4,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 
 /// <summary>
-/// Oyun sahnesinin (SampleScene) yönetici yapısını kalıcı ve tekrarlanabilir şekilde kurar.
+/// Oyun sahnesinin (Game) yönetici yapısını kalıcı ve tekrarlanabilir şekilde kurar.
 /// Runtime'daki "yoksa yarat" yedeklerine gerek kalmaz; referanslar Inspector'da görünür.
 ///
 /// Menü: KacAtaKac/Sahne Yöneticilerini Kur
@@ -12,7 +12,7 @@ using UnityEngine;
 /// </summary>
 public static class KakSceneSetup
 {
-    const string GameScenePath = "Assets/Scenes/SampleScene.unity";
+    const string GameScenePath = KakEditorUtil.GameScenePath;
     const string DefaultLevelPath = "Assets/Data/Endless_Level1_LevelData.asset";
 
     [MenuItem("KacAtaKac/Sahne Yöneticilerini Kur")]

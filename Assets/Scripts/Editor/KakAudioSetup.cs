@@ -67,7 +67,7 @@ public class KakAudioSetup : AssetPostprocessor
             Object.DestroyImmediate(old.gameObject);
         EditorSceneManager.MarkSceneDirty(menu);
         EditorSceneManager.SaveScene(menu);
-        EditorSceneManager.OpenScene(string.IsNullOrEmpty(active) ? "Assets/Scenes/SampleScene.unity" : active, OpenSceneMode.Single);
+        EditorSceneManager.OpenScene(string.IsNullOrEmpty(active) ? KakEditorUtil.GameScenePath : active, OpenSceneMode.Single);
         return "[KakAudioSetup] AudioManager prefab'ı: " + Prefab + " (12 efekt, 2 müzik)";
     }
 }

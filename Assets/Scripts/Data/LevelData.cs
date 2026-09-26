@@ -24,10 +24,6 @@ public class LevelData : ScriptableObject
     [Header("Firlaticilar")]
     public SpawnerData[] spawnerDataList; // Her kose icin bir SpawnerData
 
-    [Header("Dalgalar (Stage modu)")]
-    [Tooltip("levelType == Stage ise bu dalgalar WaveManager tarafından işlenir")]
-    public WaveData[] waves;
-
     [Header("Güçlendirmeler (Powerups)")]
     public PowerupData[] availablePowerups; // Bu levida çıkabilecek poweruplar
 
@@ -50,20 +46,9 @@ public class LevelData : ScriptableObject
     public EnemySpawn[] enemies;
     [TextArea] public string introKeyTR = "";
 
-    [Header("Stage Mod Ayarlari")]
-    public int targetScore = 0;        // Stage modda kazanma kosulu (0 = yok)
-    public float timeLimit = 0f;       // Sure siniri (0 = sinir yok)
-
     [Header("Ozellik Acma/Kapama")]
-    public bool hasKey = false;         // Bu levelde anahtar var mi
-    public bool hasCoins = false;       // Bu levelde jeton/para var mi
-    public bool hasBoss = false;        // Bu levelde boss var mi
-    public bool enableEndlessScore = true; // Skor sayaci acik mi
     public bool enableDifficulty = true;   // Zorluk artisi acik mi
 
-    [Header("Magaza / Kilit")]
-    public bool isLocked = false;
-    public int unlockPrice = 0;
 }
 
 public enum LevelGoal

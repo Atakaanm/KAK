@@ -17,7 +17,7 @@ public static class KakSceneAudit
         var sb = new StringBuilder();
         string active = EditorSceneManager.GetActiveScene().path;
         KakEditorUtil.SaveNamedScenes();
-        foreach (var path in new[] { "Assets/Scenes/MainMenu.unity", "Assets/Scenes/SampleScene.unity" })
+        foreach (var path in new[] { KakEditorUtil.MenuScenePath, KakEditorUtil.GameScenePath })
         {
             var scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Single);
             int missingScripts = 0, missingRefs = 0, nullRefs = 0;

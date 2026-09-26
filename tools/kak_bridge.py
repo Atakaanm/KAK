@@ -14,7 +14,7 @@ Kullanım örnekleri:
   python3 tools/kak_bridge.py tests PlayMode [grup]
   python3 tools/kak_bridge.py menu "KacAtaKac/Diagnose Scene"
   python3 tools/kak_bridge.py invoke Tip.AdI Metot [stringArg]
-  python3 tools/kak_bridge.py scene Assets/Scenes/SampleScene.unity
+  python3 tools/kak_bridge.py scene Assets/Scenes/Game.unity
   python3 tools/kak_bridge.py log [satır]             # console.log sonu
   python3 tools/kak_bridge.py errors                  # console.log içindeki hata/istisnalar
   python3 tools/kak_bridge.py clear                   # console.log temizle

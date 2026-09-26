@@ -55,16 +55,9 @@ public class ArenaAutoLayout : MonoBehaviour
     public float spawnerInsetY = 1.0f;
     public float spawnerTopDepthOffset = 0.35f;
 
-    [Header("UI Düzeni")]
-    public RectTransform healthUI;
-    public RectTransform scoreUI;
-    public float uiWorldVerticalOffset = 0.85f;
-    public float uiWorldHorizontalInset = 1.25f;
-
     [Header("Player Start")]
     public Vector2 playerLocalOffset = Vector2.zero;
 
-    private Camera mainCam;
 
     /// <summary>Oyuncunun yürüyebildiği iç zemin (dünya koordinatı). Duvarların iç yüzleri bu dikdörtgenin kenarlarıdır.</summary>
     public Rect PlayableWorldRect
@@ -93,7 +86,6 @@ public class ArenaAutoLayout : MonoBehaviour
 
     void Awake()
     {
-        mainCam = Camera.main;
         if (Application.isPlaying)
         {
             ApplyLayout(); // Awake'te çalışarak diğer Start()'lardan ÖNCE duvarları yerleştirir
@@ -102,16 +94,8 @@ public class ArenaAutoLayout : MonoBehaviour
 
     void LateUpdate()
     {
-        if (Application.isPlaying)
-        {
-            // Oyunda duvarlar sabit; sadece UI (cihaz dönmesi vb.) güncel tutulur
-            ApplyUILayout();
-            return;
-        }
-
-        // Editörde canlı önizleme
-        ApplyLayout();
-        ApplyUILayout();
+        // Oyunda duvarlar sabit (yeniden yerleşim ScreenComposer/LevelManager ile); editörde canlı önizleme
+        if (!Application.isPlaying) ApplyLayout();
     }
 
     public void ApplyLayout()
@@ -160,30 +144,6 @@ public class ArenaAutoLayout : MonoBehaviour
         if (!Application.isPlaying && player != null)
         {
             player.position = new Vector3(play.center.x + playerLocalOffset.x, play.center.y + playerLocalOffset.y, 0f);
-        }
-    }
-
-    void ApplyUILayout()
-    {
-        if (arenaSpriteRenderer == null || mainCam == null)
-            return;
-
-        Bounds arenaBounds = arenaSpriteRenderer.bounds;
-        Vector3 center = arenaBounds.center;
-        float halfW = arenaBounds.size.x * 0.5f;
-        float halfH = arenaBounds.size.y * 0.5f;
-
-        if (healthUI != null)
-        {
-            float hoverEffect = Application.isPlaying ? Mathf.Sin(Time.time * 3.5f) * 0.12f : 0f;
-            Vector3 worldPos = center + new Vector3(-halfW + uiWorldHorizontalInset, halfH + uiWorldVerticalOffset + hoverEffect, 0f);
-            healthUI.position = mainCam.WorldToScreenPoint(worldPos);
-        }
-
-        if (scoreUI != null)
-        {
-            Vector3 worldPos = center + new Vector3(halfW - uiWorldHorizontalInset, halfH + uiWorldVerticalOffset, 0f);
-            scoreUI.position = mainCam.WorldToScreenPoint(worldPos);
         }
     }
 

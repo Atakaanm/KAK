@@ -13,7 +13,6 @@ public class MainMenuController : MonoBehaviour
     public Button playButton;
     public Button charactersButton;
     public Button settingsButton;
-    public Button leaderboardButton;   // eski alan (kullanılmıyor)
     public Button levelsButton;
 
     [Header("Paneller")]
@@ -30,10 +29,6 @@ public class MainMenuController : MonoBehaviour
 
     [Header("Level Ayari")]
     public LevelData defaultLevel;        // Varsayilan olarak oynanacak level
-    public string gameSceneName = "SampleScene"; // Oyun sahnesinin ismi
-
-    [Header("Animasyon (opsiyonel)")]
-    public Animator menuAnimator;
 
     bool resetArmed;
 
@@ -74,8 +69,7 @@ public class MainMenuController : MonoBehaviour
     {
         PlayButtonSound();
         if (defaultLevel != null) GameSettings.SelectedLevel = defaultLevel;
-        if (gameSceneName == SceneLoader.GAME_SCENE) SceneLoader.LoadGame();
-        else UnityEngine.SceneManagement.SceneManager.LoadScene(gameSceneName);
+        SceneLoader.LoadGame();
     }
 
     public void OnCharactersClicked() { PlayButtonSound(); Open(charactersPanel); }

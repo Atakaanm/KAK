@@ -38,7 +38,7 @@ Amaç: kaç, hayatta kal, skoru büyüt. Skor zamanla artar (saniyede 10 puan ×
 - Serialization **Force Text** → `.unity`, `.prefab`, `.asset` dosyaları YAML olarak okunabilir.
 - Paketler: Input System 1.18 (ama kod **eski** `Input.GetAxisRaw` kullanıyor), TextMeshPro, UGUI, 2D Sprite.
 - VCS: GitHub (`Atakaanm/KAK`, dal `main`) + Unity Version Control (Plastic, `.plastic/`) — Plastic'te kimlik doğrulama hatası var, yok sayılabilir.
-- Sahneler (Build sırası): `0 MainMenu`, `1 SampleScene` (oyun sahnesi). Sabitler: `SceneLoader.MENU_SCENE / GAME_SCENE`.
+- Sahneler (Build sırası): `0 MainMenu`, `1 Game` (oyun sahnesi; 2026-09-26'ya kadar adı SampleScene idi). Sabitler: `SceneLoader.MENU_SCENE / GAME_SCENE`.
 
 ## 2.5 Otonom test altyapısı (Faz 0'da kuruldu) — Unity'yi Claude kontrol eder
 
@@ -71,10 +71,10 @@ python3 tools/kak_montage.py out.png a.png b.png ...   # yan yana
 
 ```
 MainMenu sahnesi
-  MainMenuController ──(Play)──► GameSettings.SelectedLevel = defaultLevel ──► SampleScene
+  MainMenuController ──(Play)──► GameSettings.SelectedLevel = defaultLevel ──► Game
   AudioManager (singleton, DontDestroyOnLoad, PlayerPrefs: MusicOn/SfxOn/VibrationOn)
 
-SampleScene
+Game (oyun sahnesi)
   GameManager [+ ScoreManager aynı objede]  (singleton, DontDestroyOnLoad ⚠)
     Awake: LevelManager / DifficultyManager yoksa runtime'da yaratır
   LevelManager.Start ─► LevelData uygular:
@@ -110,17 +110,25 @@ SampleScene
 
 ## 4. Editör araçları (üst menü "KacAtaKac")
 
-| Menü | Dosya | İşlev |
-|---|---|---|
-| Setup - Tüm Default Dataları Oluştur | `Scripts/Editor/KacAtaKacSetup.cs` | Varsayılan SO'ları üretir |
-| Auto-Wire Scene (Ctrl+Shift+W) | `Scripts/Editor/SceneAutoWire.cs` | Sahne referanslarını otomatik bağlar |
-| Diagnose Scene / Fix Player Visibility / Fix Sorting Orders | `SceneAutoWire.cs` | Tanı ve düzeltme |
-| Spawner Görsellerini Otomatik Ekle | `AutoAssignSpawnerSprites.cs` | `Sprites/Spawner` → animatörlere |
-| Player Görsellerini Data'ya Kopyala | `CopyPlayerVisualsToData.cs` | Sahnedeki player sprite'ları → PlayerData |
-| Faz 4 Hatalarını Otomatik Düzelt | `Phase4AutoSetup.cs` | Eski faz düzeltmesi |
-| Generate Difficulty Stages / Generate Powerups | `Assets/Editor/*` | SO üreticileri |
+Hepsi tekrar çalıştırılabilir (idempotent), sonucu string döndürür, pencere açmaz. Köprüden: `invoke <Sınıf> <Metot>`.
 
-**Her derlemede otomatik çalışanlar (`[InitializeOnLoadMethod]`):** `AutoAssignPowerups` (boş powerup listesi olan LevelData'lara tüm powerup'ları ekler), `ButtonGenerator` (GoldPill.png), `JoystickSpriteGenerator`. Bunlar sessizce asset değiştirebilir, akılda tut.
+| Menü | Dosya (Scripts/Editor) | İşlev |
+|---|---|---|
+| Sahne Yöneticilerini Kur | `KakSceneSetup.SetupManagers` | Managers/{LevelManager, DifficultyManager, ProjectilePool, PowerupSpawner} + referanslar |
+| Oyuncu Çarpışmasını Kur | `KakSceneSetup.SetupPlayerHitbox` | PlayerHitbox (ayak izi + gövde) |
+| Ekran Kompozisyonunu Kur | `KakScreenSetup` | ScreenComposer, HUD bandı, kontrol alanı, joystick, DungeonFrame |
+| Görsel Temeli Kur (Faz 3) | `KakFxSetup.Setup` | taş prefab'ı, FeedbackManager, kamera sarsıntısı, PlayerJuice, Volume |
+| Taş Türlerini Kur | `KakContentSetup` | 7 taş türü + kademe dağılımı |
+| Sonsuz Mod İçeriğini Kur (Faz 5) | `KakEndlessSetup.Setup` | olaylar, dash, yakın geçiş, combo, afiş, WorldPopup, kademe eşikleri |
+| Arayüzü Kur (Faz 4) | `KakUiSetup.SetupAll` | menü ve oyun içi UI (KakUiKit ile) |
+| Sesleri Kur | `KakAudioSetup` | AudioManager prefab'ı ve klipler |
+| Sprite Atlaslarını Kur / Art Klasörünü Yeniden İçe Aktar | `KakAtlasSetup`, `KakArtImportRules` | atlas, PPU standardı |
+| Yayın/Oyuncu Ayarlarını Uygula, Yayın/macOS Development Build | `KakBuild` | PlayerSettings, ölçüm build'i |
+| Denetim/Sahneleri Denetle | `KakSceneAudit.Run` | eksik script, kopuk referans, boş alan raporu |
+| Dev/* | `KakDevMenu` | bot, ölümsüzlük, kalkan ver, `WalkPlayer up/down/left/right/stop`, dünya yazısı, UI panelleri |
+
+Yardımcılar: `KakEditorUtil` (GameScenePath/MenuScenePath, `SaveNamedScenes`, `DeleteAssets "a;b"`, `MoveAssets "a>b;c>d"` (GUID korur, Build Settings'i günceller)).
+Eski araçlar (SceneAutoWire, Phase4AutoSetup, KacAtaKacSetup, *Generator, AutoAssign*) D2'de silindi; `[InitializeOnLoad]` ile asset değiştiren kod yok (sadece `KakBridge` ve import kuralları).
 
 ## 5. Kod kuralları (mevcut stile uy)
 

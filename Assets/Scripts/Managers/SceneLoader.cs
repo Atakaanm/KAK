@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 public static class SceneLoader
 {
     public const string MENU_SCENE = "MainMenu";
-    public const string GAME_SCENE = "SampleScene";
+    public const string GAME_SCENE = "Game";
 
     /// <summary>
     /// Oyun sahnesine gecer.

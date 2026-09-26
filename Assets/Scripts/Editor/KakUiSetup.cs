@@ -14,7 +14,7 @@ using static KakUiKit;
 /// </summary>
 public static class KakUiSetup
 {
-    const string GameScene = "Assets/Scenes/SampleScene.unity";
+    const string GameScene = KakEditorUtil.GameScenePath;
     const string MenuScene = "Assets/Scenes/MainMenu.unity";
     const string FramePrefab = "Assets/Prefabs/DungeonFrame.prefab";
 
