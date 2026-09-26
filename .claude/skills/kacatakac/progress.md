@@ -46,7 +46,7 @@ Son commit'ler (Temmuz 2026): HD ana menü, altın buton, premium fontlar (Cinze
 
 ## Aktif faz
 
-**Yayın hazırlığı sürüyor (yayin.md):** Y1-Y3 ✅ (Play/App Store gereksinimleri, API 36, iPhone-only, gizlilik, reklam altyapısı kapalı), Y4 ✅ kız karakter ADA (40 kare, bedava, panel 3×2). Sıradaki adım: **Y5 mağaza görselleri** (`Docs/Magaza/play`, `appstore`, öne çıkan grafik, ikon, listing.md). Onay bekleyenler: ADA adı geçici (kullanıcı değiştirebilir), destek e-postası.
+**Yayın hazırlığı tamamlandı (yayin.md, 2026-09-26):** Y1-Y3 (Play/App Store gereksinimleri, API 36, iPhone-only, gizlilik, reklam altyapısı kapalı), Y4 kız karakter ADA (40 kare, bedava, panel 3×2), Y5 mağaza görselleri + metinleri (`Docs/Magaza`). Kalanların hepsi kullanıcı adımı: `Docs/Yayin-Kontrol-Listesi.md` (modüller, Xcode 26, keystore, konsol hesapları, 12 test kullanıcısı, build). Onay bekleyenler: ADA adı geçici, destek e-postası, hedef kitle (13+ önerisi), reklamın açılıp açılmayacağı.
 **Faz 3c tamamlandı (2026-09-26):** altın, adım adım açılma, karakterler, görevler, petler, günlük ödül, cila (`3c.md`). Denetim D0-D6 da tamam (`denetim.md`). Sıradaki büyük iş: kullanıcının cihaz testi + denge geri bildirimi, sonra Faz 2B'nin bitirilmesi (bölüm seçimi) → Buz / Futbol / Karanlık dünyaları.
 Faz 2B altyapısı yarım (kod var, sahne/UI yok, commit 6f1618f), 3c'den sonra bitirilecek.
 
@@ -148,7 +148,7 @@ Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 - Varsayım: Kalkan "vurulana kadar" sürer (`ShieldData.duration` kullanılmıyor, davranış korunuyor)
 
 ### Sıradaki adım
-**Yayın hazırlığı (yayin.md):** Y1-Y3 tamam (gereksinim listesi, teknik ayarlar, reklam altyapısı kapalı). Sıradaki **Y4 kız karakter ADA** (dal `yayin-ada`): `tools/kak_gen_girl.py` ile Ata'nın kareleri tabanlı esmer, uzun saçlı, zayıf kız; 8 yön idle + her yön 4 koşu karesi; önizlemelerle yinele; karakter kataloğuna ekle; sonra Y5 mağaza görselleri.
+**Yayın hazırlığı Y1-Y5 tamam.** Sıradaki iş kullanıcıda: `Docs/Yayin-Kontrol-Listesi.md` adımları (Android/iOS modülleri, Xcode 26, keystore, Play Console + 12 test kullanıcısı, Apple Developer). Modüller kurulunca Claude: `KacAtaKac/Yayın/Android Release (.aab)` ve `iOS Xcode Projesi`. Sonra cihaz testi + denge geri bildirimi → Faz 2B (bölüm seçimi) → Buz / Futbol / Karanlık dünyaları.
 
 ### Onay bekleyenler
 - **Android Build Support modülü** kurulmalı (Unity Hub → 6000.3.8f1 → Add modules). Sonra "Android build al" → cihazda test.
@@ -158,6 +158,10 @@ Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 - Sanat stili: piksel sanatı (32 px, PPU 32). Varsayım: evet, devam.
 - Hedef platform ve test cihazı (Android/iOS?). Faz 10'a kadar engel değil.
 - Kullanıcı tüm izinleri verdi (2026-09-25): faz dallarına push, PR birleştirme, onaysız plan başlatma, test için Unity'yi kullanma.
+- **ADA** adı geçici (kullanıcı değiştirebilir: `Loc.cs` `char_Ada`).
+- **Destek e-postası** gizlilik politikasına ve mağazaya (kişisel e-posta kendiliğinden yazılmadı).
+- **Hedef kitle** (Play: 13+ önerildi) ve **reklam** açılacak mı (`Docs/Reklam-Hazirlik.md`).
+- **Mağaza görselleri** onayı (`Docs/Magaza/`; değişiklik için `tools/kak_store_shots.py`).
 
 ## Bilinen hatalar ve riskler
 

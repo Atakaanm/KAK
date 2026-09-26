@@ -181,6 +181,26 @@ public static class KakDevMenu
     [MenuItem("KacAtaKac/Dev/UI - Dili Değiştir (TR-EN)")]
     public static void ToggleLanguage() { Loc.Current = Loc.Current == Loc.Lang.TR ? Loc.Lang.EN : Loc.Lang.TR; }
 
+    /// <summary>Dili doğrudan seçer (mağaza görüntüleri). Köprü: invoke KakDevMenu SetLanguage EN</summary>
+    public static void SetLanguage(string lang)
+    {
+        if (!Application.isPlaying) { Debug.LogWarning("[Dev] SetLanguage yalnızca Play'de (edit modunda gerçek kayda yazardı)"); return; }
+        Loc.Current = lang == "EN" ? Loc.Lang.EN : Loc.Lang.TR;
+        // Skor yazısı yalnızca skor değişince yenileniyor: donmuş karede de doğru dil görünsün
+        var s = Object.FindAnyObjectByType<ScoreManager>();
+        if (s != null && s.scoreText != null) s.scoreText.SetText(Loc.T("hud_score"), s.ScoreInt);
+    }
+
+    /// <summary>Oyun zamanını dondurur/çözer (aynı anı farklı dil ve boyutlarda çekmek için). Köprü: invoke KakDevMenu Freeze 1</summary>
+    public static void Freeze(string on) { Time.timeScale = on == "1" ? 0f : 1f; }
+
+    /// <summary>Skoru ileri alır, zorluk kademesi skora bağlı olduğu için oyun da hızlanır. Köprü: invoke KakDevMenu AddScore 400</summary>
+    public static void AddScore(string n)
+    {
+        var s = Object.FindAnyObjectByType<ScoreManager>();
+        if (s != null && int.TryParse(n, out int v)) s.AddScore(v);
+    }
+
     [MenuItem("KacAtaKac/Dev/Bot Raporu")]
     public static void Report()
     {

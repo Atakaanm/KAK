@@ -15,7 +15,7 @@
 | **Android App Bundle (.aab)** (APK kabul edilmiyor) | 🔧 | `buildAppBundle = true`, `KakBuild.BuildAndroidRelease` |
 | **Android 16 büyük ekran kuralı:** API 36'da tablet ve katlanabilirlerde (≥600dp) yön kilidi yok sayılır; **oyunlar `android:appCategory="game"` ile muaf** | 🔧 | Derleme sonrası manifest'e ekleniyor (`KakAndroidManifest`) |
 | Uygulama imzalama: yükleme anahtarı (keystore) + Play App Signing | 👤 | Keystore'u sen oluştur ve sakla (şifreyi Claude görmez) |
-| Sürüm kodu her yüklemede artmalı | 🔧 | `bundleVersionCode` sürümden türetiliyor (0.9.0 → 900) |
+| Sürüm kodu her yüklemede artmalı | 🔧 | `bundleVersionCode` sürümden türetiliyor (1.0.0 → 10000; sonraki yükleme için `KakBuild.Version`'ı artır) |
 | Min SDK | ✅ | API 25 (Android 7.1). Reklam SDK'ları 23+ istiyor, uyumlu |
 | `com.google.android.gms.permission.AD_ID` izni (reklam kimliği kullanılıyorsa, API 33+) | ⏳ | AdMob SDK'sı kendiliğinden ekliyor; Play Console'da "Reklam kimliği" beyanı 👤 |
 
@@ -30,7 +30,7 @@
 | İçerik derecelendirmesi (IARC anketi) | Hafif çizgi film şiddeti (taş) → büyük olasılıkla PEGI 7 / Herkes 10+ |
 | **Hedef kitle ve içerik:** 13 yaş altı seçilirse "Aileler" politikası (yalnızca sertifikalı reklam SDK'ları, kişiselleştirilmiş reklam yok) | **Öneri: 13+** (reklam ve analitik esnekliği). Karar senin |
 | Uygulama erişimi (giriş gerekmiyor), haber uygulaması değil, devlet uygulaması değil | Tek tıkla beyanlar |
-| Mağaza varlıkları: ikon 512×512 PNG (≤1 MB), **öne çıkan grafik 1024×500** (şeffaflık yok), telefon ekran görüntüsü 2-8 adet (**en-boy en fazla 2:1**, 9:16 önerilir) | 🔧 `Docs/Magaza/play/` altında üretildi. Eski 1242×2688 görüntüler 2,16:1 olduğu için Play'e uymuyor |
+| Mağaza varlıkları: ikon 512×512 PNG (≤1 MB), **öne çıkan grafik 1024×500** (şeffaflık yok), telefon ekran görüntüsü 2-8 adet (**en-boy en fazla 2:1**, 9:16 önerilir) | 🔧 `Docs/Magaza/play/`: TR ve EN 6'şar görüntü (1080×1920) + öne çıkan grafik; ikon `ikon_512.png`. Eski 1242×2688 görüntüler (2,16:1, Play'e uymuyordu) kaldırıldı |
 
 ## B. App Store (Apple)
 
@@ -54,7 +54,7 @@
 | **Yaş derecelendirmesi yeni anketi** (13+/16+/18+ eklendi; Ocak 2026'dan beri zorunlu, Eylül 2026'dan beri her gönderimde) | Oyun içi kontroller, yetenekler, şiddet temaları soruları: hafif çizgi film şiddeti → büyük olasılıkla 9+ |
 | Gizlilik etiketleri ("App Privacy") | Şimdilik "Veri toplanmıyor"; reklam açılınca güncellenir ⏳ |
 | Gizlilik politikası URL'si, destek URL'si | GitHub sayfası kullanılabilir |
-| Ekran görüntüsü: **6,9" iPhone 1320×2868** (en az 1, en fazla 10) | 🔧 `Docs/Magaza/appstore/` |
+| Ekran görüntüsü: **6,9" iPhone 1320×2868** (en az 1, en fazla 10) | 🔧 `Docs/Magaza/appstore/`: TR ve EN 6'şar |
 | Uygulama ikonu 1024×1024, şeffaflık yok | 🔧 `Docs/Magaza/ikon_1024.png` |
 | Kategori: Oyunlar › Arcade; açıklama, anahtar kelimeler, alt başlık | 🔧 `Docs/Magaza/listing.md` güncellendi |
 

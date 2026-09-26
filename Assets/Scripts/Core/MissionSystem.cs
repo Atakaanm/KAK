@@ -127,6 +127,8 @@ public static class MissionSystem
             string stage = Loc.T(StageKeys[Mathf.Clamp(m.target, 0, StageKeys.Length - 1)]).TrimEnd('!');
             return string.Format(Loc.T(key), stage);
         }
+        // Tekil biçim (EN "Block 1 rocks" hatası): hedef 1 ise varsa "_1" anahtarı
+        if (m.target == 1 && Loc.Has(key + "_1")) key += "_1";
         return string.Format(Loc.T(key), m.target);
     }
 }

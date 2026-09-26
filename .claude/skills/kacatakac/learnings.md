@@ -4,6 +4,15 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-09-26 — Y5: mağaza görselleri
+
+- **Mağaza görüntüsünü tam telefon ekranından küçültme:** karakter 20 px'e iner. Oyunu, başlık bandının altındaki alanın boyutunda render et (köprü `shot W H`): arayüz o orana yerleşir, ölçekleme yok.
+- **Aynı anı iki dilde çek:** `KakDevMenu.Freeze 1` (timeScale 0; kare sayacı ilerler, ekran görüntüsü çalışır) + `SetLanguage`. Skor yazısı yalnızca skor değişince yenilendiği için SetLanguage onu elle yeniliyor. Panellerin dinamik metinleri (oyun sonu, günlük) yenilenmiyor → o sahneler dil başına baştan kurulur (`per_lang`).
+- **Rastgele an:** aynı sahneden 4-5 an çek (`--takes`), montajda bak, `pick` ile seç. İlk an neredeyse hiç en iyisi değil.
+- **Edit modunda `Loc.Current =` gerçek kayda yazar** (SaveSystem.Save). Araç zinciri Play dışında dil değiştirmemeli; `SetLanguage` artık Play dışında reddediyor. Çekimden sonra gerçek kaydın saatini kontrol et.
+- Mağaza görüntüsü çekmek, gerçek hataları buldu: kısa ekranda kesilen panel, EN çoğul hatası. Farklı oranlarda gerçek ekranlara bakmak ucuz bir test.
+- Öne çıkan grafik: bulanık oyun görüntüsü arka plan olarak kalabalık duruyordu → taşsız arena görseli + az sayıda, yüzlerden uzak nesne. Sprite'ları görünür piksel sınırına (`getbbox`) göre yerleştir, kenara taşmayı assert et.
+
 ## 2026-09-26 — Y4: kız karakter ADA
 
 - Yeni karakter çizimini sıfırdan yapmak yerine mevcut 40 kareden türetmek (renk haritası + saç/gövde kuralları) animasyon tutarlılığını bedavaya getiriyor. Kuralları yön başına yaz, her sürümü 40 karelik montajda gözle kontrol et (v1-v4'te: ayaklarda saç bloğu, çizgili saç, pelerin gibi arka saç, 3/4 arkada ten çizgileri, güneyde pembe gömlek).

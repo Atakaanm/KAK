@@ -59,6 +59,7 @@ python3 tools/kak_bridge.py invoke TipAdi MetotAdi [stringArg]   # statik editö
 python3 tools/kak_bridge.py log 80 | errors | clear
 python3 tools/kak_color.py goruntu.png    # gri ton / renk körlüğü / bulanık karşılaştırma + değer dağılımı
 python3 tools/kak_montage.py out.png a.png b.png ...   # yan yana
+python3 tools/kak_store_shots.py all       # mağaza görselleri: sahneleri kurar, zamanı dondurur, aynı anı Play/App Store × TR/EN çeker, başlık bandı ekler (Docs/Magaza)
 ```
 
 - **Derleme arka planda yavaş:** assembly değişikliğinde 3-5 dk sürebilir. `refresh` 11 dk bekler, sabırlı ol.
@@ -130,7 +131,7 @@ Hepsi tekrar çalıştırılabilir (idempotent), sonucu string döndürür, penc
 | Görsel Temeli Kur (Faz 3) | `KakFxSetup.Setup` | taş prefab'ı, FeedbackManager, kamera sarsıntısı, PlayerJuice, Volume |
 | Taş Türlerini Kur | `KakContentSetup` | 7 taş türü + kademe dağılımı |
 | Sonsuz Mod İçeriğini Kur (Faz 5) | `KakEndlessSetup.Setup` | olaylar, dash, yakın geçiş, combo, afiş, WorldPopup, kademe eşikleri |
-| Arayüzü Kur (Faz 4) | `KakUiSetup.SetupAll` | menü ve oyun içi UI (KakUiKit ile) |
+| Arayüzü Kur (Faz 4) | `KakUiSetup.SetupAll` | menü ve oyun içi UI (KakUiKit ile). Modal: kök/Dim + kök/Fit/Panel; `Fit` üzerindeki `UiFitToScreen` kısa/geniş ekranda (tablet, 3:2) paneli sığdırır (kanvas genişliğe göre ölçekli, match = 0). Panelin kendi açılış animasyonu Panel'de |
 | Sesleri Kur | `KakAudioSetup` | AudioManager prefab'ı ve klipler |
 | Sprite Atlaslarını Kur / Art Klasörünü Yeniden İçe Aktar | `KakAtlasSetup`, `KakArtImportRules` | atlas, PPU standardı |
 | Yayın/Oyuncu Ayarlarını Uygula, Yayın/macOS Development Build | `KakBuild` | PlayerSettings, ölçüm build'i |
