@@ -42,6 +42,14 @@ public class ArenaAutoLayout : MonoBehaviour
     public Vector2 anchorBottomLeft = new Vector2(0.130f, 0.126f);
     public Vector2 anchorBottomRight = new Vector2(0.870f, 0.126f);
 
+    [Header("Köşe Kaideleri (katı, 0-1 normalize)")]
+    [Tooltip("Fırlatıcıların durduğu kaideler katı olsun: oyuncu kaideye çıkamaz, fırlatıcının dibine giremez")]
+    public bool solidPedestals = true;
+    public Vector2 pedestalSize = new Vector2(0.1f, 0.1f);
+    [Tooltip("Kaide merkezinin duruş noktasına göre kayması (sol köşeler için; sağda x aynalanır)")]
+    public Vector2 pedestalOffsetTop = new Vector2(0f, 0.032f);
+    public Vector2 pedestalOffsetBottom = new Vector2(0.003f, 0.007f);
+
     [Header("Spawner Settings (anchor kapalıysa)")]
     public float spawnerInsetX = 1.0f;
     public float spawnerInsetY = 1.0f;
@@ -136,6 +144,7 @@ public class ArenaAutoLayout : MonoBehaviour
             PlaceSpawnerFeet(topRightSpawner, NormalizedToWorld(anchorTopRight));
             PlaceSpawnerFeet(bottomLeftSpawner, NormalizedToWorld(anchorBottomLeft));
             PlaceSpawnerFeet(bottomRightSpawner, NormalizedToWorld(anchorBottomRight));
+            if (Application.isPlaying) LayoutPedestals();
         }
         else
         {
@@ -192,6 +201,41 @@ public class ArenaAutoLayout : MonoBehaviour
         }
     }
 
+    BoxCollider2D[] pedestals;
+
+    /// <summary>Kaide collider'larını (oyun sırasında oluşturulur, sahneye yazılmaz) arena ölçeğine göre yerleştirir.</summary>
+    void LayoutPedestals()
+    {
+        Transform parent = boundsRoot != null ? boundsRoot : transform;
+        if (pedestals == null)
+        {
+            pedestals = new BoxCollider2D[4];
+            int layer = topWall != null ? topWall.gameObject.layer : gameObject.layer;
+            for (int i = 0; i < 4; i++)
+            {
+                var go = new GameObject("Pedestal_" + i) { layer = layer };
+                go.transform.SetParent(parent, false);
+                pedestals[i] = go.AddComponent<BoxCollider2D>();
+            }
+        }
+        Bounds b = arenaSpriteRenderer.bounds;
+        Vector2 size = new Vector2(pedestalSize.x * b.size.x, pedestalSize.y * b.size.y);
+        Vector2 flipX = new Vector2(-1f, 1f);
+        Vector2[] centers =
+        {
+            anchorTopLeft + pedestalOffsetTop, anchorTopRight + Vector2.Scale(pedestalOffsetTop, flipX),
+            anchorBottomLeft + pedestalOffsetBottom, anchorBottomRight + Vector2.Scale(pedestalOffsetBottom, flipX)
+        };
+        for (int i = 0; i < 4; i++)
+        {
+            var col = pedestals[i];
+            col.gameObject.SetActive(solidPedestals);
+            col.transform.position = NormalizedToWorld(centers[i]);
+            Vector3 s = col.transform.lossyScale;
+            col.size = new Vector2(size.x / Mathf.Max(Mathf.Abs(s.x), 0.0001f), size.y / Mathf.Max(Mathf.Abs(s.y), 0.0001f));
+        }
+    }
+
     /// <summary>Fırlatıcıyı, ayakları (Shadow child'ı varsa onun konumu) duruş noktasına gelecek şekilde yerleştirir.</summary>
     static void PlaceSpawnerFeet(Transform spawner, Vector3 feetWorld)
     {
@@ -219,6 +263,16 @@ public class ArenaAutoLayout : MonoBehaviour
         {
             Gizmos.color = new Color(1f, 0.5f, 0.1f, 0.9f);
             Gizmos.DrawWireSphere(NormalizedToWorld(anchorTopLeft), 0.15f);
+            if (solidPedestals)
+            {
+                Bounds ab = arenaSpriteRenderer.bounds;
+                Vector3 ps = new Vector3(pedestalSize.x * ab.size.x, pedestalSize.y * ab.size.y, 0f);
+                Vector2 fx = new Vector2(-1f, 1f);
+                Gizmos.DrawWireCube(NormalizedToWorld(anchorTopLeft + pedestalOffsetTop), ps);
+                Gizmos.DrawWireCube(NormalizedToWorld(anchorTopRight + Vector2.Scale(pedestalOffsetTop, fx)), ps);
+                Gizmos.DrawWireCube(NormalizedToWorld(anchorBottomLeft + pedestalOffsetBottom), ps);
+                Gizmos.DrawWireCube(NormalizedToWorld(anchorBottomRight + Vector2.Scale(pedestalOffsetBottom, fx)), ps);
+            }
             Gizmos.DrawWireSphere(NormalizedToWorld(anchorTopRight), 0.15f);
             Gizmos.DrawWireSphere(NormalizedToWorld(anchorBottomLeft), 0.15f);
             Gizmos.DrawWireSphere(NormalizedToWorld(anchorBottomRight), 0.15f);

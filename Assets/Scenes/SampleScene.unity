@@ -389,6 +389,12 @@ MonoBehaviour:
   newBestBadge: {fileID: 1014265195}
   buttons: {fileID: 1008717689}
   dim: {fileID: 631477160}
+  titleText: {fileID: 0}
+  scoreLabel: {fileID: 0}
+  stars: []
+  starOn: {fileID: 0}
+  starOff: {fileID: 0}
+  nextButton: {fileID: 0}
 --- !u!1 &11143030
 GameObject:
   m_ObjectHideFlags: 0
@@ -580,6 +586,7 @@ MonoBehaviour:
   spawnerData: {fileID: 0}
   prewarmCount: 5
   telegraphTime: 0.35
+  overrideProjectile: {fileID: 0}
   meteorScatter: 0.9
 --- !u!1 &31351032
 GameObject:
@@ -1256,7 +1263,77 @@ MonoBehaviour:
   spawnerData: {fileID: 0}
   prewarmCount: 5
   telegraphTime: 0.35
+  overrideProjectile: {fileID: 0}
   meteorScatter: 0.9
+--- !u!1 &195370159
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 195370160}
+  - component: {fileID: 195370161}
+  m_Layer: 0
+  m_Name: Hurtbox
+  m_TagString: Player
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &195370160
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 195370159}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1461798715}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!70 &195370161
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 195370159}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 0.45000002, y: 1}
+  m_Direction: 0
 --- !u!1 &223202206
 GameObject:
   m_ObjectHideFlags: 0
@@ -5439,6 +5516,7 @@ MonoBehaviour:
   spawnerData: {fileID: 0}
   prewarmCount: 5
   telegraphTime: 0.35
+  overrideProjectile: {fileID: 0}
   meteorScatter: 0.9
 --- !u!1 &1194251178
 GameObject:
@@ -6221,6 +6299,7 @@ MonoBehaviour:
   spawnerData: {fileID: 0}
   prewarmCount: 5
   telegraphTime: 0.35
+  overrideProjectile: {fileID: 0}
   meteorScatter: 0.9
 --- !u!1 &1395056005
 GameObject:
@@ -6544,6 +6623,7 @@ GameObject:
   - component: {fileID: 1461798719}
   - component: {fileID: 1461798720}
   - component: {fileID: 1461798721}
+  - component: {fileID: 1461798722}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -6602,8 +6682,8 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Radius: 0.5
+  m_Offset: {x: 0, y: -0.325}
+  m_Radius: 0.25
 --- !u!50 &1461798714
 Rigidbody2D:
   serializedVersion: 5
@@ -6646,6 +6726,7 @@ Transform:
   m_Children:
   - {fileID: 1713377527}
   - {fileID: 623484393}
+  - {fileID: 195370160}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1461798716
@@ -6781,6 +6862,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: KacAtaKac::NearMissTracker
   radius: 0.75
   minRadius: 0.3
+--- !u!114 &1461798722
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1461798711}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af67426f43a124925acec011ee482a8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KacAtaKac::PlayerHitbox
+  footRadius: 0.2
+  footOffsetY: -0.26
+  hurtSize: {x: 0.36, y: 0.8}
+  hurtOffsetY: 0
 --- !u!1 &1482029490
 GameObject:
   m_ObjectHideFlags: 0
@@ -14144,6 +14241,10 @@ MonoBehaviour:
   difficultyManager: {fileID: 1804650307}
   powerupSpawner: {fileID: 1524395491}
   waveManager: {fileID: 0}
+  enemyShadow: {fileID: 0}
+  projectilePrefabDefault: {fileID: 0}
+  dungeonFrame: {fileID: 0}
+  screenComposer: {fileID: 0}
   defaultLevel: {fileID: 11400000, guid: 59b6cc49688864d0dba08a1e32eedf26, type: 2}
 --- !u!4 &1938158506
 Transform:

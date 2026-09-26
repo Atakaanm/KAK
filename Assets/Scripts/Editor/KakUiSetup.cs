@@ -35,7 +35,7 @@ public static class KakUiSetup
     {
         var scene = EditorSceneManager.GetActiveScene();
         if (scene.path == path) return scene;
-        EditorSceneManager.SaveOpenScenes();
+        KakEditorUtil.SaveNamedScenes();
         return EditorSceneManager.OpenScene(path, OpenSceneMode.Single);
     }
 

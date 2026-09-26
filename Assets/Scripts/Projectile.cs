@@ -363,10 +363,12 @@ public class Projectile : MonoBehaviour
         if (motion == ProjectileMotion.Meteor) return;
         if (other.CompareTag("Player"))
         {
-            PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
+            // Taş yalnızca gövdeye vurur (ayak izi duvarlar içindir). Bkz. PlayerHitbox.
+            if (PlayerHitbox.Hurt != null && other != PlayerHitbox.Hurt) return;
+            PlayerHealth playerHealth = other.GetComponentInParent<PlayerHealth>();
             if (playerHealth != null && playerHealth.IsGhost) return; // hayalet: içinden geçer
             PlayerHealth.LastHitSource = data != null ? data.projectileName : "Taş";
-            var status = other.GetComponent<PlayerStatus>();
+            var status = other.GetComponentInParent<PlayerStatus>();
             if (status != null && data != null && data.effect != ProjectileEffect.Damage)
                 status.Apply(data.effect, data.effectDuration, data.effectStrength, damage);
             else if (playerHealth != null)

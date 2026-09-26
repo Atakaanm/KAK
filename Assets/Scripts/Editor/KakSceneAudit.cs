@@ -16,13 +16,7 @@ public static class KakSceneAudit
     {
         var sb = new StringBuilder();
         string active = EditorSceneManager.GetActiveScene().path;
-        // Kayıtlı ve değişmiş sahneleri kaydet. Adsız (Untitled) sahneye dokunma:
-        // SaveOpenScenes adsız sahnede "Farklı Kaydet" penceresi açar ve editörü kilitler.
-        for (int i = 0; i < EditorSceneManager.sceneCount; i++)
-        {
-            var s = EditorSceneManager.GetSceneAt(i);
-            if (s.isDirty && !string.IsNullOrEmpty(s.path)) EditorSceneManager.SaveScene(s);
-        }
+        KakEditorUtil.SaveNamedScenes();
         foreach (var path in new[] { "Assets/Scenes/MainMenu.unity", "Assets/Scenes/SampleScene.unity" })
         {
             var scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Single);

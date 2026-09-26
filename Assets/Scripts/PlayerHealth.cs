@@ -16,9 +16,10 @@ public class PlayerHealth : MonoBehaviour
     public PlayerData playerData;
 
     private Color originalColor;
-    private Vector3 originalScale;
     private bool isInvincible = false;
     private bool hasShield = false;
+    public bool HasShield => hasShield;
+    private ShieldBubble shieldBubble;
     private bool isGhost = false;
     public bool IsGhost => isGhost;
     private bool isDead = false;
@@ -28,6 +29,9 @@ public class PlayerHealth : MonoBehaviour
     private Coroutine hitFlashCoroutine;
     private Coroutine invincibilityCoroutine;
     private Coroutine ghostCoroutine;
+
+    static readonly WaitForSeconds BlinkWait = new WaitForSeconds(0.1f);
+    const float GhostAlpha = 0.5f;
 
     void OnEnable() { Projectile.PlayerTarget = transform; }
     void OnDisable() { if (Projectile.PlayerTarget == transform) Projectile.PlayerTarget = null; }
@@ -54,7 +58,6 @@ public class PlayerHealth : MonoBehaviour
         {
             originalColor = playerSpriteRenderer.color;
         }
-        originalScale = transform.localScale;
 
         if (healthUI != null)
         {
@@ -79,11 +82,22 @@ public class PlayerHealth : MonoBehaviour
     public void ActivateShield()
     {
         hasShield = true;
-        transform.localScale = originalScale * 1.15f; // %15 büyüt
-        if (playerSpriteRenderer != null && !isGhost)
+        // Karakteri boyamak ya da büyütmek yerine balon: çarpışma alanı değişmez, karakter okunur kalır
+        if (shieldBubble == null)
         {
-            playerSpriteRenderer.color = Color.cyan;
+            var hb = GetComponent<PlayerHitbox>();
+            shieldBubble = ShieldBubble.Create(transform, playerSpriteRenderer, hb != null ? hb.hurtOffsetY : 0f);
         }
+        shieldBubble.Show();
+    }
+
+    /// <summary>Görsel rengi duruma göre yeniden kurar (hayalet yarı saydam, aksi halde orijinal).</summary>
+    void RefreshTint()
+    {
+        if (playerSpriteRenderer == null) return;
+        Color c = originalColor;
+        if (isGhost) c.a = GhostAlpha;
+        playerSpriteRenderer.color = c;
     }
 
     /// <summary>Mermilerin içinden geçmesini sağlayan hayalet formu.</summary>
@@ -96,20 +110,12 @@ public class PlayerHealth : MonoBehaviour
     IEnumerator GhostRoutine(float duration)
     {
         isGhost = true;
-        if (playerSpriteRenderer != null)
-        {
-            Color c = originalColor;
-            c.a = 0.5f;
-            playerSpriteRenderer.color = c;
-        }
+        RefreshTint();
 
         yield return KakTime.WaitGameplay(duration);
 
         isGhost = false;
-        if (playerSpriteRenderer != null)
-        {
-            playerSpriteRenderer.color = hasShield ? Color.cyan : originalColor;
-        }
+        if (hitFlashCoroutine == null) RefreshTint();
         ghostCoroutine = null;
     }
 
@@ -124,8 +130,7 @@ public class PlayerHealth : MonoBehaviour
         if (!hasShield) return false;
         GameEvents.RaiseShieldBlocked(transform.position);
         hasShield = false;
-        transform.localScale = originalScale;
-        if (playerSpriteRenderer != null) playerSpriteRenderer.color = originalColor;
+        if (shieldBubble != null) shieldBubble.Pop();
         if (invincibilityCoroutine != null) StopCoroutine(invincibilityCoroutine);
         invincibilityCoroutine = StartCoroutine(InvincibilityRoutine());
         return true;
@@ -138,16 +143,7 @@ public class PlayerHealth : MonoBehaviour
 #endif
         if (isDead || isInvincible || isGhost || IsInvulnerable) return;
 
-        if (hasShield)
-        {
-            GameEvents.RaiseShieldBlocked(transform.position);
-            hasShield = false;
-            transform.localScale = originalScale;
-            if (playerSpriteRenderer != null) playerSpriteRenderer.color = originalColor;
-            if (invincibilityCoroutine != null) StopCoroutine(invincibilityCoroutine);
-            invincibilityCoroutine = StartCoroutine(InvincibilityRoutine());
-            return;
-        }
+        if (ConsumeShield()) return;
 
         currentHealth -= damage;
         GameEvents.RaisePlayerDamaged(Mathf.Max(0, currentHealth), transform.position);
@@ -205,22 +201,8 @@ public class PlayerHealth : MonoBehaviour
     {
         playerSpriteRenderer.color = hitColor;
         yield return new WaitForSeconds(hitFlashDuration);
-        
-        // Rengi mevcut duruma göre doğru geri yükle
-        if (isGhost)
-        {
-            Color c = originalColor; c.a = 0.5f;
-            playerSpriteRenderer.color = c;
-        }
-        else if (hasShield)
-        {
-            playerSpriteRenderer.color = Color.cyan;
-        }
-        else
-        {
-            playerSpriteRenderer.color = originalColor;
-        }
         hitFlashCoroutine = null;
+        RefreshTint();
     }
 
     IEnumerator InvincibilityRoutine()
@@ -231,25 +213,12 @@ public class PlayerHealth : MonoBehaviour
         {
             if (playerSpriteRenderer != null)
                 playerSpriteRenderer.enabled = !playerSpriteRenderer.enabled;
-            yield return new WaitForSeconds(0.1f);
+            yield return BlinkWait;
             elapsed += 0.1f;
         }
         if (playerSpriteRenderer != null) playerSpriteRenderer.enabled = true;
         isInvincible = false;
-        
-        // Renk çakışmasını çöz
-        if (playerSpriteRenderer != null)
-        {
-            if (isGhost)
-            {
-                Color c = originalColor; c.a = 0.5f;
-                playerSpriteRenderer.color = c;
-            }
-            else if (hasShield)
-            {
-                playerSpriteRenderer.color = Color.cyan;
-            }
-        }
+        if (hitFlashCoroutine == null) RefreshTint();
         invincibilityCoroutine = null;
     }
 }
