@@ -1,5 +1,6 @@
 using System.Collections;
 using TMPro;
+using UnityEngine.UI;
 using UnityEngine;
 
 /// <summary>
@@ -18,6 +19,14 @@ public class GameOverScreen : MonoBehaviour
     [Tooltip("Bu oyunla yeni açılan özellik afişi (panelin üstünde)")]
     public RectTransform unlockBanner;
     public TMP_Text unlockText;
+    [Header("Görevler (Faz 3c.4)")]
+    public RectTransform missionsBlock;
+    public TMP_Text[] missionTexts;
+    public TMP_Text[] missionProgress;
+    public Image[] missionChecks;
+    [Tooltip("Görevler görünürken panel yüksekliği (butonlar alta sabit, satırlar araya girer)")]
+    public float heightWithMissions = 1480f;
+    public float heightWithoutMissions = 1240f;
     public RectTransform newBestBadge;
     public CanvasGroup buttons;
     public CanvasGroup dim;
@@ -197,5 +206,47 @@ public class GameOverScreen : MonoBehaviour
         }
         if (statsText != null) statsText.alpha = 1f;
         if (buttons != null) { buttons.alpha = 1f; buttons.interactable = true; }
+    }
+
+    /// <summary>
+    /// Görev satırlarını gösterir (Show'dan hemen sonra çağrılır). null: görevler kapalı, blok gizli ve panel kısa.
+    /// Bu oyunla tamamlananlar altın renkte, onaylı ve ödüllü ("+40"), sırayla zıplar.
+    /// </summary>
+    public void ShowMissions(System.Collections.Generic.List<MissionState> missions, System.Collections.Generic.List<MissionState> justCompleted)
+    {
+        bool on = missions != null && missions.Count > 0 && missionsBlock != null;
+        if (panel != null) panel.sizeDelta = new Vector2(panel.sizeDelta.x, on ? heightWithMissions : heightWithoutMissions);
+        if (missionsBlock != null) missionsBlock.gameObject.SetActive(on);
+        if (!on) return;
+        for (int i = 0; i < missionTexts.Length; i++)
+        {
+            bool has = i < missions.Count && missions[i] != null;
+            missionTexts[i].transform.parent.gameObject.SetActive(has);
+            if (!has) continue;
+            var m = missions[i];
+            bool done = m.done;
+            bool fresh = justCompleted != null && justCompleted.Contains(m);
+            missionTexts[i].text = MissionSystem.Describe(m);
+            missionTexts[i].color = done ? KakPalette.AltinAcik : KakPalette.Krem;
+            if (done) missionProgress[i].SetText("+{0}", m.reward);
+            else missionProgress[i].SetText("{0}/{1}", m.progress, m.target);
+            missionProgress[i].color = done ? KakPalette.Altin : KakPalette.Sis;
+            missionChecks[i].color = done ? KakPalette.AcikYesil : KakPalette.WithAlpha(KakPalette.ArduvazAcik, 0.35f);
+            if (fresh) StartCoroutine(PopRow(missionTexts[i].transform.parent as RectTransform, 0.9f + i * 0.25f));
+        }
+    }
+
+    IEnumerator PopRow(RectTransform row, float delay)
+    {
+        for (float t = 0f; t < delay; t += Time.unscaledDeltaTime) yield return null;
+        if (AudioManager.Instance != null) AudioManager.Instance.PlaySfx(AudioManager.Instance.coinSfx, 1.2f);
+        for (float t = 0f; t < 0.3f; t += Time.unscaledDeltaTime)
+        {
+            float k = t / 0.3f;
+            float s = 1f + 0.12f * Mathf.Sin(k * Mathf.PI);
+            row.localScale = new Vector3(s, s, 1f);
+            yield return null;
+        }
+        row.localScale = Vector3.one;
     }
 }

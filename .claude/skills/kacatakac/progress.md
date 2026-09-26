@@ -63,6 +63,7 @@ Faz 2B altyapısı yarım (kod var, sahne/UI yok, commit 6f1618f), 3c'den sonra 
 - [x] **3c.1 Altın:** arenada altın kümeleri, HUD sayacı, ses/parıltı, oyun sonu altın satırı ve cüzdan, `FeatureGate` (1. oyun saf kaçış). Rekoru ≥1000 olan oyuncu da "deneyimli" (temel ipuçları yok). Testler 50/50 + 8/8.
 - [x] **3c.2 Özellik kapısı:** açılma takvimi (altın → görevler → karakterler → günlük ödül → pet'ler), menüde kilitli/YENİ! butonu (şimdilik Karakter), cüzdan, oyun sonunda "YENİ AÇILDI" afişi, oyun günü sayacı. Kullanıcının kaydı: 3 oyun → karakterler 2 oyun sonra açılır. Testler 53/53 + 12/12.
 - [x] **3c.3 Karakterler:** 4 karakter (Ata / Çevik 300 / Tank 800 / Şanslı 1500), ödünleşimli istatistikler oyunda uygulanıyor, gerçek karakter paneli (satın al/seç), altın sayacı kalplerin altına taşındı. **Eski HUD hatası bulundu ve düzeltildi:** HealthUI yalnızca Heart1'i yönetiyordu; klonlar Heart2/3'ün üstüne biniyor, can kaybında alttaki kalpler kaybolmuyordu (öldükten sonra HUD'da 2 kalp görünüyordu). Testler 59/59 + 12/12.
+- [x] **3c.4 Görevler:** 3 aktif görev (7 tür), oyun sonunda ilerleme/ödül, seviye arttıkça hedef ve ödül büyür; oyun sonu ekranında görev bloğu. Testler 61/61 + 15/15.
 
 **Önceki: Faz 2B — Bölüm dünyaları için mimari** (yarım). Sonsuz Mod v1.0 hazır: 0 ✅ 1 ✅ 1.5 ✅ 3 ✅ 2A ✅ 5 ✅ 4 ✅ 10 ✅* (2026-09-25).
 Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
@@ -142,7 +143,7 @@ Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 - Varsayım: Kalkan "vurulana kadar" sürer (`ShieldData.duration` kullanılmıyor, davranış korunuyor)
 
 ### Sıradaki adım
-**Faz 3c.4 Görevler** (dal `faz-3c-gorev`): görev verisi (tür: hayatta kal N sn / tek oyunda N yakın geçiş / N dash / N altın / kalkanla engelle / kademe X'e ulaş; hedef, ödül), havuzdan 3 aktif görev (`SaveData`), GameEvents ile oyun içi takip, oyun sonu ekranında görev kartları + tamamlanınca ödül animasyonu, menüde görev butonu (FeatureGate.Missions: 3. oyun). Zorluk oyuncunun rekoruna göre ölçeklenir. Sonra 3c.5 Pet. Ayrıntı: `3c.md`.
+**Faz 3c.5 Pet başlangıcı** (dal `faz-3c-pet`): pet verisi (id, ad, pasif, fiyat), ilk pet **Ateşböceği** (12-16 px piksel sanat, palet içi, `tools/kak_gen_pickups.py` benzeri üretici), oyuncuyu süzülerek takip eden davranış (gecikmeli izleme, hafif salınım, gölge, Y sıralama), pasif: altın mıknatısı (yarıçap içindeki altını `Coin.PullTowards` ile çeker), FeatureGate.Pets (10. oyun veya 2. karakter), menüde pet seçimi (karakter panelinde sekme ya da ayrı küçük panel; başlangıç için tek pet, altınla açılır). Sonra 3c.6 günlük ödül, 3c.7 his cilası. Ayrıntı: `3c.md`.
 
 ### Onay bekleyenler
 - **Android Build Support modülü** kurulmalı (Unity Hub → 6000.3.8f1 → Add modules). Sonra "Android build al" → cihazda test.
