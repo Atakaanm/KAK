@@ -4,6 +4,14 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-09-26 — Faz 3c.4-3c.5: görevler ve petler
+
+- Kalkan veren pet `ShieldBlocked` olayını tetiklememeli: o olay "vuruş engellendi" demek (görev sayacı, HUD çipi, parçacık). Olay anlamını koru, yan etkiye başka yoldan (ses) ulaş.
+- Küçük sprite'lar oyunda nokta gibi kalır (8×10 px ateşböceği). Ölçek büyütmek tek piksel yoğunluğunu bozar: daha büyük ızgarada yeniden çiz. Önce oyuncu yanında gerçek boyutta önizle.
+- Loc sözlüğünde yinelenen anahtar çalışma anında tüm Loc'u çökertir (Dictionary başlatıcı). Yeni anahtar eklerken var mı diye bak (`levels` zaten vardı).
+- zsh döngüsünde `$c` bölünmez: köprü komutlarını tek tek çağır.
+- Panel portrelerinde tam sayı ölçek: 160 kutu → 14×16 ateşböceği ×10, 20×14 kaplumbağa ×8.
+
 ## 2026-09-26 — Faz 3c.3: karakterler
 
 - **Okunurluk birinci kural:** yeşil gömlekli varyant yeşil zeminde kayboluyordu → pembe-mor. Yeni renk seçerken zemin rengine karşı kontrol et; sıcak renkler (kırmızı/turuncu) tehlikeye (taş) ayrılmış.

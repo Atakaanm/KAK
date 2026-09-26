@@ -133,6 +133,16 @@ def main():
 ..#....
 """, CREAM)
     save(check, "icon_check.png")
+    paw = icon("""
+.#.#.#.
+.#.#.#.
+.......
+..###..
+.#####.
+.#####.
+..###..
+""", CREAM)
+    save(paw, "icon_pet.png")
     # Açma/kapama anahtarı
     save(plaque(16, 8, GREEN, hx("265c42"), hx("63c74d"), INK, bevel=1, corner=1), "toggle_on_9s.png")
     save(plaque(16, 8, SLATE_D, NIGHT, SLATE, INK, bevel=1, corner=1), "toggle_off_9s.png")

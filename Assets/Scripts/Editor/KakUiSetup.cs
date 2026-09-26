@@ -216,8 +216,13 @@ public static class KakUiSetup
         var play = Button(Place(Rect(safe, "PlayButton"), new Vector2(0.5f, 0f), new Vector2(0f, 560f), new Vector2(680f, 200f)), "@play", Style.Gold, 96, "icon_play.png");
         var chars = Button(Place(Rect(safe, "CharactersButton"), new Vector2(0.5f, 0f), new Vector2(-175f, 360f), new Vector2(330f, 150f)), "@character", Style.Stone, 38, "icon_character.png");
         var sett = Button(Place(Rect(safe, "SettingsButton"), new Vector2(0.5f, 0f), new Vector2(175f, 360f), new Vector2(330f, 150f)), "@settings", Style.Stone, 38, "icon_settings.png");
-        var levels = Button(Place(Rect(safe, "LevelsButton"), new Vector2(0.5f, 0f), new Vector2(0f, 180f), new Vector2(680f, 130f)), "@levels_soon", Style.Stone, 40, "icon_lock.png");
+        // 2. satır: PET (Faz 3c.5, kilitli/YENİ) + BÖLÜMLER (yakında)
+        var pets = Button(Place(Rect(safe, "PetsButton"), new Vector2(0.5f, 0f), new Vector2(-175f, 190f), new Vector2(330f, 150f)), "@pet_button", Style.Stone, 38, "icon_pet.png");
+        var levels = Button(Place(Rect(safe, "LevelsButton"), new Vector2(0.5f, 0f), new Vector2(175f, 190f), new Vector2(330f, 150f)), "@levels", Style.Stone, 38, "icon_lock.png");
         levels.GetComponent<Image>().color = new Color(0.7f, 0.7f, 0.75f, 1f);
+        Text(Place(Rect((RectTransform)levels.transform, "LockHint"), new Vector2(0.5f, 0f), new Vector2(0f, 24f), new Vector2(300f, 34f)),
+             "@soon", 26, KakPalette.Sis, TextAlignmentOptions.Center, false, false);
+        var petsFeature = BuildFeatureButton(pets, Feature.Pets);
         var charsFeature = BuildFeatureButton(chars, Feature.Characters);
         var wallet = BuildWallet(safe);
 
@@ -234,6 +239,7 @@ public static class KakUiSetup
 
         // Karakter paneli (Faz 3c.3): katalogdaki karakterler, satın al / seç
         var (croot, closeC) = BuildCharacterPanel(canvas, wallet);
+        var (proot, closeP) = BuildPetPanel(canvas, wallet);
 
         // Kontrolcü bağlantıları
         var mmc = Object.FindAnyObjectByType<MainMenuController>();
@@ -245,6 +251,10 @@ public static class KakUiSetup
             mmc.settingsButton = sett;
             mmc.levelsButton = levels;
             mmc.charactersFeature = charsFeature;
+            mmc.petsFeature = petsFeature;
+            mmc.petsPanel = proot.gameObject;
+            OnClick(pets, mmc.OnPetsClicked);
+            OnClick(closeP, mmc.ClosePetsPanel);
             mmc.settingsPanel = sroot.gameObject;
             mmc.charactersPanel = croot.gameObject;
             mmc.bestScoreText = bestT;
@@ -265,6 +275,8 @@ public static class KakUiSetup
 
         sroot.SetAsLastSibling();
         croot.SetAsLastSibling();
+        proot.SetAsLastSibling();
+        proot.gameObject.SetActive(false);
         sroot.gameObject.SetActive(false);
         croot.gameObject.SetActive(false);
 
@@ -438,5 +450,44 @@ public static class KakUiSetup
         gos.missionChecks = checks;
         block.gameObject.SetActive(false);
         EditorUtility.SetDirty(gos);
+    }
+
+    /// <summary>Pet paneli: başlık, cüzdan, 2 kart (büyük piksel portre, ad, pasif, SEÇ/ÇIKAR/fiyat), kapat.</summary>
+    public static (RectTransform root, Button close) BuildPetPanel(Transform canvas, WalletHud menuWallet)
+    {
+        var old = canvas.Find("PetsPanel");
+        if (old != null) Object.DestroyImmediate(old.gameObject);
+        var (root, panel) = Modal(canvas, "PetsPanel", new Vector2(900f, 1120f));
+        Text(Place(Rect(panel, "Title"), new Vector2(0.5f, 1f), new Vector2(0f, -100f), new Vector2(800f, 110f)), "@pets_title", 78, KakPalette.Altin);
+        var wrow = Place(Rect(panel, "Wallet"), new Vector2(0.5f, 1f), new Vector2(0f, -190f), new Vector2(360f, 64f));
+        Img(Place(Rect(wrow, "Icon"), new Vector2(0.5f, 0.5f), new Vector2(-70f, 0f), new Vector2(52f, 52f)),
+            AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Pickups/coin_0.png"), false);
+        var wtext = Text(Place(Rect(wrow, "Amount"), new Vector2(0.5f, 0.5f), new Vector2(40f, 0f), new Vector2(200f, 64f)),
+                         "0", 50, KakPalette.AltinAcik, TextAlignmentOptions.MidlineLeft);
+        var cards = new PetPanel.Card[2];
+        for (int i = 0; i < 2; i++)
+        {
+            var card = Place(Rect(panel, "Card" + i), new Vector2(0.5f, 1f), new Vector2(i == 0 ? -210f : 210f, -560f), new Vector2(400f, 600f));
+            var bg = Img(card, S("btn_stone_9s.png"), true);
+            var portrait = Img(Place(Rect(card, "Portrait"), new Vector2(0.5f, 1f), new Vector2(0f, -150f), new Vector2(160f, 160f)), null, false);
+            var name = Text(Place(Rect(card, "Name"), new Vector2(0.5f, 1f), new Vector2(0f, -290f), new Vector2(380f, 56f)), "PET", 42, KakPalette.Krem);
+            var trait = Text(Place(Rect(card, "Trait"), new Vector2(0.5f, 1f), new Vector2(0f, -345f), new Vector2(380f, 70f)), "", 26, KakPalette.Sis,
+                             TextAlignmentOptions.Center, false, false);
+            trait.textWrappingMode = TextWrappingModes.Normal;
+            var btn = Button(Place(Rect(card, "Action"), new Vector2(0.5f, 0f), new Vector2(0f, 60f), new Vector2(340f, 90f)), "SEÇ", Style.Stone, 40);
+            var coin = Img(Place(Rect(btn.transform, "Coin"), new Vector2(0.5f, 0.5f), new Vector2(-95f, 0f), new Vector2(42f, 42f)),
+                           AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Pickups/coin_0.png"), false);
+            cards[i] = new PetPanel.Card
+            {
+                root = card, background = bg, portrait = portrait, nameText = name, traitText = trait,
+                actionButton = btn, actionBackground = btn.GetComponent<Image>(), actionText = btn.transform.Find("Label").GetComponent<TMP_Text>(), actionCoin = coin
+            };
+        }
+        var close = Button(Place(Rect(panel, "CloseButton"), new Vector2(0.5f, 0f), new Vector2(0f, 95f), new Vector2(560f, 120f)), "@close", Style.Gold, 58);
+        var pp = GetOrAdd<PetPanel>(root.gameObject);
+        pp.cards = cards; pp.walletText = wtext; pp.menuWallet = menuWallet;
+        pp.goldSprite = S("btn_gold_9s.png"); pp.stoneSprite = S("btn_stone_9s.png");
+        EditorUtility.SetDirty(pp);
+        return (root, close);
     }
 }

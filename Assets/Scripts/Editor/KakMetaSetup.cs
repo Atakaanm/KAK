@@ -229,4 +229,55 @@ public static class KakMetaSetup
         var v = AssetDatabase.LoadAssetAtPath<Sprite>(CharSprites + id + "/" + p.Substring(PlayerSprites.Length));
         return v != null ? v : s;
     }
+
+    // ─────────────────────────────────────────────────────────────
+    // Pet'ler (Faz 3c.5)
+    // ─────────────────────────────────────────────────────────────
+    [MenuItem("KacAtaKac/Petleri Kur (Faz 3c)")]
+    public static void SetupPetsMenu() => Debug.Log(SetupPets());
+
+    /// <summary>Pet verileri (Assets/Data/Pets), Resources/PetCatalog, LevelManager gölge/ışık sprite'ları. Önce: tools/kak_gen_pickups.py</summary>
+    public static string SetupPets()
+    {
+        System.IO.Directory.CreateDirectory("Assets/Data/Pets");
+        var firefly = PetAsset("Firefly", 400, PetPassive.Magnet, "Assets/Art/Pets/firefly_{0}.png", 8f, true, true);
+        var turtle = PetAsset("Turtle", 1200, PetPassive.ShieldRegen, "Assets/Art/Pets/turtle_{0}.png", 4f, false, false);
+        const string catPath = "Assets/Resources/PetCatalog.asset";
+        var cat = AssetDatabase.LoadAssetAtPath<PetCatalog>(catPath);
+        if (cat == null) { cat = ScriptableObject.CreateInstance<PetCatalog>(); AssetDatabase.CreateAsset(cat, catPath); }
+        cat.pets = new[] { firefly, turtle };
+        EditorUtility.SetDirty(cat);
+        AssetDatabase.SaveAssets();
+
+        // Oyun sahnesi: LevelManager pet gölgesi/ışığı
+        var scene = EditorSceneManager.GetActiveScene();
+        if (scene.path != KakEditorUtil.GameScenePath)
+        {
+            KakEditorUtil.SaveNamedScenes();
+            scene = EditorSceneManager.OpenScene(KakEditorUtil.GameScenePath, OpenSceneMode.Single);
+        }
+        var lm = Object.FindAnyObjectByType<LevelManager>();
+        if (lm != null)
+        {
+            Undo.RecordObject(lm, "pet sprites");
+            lm.petShadowSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Player/Black.png");
+            lm.petGlowSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Tiles/Dungeon/glow.png");
+            EditorUtility.SetDirty(lm);
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+        }
+        return "[KakMetaSetup] 2 pet (Ateşböceği, Kaplumbağa) + PetCatalog.";
+    }
+
+    static PetData PetAsset(string id, int price, PetPassive passive, string framePattern, float fps, bool flying, bool glow)
+    {
+        string path = "Assets/Data/Pets/" + id + "_PetData.asset";
+        var pd = AssetDatabase.LoadAssetAtPath<PetData>(path);
+        if (pd == null) { pd = ScriptableObject.CreateInstance<PetData>(); AssetDatabase.CreateAsset(pd, path); }
+        pd.id = id; pd.nameKey = "pet_" + id; pd.traitKey = "pettrait_" + id; pd.price = price; pd.passive = passive;
+        pd.fps = fps; pd.flying = flying; pd.glow = glow;
+        pd.frames = new[] { AssetDatabase.LoadAssetAtPath<Sprite>(string.Format(framePattern, 0)), AssetDatabase.LoadAssetAtPath<Sprite>(string.Format(framePattern, 1)) };
+        EditorUtility.SetDirty(pd);
+        return pd;
+    }
 }

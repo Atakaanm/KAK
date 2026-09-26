@@ -16,6 +16,9 @@ public class MainMenuController : MonoBehaviour
     public Button levelsButton;
     [Tooltip("Karakter butonunun kilit/YENİ durumu (FeatureGate)")]
     public FeatureButton charactersFeature;
+    [Tooltip("Pet butonu ve paneli (Faz 3c.5)")]
+    public FeatureButton petsFeature;
+    public GameObject petsPanel;
 
     [Header("Paneller")]
     public GameObject settingsPanel;
@@ -80,6 +83,15 @@ public class MainMenuController : MonoBehaviour
         if (charactersFeature != null && !charactersFeature.TryUse()) return; // kilitli: buton sallanır
         Open(charactersPanel);
     }
+    public void OnPetsClicked()
+    {
+        PlayButtonSound();
+        if (petsFeature != null && !petsFeature.TryUse()) return;
+        Open(petsPanel);
+    }
+
+    public void ClosePetsPanel() { PlayButtonSound(); Close(petsPanel); }
+
     public void OnSettingsClicked() { PlayButtonSound(); resetArmed = false; RefreshResetLabel(); Open(settingsPanel); }
 
     public void OnLevelsClicked()

@@ -134,6 +134,8 @@ public class SaveData
     [Header("İlerleme")]
     public int coins;          // cüzdan (harcanabilir)
     public int totalCoins;     // şimdiye kadar kazanılan toplam (istatistik, açılma koşulları)
+    public List<string> unlockedPets = new List<string>();
+    public string selectedPet = "";
     public List<MissionState> missions = new List<MissionState>(); // aktif görevler (MissionSystem)
     public int missionsCompleted;
     public int playDays;       // farklı günlerde oynama sayısı
@@ -152,6 +154,8 @@ public class SaveData
     {
         if (seen == null) seen = new List<string>();
         if (missions == null) missions = new List<MissionState>();
+        if (unlockedPets == null) unlockedPets = new List<string>();
+        if (selectedPet == null) selectedPet = "";
         if (!seen.Contains(id)) seen.Add(id);
     }
 

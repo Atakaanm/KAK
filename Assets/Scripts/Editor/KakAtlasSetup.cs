@@ -32,6 +32,7 @@ public static class KakAtlasSetup
         pixel.AddRange(Sprites("Assets/Sprites/Spawner"));
         pixel.AddRange(Sprites("Assets/Sprites/Characters"));   // karakter varyantları (Faz 3c.3)
         pixel.AddRange(Sprites("Assets/Art/Pickups"));          // altın (Faz 3c.1)
+        pixel.AddRange(Sprites("Assets/Art/Pets"));             // petler (Faz 3c.5)
 
         var soft = new List<string>();
         soft.AddRange(Sprites("Assets/Art/Tiles/Dungeon").Where(IsSoft));
