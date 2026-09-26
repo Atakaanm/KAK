@@ -389,23 +389,27 @@ public static class KakUiSetup
 
         var heart = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/UI/Kalp.png");
         var white = S("white_ui.png");
-        var cards = new CharacterCard[4];
-        for (int i = 0; i < 4; i++)
+        // 3×2 ızgara (6 yuva; katalog büyüdükçe fazlası gizli). Portre 3× (48 px → 144, tam sayı ölçek)
+        const int Cols = 3, Slots = 6;
+        const float CardW = 290f, CardH = 530f, GapX = 305f;
+        var cards = new CharacterCard[Slots];
+        for (int i = 0; i < Slots; i++)
         {
-            float x = (i % 2 == 0) ? -225f : 225f, y = (i < 2) ? -510f : -1070f;
-            var card = Place(Rect(cpanel, "Card" + i), new Vector2(0.5f, 1f), new Vector2(x, y), new Vector2(430f, 540f));
+            float x = (i % Cols - 1) * GapX, y = (i < Cols) ? -505f : -1055f;
+            var card = Place(Rect(cpanel, "Card" + i), new Vector2(0.5f, 1f), new Vector2(x, y), new Vector2(CardW, CardH));
             var bg = Img(card, S("btn_stone_9s.png"), true);
-            var portrait = Img(Place(Rect(card, "Portrait"), new Vector2(0.5f, 1f), new Vector2(0f, -130f), new Vector2(192f, 192f)), null, false);
-            var name = Text(Place(Rect(card, "Name"), new Vector2(0.5f, 1f), new Vector2(0f, -258f), new Vector2(400f, 56f)), "ATA", 44, KakPalette.Krem);
-            var trait = Text(Place(Rect(card, "Trait"), new Vector2(0.5f, 1f), new Vector2(0f, -302f), new Vector2(410f, 40f)), "", 24, KakPalette.Sis,
+            var portrait = Img(Place(Rect(card, "Portrait"), new Vector2(0.5f, 1f), new Vector2(0f, -105f), new Vector2(144f, 144f)), null, false);
+            var name = Text(Place(Rect(card, "Name"), new Vector2(0.5f, 1f), new Vector2(0f, -205f), new Vector2(280f, 50f)), "ATA", 40, KakPalette.Krem);
+            var trait = Text(Place(Rect(card, "Trait"), new Vector2(0.5f, 1f), new Vector2(0f, -258f), new Vector2(270f, 60f)), "", 22, KakPalette.Sis,
                              TextAlignmentOptions.Center, false, false);
+            trait.textWrappingMode = TextWrappingModes.Normal;
             var hearts = new Image[5];
             for (int h = 0; h < 5; h++)
-                hearts[h] = Img(Place(Rect(card, "Heart" + h), new Vector2(0.5f, 1f), new Vector2((h - 2) * 50f, -348f), new Vector2(48f, 48f)), heart, false);
-            var speed = Bar(card, "Speed", "@stat_speed", -392f, KakPalette.Camgobegi, white);
-            var dash = Bar(card, "Dash", "@stat_dash", -428f, KakPalette.CamgobegiParlak, white);
-            var btn = Button(Place(Rect(card, "Action"), new Vector2(0.5f, 0f), new Vector2(0f, 58f), new Vector2(360f, 88f)), "SEÇ", Style.Stone, 40);
-            var coin = Img(Place(Rect(btn.transform, "Coin"), new Vector2(0.5f, 0.5f), new Vector2(-95f, 0f), new Vector2(42f, 42f)),
+                hearts[h] = Img(Place(Rect(card, "Heart" + h), new Vector2(0.5f, 1f), new Vector2((h - 2) * 40f, -312f), new Vector2(38f, 38f)), heart, false);
+            var speed = Bar(card, "Speed", "@stat_speed", -352f, KakPalette.Camgobegi, white);
+            var dash = Bar(card, "Dash", "@stat_dash", -384f, KakPalette.CamgobegiParlak, white);
+            var btn = Button(Place(Rect(card, "Action"), new Vector2(0.5f, 0f), new Vector2(0f, 56f), new Vector2(250f, 80f)), "SEÇ", Style.Stone, 34);
+            var coin = Img(Place(Rect(btn.transform, "Coin"), new Vector2(0.5f, 0.5f), new Vector2(-72f, 0f), new Vector2(36f, 36f)),
                            AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Pickups/coin_0.png"), false);
 
             var cc = GetOrAdd<CharacterCard>(card.gameObject);
@@ -428,9 +432,9 @@ public static class KakUiSetup
     /// <summary>Etiketli yatay gösterge çubuğu (zemin + dolum). Dolum Image'ını döndürür.</summary>
     static Image Bar(RectTransform card, string name, string label, float y, Color color, Sprite white)
     {
-        Text(Place(Rect(card, name + "Label"), new Vector2(0.5f, 1f), new Vector2(-135f, y), new Vector2(120f, 30f)), label, 22, KakPalette.Sis,
+        Text(Place(Rect(card, name + "Label"), new Vector2(0.5f, 1f), new Vector2(-92f, y), new Vector2(90f, 28f)), label, 20, KakPalette.Sis,
              TextAlignmentOptions.MidlineLeft, false, false);
-        var bg = Img(Place(Rect(card, name + "Bar"), new Vector2(0.5f, 1f), new Vector2(50f, y), new Vector2(240f, 16f)), white, false,
+        var bg = Img(Place(Rect(card, name + "Bar"), new Vector2(0.5f, 1f), new Vector2(38f, y), new Vector2(160f, 14f)), white, false,
                      KakPalette.Gece);
         bg.preserveAspect = false;
         var fill = Img(Stretch(Rect(bg.rectTransform, "Fill")), white, false, color);

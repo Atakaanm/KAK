@@ -137,7 +137,7 @@ Hepsi tekrar çalıştırılabilir (idempotent), sonucu string döndürür, penc
 | Performans Ayarlarını Uygula | `KakFxSetup.SetupPerformance` | SRP Batcher kapalı + dinamik batching, Mobile URP (ölçek 1, HDR/gölge kapalı), Bloom çeyrek |
 | Fontları Statik Atlasa Pişir | `KakFontSetup.Bake` | Nunito/Cinzel statik atlas (ASCII + Türkçe + Loc), TMP varsayılan font |
 | Bağlılık Katmanını Kur (Faz 3c) | `KakMetaSetup.Setup` | Coin.prefab, CoinSpawner, HUD altın sayacı, oyun sonu altın satırı |
-| Karakterleri Kur (Faz 3c) | `KakMetaSetup.SetupCharacters` | varyant sprite ayarları, Characters/*_PlayerData, Resources/CharacterCatalog (önce `tools/kak_recolor_characters.py`) |
+| Karakterleri Kur (Faz 3c) | `KakMetaSetup.SetupCharacters` | varyant sprite ayarları, Characters/*_PlayerData, Resources/CharacterCatalog (önce `tools/kak_recolor_characters.py` ve kız karakter için `tools/kak_gen_girl.py`; ikisi de Ata'nın .png + .gif karelerinden 40 .png üretir). Sıra: Ata, Ada (bedava) → Çevik, Tank, Şanslı |
 | Petleri Kur (Faz 3c) | `KakMetaSetup.SetupPets` | Data/Pets, Resources/PetCatalog, LevelManager pet gölge/ışık (önce `tools/kak_gen_pickups.py`) |
 | Yayın/Android Release (.aab), Yayın/iOS Xcode Projesi | `KakBuild` | mağaza build'leri (modüller + keystore + Xcode kullanıcıda) |
 | Denetim/Sahneleri Denetle | `KakSceneAudit.Run` | eksik script, kopuk referans, boş alan raporu |

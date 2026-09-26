@@ -26,13 +26,15 @@ def rgb(h):
 
 
 def main():
-    files = [f for f in glob.glob(os.path.join(SRC, "*", "*.png"))]
+    # Koşu karelerinin çoğu .gif (yalnızca doğu .png): hepsi işlenir, çıktı her zaman .png
+    files = [f for f in glob.glob(os.path.join(SRC, "*", "*.png")) + glob.glob(os.path.join(SRC, "*", "*.gif"))
+             if not f.endswith("Black.png")]
     for vid, mapping in VARIANTS.items():
         m = {rgb(k): rgb(v) for k, v in mapping.items()}
         n = 0
         for f in files:
             rel = os.path.relpath(f, SRC)
-            out = os.path.join(DST, vid, rel)
+            out = os.path.join(DST, vid, os.path.splitext(rel)[0] + ".png")
             os.makedirs(os.path.dirname(out), exist_ok=True)
             im = Image.open(f).convert("RGBA")
             px = im.load()

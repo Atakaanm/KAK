@@ -28,13 +28,39 @@ public class KarakterTests
     }
 
     [Test]
-    public void Katalog_DortKarakter_IlkBedava()
+    public void Katalog_BesKarakter_AtaVeAdaBedava()
     {
         var cat = CharacterCatalog.Load();
         Assert.IsNotNull(cat, "Resources/CharacterCatalog yok");
-        Assert.AreEqual(4, cat.characters.Length);
-        Assert.AreEqual(0, cat.characters[0].unlockPrice, "Başlangıç karakteri bedava olmalı");
-        foreach (var c in cat.characters) Assert.IsNotNull(c.Portrait, c.id + " portresi yok");
+        Assert.AreEqual(5, cat.characters.Length);
+        Assert.AreEqual("Boy", cat.characters[0].id);
+        Assert.AreEqual("Ada", cat.characters[1].id);
+        Assert.IsTrue(CharacterCatalog.Owned(cat.characters[0]) && CharacterCatalog.Owned(cat.characters[1]), "Başlangıç karakterleri (Ata, Ada) bedava olmalı");
+        foreach (var c in cat.characters)
+        {
+            Assert.IsNotNull(c.Portrait, c.id + " portresi yok");
+            Assert.IsTrue(Loc.Has(c.nameKey) && Loc.Has(c.traitKey), c.id + " ad/özellik çevirisi yok");
+        }
+    }
+
+    [Test]
+    public void Varyantlar_HerYondeKendiKarelerini_Kullanir()
+    {
+        // Eski hata: .gif koşu kareleri renklendirilmemişti → Çevik/Tank/Şanslı kuzeye koşarken mavi Ata görünüyordu
+        var cat = CharacterCatalog.Load();
+        var boy = cat.characters[0];
+        foreach (var c in cat.characters)
+        {
+            if (c == boy) continue;
+            foreach (var d in new[] { c.north, c.south, c.east, c.west, c.northEast, c.northWest, c.southEast, c.southWest })
+            {
+                Assert.IsNotNull(d.idle);
+                Assert.AreEqual(4, d.runFrames.Length, c.id + " koşu karesi eksik");
+                foreach (var f in d.runFrames)
+                    foreach (var bd in new[] { boy.north, boy.south, boy.east, boy.west, boy.northEast, boy.northWest, boy.southEast, boy.southWest })
+                        CollectionAssert.DoesNotContain(bd.runFrames, f, c.id + " Ata'nın karesini kullanıyor: " + f.name);
+            }
+        }
     }
 
     [UnityTest]
@@ -49,7 +75,7 @@ public class KarakterTests
         yield return KakTestUtil.WaitReal(0.3f);
         var panel = Object.FindAnyObjectByType<CharacterPanel>();
         Assert.IsNotNull(panel, "Karakter paneli açılmadı");
-        panel.OnCardAction(1); // Çevik 300
+        panel.OnCardAction(2); // Çevik 300
         Assert.AreEqual(100, d.coins, "Altın düşülmedi");
         Assert.AreEqual("Swift", d.selectedCharacter);
         Assert.IsTrue(CharacterCatalog.Owned(Char("Swift")));

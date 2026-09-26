@@ -4,6 +4,13 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-09-26 — Y4: kız karakter ADA
+
+- Yeni karakter çizimini sıfırdan yapmak yerine mevcut 40 kareden türetmek (renk haritası + saç/gövde kuralları) animasyon tutarlılığını bedavaya getiriyor. Kuralları yön başına yaz, her sürümü 40 karelik montajda gözle kontrol et (v1-v4'te: ayaklarda saç bloğu, çizgili saç, pelerin gibi arka saç, 3/4 arkada ten çizgileri, güneyde pembe gömlek).
+- Saç renkleri bacaklarda da var: kafa sınırını yalnızca üst bantta ara (`top_row+17`), yoksa ayağa saç çizer.
+- **Ata'nın koşu kareleri .gif** (yalnız Doğu .png). Dosya türüne bağlı araçlar sessizce eksik üretir → varyantlar kuzeye koşarken mavi Ata oluyordu. Yeni araçta kaynak uzantılarını say, çıktı sayısını test et.
+- Yeni karakter eklerken Loc'ta `char_<id>` ve `trait_<id>` gerekir; eksikse panelde anahtar adı çıkar (`char_Ada`). Artık katalog testi denetliyor.
+
 ## 2026-09-26 — Yayın hazırlığı Y1-Y3
 
 - Mağaza kuralları hızla değişiyor: her yayın öncesi yeniden araştır (API 36 zorunluluğu 31.08.2026'da başladı; Xcode 26 zorunlu 28.04.2026; iPadOS 26 UIRequiresFullScreen'i yok sayıyor; Apple yeni yaş anketi).

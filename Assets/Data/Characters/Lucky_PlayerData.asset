@@ -26,17 +26,17 @@ MonoBehaviour:
   north:
     idle: {fileID: 21300000, guid: 5d20db528c38941ce9d4135c20df4021, type: 3}
     runFrames:
-    - {fileID: 21300000, guid: 7f1c21df28895485baae80d281713dc0, type: 3}
-    - {fileID: 21300000, guid: 8cd2145fe78b94989a875dae8b61a0c5, type: 3}
-    - {fileID: 21300000, guid: 4291ea443911d49a385477573a98c8de, type: 3}
-    - {fileID: 21300000, guid: 4f75754dcfdb54a48977949ae0931ef6, type: 3}
+    - {fileID: 21300000, guid: 3092958712ac848e4b037695938294a8, type: 3}
+    - {fileID: 21300000, guid: 8ea122af77b614db3b6be137bed4d04b, type: 3}
+    - {fileID: 21300000, guid: a4e7d2e890008457cb87827baac87f8b, type: 3}
+    - {fileID: 21300000, guid: a69fe8e8a447447babaab12903757183, type: 3}
   south:
     idle: {fileID: 21300000, guid: 213234f0bbe07439c9deb65e808c16d7, type: 3}
     runFrames:
-    - {fileID: 21300000, guid: bc05aff385fc541db932fc484dccaf47, type: 3}
-    - {fileID: 21300000, guid: 6c56ee7370f004b2aa8a7038f679542c, type: 3}
-    - {fileID: 21300000, guid: c909854b0992149889b33f4290b7d22e, type: 3}
-    - {fileID: 21300000, guid: 7509a1ef9bc0e4ae497b4de358db18b9, type: 3}
+    - {fileID: 21300000, guid: 381e1292381324c6fa07830ed5bbd028, type: 3}
+    - {fileID: 21300000, guid: bf93f9bc290bb40ae80e4a171f61689b, type: 3}
+    - {fileID: 21300000, guid: cfb55e1ec810647e999fc264004d28ef, type: 3}
+    - {fileID: 21300000, guid: 87e4b2ca76c4f446ea6c765992b16911, type: 3}
   east:
     idle: {fileID: 21300000, guid: 976f4530bfd5240138dc922a0fd7ca64, type: 3}
     runFrames:
@@ -47,38 +47,38 @@ MonoBehaviour:
   west:
     idle: {fileID: 21300000, guid: 122c52450a7464ca4981d105ffb888ea, type: 3}
     runFrames:
-    - {fileID: 21300000, guid: e846316e34aab49fdb863fe2721040f3, type: 3}
-    - {fileID: 21300000, guid: 9c6714cb0eff24c5fbb71dd252ef774c, type: 3}
-    - {fileID: 21300000, guid: 4bbea834dbad24303894a8486559eb9e, type: 3}
-    - {fileID: 21300000, guid: 84da3c21fe949499f9f6da41bdb6560e, type: 3}
+    - {fileID: 21300000, guid: 30a27bf1241ba4634b193b2c988f2f89, type: 3}
+    - {fileID: 21300000, guid: 688c210684f4648c1970082e4169f5dc, type: 3}
+    - {fileID: 21300000, guid: a0d5e724a1b774fd396983513a601654, type: 3}
+    - {fileID: 21300000, guid: 5655c57b99e6b4ccab08673837cdf339, type: 3}
   northEast:
     idle: {fileID: 21300000, guid: 0033b13be71474a309fe4493577e660d, type: 3}
     runFrames:
-    - {fileID: 21300000, guid: 531b90a7380e1440d9d21305eeee0509, type: 3}
-    - {fileID: 21300000, guid: c34994016bf174dc3b2bec7fe28314ec, type: 3}
-    - {fileID: 21300000, guid: 9482db4bd1e594b049a385898a14ca02, type: 3}
-    - {fileID: 21300000, guid: d6794eae840594e2c997aee9ec992119, type: 3}
+    - {fileID: 21300000, guid: f0a32ab250ef943cea617d3684b522f8, type: 3}
+    - {fileID: 21300000, guid: 6ed6a3393f10643399a52ab3cb3f96b3, type: 3}
+    - {fileID: 21300000, guid: a814cf69be2df468292815d3ff705fca, type: 3}
+    - {fileID: 21300000, guid: 40b815db8168c4ec5ade377e68835644, type: 3}
   northWest:
     idle: {fileID: 21300000, guid: ccdb1d277f5194a1b99c91b1ba1ce9a6, type: 3}
     runFrames:
-    - {fileID: 21300000, guid: e1d364dc1746a4525814cd43803a51ae, type: 3}
-    - {fileID: 21300000, guid: 3fb8c17e8d5de429aba72a839da34450, type: 3}
-    - {fileID: 21300000, guid: 9d404a853818846dd8cac35934229016, type: 3}
-    - {fileID: 21300000, guid: 59f006221016348ce9bfc063d5ce67e6, type: 3}
+    - {fileID: 21300000, guid: b8e87a9eaf6f04bc5b862d705d242875, type: 3}
+    - {fileID: 21300000, guid: c7650de757321480ba402ad27fe5eb16, type: 3}
+    - {fileID: 21300000, guid: 07a1923eebb274c84a38a42dac4968d5, type: 3}
+    - {fileID: 21300000, guid: ac6a158d10fd8408aae1c7d49d00b13e, type: 3}
   southEast:
     idle: {fileID: 21300000, guid: 0c2f599a928f24b4aa88d2e369be83ec, type: 3}
     runFrames:
-    - {fileID: 21300000, guid: dafbd893b6cf142ecbdd3c0fde89bf7f, type: 3}
-    - {fileID: 21300000, guid: 0a7b16973aabf403baedda490b9d706c, type: 3}
-    - {fileID: 21300000, guid: 3eec57c10c1204260a883f3461bd43b3, type: 3}
-    - {fileID: 21300000, guid: b9e2c942335d14c8492197b1a8b07b9a, type: 3}
+    - {fileID: 21300000, guid: ffb90a7319b3a43379911944cbefb9a3, type: 3}
+    - {fileID: 21300000, guid: 1a44357b6cfb34a399dd3210faf0f918, type: 3}
+    - {fileID: 21300000, guid: d8c7d9c8f0e0840d7ba79c929f3510a5, type: 3}
+    - {fileID: 21300000, guid: 35c6e07a8e94049a59fc75d9fe0c071d, type: 3}
   southWest:
     idle: {fileID: 21300000, guid: 4ec97160fb97f4ccf86e909a135d4e6b, type: 3}
     runFrames:
-    - {fileID: 21300000, guid: e43535b9bc99e41dbad8140c5ae660d0, type: 3}
-    - {fileID: 21300000, guid: 76500756c3b2a40988b4ff33cfc53e73, type: 3}
-    - {fileID: 21300000, guid: 7f3cec27e476e47e399e10677d7f5fd5, type: 3}
-    - {fileID: 21300000, guid: 5c82b1f6584b54c9eae4c7be1b1d9a32, type: 3}
+    - {fileID: 21300000, guid: 1b5c0813656ee4c07a4a4d87e2c0fe67, type: 3}
+    - {fileID: 21300000, guid: 0b71d7a70ceb34cd4861f447a36545f2, type: 3}
+    - {fileID: 21300000, guid: ad44bebc293d94054ae753244d143c9a, type: 3}
+    - {fileID: 21300000, guid: eb987dd1058da4522981c4f5513b78d5, type: 3}
   playerPrefab: {fileID: 0}
   isLocked: 1
   unlockPrice: 1500

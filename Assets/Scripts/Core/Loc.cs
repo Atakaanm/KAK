@@ -64,10 +64,12 @@ public static class Loc
         { "locked_toast", new[] { "Kilitli: {0}", "Locked: {0}" } },
         // Karakterler (Faz 3c.3)
         { "char_Boy", new[] { "ATA", "ATA" } },
+        { "char_Ada", new[] { "ADA", "ADA" } },
         { "char_Swift", new[] { "ÇEVİK", "SWIFT" } },
         { "char_Tank", new[] { "TANK", "TANK" } },
         { "char_Lucky", new[] { "ŞANSLI", "LUCKY" } },
         { "trait_Boy", new[] { "Dengeli, her işe yarar", "Balanced all-rounder" } },
+        { "trait_Ada", new[] { "Dengeli, çevik adımlı", "Balanced, light on her feet" } },
         { "trait_Swift", new[] { "Hızlı, küçük, sık dash", "Fast, small, quick dash" } },
         { "trait_Tank", new[] { "4 can, kalkanla başlar", "4 hearts, starts shielded" } },
         { "trait_Lucky", new[] { "+%25 altın, bol güçlendirme", "+25% gold, more power-ups" } },
