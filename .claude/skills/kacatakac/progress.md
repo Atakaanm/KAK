@@ -65,6 +65,7 @@ Faz 2B altyapısı yarım (kod var, sahne/UI yok, commit 6f1618f), 3c'den sonra 
 - [x] **3c.3 Karakterler:** 4 karakter (Ata / Çevik 300 / Tank 800 / Şanslı 1500), ödünleşimli istatistikler oyunda uygulanıyor, gerçek karakter paneli (satın al/seç), altın sayacı kalplerin altına taşındı. **Eski HUD hatası bulundu ve düzeltildi:** HealthUI yalnızca Heart1'i yönetiyordu; klonlar Heart2/3'ün üstüne biniyor, can kaybında alttaki kalpler kaybolmuyordu (öldükten sonra HUD'da 2 kalp görünüyordu). Testler 59/59 + 12/12.
 - [x] **3c.4 Görevler:** 3 aktif görev (7 tür), oyun sonunda ilerleme/ödül, seviye arttıkça hedef ve ödül büyür; oyun sonu ekranında görev bloğu. Testler 61/61 + 15/15.
 - [x] **3c.5 Pet'ler:** Ateşböceği (altın mıknatısı) ve Kaplumbağa (aralıklı kalkan), takip davranışı, menüde PET butonu + pet paneli. İlk çizimde petler çok küçüktü (8 px): tek piksel yoğunluğunu bozmadan büyük ızgarada yeniden çizildi. Testler 65/65 + 15/15.
+- [x] **3c.6 Günlük ödül:** 7 günlük artan takvim, seri/kaçırma kuralı, menüde kendiliğinden açılan panel. Testler 67/67 + 18/18.
 
 **Önceki: Faz 2B — Bölüm dünyaları için mimari** (yarım). Sonsuz Mod v1.0 hazır: 0 ✅ 1 ✅ 1.5 ✅ 3 ✅ 2A ✅ 5 ✅ 4 ✅ 10 ✅* (2026-09-25).
 Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
@@ -144,7 +145,7 @@ Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 - Varsayım: Kalkan "vurulana kadar" sürer (`ShieldData.duration` kullanılmıyor, davranış korunuyor)
 
 ### Sıradaki adım
-**Faz 3c.6 Günlük ödül** (dal `faz-3c-gunluk`): 7 günlük artan takvim (1. gün 30 altın … 7. gün 250 altın), ardışık gün kaçarsa 1. güne döner (ya da kaldığı yerden: nazik seçenek), menü açılışında ödül paneli (FeatureGate.DailyReward: 2. oyun günü), `SaveData.dailyStreak/lastClaimDay`. Sonra **3c.7 His/izleme cilası** (yeni rekor kutlaması, ödül patlamaları, bir sonraki kilide ilerleme çubuğu). Ayrıntı: `3c.md`.
+**Faz 3c.7 His ve izleme cilası** (dal `faz-3c-cila`): (1) yeni rekor kutlaması (oyun sonunda konfeti parçacıkları + "YENİ REKOR!" rozetinin güçlü girişi + fanfar), (2) bir sonraki kilide ilerleme çubuğu (oyun sonu: "ÇEVİK için 120/300 altın" — hedefe yaklaşma etkisi), (3) menüde karakter ve pet butonlarında satın alınabilir bir şey varsa küçük altın nokta rozeti. Sonra Faz 3c özeti ve kullanıcıya rapor; ardından Faz 2B'nin bitirilmesi (bölüm seçimi) ya da kullanıcının önceliği. Ayrıntı: `3c.md`.
 
 ### Onay bekleyenler
 - **Android Build Support modülü** kurulmalı (Unity Hub → 6000.3.8f1 → Add modules). Sonra "Android build al" → cihazda test.

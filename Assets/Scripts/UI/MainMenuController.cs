@@ -19,6 +19,8 @@ public class MainMenuController : MonoBehaviour
     [Tooltip("Pet butonu ve paneli (Faz 3c.5)")]
     public FeatureButton petsFeature;
     public GameObject petsPanel;
+    [Tooltip("Günlük ödül paneli (Faz 3c.6): alınabiliyorsa menü açılınca kendiliğinden açılır")]
+    public DailyRewardPanel dailyPanel;
 
     [Header("Paneller")]
     public GameObject settingsPanel;
@@ -46,6 +48,12 @@ public class MainMenuController : MonoBehaviour
         UpdateStats();
         if (settingsPanel != null) settingsPanel.SetActive(false);
         if (charactersPanel != null) charactersPanel.SetActive(false);
+        if (petsPanel != null) petsPanel.SetActive(false);
+        if (dailyPanel != null)
+        {
+            dailyPanel.gameObject.SetActive(false);
+            if (DailyReward.CanClaim()) StartCoroutine(OpenDailyDelayed());
+        }
 
         if (playButton != null) playButton.onClick.AddListener(OnPlayClicked);
         if (charactersButton != null) charactersButton.onClick.AddListener(OnCharactersClicked);
@@ -120,6 +128,12 @@ public class MainMenuController : MonoBehaviour
     }
 
     // ── Panel animasyonu ─────────────────────────────────
+    System.Collections.IEnumerator OpenDailyDelayed()
+    {
+        yield return new WaitForSecondsRealtime(0.6f); // menü yerleşsin, sonra ödül
+        Open(dailyPanel.gameObject);
+    }
+
     void Open(GameObject panel)
     {
         if (panel == null) return;

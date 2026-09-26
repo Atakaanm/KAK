@@ -91,6 +91,11 @@ public static class Loc
         { "pettrait_Firefly", new[] { "Yakındaki altını çeker", "Pulls nearby gold" } },
         { "pettrait_Turtle", new[] { "45 sn'de bir kalkan verir", "A shield every 45s" } },
         { "remove", new[] { "ÇIKAR", "REMOVE" } },
+        // Günlük ödül (Faz 3c.6)
+        { "daily_title", new[] { "GÜNLÜK ÖDÜL", "DAILY REWARD" } },
+        { "daily_day", new[] { "GÜN {0}", "DAY {0}" } },
+        { "daily_claim", new[] { "AL", "CLAIM" } },
+        { "daily_hint", new[] { "Her gün gel, ödül büyüsün!", "Come back daily for bigger rewards!" } },
         // İlk oyun ipuçları (OnboardingHints)
         { "hint_move", new[] { "Parmağını sürükle,\ntaşlardan kaç!", "Drag your finger,\ndodge the rocks!" } },
         { "hint_dash", new[] { "DASH ile taşların\niçinden geç!", "DASH straight\nthrough rocks!" } },
