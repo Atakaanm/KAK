@@ -5,7 +5,8 @@
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "KacAtaKac",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "KacAtaKac.Editor"
     ],
     "includePlatforms": [
         "Editor"

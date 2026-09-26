@@ -1,73 +1,74 @@
+using System.Collections.Generic;
 using System.Text;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
-/// Sahne denetimi: kopmuş (Missing) referanslar, eksik script'ler, boş kalmış önemli alanlar.
+/// Sahne denetimi: eksik script'ler, kopmuş (Missing) referanslar, bizim bileşenlerimizde boş kalmış alanlar.
+/// Sahneyi ek (additive) açar ve kapatır: editörde açık sahneye dokunmaz. `SahneDenetimTests` bunu kullanır.
 /// Menü: KacAtaKac/Denetim/Sahneleri Denetle · Köprü: invoke KakSceneAudit Run
 /// </summary>
 public static class KakSceneAudit
 {
+    public static readonly string[] Scenes = { KakEditorUtil.MenuScenePath, KakEditorUtil.GameScenePath };
+
+    public class Report
+    {
+        public string scene;
+        public int missingScripts, brokenRefs;
+        public readonly List<string> broken = new List<string>();
+        public readonly List<string> empty = new List<string>();  // "Yol / Tip.alan"
+    }
+
     [MenuItem("KacAtaKac/Denetim/Sahneleri Denetle")]
     public static void Menu() => Debug.Log(Run());
 
     public static string Run()
     {
         var sb = new StringBuilder();
-        string active = EditorSceneManager.GetActiveScene().path;
-        KakEditorUtil.SaveNamedScenes();
-        foreach (var path in new[] { KakEditorUtil.MenuScenePath, KakEditorUtil.GameScenePath })
+        foreach (var path in Scenes)
         {
-            var scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Single);
-            int missingScripts = 0, missingRefs = 0, nullRefs = 0;
+            var r = Audit(path);
+            sb.AppendLine($"[{r.scene}] eksik script {r.missingScripts}, kopuk referans {r.brokenRefs}, boş alan {r.empty.Count}");
+            foreach (var b in r.broken) sb.AppendLine("  KOPUK: " + b);
+            foreach (var e in r.empty) sb.AppendLine("  boş: " + e);
+        }
+        return sb.ToString();
+    }
+
+    public static Report Audit(string scenePath)
+    {
+        var r = new Report { scene = System.IO.Path.GetFileNameWithoutExtension(scenePath) };
+        var existing = SceneManager.GetSceneByPath(scenePath);
+        bool wasLoaded = existing.IsValid() && existing.isLoaded;
+        var scene = wasLoaded ? existing : EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Additive);
+        try
+        {
             foreach (var root in scene.GetRootGameObjects())
-            {
                 foreach (var t in root.GetComponentsInChildren<Transform>(true))
-                {
-                    var comps = t.GetComponents<Component>();
-                    foreach (var c in comps)
+                    foreach (var c in t.GetComponents<Component>())
                     {
-                        if (c == null) { missingScripts++; sb.AppendLine("  EKSİK SCRIPT: " + Path(t)); continue; }
+                        if (c == null) { r.missingScripts++; r.broken.Add(Path(t) + " (eksik script)"); continue; }
                         if (!(c is MonoBehaviour mb)) continue;
-                        string asm = mb.GetType().Assembly.GetName().Name;
-                        bool ours = asm == "KacAtaKac";
-                        var so = new SerializedObject(c);
-                        var it = so.GetIterator();
+                        bool ours = mb.GetType().Assembly.GetName().Name == "KacAtaKac";
+                        var it = new SerializedObject(c).GetIterator();
                         while (it.NextVisible(true))
                         {
                             if (it.propertyType != SerializedPropertyType.ObjectReference) continue;
                             if (it.objectReferenceValue == null && it.objectReferenceInstanceIDValue != 0)
-                            { missingRefs++; sb.AppendLine("  KOPUK: " + Path(t) + " / " + c.GetType().Name + "." + it.propertyPath); }
+                            { r.brokenRefs++; r.broken.Add(Path(t) + " / " + c.GetType().Name + "." + it.propertyPath); }
                             else if (ours && it.objectReferenceValue == null && !it.propertyPath.Contains("Array") && it.depth == 0)
-                            { nullRefs++; sb.AppendLine("  boş: " + Path(t) + " / " + c.GetType().Name + "." + it.propertyPath); }
+                                r.empty.Add(Path(t) + " / " + c.GetType().Name + "." + it.propertyPath);
                         }
                     }
-                }
-            }
-            sb.Insert(0, $"[{System.IO.Path.GetFileNameWithoutExtension(path)}] eksik script {missingScripts}, kopuk referans {missingRefs}, boş alan {nullRefs}\n");
         }
-        if (!string.IsNullOrEmpty(active)) EditorSceneManager.OpenScene(active, OpenSceneMode.Single);
-        return sb.ToString();
-    }
-
-    /// <summary>Test/otomasyon için: sahne yolu verilir, sonuç (eksik script + kopuk referans sayısı) döner. Sahneyi açar.</summary>
-    public static int CountBroken(string scenePath)
-    {
-        var scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
-        int broken = 0;
-        foreach (var root in scene.GetRootGameObjects())
-            foreach (var t in root.GetComponentsInChildren<Transform>(true))
-                foreach (var c in t.GetComponents<Component>())
-                {
-                    if (c == null) { broken++; continue; }
-                    var it = new SerializedObject(c).GetIterator();
-                    while (it.NextVisible(true))
-                        if (it.propertyType == SerializedPropertyType.ObjectReference
-                            && it.objectReferenceValue == null && it.objectReferenceInstanceIDValue != 0)
-                            broken++;
-                }
-        return broken;
+        finally
+        {
+            if (!wasLoaded) EditorSceneManager.CloseScene(scene, true);
+        }
+        return r;
     }
 
     static string Path(Transform t) => t.parent == null ? t.name : Path(t.parent) + "/" + t.name;

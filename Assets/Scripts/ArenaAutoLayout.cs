@@ -163,6 +163,19 @@ public class ArenaAutoLayout : MonoBehaviour
 
     BoxCollider2D[] pedestals;
 
+    /// <summary>Katı köşe kaidelerinin dünya dikdörtgenleri (bot ve analiz için). Kaide yoksa boş.</summary>
+    public int PedestalRects(Rect[] into)
+    {
+        if (pedestals == null || !solidPedestals) return 0;
+        int n = 0;
+        for (int i = 0; i < pedestals.Length && n < into.Length; i++)
+        {
+            var b = pedestals[i].bounds;
+            into[n++] = Rect.MinMaxRect(b.min.x, b.min.y, b.max.x, b.max.y);
+        }
+        return n;
+    }
+
     /// <summary>Kaide collider'larını (oyun sırasında oluşturulur, sahneye yazılmaz) arena ölçeğine göre yerleştirir.</summary>
     void LayoutPedestals()
     {

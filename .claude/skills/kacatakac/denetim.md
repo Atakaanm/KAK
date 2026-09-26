@@ -27,13 +27,13 @@
 | Y5 ✅ | Performans: 82 batch (hedef < 60), Universal Renderer'da sprite birleşmesi yok. 2D Renderer denemesi gerekli (Karanlık dünya için de şart) | D3 |
 | Y6 ✅ | TMP fontları dinamik: `FontWarmup` çalışma zamanında glif ekliyor → font dosyaları editörde sürekli değişiyor (git gürültüsü), ilk açılışta maliyet. Statik atlas (TR+EN) daha doğru | D3 |
 | Y7 ✅ | Kullanılmayan paketler: Visual Scripting, AI Navigation, Multiplayer Center (+ Plastic) → derleme süresi, build boyutu | D0 |
-| Y8 | Sahne bağlantılarını denetleyen otomatik test yok (kopuk referans, boş alan) | D5 |
+| Y8 ✅ | Sahne bağlantılarını denetleyen otomatik test yok (kopuk referans, boş alan) | D5 |
 | Y9 | Faz 2B yarım (kod var, sahne/UI/içerik yok). `LevelData`'da kullanılmayan alanlar (hasKey, hasCoins, hasBoss, isLocked, unlockPrice, targetScore, timeLimit, waves + WaveManager) | 3c sonrası |
 
 ### 🟡 Orta
 | # | Bulgu | Faz |
 |---|---|---|
-| O1 | Denge ölçümü K3 yüzünden yanlış → düzeltme sonrası yeniden ölç | D5 |
+| O1 ✅ | Denge ölçümü K3 yüzünden yanlış → düzeltme sonrası yeniden ölç | D5 |
 | O2 | Eski Input (`Input.GetAxisRaw`, `GetKeyDown`) + Input System birlikte ("Both") | ileride |
 | O3 ✅ | Ölü dosyalar: `FloatingText.cs`, `CameraFitWidth.cs` (yedek), `TutorialInfo/` (Unity şablonu), eski UI sprite'ları (GoldPill, PremiumGoldButton, PremiumPill, MenuBackground_HD, eski JoystickBG/Handle) | D2 |
 | O4 ✅ | Oyun sahnesinin adı hâlâ şablon adı "SampleScene" | D2 |
@@ -60,8 +60,8 @@
 | ✅ **D2 Temizlik** | Eski editör araçları ve InitializeOnLoad jeneratörleri kaldırılır; ölü dosyalar; sahne adı "Game" | Menüde sadece güncel araçlar, testler yeşil |
 | ✅ **D3 Performans** | Powerup havuzu, coroutine tahsisleri, GetComponent önbelleği, statik font atlası, 2D Renderer deneyi + build ölçümü | Build bench: batch, GC, en kötü kare |
 | ✅ **D4 Oyuncu bilgisi** | HUD'da aktif powerup ikonları ve süre halkaları, kalkan/hayalet görselleri, ilk oyun ipuçları | Ekran görüntüleri, UI testleri |
-| **D5 Doğrulama** | Sahne denetimi testi (EditMode), yeniden denge ölçümü, tam regresyon | Tüm testler yeşil |
-| **D6 Belgeler** | README, skill, yol haritası | — |
+| ✅ **D5 Doğrulama** | Sahne denetimi testi (EditMode), yeniden denge ölçümü, tam regresyon | Tüm testler yeşil |
+| ✅ **D6 Belgeler** | README, skill, yol haritası | — |
 | **Faz 3c** | Derin araştırma → bağlılık ve meta ilerleme (altın, karakterler + istatistikler + kilitler, pet'ler, adım adım açılan özellikler, görevler/ödüller), görsel kalite ve his cilası. **Odak: Sonsuz Mod** | Ayrı plan (3c.md) |
 | sonra | Faz 2B'yi bitir → 6 Buz → 7 Futbol → 8 Karanlık | — |
 
@@ -72,7 +72,7 @@
 - ✅ (D2) `WorldPopup.font` boştu → uçan yazılar LiberationSans ile çıkıyordu; artık Nunito + paylaşılan konturlu materyal. `Show(scale)` parametresi Update'te eziliyordu (düzeltildi)
 - ✅ (D2) `KakEndlessSetup` afişte `outlineWidth` ayarlayıp sahneye gömülü, yanlış atlaslı materyal kopyası üretiyordu (Faz 4 aracı sonradan düzeltiyordu: araç sırasına bağlı gizli hata)
 - ✅ (D2) Ölü alanlar: MainMenuController (leaderboardButton, menuAnimator, gameSceneName), ArenaAutoLayout eski HUD takibi (healthUI/scoreUI), LevelData (waves, targetScore, timeLimit, hasKey/Coins/Boss, isLocked/unlockPrice, enableEndlessScore)
-- ⬜ Sahne denetimi: Game (eski SampleScene) 28, MainMenu 2 boş alan (çoğu opsiyonel; 2B alanları bağlanmadı: GameOverScreen yıldız/başlık, LevelManager tema alanları; `WorldPopup.font` boş; `PlayerData` atanmamış) → D5/3c
+- ✅ (D5) Sahne denetimi → `SahneDenetimTests` (izin listesi); LevelManager tema referansları bağlandı. Önceki not: Game (eski SampleScene) 28, MainMenu 2 boş alan (çoğu opsiyonel; 2B alanları bağlanmadı: GameOverScreen yıldız/başlık, LevelManager tema alanları; `WorldPopup.font` boş; `PlayerData` atanmamış) → D5/3c
 
 ## D3 ölçüm sonuçları (macOS dev build, Apple M4, 540x1170, bot oynuyor)
 | Durum | draw ort (en fazla) | SetPass | ana iş parçacığı |
@@ -91,3 +91,11 @@ Kırılım (SRP açıkken, grup kapatınca düşen draw): taşlar ~22, DungeonFr
 - ✅ `OnboardingHints`: hareket → dash (10. sn, buton vurgulanır) → yakın geçiş; `SaveData.seen` ile bir kez; ≥5 oyun oynamış kayıtta gösterilmez
 - ✅ Test izolasyonu hatası: PlayMode test kaydı testler arasında kalıcıydı (oyun sayısı birikiyordu) → her test temiz kayıt
 - ✅ Tasarım hatası (testle bulundu): bileşen kendi nesnesini gizleyince Update duruyordu → yalnızca TMP bileşeni kapatılıyor
+
+## D5 sonuçları
+- ✅ `SahneDenetimTests` (EditMode): eksik script/kopuk referans 0, boş alanlar yalnızca izin listesindekiler (sahneyi additive açıp kapatır)
+- ✅ Denge ölçümü: bot katı kaidelere takılıyordu (acemi 20-31 sn) → bot kaideleri biliyor: usta dash'li 65-143 sn, dash'siz 48-75 sn, acemi 80-93 sn; yakın geçiş iyi oyunlarda 11-15. Denge değerleri değişmedi (insan testi bekleniyor)
+- ✅ 5 oranlı ekran görüntüsü seti (`d5_montaj.png`): yerleşim sağlam
+- ⚪ Not: 9:16 ve 3:4'te ipucu yazısı joystick halkasına yakın (çakışmıyor)
+
+## Denetim tamamlandı (2026-09-26): D0-D6 ✅ → sıradaki Faz 3c (`3c.md`)

@@ -31,6 +31,8 @@ public class KakAutoPilot : MonoBehaviour
     PlayerHealth health;
     Rect area;       // oyuncu merkezinin gidebileceği alan
     Rect playRect;   // oynanabilir alan (taşlar bunun içinde seker)
+    readonly Rect[] pedestals = new Rect[4]; // katı köşe kaideleri (ayak izi kadar genişletilmiş)
+    int pedestalCount;
     PlayerHitbox hitbox;
     float decisionTimer;
     int lastHealth;
@@ -67,6 +69,14 @@ public class KakAutoPilot : MonoBehaviour
         {
             Rect r = arena.PlayableWorldRect;
             playRect = r;
+            pedestalCount = arena.PedestalRects(pedestals);
+            float fr = hitbox != null ? hitbox.footRadius : playerRadius, fo = hitbox != null ? hitbox.footOffsetY : 0f;
+            for (int i = 0; i < pedestalCount; i++)
+            {
+                // Merkez için yasak bölge: kaide + ayak izi (ayak merkezin fo altında)
+                var q = pedestals[i];
+                pedestals[i] = Rect.MinMaxRect(q.xMin - fr, q.yMin - fr - fo, q.xMax + fr, q.yMax + fr - fo);
+            }
             // Oyuncu merkezi duvara ayak izi kadar yaklaşabilir
             if (hitbox != null) return hitbox.CenterBounds(r);
             return Rect.MinMaxRect(r.xMin + playerRadius, r.yMin + playerRadius, r.xMax - playerRadius, r.yMax - playerRadius);
@@ -177,6 +187,9 @@ public class KakAutoPilot : MonoBehaviour
             // Duvar yakınlığı: köşeye sıkışmamak için
             float edge = Mathf.Min(Mathf.Min(pp.x - area.xMin, area.xMax - pp.x), Mathf.Min(pp.y - area.yMin, area.yMax - pp.y));
             if (edge < 0.8f) cost += (0.8f - edge) * 0.6f * weight;
+            // Katı kaideler: içine yürünemez (takılıp kalma), yakınları da dar alan
+            for (int k = 0; k < pedestalCount; k++)
+                if (pedestals[k].Contains(pp)) { cost += 3f * weight; break; }
         }
 
         // Merkeze hafif çekim (manevra alanı)
