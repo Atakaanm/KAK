@@ -4,6 +4,13 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-09-26 — Faz 3c.1: altın
+
+- **Yanlış varsayım düzeltildi:** kullanıcının kaydında `gamesPlayed` = 3 (4775 rekoru eski PlayerPrefs'ten taşındı, oyun sayısı taşınmadı). "Deneyimli oyuncu" kuralına rekor ≥ 1000 eklendi. Kayıt istatistiklerinden varsayım yapmadan önce gerçek değeri kontrol et (köprü Play'de gerçek kaydı geçici dosyaya kopyalıyor: menüdeki "EN İYİ" ve "N oyun" gerçek değerlerdir).
+- Köprünün geçici kaydı her Play'de gerçek kayıttan yeniden kopyalanıyor: `.claude-bridge/scratch_save.json`'u elle düzenlemek işe yaramaz. Test için durum gerekiyorsa PlayMode testinde `SaveSystem.Data` alanlarını ayarla.
+- Altın sprite'ı palet içi (altın = ödül rolü); yeşil zeminde tamamlayıcı renk olarak net okunuyor, taşlarla (kahve + kontur) karışmıyor. Klasik tasarım (kontur, sol üst açık kenar, sağ alt gölge, dikey kabartma) gürültülü gölgelendirmeden daha okunur.
+- Rastgele gürültü içeren ses üreticisini baştan çalıştırmak tüm wav'ları değiştirir (git gürültüsü). `kak_gen_audio.py coin` gibi tek ses üret.
+
 ## 2026-09-26 — Denetim D5-D6 ve Faz 3c araştırması
 
 - **Bot dünyayı bilmeli:** katı kaideler eklenince bot onları bilmediği için köşelere takıldı; acemi bot 37-86 sn'den 20-31 sn'ye düştü. Denge ölçümünden önce botun engel modeli güncel mi kontrol et. Yeni katı engel = `KakAutoPilot`'a da ekle.

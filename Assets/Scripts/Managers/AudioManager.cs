@@ -33,6 +33,7 @@ public class AudioManager : MonoBehaviour
     public AudioClip shieldSfx;
     public AudioClip stageSfx;
     public AudioClip eventSfx;
+    public AudioClip coinSfx;
 
     [Header("Çeşitlilik")]
     public float pitchJitter = 0.06f;
@@ -102,6 +103,7 @@ public class AudioManager : MonoBehaviour
         GameEvents.ProjectileHitWall += OnWall;
         GameEvents.StageChanged += OnStage;
         GameEvents.EndlessEventStarted += OnEvent;
+        GameEvents.CoinCollected += OnCoin;
     }
 
     void OnDisable()
@@ -116,6 +118,7 @@ public class AudioManager : MonoBehaviour
         GameEvents.ProjectileHitWall -= OnWall;
         GameEvents.StageChanged -= OnStage;
         GameEvents.EndlessEventStarted -= OnEvent;
+        GameEvents.CoinCollected -= OnCoin;
     }
 
     void Start() => OnSceneLoaded(SceneManager.GetActiveScene(), LoadSceneMode.Single);
@@ -135,6 +138,17 @@ public class AudioManager : MonoBehaviour
     void OnWall(Vector3 pos, Vector2 vel) => PlaySfx(crumbleSfx, 1f, 0.5f);
     void OnStage(string name, int index) { if (index > 0) PlaySfx(stageSfx); }
     void OnEvent(string key) => PlaySfx(eventSfx);
+
+    // Altın: art arda toplandıkça ton yükselir (küme toplamanın tatmini)
+    float lastCoinAt = -9f;
+    int coinStreak;
+    void OnCoin(int total, Vector3 pos)
+    {
+        float now = Time.unscaledTime;
+        coinStreak = now - lastCoinAt < 0.7f ? Mathf.Min(coinStreak + 1, 8) : 0;
+        lastCoinAt = now;
+        PlaySfx(coinSfx, 1f + coinStreak * 0.06f, 0.8f);
+    }
 
     /// <summary>
     /// Kayitli ses ayarlarini yukler.

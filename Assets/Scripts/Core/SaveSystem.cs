@@ -121,7 +121,8 @@ public class SaveData
     public int totalPowerups;
 
     [Header("İlerleme")]
-    public int coins;
+    public int coins;          // cüzdan (harcanabilir)
+    public int totalCoins;     // şimdiye kadar kazanılan toplam (istatistik, açılma koşulları)
     public string selectedCharacter = "Boy";
     public List<string> unlockedCharacters = new List<string> { "Boy" };
 

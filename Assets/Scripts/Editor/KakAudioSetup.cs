@@ -56,6 +56,7 @@ public class KakAudioSetup : AssetPostprocessor
         am.shieldSfx = C("Sfx/shield.wav");
         am.stageSfx = C("Sfx/stage.wav");
         am.eventSfx = C("Sfx/event.wav");
+        am.coinSfx = C("Sfx/coin.wav");
         PrefabUtility.SaveAsPrefabAsset(go, Prefab);
         Object.DestroyImmediate(go);
 

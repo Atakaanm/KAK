@@ -59,6 +59,9 @@ Faz 2B altyapısı yarım (kod var, sahne/UI yok, commit 6f1618f), 3c'den sonra 
 - [x] **D6 Belgeler:** SKILL.md mimari haritası ve teknik ortam güncel koda göre yeniden yazıldı, README yenilendi, git izin kuralı güncellendi.
 - **Denetim tamamlandı.** Sıradaki: **Faz 3c** (`3c.md`: araştırma + tasarım + uygulama sırası).
 
+### Faz 3c sonucu (sürüyor)
+- [x] **3c.1 Altın:** arenada altın kümeleri, HUD sayacı, ses/parıltı, oyun sonu altın satırı ve cüzdan, `FeatureGate` (1. oyun saf kaçış). Rekoru ≥1000 olan oyuncu da "deneyimli" (temel ipuçları yok). Testler 50/50 + 8/8.
+
 **Önceki: Faz 2B — Bölüm dünyaları için mimari** (yarım). Sonsuz Mod v1.0 hazır: 0 ✅ 1 ✅ 1.5 ✅ 3 ✅ 2A ✅ 5 ✅ 4 ✅ 10 ✅* (2026-09-25).
 Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 *Faz 10'un mobil build, cihaz testi ve mağaza hesabı adımları kullanıcıya bağlı → `Docs/Yayin-Kontrol-Listesi.md`.
@@ -137,7 +140,7 @@ Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 - Varsayım: Kalkan "vurulana kadar" sürer (`ShieldData.duration` kullanılmıyor, davranış korunuyor)
 
 ### Sıradaki adım
-**Faz 3c.1 Altın** (dal `faz-3c-altin`): havuzlu altın nesnesi (palet içi piksel sprite + parıltı), arenada doğma kuralı (6-10 sn'de bir 1-3'lü küme, oyuncudan uzak ama ulaşılabilir, kademeyle artar), toplama (gövde ya da ayak izi değince; ardışık toplamada ses tonu yükselir), HUD sayacı (skorun altında), oyun sonu altın satırı + sayma animasyonu, `SaveData.coins` + `totalCoins`. Testler + ekran görüntüsü. Ayrıntı: `3c.md`.
+**Faz 3c.2 FeatureGate + tanıtım** (dal `faz-3c-kapi`): `Feature` listesini genişlet (Missions: 3. oyun sonu, Characters: 150 toplam altın veya 5. oyun, DailyReward: 2. takvim günü, Pets: 10. oyun veya 2. karakter); menüde kilitli özellik butonları gri + kilit ikonu, açılınca "YENİ!" rozeti ve kısa tanıtım paneli (bir kez); menüde cüzdan (altın) göstergesi. Sonra 3c.3 Karakterler. Ayrıntı: `3c.md`.
 
 ### Onay bekleyenler
 - **Android Build Support modülü** kurulmalı (Unity Hub → 6000.3.8f1 → Add modules). Sonra "Android build al" → cihazda test.

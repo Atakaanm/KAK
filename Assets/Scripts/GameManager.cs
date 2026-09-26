@@ -92,6 +92,18 @@ public class GameManager : MonoBehaviour
         }
         save.gamesPlayed++;
         save.totalPlaySeconds += seconds;
+
+        // Altın: toplanan + hayatta kalma bonusu (skorun %1'i), yalnızca altın bu oyunda açıksa
+        RunCoins = 0; RunCoinBonus = 0;
+        var coinSpawner = FindAnyObjectByType<CoinSpawner>();
+        coinsActiveThisRun = coinSpawner != null && coinSpawner.ActiveThisRun;
+        if (coinsActiveThisRun)
+        {
+            RunCoins = scoreManager != null ? scoreManager.Coins : 0;
+            RunCoinBonus = finalScore / 100;
+            save.coins += RunCoins + RunCoinBonus;
+            save.totalCoins += RunCoins + RunCoinBonus;
+        }
         SaveSystem.Save();
 
         StartCoroutine(DeathSequence(finalScore, bestScore));
@@ -99,6 +111,10 @@ public class GameManager : MonoBehaviour
     }
 
     private float lastSeconds;
+    /// <summary>Son oyunda toplanan altın ve hayatta kalma bonusu (oyun sonu ekranı).</summary>
+    public int RunCoins { get; private set; }
+    public int RunCoinBonus { get; private set; }
+    private bool coinsActiveThisRun;
 
     private System.Collections.IEnumerator DeathSequence(int finalScore, int bestScore)
     {
@@ -112,7 +128,8 @@ public class GameManager : MonoBehaviour
         {
             int near = scoreManager != null ? scoreManager.NearMissCount : 0;
             float combo = scoreManager != null ? scoreManager.MaxCombo : 1f;
-            gameOverScreen.Show(finalScore, bestScore, IsNewBest, lastSeconds, near, combo);
+            gameOverScreen.Show(finalScore, bestScore, IsNewBest, lastSeconds, near, combo,
+                                coinsActiveThisRun ? RunCoins + RunCoinBonus : -1, SaveSystem.Data.coins);
         }
         else
         {
