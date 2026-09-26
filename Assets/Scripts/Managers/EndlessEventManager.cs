@@ -33,6 +33,15 @@ public class EndlessEventManager : MonoBehaviour
     public string CurrentEvent { get; private set; }
 
     float nextAt;
+    // Coroutine beklemeleri önbellekte (olay başına tahsis yok)
+    static readonly WaitForSeconds Wait0_35 = new WaitForSeconds(0.35f);
+    static readonly WaitForSeconds Wait0_5 = new WaitForSeconds(0.5f);
+    static readonly WaitForSeconds Wait0_8 = new WaitForSeconds(0.8f);
+    static readonly WaitForSeconds Wait0_9 = new WaitForSeconds(0.9f);
+    static readonly WaitForSeconds Wait1 = new WaitForSeconds(1f);
+    static readonly WaitForSeconds Wait1_4 = new WaitForSeconds(1.4f);
+    static readonly WaitForSeconds Wait3 = new WaitForSeconds(3f);
+    readonly System.Collections.Generic.List<int> eventOptions = new System.Collections.Generic.List<int>(4);
     ArenaAutoLayout arena;
 
     void Awake() { Instance = this; }
@@ -62,7 +71,8 @@ public class EndlessEventManager : MonoBehaviour
     public void StartRandomEvent()
     {
         int stage = Stage;
-        var options = new System.Collections.Generic.List<int>(4);
+        var options = eventOptions;
+        options.Clear();
         if (stage >= meteorShowerStage) options.Add(0);
         if (stage >= crossfireStage) options.Add(1);
         if (stage >= calmStage) options.Add(2);
@@ -98,7 +108,7 @@ public class EndlessEventManager : MonoBehaviour
 
     IEnumerator MeteorShower()
     {
-        yield return new WaitForSeconds(1f);
+        yield return Wait1;
         float end = Time.time + 5f;
         float nearTimer = 0f;
         while (Time.time < end && !Over)
@@ -115,7 +125,7 @@ public class EndlessEventManager : MonoBehaviour
             pos.x = Mathf.Clamp(pos.x, r.xMin + 0.3f, r.xMax - 0.3f);
             pos.y = Mathf.Clamp(pos.y, r.yMin + 0.3f, r.yMax - 0.3f);
             Projectile.LaunchMeteor(projectilePrefab, meteorData, pos, ScaleMult);
-            yield return new WaitForSeconds(0.35f);
+            yield return Wait0_35;
         }
     }
 
@@ -124,13 +134,13 @@ public class EndlessEventManager : MonoBehaviour
         var shooters = LevelManager.Instance.spawners;
         var wasActive = new bool[shooters.Length];
         for (int i = 0; i < shooters.Length; i++) { wasActive[i] = shooters[i].gameObject.activeSelf; shooters[i].gameObject.SetActive(true); shooters[i].enabled = false; }
-        yield return new WaitForSeconds(0.8f);
+        yield return Wait0_8;
         for (int v = 0; v < 3 && !Over; v++)
         {
             foreach (var s in shooters) if (s != null) s.FireNow();
-            yield return new WaitForSeconds(0.9f);
+            yield return Wait0_9;
         }
-        yield return new WaitForSeconds(0.5f);
+        yield return Wait0_5;
         for (int i = 0; i < shooters.Length; i++) { shooters[i].enabled = true; shooters[i].gameObject.SetActive(wasActive[i]); }
         if (DifficultyManager.Instance != null) DifficultyManager.Instance.RefreshSpawnerActivation();
     }
@@ -139,7 +149,7 @@ public class EndlessEventManager : MonoBehaviour
     {
         var shooters = LevelManager.Instance.spawners;
         foreach (var s in shooters) if (s != null) s.enabled = false;
-        yield return new WaitForSeconds(3f);
+        yield return Wait3;
         if (!Over)
         {
             for (int i = 0; i < shooters.Length; i++)
@@ -155,7 +165,7 @@ public class EndlessEventManager : MonoBehaviour
         }
         foreach (var s in shooters) if (s != null) s.enabled = true;
         if (DifficultyManager.Instance != null) DifficultyManager.Instance.RefreshSpawnerActivation();
-        yield return new WaitForSeconds(1f);
+        yield return Wait1;
     }
 
     IEnumerator Rolling()
@@ -187,7 +197,7 @@ public class EndlessEventManager : MonoBehaviour
             if (Over) yield break;
             Vector3 from = new Vector3(fromLeft ? r.xMin - 0.1f : r.xMax + 0.1f, y, 0f);
             Projectile.Launch(projectilePrefab, boulderData, from, fromLeft ? Vector2.right : Vector2.left, 2.4f, 1.3f);
-            yield return new WaitForSeconds(1.4f);
+            yield return Wait1_4;
         }
     }
 

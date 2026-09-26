@@ -1,6 +1,8 @@
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 using System.Collections;
 using System.IO;
+using System.Text;
+using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -29,6 +31,14 @@ public class KakAutoBench : MonoBehaviour
 
     IEnumerator Start()
     {
+        // -kakquality N: kalite seviyesini zorla (0 = Mobile; telefondaki URP ayarlarını Mac'te ölçmek için)
+        // -kakuncapped: vsync ve 60 FPS sınırı kapalı → gerçek kare maliyeti (boşluk payı) görünür
+        var args = System.Environment.GetCommandLineArgs();
+        int q = System.Array.IndexOf(args, "-kakquality");
+        if (q >= 0 && q + 1 < args.Length && int.TryParse(args[q + 1], out int level)) QualitySettings.SetQualityLevel(level, true);
+        bool uncapped = System.Array.IndexOf(args, "-kakuncapped") >= 0;
+        if (uncapped) { QualitySettings.vSyncCount = 0; Application.targetFrameRate = -1; }
+
         // Menüden oyuna (gerçek akış)
         yield return new WaitForSeconds(1f);
         var menu = FindAnyObjectByType<MainMenuController>();
@@ -56,12 +66,71 @@ public class KakAutoBench : MonoBehaviour
         }
 
         var sm = GameManager.Instance != null ? GameManager.Instance.scoreManager : null;
+        int scoreAtEnd = sm != null ? sm.ScoreInt : -1;
+        int activeAtEnd = Projectile.Active.Count;
+
+        // Kırılım: grupları sırayla kapatıp batch/SetPass payını ölç (render maliyeti nereden geliyor?)
+        var breakdown = new StringBuilder("\n-- kırılım (grup kapalıyken ort. batch / SetPass) --");
+        yield return Breakdown(breakdown);
+
         string report = perf.Report()
-            + $"\nçözünürlük {Screen.width}x{Screen.height}, süre {seconds}s, skor {(sm != null ? sm.ScoreInt : -1)}, olay {eventsStarted}, aktif taş {Projectile.Active.Count}"
-            + $"\ncihaz {SystemInfo.deviceModel} | {SystemInfo.graphicsDeviceName} | {SystemInfo.graphicsDeviceType}";
+            + $"\nçözünürlük {Screen.width}x{Screen.height}, süre {seconds}s, skor {scoreAtEnd}, olay {eventsStarted}, aktif taş {activeAtEnd}"
+            + $"\ncihaz {SystemInfo.deviceModel} | {SystemInfo.graphicsDeviceName} | {SystemInfo.graphicsDeviceType} | kalite {QualitySettings.names[QualitySettings.GetQualityLevel()]}{(uncapped ? " | SINIRSIZ FPS" : "")}"
+            + breakdown;
         File.WriteAllText(outFile, report);
+        yield return null;
         Debug.Log("[KakAutoBench] " + report);
         Application.Quit();
+    }
+
+    IEnumerator Breakdown(StringBuilder sb)
+    {
+        string[] groups = { "", "HUDCanvas", "DungeonFrame", "ArenaVisual", "Spawners", "#taşlar", "Global Volume", "Directional Light", "Player", "" };
+        var shooters = FindObjectsByType<CornerShooter>(FindObjectsSortMode.None);
+        foreach (var g in groups)
+        {
+            GameObject go = null;
+            if (g == "#taşlar")
+            {
+                foreach (var c in shooters) c.enabled = false;
+                foreach (var p in Projectile.Active.ToArray()) ProjectilePool.Instance.Return(p.gameObject);
+            }
+            else if (g.Length > 0)
+            {
+                go = FindByName(g);
+                if (go != null) go.SetActive(false);
+            }
+            yield return new WaitForSecondsRealtime(0.5f);
+            float b = 0f, sp = 0f;
+            yield return Measure(2.5f, r => { b = r.Item1; sp = r.Item2; });
+            sb.Append($"\n{(g.Length == 0 ? "(hepsi açık)" : g + " kapalı")}: {b:F0} / {sp:F0}{(g.Length > 0 && g != "#taşlar" && go == null ? " (bulunamadı)" : "")}");
+            if (go != null) go.SetActive(true);
+            if (g == "#taşlar") foreach (var c in shooters) c.enabled = true;
+        }
+    }
+
+    static GameObject FindByName(string name)
+    {
+        foreach (var t in FindObjectsByType<Transform>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+            if (t.name == name) return t.gameObject;
+        return null;
+    }
+
+    static IEnumerator Measure(float secs, System.Action<(float, float)> done)
+    {
+        var batches = ProfilerRecorder.StartNew(ProfilerCategory.Render, "Batches Count");
+        var setPass = ProfilerRecorder.StartNew(ProfilerCategory.Render, "SetPass Calls Count");
+        long sb = 0, ss = 0; int n = 0;
+        float end = Time.realtimeSinceStartup + secs;
+        while (Time.realtimeSinceStartup < end)
+        {
+            yield return null;
+            if (batches.Valid) sb += batches.LastValue;
+            if (setPass.Valid) ss += setPass.LastValue;
+            n++;
+        }
+        batches.Dispose(); setPass.Dispose();
+        done(n > 0 ? ((float)sb / n, (float)ss / n) : (0f, 0f));
     }
 }
 #endif

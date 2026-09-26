@@ -95,4 +95,24 @@ public class CarpismaTests
         yield return KakTestUtil.WaitReal(0.4f);
         Assert.IsFalse(bubble.gameObject.activeSelf, "Kalkan kırılınca balon kaybolmadı");
     }
+
+    [UnityTest]
+    public IEnumerator Powerup_Toplaninca_HavuzaDoner_YokEdilmez()
+    {
+        // Denetim D3: powerup'lar Instantiate/Destroy yerine havuzda
+        var spawner = Object.FindAnyObjectByType<PowerupSpawner>();
+        spawner.enabled = true;
+        spawner.SetSpawnInterval(0.1f, 0.2f);
+        PowerupPickup pickup = null;
+        yield return KakTestUtil.WaitUntil(() => (pickup = Object.FindAnyObjectByType<PowerupPickup>()) != null, 5f, "powerup çıkmadı");
+        spawner.enabled = false;
+        var go = pickup.gameObject;
+        // Oyuncuyu powerup'ın üstüne taşı → toplanır
+        var rb = ph.GetComponent<Rigidbody2D>();
+        rb.position = go.transform.position;
+        ph.transform.position = go.transform.position;
+        yield return KakTestUtil.WaitUntil(() => !go.activeSelf, 3f, "powerup toplanmadı");
+        Assert.IsTrue(go != null, "Toplanan powerup yok edildi (havuza dönmeliydi)");
+        Assert.IsFalse(go.activeSelf);
+    }
 }

@@ -253,6 +253,64 @@ public static class KakFxSetup
     /// URP Universal Renderer'da sprite'lar ancak dinamik batching ile birleşir.
     /// Projedeki tüm URP asset'lerinde açar.
     /// </summary>
+    [MenuItem("KacAtaKac/Performans Ayarlarını Uygula")]
+    public static void SetupPerformanceMenu() => Debug.Log(SetupPerformance());
+
+    /// <summary>
+    /// Denetim D3 (ölçüme dayalı): SRP Batcher kapalı + dinamik batching → sprite'lar birleşir (M4 build: draw 75 → 43,
+    /// en fazla 194 → 96, CPU aynı; SetPass 31 → 38). Mobile URP asset'i piksel sanatı için tam çözünürlük (0.8 bulanıklaştırıyordu),
+    /// HDR ve 3D gölge kapalı (2D oyunda bant genişliği israfı); Bloom çeyrek çözünürlük + 4 geçiş (mobil GPU).
+    /// Köprü: invoke KakFxSetup SetupPerformance
+    /// </summary>
+    public static string SetupPerformance()
+    {
+        var log = new StringBuilder("[KakFxSetup] ");
+        foreach (var guid in AssetDatabase.FindAssets("t:UniversalRenderPipelineAsset"))
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            var asset = AssetDatabase.LoadAssetAtPath<UniversalRenderPipelineAsset>(path);
+            if (asset == null) continue;
+            var so = new SerializedObject(asset);
+            so.FindProperty("m_SupportsDynamicBatching").boolValue = true;
+            so.FindProperty("m_UseSRPBatcher").boolValue = false;
+            if (path.Contains("Mobile"))
+            {
+                so.FindProperty("m_RenderScale").floatValue = 1f;
+                so.FindProperty("m_SupportsHDR").boolValue = false;
+                so.FindProperty("m_MainLightShadowsSupported").boolValue = false;
+                log.Append("Mobile: ölçek 1, HDR kapalı, gölge kapalı. ");
+            }
+            so.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(asset);
+        }
+
+        var profile = AssetDatabase.LoadAssetAtPath<VolumeProfile>("Assets/Settings/GameVolumeProfile.asset");
+        if (profile != null && profile.TryGet(out Bloom bloom))
+        {
+            bloom.downscale.Override(BloomDownscaleMode.Quarter);
+            bloom.maxIterations.Override(4);
+            EditorUtility.SetDirty(profile);
+            log.Append("Bloom: çeyrek çözünürlük, 4 geçiş. ");
+        }
+        AssetDatabase.SaveAssets();
+        return log.ToString();
+    }
+
+    /// <summary>Ölçüm deneyi: SRP Batcher aç/kapa ("1"/"0"). Kapalıyken sprite'lar dinamik batching ile birleşir.</summary>
+    public static string SetSrpBatcher(string on)
+    {
+        bool v = on == "1";
+        foreach (var guid in AssetDatabase.FindAssets("t:UniversalRenderPipelineAsset"))
+        {
+            var asset = AssetDatabase.LoadAssetAtPath<UniversalRenderPipelineAsset>(AssetDatabase.GUIDToAssetPath(guid));
+            if (asset == null) continue;
+            asset.useSRPBatcher = v;
+            EditorUtility.SetDirty(asset);
+        }
+        AssetDatabase.SaveAssets();
+        return "SRP Batcher: " + (v ? "açık" : "kapalı");
+    }
+
     public static void SetupRenderPipeline(StringBuilder log)
     {
         int n = 0;

@@ -47,7 +47,11 @@ public class PlayerMovement2D : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        status = GetComponent<PlayerStatus>();
     }
+
+    /// <summary>PlayerStatus sonradan eklenirse kendini bağlar (bölüm modu).</summary>
+    public void AttachStatus(PlayerStatus s) { status = s; }
 
     void Start()
     {
@@ -125,7 +129,6 @@ public class PlayerMovement2D : MonoBehaviour
             return;
         }
 
-        if (status == null) status = GetComponent<PlayerStatus>();
         float currentSpeed = baseMoveSpeed * arenaSpeedMultiplier * currentSpeedBoostMult * (status != null ? status.SpeedMultiplier : 1f);
         if (DifficultyManager.Instance != null && DifficultyManager.Instance.isActiveAndEnabled)
         {

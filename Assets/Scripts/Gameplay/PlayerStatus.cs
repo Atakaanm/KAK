@@ -25,7 +25,13 @@ public class PlayerStatus : MonoBehaviour
         }
     }
 
-    void Awake() { health = GetComponent<PlayerHealth>(); }
+    void Awake()
+    {
+        health = GetComponent<PlayerHealth>();
+        // Hareket bileşeni hız çarpanını her fizik adımında aramasın: kendini bildir
+        var move = GetComponent<PlayerMovement2D>();
+        if (move != null) move.AttachStatus(this);
+    }
 
     /// <summary>Mermi etkisini uygular. Kalkan/hayalet/ölümsüzlük etkileri engeller. Etki uygulandıysa true.</summary>
     public bool Apply(ProjectileEffect effect, float duration, float strength, int damage)
