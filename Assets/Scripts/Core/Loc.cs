@@ -62,6 +62,18 @@ public static class Loc
         { "new_badge", new[] { "YENİ!", "NEW!" } },
         { "unlock_new", new[] { "YENİ AÇILDI: {0}!", "UNLOCKED: {0}!" } },
         { "locked_toast", new[] { "Kilitli: {0}", "Locked: {0}" } },
+        // Karakterler (Faz 3c.3)
+        { "char_Boy", new[] { "ATA", "ATA" } },
+        { "char_Swift", new[] { "ÇEVİK", "SWIFT" } },
+        { "char_Tank", new[] { "TANK", "TANK" } },
+        { "char_Lucky", new[] { "ŞANSLI", "LUCKY" } },
+        { "trait_Boy", new[] { "Dengeli, her işe yarar", "Balanced all-rounder" } },
+        { "trait_Swift", new[] { "Hızlı, küçük, sık dash", "Fast, small, quick dash" } },
+        { "trait_Tank", new[] { "4 can, kalkanla başlar", "4 hearts, starts shielded" } },
+        { "trait_Lucky", new[] { "+%25 altın, bol güçlendirme", "+25% gold, more power-ups" } },
+        { "select", new[] { "SEÇ", "SELECT" } },
+        { "stat_speed", new[] { "HIZ", "SPEED" } },
+        { "stat_dash", new[] { "DASH", "DASH" } },
         // İlk oyun ipuçları (OnboardingHints)
         { "hint_move", new[] { "Parmağını sürükle,\ntaşlardan kaç!", "Drag your finger,\ndodge the rocks!" } },
         { "hint_dash", new[] { "DASH ile taşların\niçinden geç!", "DASH straight\nthrough rocks!" } },

@@ -82,3 +82,11 @@ MonoBehaviour:
   playerPrefab: {fileID: 0}
   isLocked: 0
   unlockPrice: 0
+  id: Boy
+  nameKey: char_Boy
+  traitKey: trait_Boy
+  dashCooldown: 0
+  hurtboxScale: 1
+  coinMultiplier: 1
+  startWithShield: 0
+  portrait: {fileID: 0}

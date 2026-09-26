@@ -32,6 +32,8 @@ public class LevelManager : MonoBehaviour
 
     /// <summary>Tema uygulandığında (karanlık, ışık vb. sistemler dinler).</summary>
     public static event System.Action<WorldTheme> ThemeApplied;
+    /// <summary>Bu oyunda oynanan karakter (altın çarpanı vb. için).</summary>
+    public PlayerData CurrentCharacter { get; private set; }
     public WorldTheme CurrentTheme { get; private set; }
 
     [Header("Varsayılan Level (Build için)")]
@@ -184,7 +186,9 @@ public class LevelManager : MonoBehaviour
         KakLog.Info("[LevelManager] Level yukleniyor: " + level.levelName);
 
         // --- PLAYER AYARLARI ---
-        ApplyPlayerData(level.playerData);
+        // Karakter: oyuncunun seçtiği (katalog), yoksa bölümün verisi
+        CurrentCharacter = CharacterCatalog.Selected(level.playerData);
+        ApplyPlayerData(CurrentCharacter);
 
         // --- ARENA AYARLARI ---
         ApplyArenaData(level.arenaData);
@@ -242,11 +246,31 @@ public class LevelManager : MonoBehaviour
             playerMovement.SetMoveSpeed(data.moveSpeed);
         }
 
+        if (playerMovement != null) playerMovement.playerData = data; // powerup süre çarpanı buradan okunur
+
         if (playerHealth != null)
         {
-            playerHealth.maxHealth = data.maxHealth;
+            playerHealth.SetMaxHealth(data.maxHealth);
             playerHealth.invincibilityDuration = data.invincibilityDuration;
+            if (data.startWithShield) playerHealth.ActivateShield();
         }
+
+        // Karakter istatistikleri (Faz 3c.3): dash, gövde, powerup sıklığı
+        var player = playerMovement != null ? playerMovement.gameObject : null;
+        if (player != null)
+        {
+            var dash = player.GetComponent<PlayerDash>();
+            if (dash != null && data.dashCooldown > 0f) dash.cooldown = data.dashCooldown;
+            var hb = player.GetComponent<PlayerHitbox>();
+            if (hb != null && !Mathf.Approximately(data.hurtboxScale, 1f))
+            {
+                hb.hurtSize *= data.hurtboxScale;
+                hb.Apply();
+            }
+        }
+        if (powerupSpawner != null && data.powerupSpawnRateMultiplier > 0f && !Mathf.Approximately(data.powerupSpawnRateMultiplier, 1f))
+            powerupSpawner.SetSpawnInterval(powerupSpawner.spawnIntervalMin / data.powerupSpawnRateMultiplier,
+                                            powerupSpawner.spawnIntervalMax / data.powerupSpawnRateMultiplier);
 
         if (playerVisual != null)
         {

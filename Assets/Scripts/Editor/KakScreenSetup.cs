@@ -72,13 +72,21 @@ public static class KakScreenSetup
             Reparent(health, hudContent);
             SetRect(health, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(36f, 0f), new Vector2(330f, 110f));
             string[] hearts = { "Heart1", "Heart2", "Heart3" };
+            var imgs = new System.Collections.Generic.List<UnityEngine.UI.Image>();
             for (int i = 0; i < hearts.Length; i++)
             {
                 var h = Find(health, hearts[i]);
                 if (h != null)
+                {
                     SetRect(h, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(0.5f, 0.5f),
                             new Vector2(52f + i * 96f, 0f), new Vector2(150f, 82f));
+                    var img = h.GetComponent<UnityEngine.UI.Image>();
+                    if (img != null) imgs.Add(img);
+                }
             }
+            // HealthUI tüm kalpleri yönetsin (eskiden sadece Heart1: klonlar Heart2/3'ün üstüne biniyordu)
+            var hui = health.GetComponent<HealthUI>();
+            if (hui != null) { Undo.RecordObject(hui, "hearts"); hui.hearts = imgs.ToArray(); EditorUtility.SetDirty(hui); }
         }
         var score = Find(canvasGo.transform, "ScoreText");
         if (score != null)

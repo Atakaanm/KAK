@@ -49,12 +49,13 @@ public static class KakMetaSetup
         var hudContent = canvas != null ? canvas.transform.Find("HudBand/HudContent") : null;
         if (hudContent != null)
         {
-            var root = Place(Rect(hudContent, "CoinHud"), new Vector2(0.5f, 0.5f), new Vector2(-40f, 0f), new Vector2(260f, 90f));
+            // Kalplerin altında (skorun altındaki combo yazısının simetriği): 4-5 kalpli karakterlerde bandın ortası dolar
+            var root = Place(Rect(hudContent, "CoinHud"), new Vector2(0f, 0f), new Vector2(46f, 44f), new Vector2(220f, 50f), new Vector2(0f, 0.5f));
             var content = Stretch(Rect(root, "Content"));
-            var icon = Img(Place(Rect(content, "Icon"), new Vector2(0.5f, 0.5f), new Vector2(-60f, 0f), new Vector2(58f, 58f)),
+            var icon = Img(Place(Rect(content, "Icon"), new Vector2(0f, 0.5f), new Vector2(22f, 0f), new Vector2(40f, 40f)),
                            AssetDatabase.LoadAssetAtPath<Sprite>(string.Format(CoinArt, 0)), false);
-            var text = Text(Place(Rect(content, "Count"), new Vector2(0.5f, 0.5f), new Vector2(50f, 0f), new Vector2(160f, 80f)),
-                            "0", 52, KakPalette.AltinAcik, TextAlignmentOptions.MidlineLeft);
+            var text = Text(Place(Rect(content, "Count"), new Vector2(0f, 0.5f), new Vector2(110f, 0f), new Vector2(150f, 56f)),
+                            "0", 40, KakPalette.AltinAcik, TextAlignmentOptions.MidlineLeft);
             var hud = GetOrAdd<CoinHud>(root.gameObject);
             hud.icon = icon; hud.countText = text; hud.content = content;
             EditorUtility.SetDirty(hud);
@@ -113,5 +114,118 @@ public static class KakMetaSetup
         Object.DestroyImmediate(root);
         log.Append("Coin.prefab. ");
         return prefab;
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Karakterler (Faz 3c.3)
+    // ─────────────────────────────────────────────────────────────
+    const string PlayerSprites = "Assets/Sprites/Player/";
+    const string CharSprites = "Assets/Sprites/Characters/";
+    const string BoyData = "Assets/Data/Boy_PlayerData.asset";
+
+    struct CharDef
+    {
+        public string id; public int hp; public float speed, dash, hurt, coin, puRate, puDur; public bool shield; public int price;
+    }
+
+    // Ödünleşimli istatistikler (düz güç değil): 3c.md
+    static readonly CharDef[] Chars =
+    {
+        new CharDef { id = "Swift", hp = 2, speed = 5.75f, dash = 2.0f, hurt = 0.85f, coin = 1f, puRate = 1f, puDur = 1f, price = 300 },
+        new CharDef { id = "Tank", hp = 4, speed = 4.5f, dash = 3.2f, hurt = 1f, coin = 1f, puRate = 1f, puDur = 1f, shield = true, price = 800 },
+        new CharDef { id = "Lucky", hp = 3, speed = 5f, dash = 0f, hurt = 1f, coin = 1.25f, puRate = 1.3f, puDur = 1.2f, price = 1500 },
+    };
+
+    [MenuItem("KacAtaKac/Karakterleri Kur (Faz 3c)")]
+    public static void SetupCharactersMenu() => Debug.Log(SetupCharacters());
+
+    /// <summary>
+    /// Varyant sprite'ların içe aktarma ayarlarını Ata'dan kopyalar, PlayerData'ları ve Resources/CharacterCatalog'u kurar.
+    /// Önce: python3 tools/kak_recolor_characters.py
+    /// </summary>
+    public static string SetupCharacters()
+    {
+        var log = new StringBuilder("[KakMetaSetup] ");
+        var boy = AssetDatabase.LoadAssetAtPath<PlayerData>(BoyData);
+        if (boy == null) return "HATA: Boy_PlayerData yok.";
+        boy.id = "Boy"; boy.nameKey = "char_Boy"; boy.traitKey = "trait_Boy"; boy.unlockPrice = 0; boy.isLocked = false;
+        EditorUtility.SetDirty(boy);
+
+        // 1) Varyant sprite'ların içe aktarma ayarları = kaynak (PPU 100, nokta filtre, merkez pivot)
+        int copied = 0;
+        foreach (var guid in AssetDatabase.FindAssets("t:Texture2D", new[] { "Assets/Sprites/Characters" }))
+        {
+            string dst = AssetDatabase.GUIDToAssetPath(guid);
+            string rel = dst.Substring(CharSprites.Length);
+            rel = rel.Substring(rel.IndexOf('/') + 1); // <Id>/ sonrası
+            var srcImp = AssetImporter.GetAtPath(PlayerSprites + rel) as TextureImporter;
+            var dstImp = AssetImporter.GetAtPath(dst) as TextureImporter;
+            if (srcImp == null || dstImp == null) continue;
+            var st = new TextureImporterSettings();
+            srcImp.ReadTextureSettings(st);
+            dstImp.SetTextureSettings(st);
+            dstImp.textureCompression = srcImp.textureCompression;
+            dstImp.maxTextureSize = srcImp.maxTextureSize;
+            dstImp.SaveAndReimport();
+            copied++;
+        }
+        log.Append(copied + " sprite ayarı kopyalandı. ");
+
+        // 2) PlayerData'lar
+        System.IO.Directory.CreateDirectory("Assets/Data/Characters");
+        var list = new System.Collections.Generic.List<PlayerData> { boy };
+        foreach (var c in Chars)
+        {
+            string path = "Assets/Data/Characters/" + c.id + "_PlayerData.asset";
+            var pd = AssetDatabase.LoadAssetAtPath<PlayerData>(path);
+            if (pd == null)
+            {
+                pd = ScriptableObject.CreateInstance<PlayerData>();
+                EditorUtility.CopySerialized(boy, pd);
+                AssetDatabase.CreateAsset(pd, path);
+            }
+            else EditorUtility.CopySerialized(boy, pd);
+            pd.name = c.id + "_PlayerData";
+            pd.playerName = c.id;
+            pd.id = c.id; pd.nameKey = "char_" + c.id; pd.traitKey = "trait_" + c.id;
+            pd.maxHealth = c.hp; pd.moveSpeed = c.speed; pd.dashCooldown = c.dash; pd.hurtboxScale = c.hurt;
+            pd.coinMultiplier = c.coin; pd.powerupSpawnRateMultiplier = c.puRate; pd.powerupDurationMultiplier = c.puDur;
+            pd.startWithShield = c.shield; pd.unlockPrice = c.price; pd.isLocked = true; pd.portrait = null;
+            foreach (var dir in new[] { pd.north, pd.south, pd.east, pd.west, pd.northEast, pd.northWest, pd.southEast, pd.southWest })
+                Remap(dir, c.id);
+            EditorUtility.SetDirty(pd);
+            list.Add(pd);
+        }
+
+        // 3) Katalog (Resources)
+        const string catPath = "Assets/Resources/CharacterCatalog.asset";
+        var cat = AssetDatabase.LoadAssetAtPath<CharacterCatalog>(catPath);
+        if (cat == null) { cat = ScriptableObject.CreateInstance<CharacterCatalog>(); AssetDatabase.CreateAsset(cat, catPath); }
+        cat.characters = list.ToArray();
+        EditorUtility.SetDirty(cat);
+        AssetDatabase.SaveAssets();
+        return log.Append(list.Count + " karakter kataloğa eklendi.").ToString();
+    }
+
+    /// <summary>Yön verisindeki sprite'ları varyant klasöründeki karşılığına çevirir (aynı göreli yol).</summary>
+    static void Remap(PlayerData.DirectionData d, string id)
+    {
+        if (d == null) return;
+        d.idle = RemapSprite(d.idle, id);
+        if (d.runFrames != null)
+        {
+            var frames = new Sprite[d.runFrames.Length];
+            for (int i = 0; i < frames.Length; i++) frames[i] = RemapSprite(d.runFrames[i], id);
+            d.runFrames = frames;
+        }
+    }
+
+    static Sprite RemapSprite(Sprite s, string id)
+    {
+        if (s == null) return null;
+        string p = AssetDatabase.GetAssetPath(s);
+        if (!p.StartsWith(PlayerSprites)) return s;
+        var v = AssetDatabase.LoadAssetAtPath<Sprite>(CharSprites + id + "/" + p.Substring(PlayerSprites.Length));
+        return v != null ? v : s;
     }
 }

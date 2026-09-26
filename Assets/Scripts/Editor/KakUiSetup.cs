@@ -218,7 +218,7 @@ public static class KakUiSetup
         var levels = Button(Place(Rect(safe, "LevelsButton"), new Vector2(0.5f, 0f), new Vector2(0f, 180f), new Vector2(680f, 130f)), "@levels_soon", Style.Stone, 40, "icon_lock.png");
         levels.GetComponent<Image>().color = new Color(0.7f, 0.7f, 0.75f, 1f);
         var charsFeature = BuildFeatureButton(chars, Feature.Characters);
-        BuildWallet(safe);
+        var wallet = BuildWallet(safe);
 
         // Ayarlar paneli
         var (sroot, spanel) = Modal(canvas, "SettingsPanel", new Vector2(860f, 1400f));
@@ -231,21 +231,8 @@ public static class KakUiSetup
         var reset = Button(Place(Rect(spanel, "ResetButton"), new Vector2(0.5f, 0f), new Vector2(0f, 330f), new Vector2(700f, 120f)), "@reset", Style.Stone, 40);
         var closeS = Button(Place(Rect(spanel, "CloseButton"), new Vector2(0.5f, 0f), new Vector2(0f, 150f), new Vector2(620f, 150f)), "@close", Style.Gold, 64);
 
-        // Karakter paneli
-        var (croot, cpanel) = Modal(canvas, "CharactersPanel", new Vector2(900f, 1100f));
-        Text(Place(Rect(cpanel, "Title"), new Vector2(0.5f, 1f), new Vector2(0f, -110f), new Vector2(800f, 120f)), "@character", 80, KakPalette.Altin);
-        string[] names = { "ALİ", "?", "?" };
-        for (int i = 0; i < 3; i++)
-        {
-            var card = Place(Rect(cpanel, "Card" + i), new Vector2(0.5f, 0.5f), new Vector2((i - 1) * 270f, 40f), new Vector2(240f, 340f));
-            Img(card, S(i == 0 ? "btn_gold_9s.png" : "btn_stone_9s.png"), true);
-            var face = Place(Rect(card, "Face"), new Vector2(0.5f, 0.5f), new Vector2(0f, 30f), new Vector2(190f, 190f));
-            if (i == 0) Img(face, AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Player/South/south.png"), false);
-            else Img(face, S("icon_lock.png"), false, KakPalette.ArduvazAcik);
-            Text(Place(Rect(card, "Name"), new Vector2(0.5f, 0f), new Vector2(0f, 45f), new Vector2(220f, 60f)),
-                 i == 0 ? "@selected" : "@soon", 34, i == 0 ? KakPalette.Murekkep : KakPalette.Krem, TextAlignmentOptions.Center, false, i != 0);
-        }
-        var closeC = Button(Place(Rect(cpanel, "CloseButton"), new Vector2(0.5f, 0f), new Vector2(0f, 140f), new Vector2(620f, 150f)), "@close", Style.Gold, 64);
+        // Karakter paneli (Faz 3c.3): katalogdaki karakterler, satın al / seç
+        var (croot, closeC) = BuildCharacterPanel(canvas, wallet);
 
         // Kontrolcü bağlantıları
         var mmc = Object.FindAnyObjectByType<MainMenuController>();
@@ -356,5 +343,72 @@ public static class KakUiSetup
         w.amount = amount;
         EditorUtility.SetDirty(w);
         return w;
+    }
+
+    /// <summary>Karakter paneli: başlık, cüzdan, 2x2 kart ızgarası, kapat. Kartları CharacterPanel çalışma anında doldurur.</summary>
+    public static (RectTransform root, Button close) BuildCharacterPanel(Transform canvas, WalletHud menuWallet)
+    {
+        var old = canvas.Find("CharactersPanel");
+        if (old != null) Object.DestroyImmediate(old.gameObject); // eski sahte panel / yeniden kurulum
+        var (croot, cpanel) = Modal(canvas, "CharactersPanel", new Vector2(960f, 1560f));
+        Text(Place(Rect(cpanel, "Title"), new Vector2(0.5f, 1f), new Vector2(0f, -100f), new Vector2(800f, 110f)), "@character", 78, KakPalette.Altin);
+        var wrow = Place(Rect(cpanel, "Wallet"), new Vector2(0.5f, 1f), new Vector2(0f, -190f), new Vector2(360f, 64f));
+        Img(Place(Rect(wrow, "Icon"), new Vector2(0.5f, 0.5f), new Vector2(-70f, 0f), new Vector2(52f, 52f)),
+            AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Pickups/coin_0.png"), false);
+        var wtext = Text(Place(Rect(wrow, "Amount"), new Vector2(0.5f, 0.5f), new Vector2(40f, 0f), new Vector2(200f, 64f)),
+                         "0", 50, KakPalette.AltinAcik, TextAlignmentOptions.MidlineLeft);
+
+        var heart = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/UI/Kalp.png");
+        var white = S("white_ui.png");
+        var cards = new CharacterCard[4];
+        for (int i = 0; i < 4; i++)
+        {
+            float x = (i % 2 == 0) ? -225f : 225f, y = (i < 2) ? -510f : -1070f;
+            var card = Place(Rect(cpanel, "Card" + i), new Vector2(0.5f, 1f), new Vector2(x, y), new Vector2(430f, 540f));
+            var bg = Img(card, S("btn_stone_9s.png"), true);
+            var portrait = Img(Place(Rect(card, "Portrait"), new Vector2(0.5f, 1f), new Vector2(0f, -130f), new Vector2(192f, 192f)), null, false);
+            var name = Text(Place(Rect(card, "Name"), new Vector2(0.5f, 1f), new Vector2(0f, -258f), new Vector2(400f, 56f)), "ATA", 44, KakPalette.Krem);
+            var trait = Text(Place(Rect(card, "Trait"), new Vector2(0.5f, 1f), new Vector2(0f, -302f), new Vector2(410f, 40f)), "", 24, KakPalette.Sis,
+                             TextAlignmentOptions.Center, false, false);
+            var hearts = new Image[5];
+            for (int h = 0; h < 5; h++)
+                hearts[h] = Img(Place(Rect(card, "Heart" + h), new Vector2(0.5f, 1f), new Vector2((h - 2) * 50f, -348f), new Vector2(48f, 48f)), heart, false);
+            var speed = Bar(card, "Speed", "@stat_speed", -392f, KakPalette.Camgobegi, white);
+            var dash = Bar(card, "Dash", "@stat_dash", -428f, KakPalette.CamgobegiParlak, white);
+            var btn = Button(Place(Rect(card, "Action"), new Vector2(0.5f, 0f), new Vector2(0f, 58f), new Vector2(360f, 88f)), "SEÇ", Style.Stone, 40);
+            var coin = Img(Place(Rect(btn.transform, "Coin"), new Vector2(0.5f, 0.5f), new Vector2(-95f, 0f), new Vector2(42f, 42f)),
+                           AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Pickups/coin_0.png"), false);
+
+            var cc = GetOrAdd<CharacterCard>(card.gameObject);
+            cc.background = bg; cc.portrait = portrait; cc.nameText = name; cc.traitText = trait; cc.hearts = hearts;
+            cc.speedFill = speed; cc.dashFill = dash; cc.actionButton = btn; cc.actionBackground = btn.GetComponent<Image>();
+            cc.actionText = btn.transform.Find("Label").GetComponent<TMP_Text>(); cc.actionCoin = coin;
+            cc.goldSprite = S("btn_gold_9s.png"); cc.stoneSprite = S("btn_stone_9s.png");
+            cc.softTexts = new TMP_Text[] { trait, card.Find("SpeedLabel").GetComponent<TMP_Text>(), card.Find("DashLabel").GetComponent<TMP_Text>() };
+            EditorUtility.SetDirty(cc);
+            cards[i] = cc;
+        }
+        var close = Button(Place(Rect(cpanel, "CloseButton"), new Vector2(0.5f, 0f), new Vector2(0f, 95f), new Vector2(560f, 120f)), "@close", Style.Gold, 58);
+
+        var panel = GetOrAdd<CharacterPanel>(croot.gameObject);
+        panel.cards = cards; panel.walletText = wtext; panel.menuWallet = menuWallet;
+        EditorUtility.SetDirty(panel);
+        return (croot, close);
+    }
+
+    /// <summary>Etiketli yatay gösterge çubuğu (zemin + dolum). Dolum Image'ını döndürür.</summary>
+    static Image Bar(RectTransform card, string name, string label, float y, Color color, Sprite white)
+    {
+        Text(Place(Rect(card, name + "Label"), new Vector2(0.5f, 1f), new Vector2(-135f, y), new Vector2(120f, 30f)), label, 22, KakPalette.Sis,
+             TextAlignmentOptions.MidlineLeft, false, false);
+        var bg = Img(Place(Rect(card, name + "Bar"), new Vector2(0.5f, 1f), new Vector2(50f, y), new Vector2(240f, 16f)), white, false,
+                     KakPalette.Gece);
+        bg.preserveAspect = false;
+        var fill = Img(Stretch(Rect(bg.rectTransform, "Fill")), white, false, color);
+        fill.preserveAspect = false;
+        fill.type = Image.Type.Filled;
+        fill.fillMethod = Image.FillMethod.Horizontal;
+        fill.fillAmount = 0.6f;
+        return fill;
     }
 }

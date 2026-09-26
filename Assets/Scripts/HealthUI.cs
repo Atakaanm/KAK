@@ -9,6 +9,7 @@ public class HealthUI : MonoBehaviour
     public Image[] hearts; // Inspector'dan dizilen kalpler
 
     private List<Image> activeHearts = new List<Image>();
+    private readonly List<Image> clones = new List<Image>();
 
     // Her kalp için bağımsız animasyon coroutine'i
     private Dictionary<int, Coroutine> heartAnimCoroutines = new Dictionary<int, Coroutine>();
@@ -25,33 +26,19 @@ public class HealthUI : MonoBehaviour
     {
         activeHearts.Clear();
 
-        // Her şeyden önce senin Inspector üzerinden verdiğin listeyi (hearts array) baz alıyoruz.
-        if (hearts != null && hearts.Length >= 1)
-        {
+        // Panelin tüm kalpleri: Inspector dizisi + "Heart" adlı çocuklar (önceki klonlar dahil), soldan sağa.
+        // Not: eskiden dizi yalnızca Heart1'i içeriyordu; Heart2/3 yönetilmiyor, klonlar üstlerine biniyordu
+        // (can kaybında alttaki kalpler kaybolmuyordu).
+        if (hearts != null)
             foreach (var h in hearts)
-            {
-                if (h != null) activeHearts.Add(h);
-            }
-        }
-        else
+                if (h != null && !activeHearts.Contains(h)) activeHearts.Add(h);
+        foreach (Transform child in transform)
         {
-            // Eğer inspector'da unutulmuşsa, GameObject'in çocuklarından "Heart" ismini içerenleri bulalım
-            foreach(Transform child in transform)
-            {
-                if(child.name.StartsWith("Heart") || child.name.Contains("Heart"))
-                {
-                    Image img = child.GetComponent<Image>();
-                    if(img != null) activeHearts.Add(img);
-                }
-            }
-            // İsim sırasına göre sıralayalım (Heart1, Heart2, Heart10 sorunsuz sıralanır)
-            activeHearts.Sort((a,b) => {
-                int numA = 0, numB = 0;
-                for(int i=0; i<a.name.Length; i++) if(char.IsDigit(a.name[i])) { int.TryParse(a.name.Substring(i), out numA); break; }
-                for(int i=0; i<b.name.Length; i++) if(char.IsDigit(b.name[i])) { int.TryParse(b.name.Substring(i), out numB); break; }
-                return numA.CompareTo(numB);
-            });
+            if (!child.name.Contains("Heart")) continue;
+            var img = child.GetComponent<Image>();
+            if (img != null && !activeHearts.Contains(img)) activeHearts.Add(img);
         }
+        activeHearts.Sort((a, b) => a.rectTransform.anchoredPosition.x.CompareTo(b.rectTransform.anchoredPosition.x));
 
         if (activeHearts.Count == 0) return;
 
@@ -73,7 +60,15 @@ public class HealthUI : MonoBehaviour
                 newHeart.rectTransform.anchoredPosition3D = lastHeart.rectTransform.anchoredPosition3D + offset * (i + 1);
                 newHeart.gameObject.SetActive(true);
                 activeHearts.Add(newHeart);
+                clones.Add(newHeart);
             }
+        }
+
+        // Karakterin canından fazla kalp gizlenir (ör. 2 canlı karakter: 3. kalp "kaybedilmiş" görünmesin)
+        for (int i = activeHearts.Count - 1; i >= maxHealth; i--)
+        {
+            if (activeHearts[i] != null) activeHearts[i].gameObject.SetActive(false);
+            activeHearts.RemoveAt(i);
         }
 
         // Tüm kalplerin görünür ve tam ölçekli olduğundan emin ol

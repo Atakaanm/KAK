@@ -101,6 +101,8 @@ public class GameManager : MonoBehaviour
         if (coinsActiveThisRun)
         {
             RunCoins = scoreManager != null ? scoreManager.Coins : 0;
+            var ch = levelManager != null ? levelManager.CurrentCharacter : null;
+            if (ch != null && ch.coinMultiplier > 1f) RunCoins = Mathf.RoundToInt(RunCoins * ch.coinMultiplier);
             RunCoinBonus = finalScore / 100;
             save.coins += RunCoins + RunCoinBonus;
             save.totalCoins += RunCoins + RunCoinBonus;
