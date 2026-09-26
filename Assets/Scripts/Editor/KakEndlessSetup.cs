@@ -123,6 +123,33 @@ public static class KakEndlessSetup
             db.visual = visual.rectTransform;
             EditorUtility.SetDirty(db);
 
+            // Aktif güçlendirme göstergesi: kontrol alanının üst ortası (arenanın hemen altı)
+            var hudT = control.Find("PowerupHud") as RectTransform;
+            if (hudT == null)
+            {
+                var go = new GameObject("PowerupHud", typeof(RectTransform));
+                Undo.RegisterCreatedObjectUndo(go, "PowerupHud");
+                go.transform.SetParent(control, false);
+                hudT = (RectTransform)go.transform;
+            }
+            SetRect(hudT, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 0.5f), new Vector2(0f, -90f), new Vector2(600f, 120f));
+            var ph = hudT.GetComponent<PowerupHud>();
+            if (ph == null) ph = hudT.gameObject.AddComponent<PowerupHud>();
+            ph.chipBase = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/UI/dash_base_soft.png");
+            ph.ringSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/UI/ring_soft.png");
+            EditorUtility.SetDirty(ph);
+
+            // İlk oyun ipuçları (bir kez): kontrol alanında yazı
+            var hint = Text(control, "HintText", font, 46, TextAlignmentOptions.Center);
+            SetRect(hint.rectTransform, new Vector2(0.5f, 0.68f), new Vector2(0.5f, 0.68f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(680f, 150f));
+            hint.textWrappingMode = TextWrappingModes.NoWrap; // satırlar Loc'ta \n ile
+            var ob = hint.GetComponent<OnboardingHints>();
+            if (ob == null) ob = hint.gameObject.AddComponent<OnboardingHints>();
+            ob.hintText = hint;
+            ob.dashButton = db;
+            EditorUtility.SetDirty(ob);
+            hint.gameObject.SetActive(true); // bileşen Start'ta kendini gizler
+
             // Joystick bölgesi butonla çakışmasın: sol %60
             var zone = control.Find("JoystickZone") as RectTransform;
             if (zone != null) { zone.anchorMin = Vector2.zero; zone.anchorMax = new Vector2(0.6f, 1f); }

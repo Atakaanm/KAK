@@ -4,6 +4,14 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-09-26 — Denetim D4: oyuncu bilgisi
+
+- **Tuzak:** bir bileşeni gösterdiği/gizlediği nesnenin üstüne koyup `gameObject.SetActive(false)` yaparsan kendi Update'i de durur (ipucu hiç ilerlemez). Aynı nesnedeyse `TMP_Text.enabled` ile gizle; ya da bileşeni ebeveyne koy.
+- **Test izolasyonu:** PlayMode test kaydı sabit dosyadaydı ve testler arasında birikiyordu (gamesPlayed). Kayda bağlı bir kural (deneyimli oyuncu) eklenince ortaya çıktı. `KakTestUtil.ResetWorld` artık dosyayı siliyor.
+- Test başarısız olunca koşulları mesajda dök (`current=… seen=… enabled=…`): tahmin yerine tek koşuda kök neden.
+- Kullanıcının gerçek kaydı çok oyunlu → yeni ipuçları ona gösterilmez (≥5 oyun). Yeni oyuncu deneyimi: kayıt silinerek ya da test ile görülür.
+- Göstergeler kontrol alanının üstünde (arenanın hemen altı): HUD bandında yer yok, kontrol alanı boş ve göz arenaya yakın.
+
 ## 2026-09-26 — Denetim D3: performans ölçerek karar
 
 - **Tuzak:** URP Universal Renderer + SRP Batcher açıkken her SpriteRenderer ayrı draw call; "dinamik batching açık" ayarı etkisiz kalıyor (aynı sprite/materyaldeki 8 meşale ışığı = 8 draw). 2D sprite oyununda SRP Batcher'ı kapatmak draw'u %43 düşürdü, CPU değişmedi. Karar ölçümle: `KakAutoBench` kırılım aşaması (grupları kapatıp draw farkı) + `-kakuncapped`.

@@ -87,6 +87,19 @@ public static class KakDevMenu
         WorldPopup.Show("+10", p.position + new Vector3(1.2f, -0.6f, 0f), KakPalette.AltinAcik, 1f);
     }
 
+    /// <summary>Kalkan, hız, hayalet ve yavaş çekimi aynı anda verir (HUD göstergesi kontrolü).</summary>
+    [MenuItem("KacAtaKac/Dev/Tüm Powerup'ları Ver")]
+    public static void GiveAllPowerups()
+    {
+        var player = Object.FindAnyObjectByType<PlayerMovement2D>();
+        if (player == null) return;
+        foreach (var guid in AssetDatabase.FindAssets("t:PowerupData", new[] { "Assets/Data/Powerups" }))
+        {
+            var d = AssetDatabase.LoadAssetAtPath<PowerupData>(AssetDatabase.GUIDToAssetPath(guid));
+            if (d != null && d.type != PowerupType.Heal) PowerupPickup.Apply(d, player.gameObject, player.transform.position);
+        }
+    }
+
     [MenuItem("KacAtaKac/Dev/UI - Dili Değiştir (TR-EN)")]
     public static void ToggleLanguage() { Loc.Current = Loc.Current == Loc.Lang.TR ? Loc.Lang.EN : Loc.Lang.TR; }
 

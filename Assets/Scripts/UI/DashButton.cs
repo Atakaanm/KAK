@@ -12,6 +12,8 @@ public class DashButton : MonoBehaviour, IPointerDownHandler
     public Image cooldownFill;      // Filled / Radial360
     public Image icon;
     public RectTransform visual;
+    [Tooltip("İpucu gösterilirken buton belirgin şekilde nabız atar (OnboardingHints)")]
+    public bool highlight;
 
     float pulse;
 
@@ -32,14 +34,15 @@ public class DashButton : MonoBehaviour, IPointerDownHandler
         if (cooldownFill != null) cooldownFill.fillAmount = cd;
         if (icon != null)
         {
-            Color c = dash.Ready ? KakPalette.Krem : KakPalette.ArduvazAcik;
+            Color c = dash.Ready ? (highlight ? KakPalette.CamgobegiParlak : KakPalette.Krem) : KakPalette.ArduvazAcik;
             c.a = dash.Ready ? 1f : 0.6f;
             icon.color = c;
         }
         pulse = Mathf.MoveTowards(pulse, 0f, Time.unscaledDeltaTime * 4f);
         if (visual != null)
         {
-            float idle = dash.Ready ? 1f + Mathf.Sin(Time.unscaledTime * 4f) * 0.03f : 1f;
+            float amp = highlight ? 0.1f : 0.03f;
+            float idle = dash.Ready ? 1f + Mathf.Sin(Time.unscaledTime * (highlight ? 7f : 4f)) * amp : 1f;
             visual.localScale = Vector3.one * (idle - pulse * 0.12f);
         }
     }
