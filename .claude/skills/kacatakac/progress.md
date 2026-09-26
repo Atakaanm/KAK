@@ -46,7 +46,7 @@ Son commit'ler (Temmuz 2026): HD ana menü, altın buton, premium fontlar (Cinze
 
 ## Aktif faz
 
-**Faz 3c — bağlılık katmanı (odak Sonsuz Mod):** altın, adım adım açılan özellikler, istatistikli kilitli karakterler, görevler, pet'ler, günlük ödül. Araştırma, tasarım ve uygulama sırası: `3c.md`. (Denetim D0-D6 tamamlandı: `denetim.md`.)
+**Faz 3c tamamlandı (2026-09-26):** altın, adım adım açılma, karakterler, görevler, petler, günlük ödül, cila (`3c.md`). Denetim D0-D6 da tamam (`denetim.md`). Sıradaki büyük iş: kullanıcının cihaz testi + denge geri bildirimi, sonra Faz 2B'nin bitirilmesi (bölüm seçimi) → Buz / Futbol / Karanlık dünyaları.
 Faz 2B altyapısı yarım (kod var, sahne/UI yok, commit 6f1618f), 3c'den sonra bitirilecek.
 
 ### Denetim sonucu (sürüyor)
@@ -66,6 +66,8 @@ Faz 2B altyapısı yarım (kod var, sahne/UI yok, commit 6f1618f), 3c'den sonra 
 - [x] **3c.4 Görevler:** 3 aktif görev (7 tür), oyun sonunda ilerleme/ödül, seviye arttıkça hedef ve ödül büyür; oyun sonu ekranında görev bloğu. Testler 61/61 + 15/15.
 - [x] **3c.5 Pet'ler:** Ateşböceği (altın mıknatısı) ve Kaplumbağa (aralıklı kalkan), takip davranışı, menüde PET butonu + pet paneli. İlk çizimde petler çok küçüktü (8 px): tek piksel yoğunluğunu bozmadan büyük ızgarada yeniden çizildi. Testler 65/65 + 15/15.
 - [x] **3c.6 Günlük ödül:** 7 günlük artan takvim, seri/kaçırma kuralı, menüde kendiliğinden açılan panel. Testler 67/67 + 18/18.
+- [x] **3c.7 Cila:** yeni rekor konfetisi + fanfar, oyun sonunda sıradaki hedef çubuğu ("ÇEVİK: 180/300"), menüde "alınabilir" işareti. Testler 69/69 + 18/18.
+- **Faz 3c tamamlandı.**
 
 **Önceki: Faz 2B — Bölüm dünyaları için mimari** (yarım). Sonsuz Mod v1.0 hazır: 0 ✅ 1 ✅ 1.5 ✅ 3 ✅ 2A ✅ 5 ✅ 4 ✅ 10 ✅* (2026-09-25).
 Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
@@ -145,7 +147,7 @@ Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 - Varsayım: Kalkan "vurulana kadar" sürer (`ShieldData.duration` kullanılmıyor, davranış korunuyor)
 
 ### Sıradaki adım
-**Faz 3c.7 His ve izleme cilası** (dal `faz-3c-cila`): (1) yeni rekor kutlaması (oyun sonunda konfeti parçacıkları + "YENİ REKOR!" rozetinin güçlü girişi + fanfar), (2) bir sonraki kilide ilerleme çubuğu (oyun sonu: "ÇEVİK için 120/300 altın" — hedefe yaklaşma etkisi), (3) menüde karakter ve pet butonlarında satın alınabilir bir şey varsa küçük altın nokta rozeti. Sonra Faz 3c özeti ve kullanıcıya rapor; ardından Faz 2B'nin bitirilmesi (bölüm seçimi) ya da kullanıcının önceliği. Ayrıntı: `3c.md`.
+**Faz 2B'yi bitir (bölüm modu arayüzü)** (dal `faz-2b-arayuz`): WorldCatalog/World asset'leri (ilk dünya: Zindan, 3 bölüm), menüde BÖLÜMLER butonu (FeatureGate'e yeni özellik: Levels, ör. 8. oyun veya rekor ≥ 1500), bölüm seçim ekranı (dünya kartı + bölüm düğümleri + yıldızlar), bölüm içi hedef HUD'u (süre/gol sayacı), `GameOverScreen` bölüm sonu (yıldızlar, SONRAKİ; `SahneDenetimTests.BilincliBos` listesinden GameOverScreen alanlarını çıkar), PlayerStatus ikonları. Önce kullanıcıya Faz 3c özetini sun; kullanıcı öncelik değiştirirse ona göre.
 
 ### Onay bekleyenler
 - **Android Build Support modülü** kurulmalı (Unity Hub → 6000.3.8f1 → Add modules). Sonra "Android build al" → cihazda test.

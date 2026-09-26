@@ -126,6 +126,7 @@ public static class KakUiSetup
         BuildCoinsRow(gpanel, gos);
         BuildUnlockBanner(gpanel, gos);
         BuildMissionsBlock(gpanel, gos);
+        BuildPolish(gpanel, gos);
         if (gm != null)
         {
             OnClick(retry, gm.RetryGame);
@@ -333,8 +334,11 @@ public static class KakUiSetup
         badge.localRotation = Quaternion.Euler(0f, 0f, -8f);
         Img(badge, S("badge_9s.png"), true);
         Text(Stretch(Rect(badge, "Label")), "@new_badge", 30, KakPalette.AltinAcik);
+        var dot = Img(Place(Rect(rt, "BuyDot"), new Vector2(0f, 1f), new Vector2(20f, -20f), new Vector2(38f, 38f)),
+                      AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Pickups/coin_0.png"), false);
         var fb = GetOrAdd<FeatureButton>(rt.gameObject);
         fb.feature = feature;
+        fb.buyDot = dot.rectTransform;
         var icon = rt.Find("Icon") != null ? rt.Find("Icon").GetComponent<Image>() : null;
         var label = rt.Find("Label") != null ? rt.Find("Label").GetComponent<TMP_Text>() : null;
         fb.tintTargets = new Graphic[] { button.GetComponent<Image>(), icon, label };
@@ -432,7 +436,7 @@ public static class KakUiSetup
     /// <summary>Oyun sonu görev bloğu: başlık + 3 satır (onay, metin, ilerleme/ödül). Altın satırının altında.</summary>
     public static void BuildMissionsBlock(RectTransform gpanel, GameOverScreen gos)
     {
-        var block = Place(Rect(gpanel, "Missions"), new Vector2(0.5f, 1f), new Vector2(0f, -950f), new Vector2(780f, 230f));
+        var block = Place(Rect(gpanel, "Missions"), new Vector2(0.5f, 1f), new Vector2(0f, -975f), new Vector2(780f, 230f));
         Text(Place(Rect(block, "Title"), new Vector2(0.5f, 1f), new Vector2(0f, -18f), new Vector2(760f, 36f)), "@missions_title", 30,
              KakPalette.ArduvazAcik, TextAlignmentOptions.Center, false, false);
         var texts = new TMP_Text[3];
@@ -533,5 +537,30 @@ public static class KakUiSetup
         OnClick(claim, dp.OnClaim);
         EditorUtility.SetDirty(dp);
         return dp;
+    }
+
+    /// <summary>Faz 3c.7 cilası: sıradaki hedef satırı (çubuk + metin) ve yeni rekor konfetisi.</summary>
+    public static void BuildPolish(RectTransform gpanel, GameOverScreen gos)
+    {
+        var row = Place(Rect(gpanel, "GoalRow"), new Vector2(0.5f, 1f), new Vector2(0f, -825f), new Vector2(760f, 40f));
+        var white = S("white_ui.png");
+        var bg = Img(Place(Rect(row, "Bar"), new Vector2(0f, 0.5f), new Vector2(150f, 0f), new Vector2(280f, 14f)), white, false, KakPalette.Gece);
+        bg.preserveAspect = false;
+        var fill = Img(Stretch(Rect(bg.rectTransform, "Fill")), white, false, KakPalette.Altin);
+        fill.preserveAspect = false;
+        fill.type = Image.Type.Filled;
+        fill.fillMethod = Image.FillMethod.Horizontal;
+        var text = Text(Place(Rect(row, "Text"), new Vector2(0f, 0.5f), new Vector2(310f, 0f), new Vector2(440f, 40f), new Vector2(0f, 0.5f)),
+                        "", 28, KakPalette.Sis, TextAlignmentOptions.MidlineLeft, false, false);
+        gos.goalRow = row; gos.goalFill = fill; gos.goalText = text;
+        row.gameObject.SetActive(false);
+
+        // Konfeti: panelin üst yarısında (rozetin çevresi), panel içeriğinin üstünde
+        var conf = Place(Rect(gpanel, "Confetti"), new Vector2(0.5f, 1f), new Vector2(0f, -300f), new Vector2(860f, 10f));
+        conf.SetAsLastSibling();
+        var c = GetOrAdd<UiConfetti>(conf.gameObject);
+        c.sprite = white;
+        gos.confetti = c;
+        EditorUtility.SetDirty(gos);
     }
 }
