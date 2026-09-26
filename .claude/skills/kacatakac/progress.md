@@ -46,7 +46,7 @@ Son commit'ler (Temmuz 2026): HD ana menü, altın buton, premium fontlar (Cinze
 
 ## Aktif faz
 
-**Yayın hazırlığı sürüyor (yayin.md):** Y1-Y3 ✅ (Play/App Store gereksinimleri, API 36, iPhone-only, gizlilik, reklam altyapısı kapalı). Y4 kız karakter, Y5 mağaza görselleri.
+**Yayın hazırlığı sürüyor (yayin.md):** Y1-Y3 ✅ (Play/App Store gereksinimleri, API 36, iPhone-only, gizlilik, reklam altyapısı kapalı), Y4 ✅ kız karakter ADA (40 kare, bedava, panel 3×2). Sıradaki adım: **Y5 mağaza görselleri** (`Docs/Magaza/play`, `appstore`, öne çıkan grafik, ikon, listing.md). Onay bekleyenler: ADA adı geçici (kullanıcı değiştirebilir), destek e-postası.
 **Faz 3c tamamlandı (2026-09-26):** altın, adım adım açılma, karakterler, görevler, petler, günlük ödül, cila (`3c.md`). Denetim D0-D6 da tamam (`denetim.md`). Sıradaki büyük iş: kullanıcının cihaz testi + denge geri bildirimi, sonra Faz 2B'nin bitirilmesi (bölüm seçimi) → Buz / Futbol / Karanlık dünyaları.
 Faz 2B altyapısı yarım (kod var, sahne/UI yok, commit 6f1618f), 3c'den sonra bitirilecek.
 

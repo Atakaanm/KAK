@@ -129,11 +129,15 @@ public static class KakMetaSetup
     struct CharDef
     {
         public string id; public int hp; public float speed, dash, hurt, coin, puRate, puDur; public bool shield; public int price;
+        public bool girl;
     }
 
     // Ödünleşimli istatistikler (düz güç değil): 3c.md
     static readonly CharDef[] Chars =
     {
+        // ADA: ücretsiz başlangıç seçeneği, Ata ile aynı istatistikler (kız/erkek seçimi görünüm tercihi, güç farkı değil)
+        // Görseller: tools/kak_gen_girl.py (esmer, uzun koyu saçlı, zayıf; 8 yön + 8×4 koşu)
+        new CharDef { id = "Ada", hp = 3, speed = 5f, dash = 0f, hurt = 1f, coin = 1f, puRate = 1f, puDur = 1f, price = 0, girl = true },
         new CharDef { id = "Swift", hp = 2, speed = 5.75f, dash = 2.0f, hurt = 0.85f, coin = 1f, puRate = 1f, puDur = 1f, price = 300 },
         new CharDef { id = "Tank", hp = 4, speed = 4.5f, dash = 3.2f, hurt = 1f, coin = 1f, puRate = 1f, puDur = 1f, shield = true, price = 800 },
         new CharDef { id = "Lucky", hp = 3, speed = 5f, dash = 0f, hurt = 1f, coin = 1.25f, puRate = 1.3f, puDur = 1.2f, price = 1500 },
@@ -162,6 +166,7 @@ public static class KakMetaSetup
             string rel = dst.Substring(CharSprites.Length);
             rel = rel.Substring(rel.IndexOf('/') + 1); // <Id>/ sonrası
             var srcImp = AssetImporter.GetAtPath(PlayerSprites + rel) as TextureImporter;
+            if (srcImp == null) srcImp = AssetImporter.GetAtPath(PlayerSprites + System.IO.Path.ChangeExtension(rel, ".gif")) as TextureImporter;
             var dstImp = AssetImporter.GetAtPath(dst) as TextureImporter;
             if (srcImp == null || dstImp == null) continue;
             var st = new TextureImporterSettings();
@@ -193,7 +198,8 @@ public static class KakMetaSetup
             pd.id = c.id; pd.nameKey = "char_" + c.id; pd.traitKey = "trait_" + c.id;
             pd.maxHealth = c.hp; pd.moveSpeed = c.speed; pd.dashCooldown = c.dash; pd.hurtboxScale = c.hurt;
             pd.coinMultiplier = c.coin; pd.powerupSpawnRateMultiplier = c.puRate; pd.powerupDurationMultiplier = c.puDur;
-            pd.startWithShield = c.shield; pd.unlockPrice = c.price; pd.isLocked = true; pd.portrait = null;
+            pd.startWithShield = c.shield; pd.unlockPrice = c.price; pd.isLocked = c.price > 0; pd.portrait = null;
+            pd.playerType = c.girl ? PlayerType.Girl : PlayerType.Boy;
             foreach (var dir in new[] { pd.north, pd.south, pd.east, pd.west, pd.northEast, pd.northWest, pd.southEast, pd.southWest })
                 Remap(dir, c.id);
             EditorUtility.SetDirty(pd);
@@ -228,7 +234,10 @@ public static class KakMetaSetup
         if (s == null) return null;
         string p = AssetDatabase.GetAssetPath(s);
         if (!p.StartsWith(PlayerSprites)) return s;
-        var v = AssetDatabase.LoadAssetAtPath<Sprite>(CharSprites + id + "/" + p.Substring(PlayerSprites.Length));
+        string rel = p.Substring(PlayerSprites.Length);
+        var v = AssetDatabase.LoadAssetAtPath<Sprite>(CharSprites + id + "/" + rel);
+        if (v == null) v = AssetDatabase.LoadAssetAtPath<Sprite>(CharSprites + id + "/" + System.IO.Path.ChangeExtension(rel, ".png")); // gif kaynak → png varyant
+        if (v == null) Debug.LogWarning("[KakMetaSetup] Varyant karesi yok: " + id + "/" + rel);
         return v != null ? v : s;
     }
 
