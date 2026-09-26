@@ -124,6 +124,8 @@ Hepsi tekrar çalıştırılabilir (idempotent), sonucu string döndürür, penc
 | Sesleri Kur | `KakAudioSetup` | AudioManager prefab'ı ve klipler |
 | Sprite Atlaslarını Kur / Art Klasörünü Yeniden İçe Aktar | `KakAtlasSetup`, `KakArtImportRules` | atlas, PPU standardı |
 | Yayın/Oyuncu Ayarlarını Uygula, Yayın/macOS Development Build | `KakBuild` | PlayerSettings, ölçüm build'i |
+| Performans Ayarlarını Uygula | `KakFxSetup.SetupPerformance` | SRP Batcher kapalı + dinamik batching, Mobile URP (ölçek 1, HDR/gölge kapalı), Bloom çeyrek |
+| Fontları Statik Atlasa Pişir | `KakFontSetup.Bake` | Nunito/Cinzel statik atlas (ASCII + Türkçe + Loc), TMP varsayılan font |
 | Denetim/Sahneleri Denetle | `KakSceneAudit.Run` | eksik script, kopuk referans, boş alan raporu |
 | Dev/* | `KakDevMenu` | bot, ölümsüzlük, kalkan ver, `WalkPlayer up/down/left/right/stop`, dünya yazısı, UI panelleri |
 
@@ -138,6 +140,7 @@ Eski araçlar (SceneAutoWire, Phase4AutoSetup, KacAtaKacSetup, *Generator, AutoA
 - Unity 6 API'si: `rb.linearVelocity` (velocity değil), `FindAnyObjectByType`/`FindObjectsByType`.
 - Yeni oynanış parametresi → önce ilgili ScriptableObject'e alan ekle, sonra LevelManager'ın `Apply*` metodunda uygula.
 - Mermiler **her zaman** `ProjectilePool` üzerinden; `Instantiate/Destroy` sadece fallback.
+- Render: SRP Batcher **kapalı**, dinamik batching açık (sprite'lar birleşsin). Aynı katmandaki sprite'lar için ortak atlas + ortak materyal. Yeni metin karakteri → `KakFontSetup.Bake`.
 - Otomasyon/editör aracında **`EditorSceneManager.SaveOpenScenes()` yasak** (adsız sahnede modal pencere → editör kilitlenir). `KakEditorUtil.SaveNamedScenes()` kullan. Editör araçlarında `EditorUtility.DisplayDialog` da yasak (köprüden çağrılınca kilitler); sonucu string döndür/logla.
 - Oyuncunun durumu (kalkan, hayalet, yavaşlama) karakteri ölçeklememeli; çarpışma alanı sabit kalır. Görsel geri bildirim ayrı katmanda.
 - `Time.timeScale` değiştiren her yer `Time.fixedDeltaTime = 0.02f * Time.timeScale` ile eşlenir.

@@ -4,6 +4,14 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-09-26 — Denetim D3: performans ölçerek karar
+
+- **Tuzak:** URP Universal Renderer + SRP Batcher açıkken her SpriteRenderer ayrı draw call; "dinamik batching açık" ayarı etkisiz kalıyor (aynı sprite/materyaldeki 8 meşale ışığı = 8 draw). 2D sprite oyununda SRP Batcher'ı kapatmak draw'u %43 düşürdü, CPU değişmedi. Karar ölçümle: `KakAutoBench` kırılım aşaması (grupları kapatıp draw farkı) + `-kakuncapped`.
+- 60 FPS kilitliyken "ana iş parçacığı 16,7 ms" vsync beklemesidir, maliyet değil. Gerçek maliyet için sınırsız FPS ile ölç (M4: 1,6 ms).
+- Mac standalone build'inde yalnızca "PC" kalite seviyesi var; Mobile URP asset'i (telefonda kullanılan) Mac'te ölçülemez. Mobile ayarlarını ayrıca gözden geçir: render ölçeği 0,8 piksel sanatını bulanıklaştırıyordu.
+- TMP statik atlas: `ClearFontAssetData(false)` + `TryAddCharacters(chars, out missing, true)` + `atlasPopulationMode = Static`. Ana atlas dokusu aynı nesne kalır, konturlu materyaller kopmaz. 122 glif 1024² atlasa sığdı (90 pt, padding 9). Loc'a yeni karakter gelirse `FontTests` kırmızı olur, aracı yeniden çalıştır.
+- `tools/__pycache__` git'e girmişti → .gitignore.
+
 ## 2026-09-26 — Denetim D2: temizlik
 
 - Silmeden önce üç tarama: (1) tip adı kodda (`grep -rlw`), (2) script GUID'i sahne/prefab/asset'te (`.meta` guid → `grep -rl`), (3) sprite GUID'i. Hepsi boşsa sil. Unity kapalı derleme (hata) varken editör asm'si yüklenemez → köprü `invoke` yeni kodu göremez; o durumda `git rm dosya dosya.meta` + refresh.

@@ -2,8 +2,8 @@ using UnityEngine;
 
 /// <summary>
 /// Haritada çıkan güçlendirmelerin (PowerUp) üzerine eklenecek kod.
-/// Oyuncu buna değdiğinde ilgili efekti verip kendini yok eder.
-/// Son 3 saniyede yanıp sönerek kaybolacağını haber verir.
+/// Oyuncu buna değdiğinde ilgili efekti verip havuza döner (ProjectilePool, yoksa Destroy).
+/// Son 3 saniyede yanıp sönerek kaybolacağını haber verir. Havuzdan her çıkışta OnEnable ile sıfırlanır.
 /// </summary>
 [RequireComponent(typeof(Collider2D))]
 public class PowerupPickup : MonoBehaviour
@@ -21,19 +21,29 @@ public class PowerupPickup : MonoBehaviour
     private float timer = 0f;
     private SpriteRenderer spriteRenderer;
     private Color originalColor;
-    // private bool isWarning = false;
+    private bool collected;
 
-    void Start()
+    void Awake()
     {
         // Collider'ın trigger olduğundan emin ol
         Collider2D col = GetComponent<Collider2D>();
         if (col != null) col.isTrigger = true;
 
         spriteRenderer = GetComponent<SpriteRenderer>();
-        if (spriteRenderer != null)
-        {
-            originalColor = spriteRenderer.color;
-        }
+        if (spriteRenderer != null) originalColor = spriteRenderer.color;
+    }
+
+    void OnEnable()
+    {
+        timer = 0f;
+        collected = false;
+        if (spriteRenderer != null) spriteRenderer.color = originalColor;
+    }
+
+    void Despawn()
+    {
+        if (ProjectilePool.Instance != null) ProjectilePool.Instance.Return(gameObject);
+        else Destroy(gameObject);
     }
 
     void Update()
@@ -45,8 +55,6 @@ public class PowerupPickup : MonoBehaviour
         // Son warningTime saniyesinde yanıp sönme efekti
         if (remaining <= warningTime && remaining > 0f)
         {
-            // isWarning = true;
-
             if (spriteRenderer != null)
             {
                 // Kalan süreye göre hızlanan blink
@@ -64,13 +72,8 @@ public class PowerupPickup : MonoBehaviour
             }
         }
 
-        if (timer >= lifetime)
-        {
-            Destroy(gameObject);
-        }
+        if (timer >= lifetime) Despawn();
     }
-
-    bool collected;
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -78,7 +81,7 @@ public class PowerupPickup : MonoBehaviour
         if (collected || !other.CompareTag("Player")) return;
         collected = true;
         ApplyEffect(other.attachedRigidbody != null ? other.attachedRigidbody.gameObject : other.gameObject);
-        Destroy(gameObject);
+        Despawn();
     }
 
     private void ApplyEffect(GameObject player)

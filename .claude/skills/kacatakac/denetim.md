@@ -23,9 +23,9 @@
 | Y1 ✅ | Kalkan görseli karakteri düz camgöbeğine boyuyor (palet dışı, karakter okunmuyor). Hayalet sadece yarı saydam. Kalkan balonu olmalı. | D1 |
 | Y2 | Aktif powerup'ların kalan süresi HUD'da görünmüyor (kalkan var mı? hız ne kadar kaldı?) | D4 |
 | Y3 | İlk oyunda öğretici yok (sürükle, dash, yakın geçiş anlatılmıyor) | D4 → 3c |
-| Y4 | Powerup'lar `Instantiate`/`Destroy` (havuz yok), `FloatingItem` her kare ölçek değiştiriyor | D3 |
-| Y5 | Performans: 82 batch (hedef < 60), Universal Renderer'da sprite birleşmesi yok. 2D Renderer denemesi gerekli (Karanlık dünya için de şart) | D3 |
-| Y6 | TMP fontları dinamik: `FontWarmup` çalışma zamanında glif ekliyor → font dosyaları editörde sürekli değişiyor (git gürültüsü), ilk açılışta maliyet. Statik atlas (TR+EN) daha doğru | D3 |
+| Y4 ✅ | Powerup'lar `Instantiate`/`Destroy` (havuz yok), `FloatingItem` her kare ölçek değiştiriyor | D3 |
+| Y5 ✅ | Performans: 82 batch (hedef < 60), Universal Renderer'da sprite birleşmesi yok. 2D Renderer denemesi gerekli (Karanlık dünya için de şart) | D3 |
+| Y6 ✅ | TMP fontları dinamik: `FontWarmup` çalışma zamanında glif ekliyor → font dosyaları editörde sürekli değişiyor (git gürültüsü), ilk açılışta maliyet. Statik atlas (TR+EN) daha doğru | D3 |
 | Y7 ✅ | Kullanılmayan paketler: Visual Scripting, AI Navigation, Multiplayer Center (+ Plastic) → derleme süresi, build boyutu | D0 |
 | Y8 | Sahne bağlantılarını denetleyen otomatik test yok (kopuk referans, boş alan) | D5 |
 | Y9 | Faz 2B yarım (kod var, sahne/UI/içerik yok). `LevelData`'da kullanılmayan alanlar (hasKey, hasCoins, hasBoss, isLocked, unlockPrice, targetScore, timeLimit, waves + WaveManager) | 3c sonrası |
@@ -38,8 +38,8 @@
 | O3 ✅ | Ölü dosyalar: `FloatingText.cs`, `CameraFitWidth.cs` (yedek), `TutorialInfo/` (Unity şablonu), eski UI sprite'ları (GoldPill, PremiumGoldButton, PremiumPill, MenuBackground_HD, eski JoystickBG/Handle) | D2 |
 | O4 ✅ | Oyun sahnesinin adı hâlâ şablon adı "SampleScene" | D2 |
 | O5 ✅ | IDE dosyası `KacAtaKac.slnx` ve `.plastic/` git'te | D0 |
-| O6 | Coroutine döngülerinde `new WaitForSeconds` (PlayerHealth, EndlessEventManager), olay seçiminde `new List` → küçük tahsisler | D3 |
-| O7 | `PlayerMovement2D.FixedUpdate` tembel `GetComponent<PlayerStatus>` (bileşen yoksa her adımda) | D3 |
+| O6 ✅ | Coroutine döngülerinde `new WaitForSeconds` (PlayerHealth, EndlessEventManager), olay seçiminde `new List` → küçük tahsisler | D3 |
+| O7 ✅ | `PlayerMovement2D.FixedUpdate` tembel `GetComponent<PlayerStatus>` (bileşen yoksa her adımda) | D3 |
 | O8 ✅ | Kalkan kodu `TakeDamage` ve `ConsumeShield` içinde kopya | D1 |
 | O9 | Sesler dinlenmeden üretildi, müzik döngüleri kısa (14-20 sn) | 3c (kullanıcı geri bildirimi) |
 | O10 ✅ | `UnityConnectSettings.m_Enabled` kendiliğinden 1 oldu (Unity servisleri) → geri alındı (0); Unity tekrar yazarsa commit etme | D0 |
@@ -58,7 +58,7 @@
 | ✅ **D0 Hijyen** | Plastic eklentisini ve `.plastic/`'i kaldır, `.slnx` git dışı, kullanılmayan paketleri kaldır, ProjectSettings'i commit et, UnityConnect kararı | Derleme temiz, testler yeşil, editör kilitlenmiyor |
 | ✅ **D1 Adil çarpışma** | Oyuncu yarıçapı ~0,24 (temas < görsel), kalkan ölçek yerine balon efekti, hayalet görünümü, bot yarıçapı, kopya kod | Yeni test: görsel temas mesafesi ≥ çarpışma mesafesi; bot testi |
 | ✅ **D2 Temizlik** | Eski editör araçları ve InitializeOnLoad jeneratörleri kaldırılır; ölü dosyalar; sahne adı "Game" | Menüde sadece güncel araçlar, testler yeşil |
-| **D3 Performans** | Powerup havuzu, coroutine tahsisleri, GetComponent önbelleği, statik font atlası, 2D Renderer deneyi + build ölçümü | Build bench: batch, GC, en kötü kare |
+| ✅ **D3 Performans** | Powerup havuzu, coroutine tahsisleri, GetComponent önbelleği, statik font atlası, 2D Renderer deneyi + build ölçümü | Build bench: batch, GC, en kötü kare |
 | **D4 Oyuncu bilgisi** | HUD'da aktif powerup ikonları ve süre halkaları, kalkan/hayalet görselleri, ilk oyun ipuçları | Ekran görüntüleri, UI testleri |
 | **D5 Doğrulama** | Sahne denetimi testi (EditMode), yeniden denge ölçümü, tam regresyon | Tüm testler yeşil |
 | **D6 Belgeler** | README, skill, yol haritası | — |
@@ -73,3 +73,15 @@
 - ✅ (D2) `KakEndlessSetup` afişte `outlineWidth` ayarlayıp sahneye gömülü, yanlış atlaslı materyal kopyası üretiyordu (Faz 4 aracı sonradan düzeltiyordu: araç sırasına bağlı gizli hata)
 - ✅ (D2) Ölü alanlar: MainMenuController (leaderboardButton, menuAnimator, gameSceneName), ArenaAutoLayout eski HUD takibi (healthUI/scoreUI), LevelData (waves, targetScore, timeLimit, hasKey/Coins/Boss, isLocked/unlockPrice, enableEndlessScore)
 - ⬜ Sahne denetimi: Game (eski SampleScene) 28, MainMenu 2 boş alan (çoğu opsiyonel; 2B alanları bağlanmadı: GameOverScreen yıldız/başlık, LevelManager tema alanları; `WorldPopup.font` boş; `PlayerData` atanmamış) → D5/3c
+
+## D3 ölçüm sonuçları (macOS dev build, Apple M4, 540x1170, bot oynuyor)
+| Durum | draw ort (en fazla) | SetPass | ana iş parçacığı |
+|---|---|---|---|
+| Önce (SRP Batcher açık) | 75 (194) | 31 | 1,62 ms (sınırsız FPS) |
+| SRP Batcher kapalı + dinamik batching | **43 (96)** | 38 | 1,55 ms |
+Kırılım (SRP açıkken, grup kapatınca düşen draw): taşlar ~22, DungeonFrame ~20-28, fırlatıcılar ~14, HUD ~10, post-process ~10-14. Kök neden: SRP Batcher yolunda her SpriteRenderer ayrı draw (aynı sprite/materyaldeki 8 meşale ışığı 8 draw).
+- ✅ Mobile URP: render ölçeği 0,8 → 1 (piksel sanatı bulanıktı), HDR ve 3D gölge kapalı. Bloom çeyrek çözünürlük + 4 geçiş (görsel fark yok, parlaklık 42,0 → 41,6)
+- ✅ Fontlar statik atlas (122 glif, 1024², Nunito + Cinzel), TMP varsayılan font Nunito, yedek LiberationSans; `FontTests`
+- ✅ Powerup havuzu (ProjectilePool genel havuz), PlayerStatus önbelleği, EndlessEventManager bekleme/liste önbelleği
+- ⚠️ Mac build'inde yalnızca "PC" kalite seviyesi var: Mobile ayarları cihazda ölçülmeli (Android modülü kurulunca)
+- ⬜ Kalan: gerçek cihazda ölçüm; en kötü kare 30-67 ms (tek seferlik; kaynağı henüz bilinmiyor, olay başlangıcı veya sahne yüklemesi olabilir)

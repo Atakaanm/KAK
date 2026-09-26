@@ -86,3 +86,7 @@ Thumbs.db
 
 # Unity Version Control (Plastic) çalışma alanı: bu proje git kullanıyor
 /.plastic/
+
+# Python önbelleği
+__pycache__/
+*.pyc

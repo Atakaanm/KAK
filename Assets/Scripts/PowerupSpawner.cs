@@ -200,7 +200,10 @@ public class PowerupSpawner : MonoBehaviour
             return; // 10 denemede uygun yer bulunamadı, bu turu atla
         }
 
-        GameObject obj = Instantiate(selectedPowerup.visualPrefab, spawnPos, Quaternion.identity);
+        // Havuzdan (ProjectilePool prefab'a göre genel havuzdur); PowerupPickup kendini iade eder
+        GameObject obj = ProjectilePool.Instance != null
+            ? ProjectilePool.Instance.Get(selectedPowerup.visualPrefab, spawnPos, Quaternion.identity)
+            : Instantiate(selectedPowerup.visualPrefab, spawnPos, Quaternion.identity);
 
         // ── BOYUT AYARI ──
         SpriteRenderer sr = obj.GetComponent<SpriteRenderer>();
