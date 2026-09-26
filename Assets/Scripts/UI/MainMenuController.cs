@@ -91,6 +91,9 @@ public class MainMenuController : MonoBehaviour
         if (charactersFeature != null && !charactersFeature.TryUse()) return; // kilitli: buton sallanır
         Open(charactersPanel);
     }
+    /// <summary>Ayarlar → Gizlilik Politikası (Apple 5.1.1: uygulama içinden erişilebilir olmalı).</summary>
+    public void OnPrivacyClicked() { PlayButtonSound(); StoreLinks.OpenPrivacy(); }
+
     public void OnPetsClicked()
     {
         PlayButtonSound();

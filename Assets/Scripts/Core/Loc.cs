@@ -99,6 +99,13 @@ public static class Loc
         // Cila (Faz 3c.7)
         { "goal_progress", new[] { "{0}: {1}/{2}", "{0}: {1}/{2}" } },
         { "goal_ready", new[] { "{0} alınabilir!", "{0} is ready to buy!" } },
+        // Reklam (Faz Y3)
+        { "continue_title", new[] { "DEVAM ET?", "CONTINUE?" } },
+        { "continue_sub", new[] { "Reklam izle, 1 canla devam et", "Watch an ad, continue with 1 heart" } },
+        { "continue_watch", new[] { "İZLE", "WATCH" } },
+        { "continue_no", new[] { "HAYIR", "NO THANKS" } },
+        { "double_coins", new[] { "2×", "2×" } },
+        { "privacy", new[] { "Gizlilik Politikası", "Privacy Policy" } },
         // İlk oyun ipuçları (OnboardingHints)
         { "hint_move", new[] { "Parmağını sürükle,\ntaşlardan kaç!", "Drag your finger,\ndodge the rocks!" } },
         { "hint_dash", new[] { "DASH ile taşların\niçinden geç!", "DASH straight\nthrough rocks!" } },

@@ -278,4 +278,10 @@ public class DifficultyManager : MonoBehaviour
     {
         isActive = false;
     }
+
+    /// <summary>Reklamla canlanınca zorluk kaldığı yerden sürer.</summary>
+    public void ResumeDifficulty()
+    {
+        if (stages != null && stages.Length > 0) isActive = true;
+    }
 }

@@ -38,6 +38,7 @@ public class GameManager : MonoBehaviour
         Instance = this;
 
         KakTime.ResetAll();
+        AdService.BeginRun();
         unlockMaskAtStart = FeatureGate.UnlockedMask();
         if (FeatureGate.IsUnlocked(Feature.Missions)) MissionSystem.Ensure(); // tamamlananların yerine yenileri
 
@@ -81,6 +82,18 @@ public class GameManager : MonoBehaviour
         if (difficultyManager != null) difficultyManager.StopDifficulty();
         if (AudioManager.Instance != null) AudioManager.Instance.PlayDeathSfx();
 
+        // Reklamla devam teklifi varsa kayıt (altın, görev, rekor) bekletilir: oyuncu reddedince bir kez yapılır.
+        // Teklif yoksa (varsayılan: reklam kapalı) eskisi gibi hemen.
+        reviveOffered = !IsLevelMode && continuePanel != null && AdService.CanShow(AdPlacement.Revive);
+        if (!reviveOffered) FinalizeRun();
+        StartCoroutine(DeathSequence());
+    }
+
+    /// <summary>Oyunu kayda işler: skor/rekor, oyun sayısı, altın, görevler, açılan özellikler. Oyun başına bir kez.</summary>
+    void FinalizeRun()
+    {
+        if (finalized) return;
+        finalized = true;
         int finalScore = scoreManager != null ? scoreManager.ScoreInt : 0;
         float seconds = scoreManager != null ? scoreManager.ElapsedSeconds : 0f;
         var save = SaveSystem.Data;
@@ -135,9 +148,20 @@ public class GameManager : MonoBehaviour
             if ((gained & (1 << (int)f)) != 0) { NewlyUnlocked = (int)f; break; }
         SaveSystem.Save();
 
-        StartCoroutine(DeathSequence(finalScore, bestScore));
         lastSeconds = seconds;
+        lastFinalScore = finalScore;
+        lastBestScore = bestScore;
     }
+
+    private bool finalized, reviveOffered;
+    private int lastFinalScore, lastBestScore;
+    [Header("Reklamla devam (Faz Y3)")]
+    public ContinuePanel continuePanel;
+    [Tooltip("Canlanınca verilen can ve dokunulmazlık süresi")]
+    public int reviveHealth = 1;
+    public float reviveInvulnerable = 2.5f;
+    /// <summary>Bu oyunda reklamla canlanıldı mı (testler, analitik).</summary>
+    public int Revives { get; private set; }
 
     private float lastSeconds;
     /// <summary>Son oyunda toplanan altın ve hayatta kalma bonusu (oyun sonu ekranı).</summary>
@@ -152,13 +176,53 @@ public class GameManager : MonoBehaviour
     /// <summary>Bu oyunun sonunda yeni açılan özellik (yoksa -1). Oyun sonu ekranında afiş.</summary>
     public int NewlyUnlocked { get; private set; } = -1;
 
-    private System.Collections.IEnumerator DeathSequence(int finalScore, int bestScore)
+    private System.Collections.IEnumerator DeathSequence()
     {
         // Kısa yavaş çekim: ölüm anı okunsun, parçacıklar ve sarsıntı görünsün
         KakTime.SetTimeScale(deathSlowMoScale);
         yield return new WaitForSecondsRealtime(deathSlowMoDuration);
         KakTime.SetTimeScale(0f);
 
+        if (reviveOffered)
+        {
+            // "Devam et?" — kabul: reklam → canlan; ret / süre doldu: kayıt + oyun sonu ekranı
+            continuePanel.Show(AdService.Config != null ? AdService.Config.continueSeconds : 5f, AcceptContinue, DeclineContinue);
+            yield break;
+        }
+        ShowGameOverScreen();
+    }
+
+    void AcceptContinue()
+    {
+        AdService.ShowRewarded(AdPlacement.Revive, Revive, DeclineContinue);
+    }
+
+    void DeclineContinue()
+    {
+        if (continuePanel != null) continuePanel.Hide();
+        FinalizeRun();
+        ShowGameOverScreen();
+    }
+
+    /// <summary>Reklam izlendi: oyuncu 1 canla ve kısa dokunulmazlıkla devam eder; yakındaki taşlar temizlenir.</summary>
+    void Revive()
+    {
+        if (continuePanel != null) continuePanel.Hide();
+        Revives++;
+        isGameOver = false;
+        reviveOffered = false;
+        foreach (var p in Projectile.Active.ToArray())
+            if (ProjectilePool.Instance != null) ProjectilePool.Instance.Return(p.gameObject);
+        var ph = FindAnyObjectByType<PlayerHealth>();
+        if (ph != null) ph.Revive(reviveHealth, reviveInvulnerable);
+        if (difficultyManager != null) difficultyManager.ResumeDifficulty();
+        KakTime.SetTimeScale(1f);
+        GameEvents.RaisePlayerRevived(ph != null ? ph.transform.position : Vector3.zero);
+    }
+
+    void ShowGameOverScreen()
+    {
+        int finalScore = lastFinalScore, bestScore = lastBestScore;
         if (gameOverPanel != null) gameOverPanel.SetActive(true);
         if (gameOverScreen != null)
         {

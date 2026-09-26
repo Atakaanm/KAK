@@ -165,6 +165,19 @@ public static class KakDevMenu
     /// <summary>Rekoru ayarlar (yeni rekor kutlamasını denemek için). Köprü: invoke KakDevMenu SetBest 10</summary>
     public static void SetBest(string n) { if (int.TryParse(n, out int v)) SaveSystem.Data.bestScoreEndless = v; }
 
+    /// <summary>Play'de sahte ödüllü reklamı açar/kapatır (devam et ve 2× altın akışlarını denemek için).</summary>
+    [MenuItem("KacAtaKac/Dev/Reklam Simülasyonu Aç-Kapa")]
+    public static void ToggleAdSimulation()
+    {
+        if (AdService.OverrideConfig != null) { AdService.ResetForTests(); Debug.Log("[Dev] Reklam simülasyonu KAPALI"); return; }
+        var c = ScriptableObject.CreateInstance<AdConfig>();
+        c.enabled = true;
+        c.provider = AdProviderKind.Simulated;
+        AdService.OverrideConfig = c;
+        AdService.OverrideProvider = new SimulatedAdProvider();
+        Debug.Log("[Dev] Reklam simülasyonu AÇIK");
+    }
+
     [MenuItem("KacAtaKac/Dev/UI - Dili Değiştir (TR-EN)")]
     public static void ToggleLanguage() { Loc.Current = Loc.Current == Loc.Lang.TR ? Loc.Lang.EN : Loc.Lang.TR; }
 
