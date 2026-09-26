@@ -9,6 +9,17 @@ public static class KakEditorUtil
     public const string MenuScenePath = "Assets/Scenes/MainMenu.unity";
 
     /// <summary>
+    /// Editörü aynı projeyle yeniden başlatır (yeni kurulan modüllerin görünmesi için). Önce kayıtlı sahneleri kaydeder.
+    /// osascript "quit" bazen AppleEvent zaman aşımına düşüyor; bu yol güvenilir. Köprü: invoke KakEditorUtil RestartEditor
+    /// </summary>
+    public static void RestartEditor()
+    {
+        SaveNamedScenes();
+        AssetDatabase.SaveAssets();
+        EditorApplication.delayCall += () => EditorApplication.OpenProject(System.IO.Directory.GetCurrentDirectory());
+    }
+
+    /// <summary>
     /// Sadece diske kayıtlı ve değişmiş sahneleri kaydeder. EditorSceneManager.SaveOpenScenes adsız
     /// (Untitled) sahnede "Farklı Kaydet" penceresi açar ve arka planda çalışan editörü kilitler.
     /// </summary>

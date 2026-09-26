@@ -224,7 +224,9 @@ def main():
         r = send("menu", arg=a[0])
         return 0 if r["ok"] else 1
     if c == "invoke":
-        r = send("invoke", arg=a[0], arg2=a[1], path=a[2] if len(a) > 2 else "")
+        # Build* (iOS/Android/macOS build) editörü dakikalarca meşgul eder: 30 dk bekle
+        r = send("invoke", arg=a[0], arg2=a[1], path=a[2] if len(a) > 2 else "",
+                 timeout=1800 if a[1].startswith("Build") else 240)
         return 0 if r["ok"] else 1
     if c in ("ping", "state", "refresh", "compile", "play", "stop", "saveScenes"):
         r = send(c, seconds=600 if c in ("refresh", "compile") else 0, timeout=660 if c in ("refresh", "compile") else 240)

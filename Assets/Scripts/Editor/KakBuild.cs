@@ -9,6 +9,8 @@ using UnityEngine;
 ///  - ConfigurePlayer: şirket/ürün adı, paket kimliği, sürüm (+ sürüm kodu), dikey kilit, Android API 36 + AAB + ARM64,
 ///    iOS yalnızca iPhone (iPadOS 26 tüm yönleri istiyor), alt kenar hareketi ertelenir, ikon, açılış ekranı
 ///  - BuildAndroidRelease (.aab, imza: senin keystore'un), BuildIosProject (Xcode projesi), BuildMacDev (ölçüm)
+///  - Test: BuildIosSimulator[Dev] (+ tools/kak_ios_sim.sh), BuildAndroidTestApk (hata ayıklama anahtarı);
+///    platform: SwitchToIos / SwitchToAndroid / SwitchToMac (geçişten sonra Unity'yi yeniden başlat)
 /// Menü: KacAtaKac/Yayın/...
 /// </summary>
 public static class KakBuild
@@ -93,11 +95,43 @@ public static class KakBuild
         return Report("Android .aab", BuildPipeline.BuildPlayer(opts));
     }
 
+    /// <summary>
+    /// Test APK'sı (Builds/Android/KacAtaKac-test.apk): development, Unity'nin hata ayıklama anahtarıyla imzalı; telefona
+    /// USB ile kurulur (adb install), Play'e yüklenemez. Build hattını (API 36, manifest, IL2CPP ARM64) keystore olmadan doğrular.
+    /// </summary>
+    [MenuItem("KacAtaKac/Yayın/Android Test APK")]
+    public static string BuildAndroidTestApk()
+    {
+        ConfigurePlayer();
+        bool prevBundle = EditorUserBuildSettings.buildAppBundle;
+        bool prevCustom = PlayerSettings.Android.useCustomKeystore;
+        try
+        {
+            EditorUserBuildSettings.buildAppBundle = false;
+            PlayerSettings.Android.useCustomKeystore = false; // hata ayıklama anahtarı
+            var opts = new BuildPlayerOptions
+            {
+                scenes = Scenes(),
+                locationPathName = "Builds/Android/KacAtaKac-test.apk",
+                target = BuildTarget.Android,
+                options = BuildOptions.Development
+            };
+            return Report("Android test APK", BuildPipeline.BuildPlayer(opts));
+        }
+        finally
+        {
+            EditorUserBuildSettings.buildAppBundle = prevBundle;
+            PlayerSettings.Android.useCustomKeystore = prevCustom;
+            AssetDatabase.SaveAssets();
+        }
+    }
+
     /// <summary>App Store için Xcode projesi (Builds/iOS). Sonra Xcode 26 ile Archive → App Store Connect (👤).</summary>
     [MenuItem("KacAtaKac/Yayın/iOS Xcode Projesi")]
     public static string BuildIosProject()
     {
         ConfigurePlayer();
+        PlayerSettings.iOS.sdkVersion = iOSSdkVersion.DeviceSDK; // mağaza: gerçek cihaz SDK'sı
         var opts = new BuildPlayerOptions
         {
             scenes = Scenes(),
@@ -106,6 +140,55 @@ public static class KakBuild
             options = BuildOptions.None
         };
         return Report("iOS Xcode", BuildPipeline.BuildPlayer(opts));
+    }
+
+    /// <summary>
+    /// iPhone simülatörü için Xcode projesi (Builds/iOS-Sim): imzasız, Apple hesabı gerekmez. Sonra
+    /// `tools/kak_ios_sim.sh` derler (xcodebuild) ve .app yolunu verir. SDK ayarı build sonrası cihaza geri döner,
+    /// mağaza build'i yanlışlıkla simülatör SDK'sıyla çıkmaz. Önce SwitchToIos (UNITY_IOS derleme sonrası kodu için).
+    /// </summary>
+    [MenuItem("KacAtaKac/Yayın/iOS Simülatör Projesi (test)")]
+    public static string BuildIosSimulator() => BuildIosSimulator(false);
+
+    /// <summary>Development: test botu + ölçüm (KakAutoBench). Simülatörde: xcrun simctl launch ... -kakbench 60 bench.txt</summary>
+    public static string BuildIosSimulatorDev() => BuildIosSimulator(true);
+
+    static string BuildIosSimulator(bool development)
+    {
+        ConfigurePlayer();
+        var prevSdk = PlayerSettings.iOS.sdkVersion;
+        var prevArch = PlayerSettings.iOS.simulatorSdkArchitecture;
+        try
+        {
+            PlayerSettings.iOS.sdkVersion = iOSSdkVersion.SimulatorSDK;
+            PlayerSettings.iOS.simulatorSdkArchitecture = AppleMobileArchitectureSimulator.ARM64; // Apple Silicon Mac
+            var opts = new BuildPlayerOptions
+            {
+                scenes = Scenes(),
+                locationPathName = "Builds/iOS-Sim",
+                target = BuildTarget.iOS,
+                options = development ? BuildOptions.Development : BuildOptions.None
+            };
+            return Report(development ? "iOS simülatör (development)" : "iOS simülatör", BuildPipeline.BuildPlayer(opts));
+        }
+        finally
+        {
+            PlayerSettings.iOS.sdkVersion = prevSdk;
+            PlayerSettings.iOS.simulatorSdkArchitecture = prevArch;
+            AssetDatabase.SaveAssets();
+        }
+    }
+
+    /// <summary>Etkin platformu değiştirir (derleme tanımları: UNITY_IOS / UNITY_ANDROID). Sonra derlemeyi bekle (köprü: refresh).</summary>
+    public static string SwitchToIos() => Switch(BuildTargetGroup.iOS, BuildTarget.iOS);
+    public static string SwitchToAndroid() => Switch(BuildTargetGroup.Android, BuildTarget.Android);
+    public static string SwitchToMac() => Switch(BuildTargetGroup.Standalone, BuildTarget.StandaloneOSX);
+
+    static string Switch(BuildTargetGroup group, BuildTarget target)
+    {
+        if (EditorUserBuildSettings.activeBuildTarget == target) return "[KakBuild] etkin platform zaten " + target;
+        bool ok = EditorUserBuildSettings.SwitchActiveBuildTarget(group, target);
+        return "[KakBuild] etkin platform → " + target + (ok ? "" : " BAŞARISIZ (modül kurulu mu?)");
     }
 
     static string Report(string what, BuildReport report)

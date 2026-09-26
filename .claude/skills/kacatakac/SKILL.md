@@ -34,7 +34,10 @@ Amaç: kaç, hayatta kal, skoru büyüt. Skor zamanla artar (saniyede 10 puan ×
 
 ## 2. Teknik ortam
 
-- **Unity 6000.3.8f1** (Unity 6), **URP** (Universal Renderer, SRP Batcher kapalı), Apple Silicon (arm64). Oyuncu ayarları `KakBuild.ConfigurePlayer` (dikey, IL2CPP ARM64, Android API 25+, iOS 14+). Android/iOS build modülleri kullanıcıda kurulu değil; ölçüm için macOS dev build (`KakBuild.BuildMacDev` + `-kakbench`).
+- **Unity 6000.3.8f1** (Unity 6), **URP** (Universal Renderer, SRP Batcher kapalı), Apple Silicon (arm64). Oyuncu ayarları `KakBuild.ConfigurePlayer` (dikey, IL2CPP ARM64, Android API 25-36 + AAB, iOS 15+ yalnızca iPhone). **Modüller (2026-09-26):** iOS + Android (OpenJDK, SDK 34/35/36, NDK) kurulu, WebGL kaldırıldı. **Xcode 26.6** (iOS 26.5 SDK + simülatör) kurulu ve `xcode-select` ile seçili.
+- **iOS simülatör akışı:** `invoke KakBuild SwitchToIos` → `refresh` → `invoke KakBuild BuildIosSimulator` (veya `BuildIosSimulatorDev`: bot + `-kakbench`) → `tools/kak_ios_sim.sh [--run]` (xcodebuild imzasız, ~7 dk ilk derleme) → `xcrun simctl install/launch`. Unity stdout'u için `xcrun simctl launch --console-pty`. Build'den sonra `SwitchToMac` ile editörü eski platforma döndür ve **Unity'yi yeniden başlat** (`invoke KakEditorUtil RestartEditor`): yoksa URP "array size… Restart Unity" uyarıları basar, `Oyun_20Saniye_HataLoguOlmadanCalisir` düşer.
+- **Android test:** `SwitchToAndroid` → `invoke KakBuild BuildAndroidTestApk` (~8 dk ilk Gradle) → `Builds/Android/KacAtaKac-test.apk` (adb install). Mağaza `.aab`: `BuildAndroidRelease` (kullanıcının keystore'u).
+- **Disk dar (228 GB, sık sık %99):** Claude uygulamasının VM görüntüsü güncellenirken geçici olarak ~10 GB yer. Büyük indirme/build öncesi `df -h /System/Volumes/Data`.
 - Editör yolu: `/Applications/Unity/Hub/Editor/6000.3.8f1/Unity.app`
 - Unity'yi açmak için: `open -a "/Applications/Unity/Hub/Editor/6000.3.8f1/Unity.app" --args -projectPath "/Users/atakaan/KacAtaKac"`
 - Derleme hatalarına bakmak için: `grep -E "error CS|Exception" ~/Library/Logs/Unity/Editor.log`
@@ -69,7 +72,7 @@ python3 tools/kak_store_shots.py all       # mağaza görselleri: sahneleri kura
 - **Test botu:** `Assets/Scripts/Dev/KakAutoPilot.cs` (sadece editör/dev build). `PlayerMovement2D.InputOverride` üzerinden oynar, `Projectile.Active` listesini okur. `skill` 0-1.
 - **Device Simulator tuzağı:** Kullanıcının editöründe Play görünümü **Simulator** (1080×2280, üst güvenli alan 116 px). Simulator açıkken oyun `Screen` boyutunu simüle cihazdan okur. `shots` komutu otomatik olarak Game view'a geçer, bitince Simulator'a döner. Tek `shot` için önce `python3 tools/kak_bridge.py view game`, sonra `view sim`.
 - **Geliştirici ölümsüzlüğü:** `PlayerHealth.DevGodMode` (menü: KacAtaKac/Dev/Ölümsüzlük Aç-Kapa; `shots` otomatik açar).
-- **Git:** Bu makinede `/usr/bin/git` Xcode yolu yüzünden bozuk olabilir. Komutların başına `export DEVELOPER_DIR=/Library/Developer/CommandLineTools` ekle.
+- **Git:** Xcode 26.6 kurulduğundan beri `git` doğrudan çalışıyor (eskiden `DEVELOPER_DIR=/Library/Developer/CommandLineTools` gerekiyordu; sorun çıkarsa yine kullan).
 
 ## 3. Mimari haritası
 
