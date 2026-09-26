@@ -125,6 +125,7 @@ public static class KakUiSetup
         gos.newBestBadge = badge; gos.buttons = cg; gos.dim = dimGroup;
         BuildCoinsRow(gpanel, gos);
         BuildUnlockBanner(gpanel, gos);
+        BuildMissionsBlock(gpanel, gos);
         if (gm != null)
         {
             OnClick(retry, gm.RetryGame);
@@ -410,5 +411,32 @@ public static class KakUiSetup
         fill.fillMethod = Image.FillMethod.Horizontal;
         fill.fillAmount = 0.6f;
         return fill;
+    }
+
+    /// <summary>Oyun sonu görev bloğu: başlık + 3 satır (onay, metin, ilerleme/ödül). Altın satırının altında.</summary>
+    public static void BuildMissionsBlock(RectTransform gpanel, GameOverScreen gos)
+    {
+        var block = Place(Rect(gpanel, "Missions"), new Vector2(0.5f, 1f), new Vector2(0f, -950f), new Vector2(780f, 230f));
+        Text(Place(Rect(block, "Title"), new Vector2(0.5f, 1f), new Vector2(0f, -18f), new Vector2(760f, 36f)), "@missions_title", 30,
+             KakPalette.ArduvazAcik, TextAlignmentOptions.Center, false, false);
+        var texts = new TMP_Text[3];
+        var progress = new TMP_Text[3];
+        var checks = new Image[3];
+        for (int i = 0; i < 3; i++)
+        {
+            var row = Place(Rect(block, "Row" + i), new Vector2(0.5f, 1f), new Vector2(0f, -68f - i * 56f), new Vector2(780f, 52f));
+            Img(row, S("white_ui.png"), false, KakPalette.WithAlpha(KakPalette.Murekkep, 0.35f)).preserveAspect = false;
+            checks[i] = Img(Place(Rect(row, "Check"), new Vector2(0f, 0.5f), new Vector2(34f, 0f), new Vector2(34f, 34f)), S("icon_check.png"), false);
+            texts[i] = Text(Place(Rect(row, "Text"), new Vector2(0f, 0.5f), new Vector2(64f, 0f), new Vector2(560f, 52f), new Vector2(0f, 0.5f)),
+                            "", 30, KakPalette.Krem, TextAlignmentOptions.MidlineLeft, false, false);
+            progress[i] = Text(Place(Rect(row, "Progress"), new Vector2(1f, 0.5f), new Vector2(-20f, 0f), new Vector2(160f, 52f), new Vector2(1f, 0.5f)),
+                               "0/0", 32, KakPalette.Sis, TextAlignmentOptions.MidlineRight);
+        }
+        gos.missionsBlock = block;
+        gos.missionTexts = texts;
+        gos.missionProgress = progress;
+        gos.missionChecks = checks;
+        block.gameObject.SetActive(false);
+        EditorUtility.SetDirty(gos);
     }
 }

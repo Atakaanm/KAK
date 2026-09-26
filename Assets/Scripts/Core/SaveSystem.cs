@@ -134,6 +134,8 @@ public class SaveData
     [Header("İlerleme")]
     public int coins;          // cüzdan (harcanabilir)
     public int totalCoins;     // şimdiye kadar kazanılan toplam (istatistik, açılma koşulları)
+    public List<MissionState> missions = new List<MissionState>(); // aktif görevler (MissionSystem)
+    public int missionsCompleted;
     public int playDays;       // farklı günlerde oynama sayısı
     public int lastPlayDay;    // son oynanan gün (gün numarası)
     public string selectedCharacter = "Boy";
@@ -149,6 +151,7 @@ public class SaveData
     public void MarkSeen(string id)
     {
         if (seen == null) seen = new List<string>();
+        if (missions == null) missions = new List<MissionState>();
         if (!seen.Contains(id)) seen.Add(id);
     }
 

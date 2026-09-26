@@ -69,6 +69,7 @@ public static class KakMetaSetup
         {
             KakUiSetup.BuildCoinsRow(gos.panel, gos);
             KakUiSetup.BuildUnlockBanner(gos.panel, gos);
+            KakUiSetup.BuildMissionsBlock(gos.panel, gos);
             log.Append("Oyun sonu altın satırı + açılış afişi. ");
         }
 

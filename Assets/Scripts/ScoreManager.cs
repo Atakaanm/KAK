@@ -43,6 +43,11 @@ public class ScoreManager : MonoBehaviour
     public int NearMissCount { get; private set; }
     /// <summary>Bu oyunda toplanan altın (oyun sonunda cüzdana eklenir).</summary>
     public int Coins { get; private set; }
+    /// <summary>Görevler için: bu oyundaki dash ve kalkanla engelleme sayısı.</summary>
+    public int DashCount { get; private set; }
+    public int ShieldBlocks { get; private set; }
+    void OnDash(Vector3 p, Vector2 d) => DashCount++;
+    void OnShieldBlocked(Vector3 p) => ShieldBlocks++;
 
     public void AddCoins(int amount, Vector3 pos)
     {
@@ -55,12 +60,16 @@ public class ScoreManager : MonoBehaviour
     {
         GameEvents.PlayerDamaged += OnPlayerDamaged;
         GameEvents.NearMiss += OnNearMiss;
+        GameEvents.DashUsed += OnDash;
+        GameEvents.ShieldBlocked += OnShieldBlocked;
     }
 
     void OnDisable()
     {
         GameEvents.PlayerDamaged -= OnPlayerDamaged;
         GameEvents.NearMiss -= OnNearMiss;
+        GameEvents.DashUsed -= OnDash;
+        GameEvents.ShieldBlocked -= OnShieldBlocked;
     }
 
     void OnPlayerDamaged(int hp, Vector3 pos)

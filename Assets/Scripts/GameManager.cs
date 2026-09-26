@@ -39,6 +39,7 @@ public class GameManager : MonoBehaviour
 
         KakTime.ResetAll();
         unlockMaskAtStart = FeatureGate.UnlockedMask();
+        if (FeatureGate.IsUnlocked(Feature.Missions)) MissionSystem.Ensure(); // tamamlananların yerine yenileri
 
         if (scoreManager == null) scoreManager = GetComponent<ScoreManager>();
         if (scoreManager == null) scoreManager = FindAnyObjectByType<ScoreManager>();
@@ -107,6 +108,26 @@ public class GameManager : MonoBehaviour
             save.coins += RunCoins + RunCoinBonus;
             save.totalCoins += RunCoins + RunCoinBonus;
         }
+        // Görevler (bu oyun başında açıksa): oyunu işle, ödülü cüzdana ekle
+        MissionReward = 0;
+        LastMissions = null;
+        JustCompleted.Clear();
+        if ((unlockMaskAtStart & (1 << (int)Feature.Missions)) != 0)
+        {
+            MissionSystem.Ensure();
+            var stats = new RunStats
+            {
+                seconds = seconds,
+                nearMisses = scoreManager != null ? scoreManager.NearMissCount : 0,
+                dashes = scoreManager != null ? scoreManager.DashCount : 0,
+                coins = scoreManager != null ? scoreManager.Coins : 0,
+                shieldBlocks = scoreManager != null ? scoreManager.ShieldBlocks : 0,
+                maxStage = difficultyManager != null ? difficultyManager.CurrentStageIndex : 0,
+            };
+            MissionReward = MissionSystem.EvaluateRun(stats, JustCompleted);
+            LastMissions = new System.Collections.Generic.List<MissionState>(save.missions);
+        }
+
         // Adım adım açılma: bu oyunla yeni açılan ilk özellik
         NewlyUnlocked = -1;
         int gained = FeatureGate.UnlockedMask() & ~unlockMaskAtStart;
@@ -124,6 +145,10 @@ public class GameManager : MonoBehaviour
     public int RunCoinBonus { get; private set; }
     private bool coinsActiveThisRun;
     private int unlockMaskAtStart;
+    /// <summary>Oyun sonu görev durumu (null: görevler kapalı), bu oyunla tamamlananlar ve toplam ödül.</summary>
+    public System.Collections.Generic.List<MissionState> LastMissions { get; private set; }
+    public readonly System.Collections.Generic.List<MissionState> JustCompleted = new System.Collections.Generic.List<MissionState>();
+    public int MissionReward { get; private set; }
     /// <summary>Bu oyunun sonunda yeni açılan özellik (yoksa -1). Oyun sonu ekranında afiş.</summary>
     public int NewlyUnlocked { get; private set; } = -1;
 
@@ -142,6 +167,7 @@ public class GameManager : MonoBehaviour
             string unlock = NewlyUnlocked >= 0 ? string.Format(Loc.T("unlock_new"), FeatureGate.Name((Feature)NewlyUnlocked)) : null;
             gameOverScreen.Show(finalScore, bestScore, IsNewBest, lastSeconds, near, combo,
                                 coinsActiveThisRun ? RunCoins + RunCoinBonus : -1, SaveSystem.Data.coins, unlock);
+            gameOverScreen.ShowMissions(LastMissions, JustCompleted);
         }
         else
         {

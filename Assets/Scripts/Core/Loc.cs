@@ -74,6 +74,15 @@ public static class Loc
         { "select", new[] { "SEÇ", "SELECT" } },
         { "stat_speed", new[] { "HIZ", "SPEED" } },
         { "stat_dash", new[] { "DASH", "DASH" } },
+        // Görevler (Faz 3c.4)
+        { "missions_title", new[] { "GÖREVLER", "MISSIONS" } },
+        { "mission_SurviveSeconds", new[] { "Tek oyunda {0} sn hayatta kal", "Survive {0}s in one run" } },
+        { "mission_NearMisses", new[] { "Tek oyunda {0} yakın geçiş", "{0} close calls in one run" } },
+        { "mission_Dashes", new[] { "Tek oyunda {0} kez dash at", "Dash {0} times in one run" } },
+        { "mission_CoinsInRun", new[] { "Tek oyunda {0} altın topla", "Grab {0} gold in one run" } },
+        { "mission_ReachStage", new[] { "{0} kademesine ulaş", "Reach {0}" } },
+        { "mission_ShieldBlocks", new[] { "Kalkanla {0} taş engelle", "Block {0} rocks with a shield" } },
+        { "mission_PlayGames", new[] { "{0} oyun oyna", "Play {0} games" } },
         // İlk oyun ipuçları (OnboardingHints)
         { "hint_move", new[] { "Parmağını sürükle,\ntaşlardan kaç!", "Drag your finger,\ndodge the rocks!" } },
         { "hint_dash", new[] { "DASH ile taşların\niçinden geç!", "DASH straight\nthrough rocks!" } },
