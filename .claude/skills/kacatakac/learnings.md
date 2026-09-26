@@ -4,6 +4,12 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-09-26 — Denetim D5-D6 ve Faz 3c araştırması
+
+- **Bot dünyayı bilmeli:** katı kaideler eklenince bot onları bilmediği için köşelere takıldı; acemi bot 37-86 sn'den 20-31 sn'ye düştü. Denge ölçümünden önce botun engel modeli güncel mi kontrol et. Yeni katı engel = `KakAutoPilot`'a da ekle.
+- Sahne denetimi additive açıp kapatınca editördeki sahneye dokunmuyor (test için güvenli).
+- Faz 3c araştırması (kaynaklar `3c.md`): özellikleri günlere yay (Habby), D1-D3 oynanış / D3-D7 meta, ödünleşimli karakterler (tek kahraman yetiyor tuzağı), yakın geçiş etkisi adil kurallarda güçlü, ödüllü reklamda en iyi yer "canlan" ve "2x altın".
+
 ## 2026-09-26 — Denetim D4: oyuncu bilgisi
 
 - **Tuzak:** bir bileşeni gösterdiği/gizlediği nesnenin üstüne koyup `gameObject.SetActive(false)` yaparsan kendi Update'i de durur (ipucu hiç ilerlemez). Aynı nesnedeyse `TMP_Text.enabled` ile gizle; ya da bileşeni ebeveyne koy.

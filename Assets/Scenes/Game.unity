@@ -14385,10 +14385,10 @@ MonoBehaviour:
   - {fileID: 781180294}
   difficultyManager: {fileID: 1804650307}
   powerupSpawner: {fileID: 1524395491}
-  enemyShadow: {fileID: 0}
-  projectilePrefabDefault: {fileID: 0}
-  dungeonFrame: {fileID: 0}
-  screenComposer: {fileID: 0}
+  enemyShadow: {fileID: 21300000, guid: ff6a994760b5043c08bcf81231e66ccc, type: 3}
+  projectilePrefabDefault: {fileID: 8748514831740309198, guid: ea2cad80380b74603b2cbf6f4f02c450, type: 3}
+  dungeonFrame: {fileID: 396405397}
+  screenComposer: {fileID: 2018724}
   defaultLevel: {fileID: 11400000, guid: 59b6cc49688864d0dba08a1e32eedf26, type: 2}
 --- !u!4 &1938158506
 Transform:

@@ -9,6 +9,8 @@ Bu skill yaşayan bir belgedir. Her oturumda öğrenilenler buraya eklenir.
 - **Bu dosya (SKILL.md):** Oyunun ne olduğu, mimari, kurallar. Nadiren değişir.
 - **[progress.md](progress.md):** Nerede kaldık, yol haritası, bilinen hatalar. Her iş sonunda güncellenir.
 - **[learnings.md](learnings.md):** Tarihli günlük: kararlar, keşifler, kullanıcı tercihleri, tuzaklar.
+- **[denetim.md](denetim.md):** 2026-09-26 kapsamlı denetim bulguları ve D0-D6 düzeltme sonuçları (ölçümler dahil).
+- **[3c.md](3c.md):** Faz 3c bağlılık katmanı: araştırma özeti + kaynaklar, açılma takvimi, karakter/pet/görev/ekonomi tasarımı, uygulama sırası.
 - **[roadmap.md](roadmap.md):** Vizyon (Sonsuz + Buz/Futbol/Karanlık dünyaları), 2.5D ve görsel değerlendirmesi, Faz 0-10.
 - **[sanat-rehberi.md](sanat-rehberi.md):** Görsel anayasa: palet, renk rolleri, değer hiyerarşisi, **ekran kompozisyonu [KESİN]** (HUD bandı + ekran enine ölçekli kare arena + koridor/kontrol alanı), ışık ve his ölçüleri. Görsel işlerden önce mutlaka oku. Kullanıcı: "renk uyumu çok önemli".
 - **[prompts/](prompts/):** `00-ana-prompt.md` (her oturumun çalışma kuralları) + `faz-XX-*.md` (her fazın detaylı görev promptu). Kullanıcı "faz N'i uygula" dediğinde ana prompt ve ilgili faz dosyasını oku, uygula.
@@ -22,22 +24,22 @@ Amaç: kaç, hayatta kal, skoru büyüt. Skor zamanla artar (saniyede 10 puan ×
 - **Kontrol:** Sanal joystick (mobil), WASD/ok tuşları (editör).
 - **Can:** 3 kalp, vurulunca kırmızı flaş + kısa ölümsüzlük (0.35 sn).
 - **Güçlendirmeler (5):** Heart (+1 can), Shield (1 vuruş bloklar), Speed (x1.5 hız, 6 sn), SloMo (zaman x0.4, 4 sn — oyuncu normal hızda kalır), Ghost (mermiler içinden geçer, 5 sn).
-- **Modlar:** `Endless` (aktif, skor arttıkça 6 kademeli zorluk) ve `Stage` (dalga sistemi — kodda var, henüz kullanılmıyor).
+- **Modlar:** `Endless` (aktif, skor arttıkça 6 kademeli zorluk, 30-45 sn'de bir olay) ve `Stage` (bölüm: hayatta kal / gol; `LevelModeController`, Faz 2B altyapısı hazır, arayüzü bağlanmadı).
 - **Hedef vizyon:** Sonsuz Mod (sadece taştan kaçış) + Bölüm Modu dünyaları: **Buz** (kaygan, anında duramazsın), **Futbol** (ayağında top, tek tuşla gol; futbolcular sarı/kırmızı kart atar), **Karanlık** (sınırlı görüş, parlayan mermiler) ve daha fazlası. Görsel hedef: "basit ama süper". Ayrıntı: [roadmap.md](roadmap.md).
 - **Güncel öncelik: Sonsuz Mod.** Bölümler sonra ve büyük ölçüde reskin + ayarla gelecek. Sonsuz için yazılan sistemler (mermi etkileri, durum efektleri, spawn noktaları, karo tabanlı arena) genel kurulmalı ki bölümlerde yeniden kullanılsın.
-- **Hedef platform:** Google Play / App Store. Monetizasyon planı: karakter/arena kilidi (`isLocked`, `unlockPrice`), RPG ekipmanı, yetenekler.
+- **Hedef platform:** Google Play / App Store. Monetizasyon/bağlılık planı (Faz 3c): altın toplama, istatistikli ve kilitli karakterler (`PlayerData.isLocked/unlockPrice`), pet'ler, adım adım açılan özellikler (`SaveData.seen`).
 
 **Kullanıcının vizyonu (README + veri yapılarından):** ScriptableObject tabanlı modüler yapı. Yeni karakter, arena, mermi ve bölüm eklemek kod yazmadan, sadece veri dosyası oluşturarak yapılabilmeli. Bu ilkeyi koru.
 
 ## 2. Teknik ortam
 
-- **Unity 6000.3.8f1** (Unity 6), **URP**, Apple Silicon (arm64). Build target: StandaloneOSX (mobil henüz ayarlanmadı).
+- **Unity 6000.3.8f1** (Unity 6), **URP** (Universal Renderer, SRP Batcher kapalı), Apple Silicon (arm64). Oyuncu ayarları `KakBuild.ConfigurePlayer` (dikey, IL2CPP ARM64, Android API 25+, iOS 14+). Android/iOS build modülleri kullanıcıda kurulu değil; ölçüm için macOS dev build (`KakBuild.BuildMacDev` + `-kakbench`).
 - Editör yolu: `/Applications/Unity/Hub/Editor/6000.3.8f1/Unity.app`
 - Unity'yi açmak için: `open -a "/Applications/Unity/Hub/Editor/6000.3.8f1/Unity.app" --args -projectPath "/Users/atakaan/KacAtaKac"`
 - Derleme hatalarına bakmak için: `grep -E "error CS|Exception" ~/Library/Logs/Unity/Editor.log`
 - Serialization **Force Text** → `.unity`, `.prefab`, `.asset` dosyaları YAML olarak okunabilir.
-- Paketler: Input System 1.18 (ama kod **eski** `Input.GetAxisRaw` kullanıyor), TextMeshPro, UGUI, 2D Sprite.
-- VCS: GitHub (`Atakaanm/KAK`, dal `main`) + Unity Version Control (Plastic, `.plastic/`) — Plastic'te kimlik doğrulama hatası var, yok sayılabilir.
+- Paketler: URP 17.3, Input System 1.18 (kod hâlâ eski `Input.GetAxisRaw` da kullanıyor, Active Input Handling = Both), UGUI 2 (TextMeshPro dahil), 2D Sprite, Test Framework, Timeline. Plastic/Visual Scripting/AI Navigation/Multiplayer Center D0'da kaldırıldı.
+- VCS: GitHub (`Atakaanm/KAK`, dal `main`). `.plastic/` diskte kalabilir ama git dışı, paket yok.
 - Sahneler (Build sırası): `0 MainMenu`, `1 Game` (oyun sahnesi; 2026-09-26'ya kadar adı SampleScene idi). Sabitler: `SceneLoader.MENU_SCENE / GAME_SCENE`.
 
 ## 2.5 Otonom test altyapısı (Faz 0'da kuruldu) — Unity'yi Claude kontrol eder
@@ -71,25 +73,29 @@ python3 tools/kak_montage.py out.png a.png b.png ...   # yan yana
 
 ```
 MainMenu sahnesi
-  MainMenuController ──(Play)──► GameSettings.SelectedLevel = defaultLevel ──► Game
-  AudioManager (singleton, DontDestroyOnLoad, PlayerPrefs: MusicOn/SfxOn/VibrationOn)
+  MainMenuController ──(OYNA)──► GameSettings.SelectedLevel = defaultLevel ──► SceneLoader.LoadGame (SceneFader)
+  MenuBackdrop (canlı arena arka planı), Ayarlar / Karakter panelleri, LanguageButton
+  AudioManager (Resources/AudioManager.prefab, her sahnede EnsureExists, DontDestroyOnLoad; ayarlar SaveSystem'de)
 
 Game (oyun sahnesi)
-  GameManager [+ ScoreManager aynı objede]  (singleton, DontDestroyOnLoad ⚠)
-    Awake: LevelManager / DifficultyManager yoksa runtime'da yaratır
+  GameManager [+ ScoreManager]  (sahneye özel; GameOver, LevelComplete, Retry, menü, ölüm yavaş çekimi)
+  Managers/ LevelManager, DifficultyManager, ProjectilePool, PowerupSpawner, FeedbackManager(+FxChips),
+            EndlessEventManager(+LaneWarning), WorldPopup   ← KakSceneSetup/KakEndlessSetup kurar
   LevelManager.Start ─► LevelData uygular:
+      theme (WorldTheme, 2B) → arena görseli/tonu, zemin sürtünmesi, DungeonFrame karoları
       PlayerData  → PlayerMovement2D, PlayerHealth, PlayerDirectionSprite
-      ArenaData   → ArenaAutoLayout (duvar/spawner yerleşimi), zemin sürtünmesi
+      ArenaData   → ArenaAutoLayout (PlayableWorldRect, duvarlar, katı kaideler, fırlatıcı duruş noktaları)
       SpawnerData → CornerShooter[] + SpawnerDirectionAnimator[]
-      Endless     → DifficultyManager (stages, spawner'lar, ScoreManager bağlanır)
-      Stage       → WaveManager.Init(waves)
+      Endless     → DifficultyManager (kademeler) + EndlessEventManager açık
+      Stage       → SetupStage (köşe fırlatıcı ayarı + EnemyFactory düşmanları) + LevelModeController.Begin
       Powerups    → PowerupSpawner.Init
-      sonra: ArenaAutoLayout.ApplyLayout → CameraFitWidth.ForceRecalculate → Projectile.SetArenaBounds
-  CornerShooter ─► ProjectilePool.Get ─► Projectile (Kinematic RB, trigger, arena dışına çıkınca havuza döner)
-  Projectile.OnTriggerEnter2D(PlayerHitbox.Hurt) ─► PlayerHealth.TakeDamage ─► 0 can → GameManager.GameOver
-  PowerupSpawner ─► PowerupPickup (+FloatingItem, 8 sn ömür, son 3 sn yanıp söner)
-  PauseManager (timeScale 0, uygulama arka plana gidince otomatik durur)
-  HUD: HealthUI (kalp animasyonları), ScoreText, Joystick, GameOverPanel, PausePanel
+      sonra: ArenaAutoLayout.ApplyLayout → ScreenComposer.ForceRecalculate → Projectile.SetArenaBounds
+  CornerShooter ─► Projectile.Launch/LaunchMeteor (ProjectilePool) ─► PlayerHitbox.Hurt ─► PlayerHealth.TakeDamage
+      (ProjectileData.effect ≠ Damage → PlayerStatus: yavaşlama, donma, sarı/kırmızı kart)
+  PowerupSpawner ─► PowerupPickup (havuzlu) ─► PowerupPickup.Apply ─► GameEvents.PowerupActivated ─► PowerupHud
+  NearMissTracker / PlayerDash / PlayerJuice / ShieldBubble (oyuncu üstünde)
+  HUD: HudBand (HealthUI kalpler, skor, combo, olay afişi, pause) · ControlArea (VirtualJoystick, DashButton,
+       PowerupHud, OnboardingHints) · PausePanel · GameOverPanel (GameOverScreen)
 ```
 
 **Ekran kompozisyonu (Faz 1.5):** `Main Camera` üzerinde `ScreenComposer` (CameraFitWidth kaldırıldı) → kamera boyutu/konumu + `HUDCanvas/HudBand/HudContent` (kalpler, skor, pause) + `HUDCanvas/ControlArea/ControlContent/JoystickZone` (kayan `VirtualJoystick`, bileşen artık zone üzerinde) + `DungeonFrame` (arena dışı dünya: Backdrop, koridor, duvarlar, Ledge, Vignette, 8 meşale). Kurulum aracı: `KacAtaKac/Ekran Kompozisyonunu Kur` (`KakScreenSetup`). Sıralama: DungeonFrame -300…-260, arena -100, oyun nesneleri ≥ 0.
@@ -102,12 +108,12 @@ Game (oyun sahnesi)
 **Oyuncu bilgisi (D4):** `PowerupHud` (ControlContent/PowerupHud; `GameEvents.PowerupActivated(data, sn)`, 0 = vurulana kadar), `OnboardingHints` (ControlContent/HintText; `SaveData.seen` + `HasSeen/MarkSeen` — bir kez gösterilen her şey için genel bayrak listesi). Güçlendirme uygulamak için tek giriş: `PowerupPickup.Apply(data, player, pos)`.
 **His:** `FeedbackManager` (Managers altında, tek ParticleSystem `FxChips`), `KakCameraShake` (kamera), `PlayerJuice` (oyuncu).
 
-**Önemli singleton'lar:** `GameManager`, `LevelManager`, `DifficultyManager`, `WaveManager`, `ProjectilePool`, `AudioManager` — hepsi `Instance` statik alanı ile.
+**Önemli singleton'lar:** `GameManager`, `LevelManager`, `DifficultyManager`, `ProjectilePool`, `AudioManager`, `WorldPopup`, `LevelModeController` — `Instance` statik alanı ile. Sahneye özel olanlar OnDestroy'da temizlenir.
 
 **Zorluk nasıl uygulanıyor (DifficultyManager):** skor eşiğine göre stage seçer → her spawner için `shootInterval = orijinal × shootIntervalMultiplier`, `activeSpawnerCount` kadarını aktif eder; mermi hız/boyut, oyuncu hızı ve skor hızı çarpanlarını getter'larla verir (`CornerShooter`, `PlayerMovement2D`, `ScoreManager` okur).
 
-**Veri dosyaları (`Assets/Data/`):** `Endless_Level1_LevelData` (tek aktif bölüm), `Boy_/Girl_PlayerData`, `Dungeon_ArenaData`, `RockThrower_SpawnerData` (4 köşede de aynı), `Rock_ProjectileData`, `Stage1..6` zorluk kademeleri, `Powerups/*Data`.
-⚠ Birçok veri dosyasında görsel/prefab alanları boş (`Rock_ProjectileData.projectilePrefab`, `Dungeon_ArenaData.arenaSprite`, spawner sprite'ları, Boy görselleri). Kod bu durumda **sahnedeki mevcut ayarları** kullanıyor. Yani görsellerin asıl kaynağı şu an sahne, veri değil.
+**Veri dosyaları (`Assets/Data/`):** `Endless_Level1_LevelData` (tek aktif bölüm), `Boy_/Girl_PlayerData`, `Dungeon_ArenaData`, `RockThrower_SpawnerData` (4 köşede de aynı), `Projectiles/*` (7 taş türü), `Stage1..6` zorluk kademeleri, `Powerups/*Data`.
+⚠ Bazı veri dosyalarında görsel alanları boş (`Dungeon_ArenaData.arenaSprite`, spawner sprite'ları). Kod bu durumda **sahnedeki mevcut ayarları** kullanıyor. Sahnede bilinçli boş bırakılan alanlar `SahneDenetimTests.BilincliBos` listesinde.
 
 ## 4. Editör araçları (üst menü "KacAtaKac")
 
@@ -153,7 +159,7 @@ Eski araçlar (SceneAutoWire, Phase4AutoSetup, KacAtaKacSetup, *Generator, AutoA
 3. Değişiklikten sonra Unity penceresine geçince derlenir. Hataları `Editor.log`'dan kontrol et.
 4. Kullanıcı Türkçe konuşuyor. Açıklamaları Türkçe, sade ve adım adım yap. Inspector'da ne yapacağını tam söyle.
 5. Kaydedilmemiş sahne değişikliklerini (`git status`) göz önünde tut. Kullanıcının Editor'deki işini ezme.
-6. Commit/push sadece kullanıcı isterse.
+6. Git: kullanıcı faz dalları, push ve PR birleştirme için kalıcı izin verdi (2026-09-25). Akış: faz dalı → commit → push → `gh pr create` → `gh pr merge --merge` → `origin/main`'den yeni dal. `.plastic/`, `*.slnx`, dinamik font gürültüsü ve UnityConnectSettings'teki kendiliğinden değişiklikler commit'e girmez.
 
 ## 7. Skill'i güncelleme protokolü (ZORUNLU)
 

@@ -46,7 +46,7 @@ Son commit'ler (Temmuz 2026): HD ana menü, altın buton, premium fontlar (Cinze
 
 ## Aktif faz
 
-**Kapsamlı denetim ve düzeltme (D0–D6)** → ardından **Faz 3c (bağlılık + meta ilerleme, odak Sonsuz Mod)**. Bulgular ve yol haritası: `denetim.md`.
+**Faz 3c — bağlılık katmanı (odak Sonsuz Mod):** altın, adım adım açılan özellikler, istatistikli kilitli karakterler, görevler, pet'ler, günlük ödül. Araştırma, tasarım ve uygulama sırası: `3c.md`. (Denetim D0-D6 tamamlandı: `denetim.md`.)
 Faz 2B altyapısı yarım (kod var, sahne/UI yok, commit 6f1618f), 3c'den sonra bitirilecek.
 
 ### Denetim sonucu (sürüyor)
@@ -55,7 +55,9 @@ Faz 2B altyapısı yarım (kod var, sahne/UI yok, commit 6f1618f), 3c'den sonra 
 - [x] **D2 Temizlik:** 10 eski editör aracı + 3 InitializeOnLoad üretici silindi; ölü kod (FloatingText, CameraFitWidth, WaveManager/WaveData, TutorialInfo, Readme) ve 6 kullanılmayan UI sprite'ı; LevelData/MainMenuController/ArenaAutoLayout ölü alanları; **SampleScene → Game**, SampleSceneProfile → GameVolumeProfile (GUID korunarak). WorldPopup artık Nunito (önce LiberationSans), `Show(scale)` hatası, afişte gömülü materyal kopyası. Testler 40/40 + 4/4.
 - [x] **D3 Performans (ölçerek):** SRP Batcher kapalı + dinamik batching → draw 75 → 43 (tepe 194 → 96), CPU aynı. Mobile URP render ölçeği 0,8 → 1 (piksel sanatı bulanıktı), HDR/gölge kapalı, Bloom çeyrek + 4 geçiş. Fontlar statik atlas (açılışta glif üretimi yok, git gürültüsü bitti), TMP varsayılan Nunito. Powerup havuzu, küçük tahsisler. Bench'e kırılım + `-kakuncapped`. Testler 41/41 + 6/6. Ayrıntı: `denetim.md` D3 tablosu.
 - [x] **D4 Oyuncu bilgisi:** aktif güçlendirme göstergesi (`PowerupHud`: arenanın altında ikon + süre halkası), ilk oyun ipuçları (`OnboardingHints`: hareket → dash → yakın geçiş, bir kez, deneyimli kayıtta yok; `SaveData.seen` = 3c adım adım açılmanın temeli). `PowerupPickup.Apply` statik, Dev menü "Tüm Powerup'ları Ver". Test kaydı artık her testte temiz. Testler 46/46 + 6/6.
-- [ ] D5 Doğrulama (sahne denetimi testi, denge ölçümü) → D6 Belgeler
+- [x] **D5 Doğrulama:** `SahneDenetimTests` (EditMode, izin listeli), LevelManager tema referansları bağlandı, denge ölçümü (bot kaidelere takılıyordu → düzeltildi; usta 65-143 sn, acemi 80-93 sn), 5 oranlı ekran seti. Testler 46/46 + 8/8.
+- [x] **D6 Belgeler:** SKILL.md mimari haritası ve teknik ortam güncel koda göre yeniden yazıldı, README yenilendi, git izin kuralı güncellendi.
+- **Denetim tamamlandı.** Sıradaki: **Faz 3c** (`3c.md`: araştırma + tasarım + uygulama sırası).
 
 **Önceki: Faz 2B — Bölüm dünyaları için mimari** (yarım). Sonsuz Mod v1.0 hazır: 0 ✅ 1 ✅ 1.5 ✅ 3 ✅ 2A ✅ 5 ✅ 4 ✅ 10 ✅* (2026-09-25).
 Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
@@ -135,7 +137,7 @@ Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 - Varsayım: Kalkan "vurulana kadar" sürer (`ShieldData.duration` kullanılmıyor, davranış korunuyor)
 
 ### Sıradaki adım
-**D5 Doğrulama** (dal `denetim-d5`): (1) `KakSceneAudit`'i EditMode testine çevir (eksik script = 0, kopuk referans = 0; bilinen opsiyonel boş alanlar izin listesinde), (2) denge ölçümü (`python3 tools/kak_bridge.py denge`) — D1 çarpışma değişikliğinden sonra bot süreleri, yakın geçiş sıklığı; gerekirse ince ayar, (3) tam regresyon + 5 oranlı ekran görüntüsü seti (`shots d5`). Sonra **D6 Belgeler** (README, SKILL mimari haritası güncel değil: GameManager artık sahneye özel, WaveManager yok vb.) → **Faz 3c**.
+**Faz 3c.1 Altın** (dal `faz-3c-altin`): havuzlu altın nesnesi (palet içi piksel sprite + parıltı), arenada doğma kuralı (6-10 sn'de bir 1-3'lü küme, oyuncudan uzak ama ulaşılabilir, kademeyle artar), toplama (gövde ya da ayak izi değince; ardışık toplamada ses tonu yükselir), HUD sayacı (skorun altında), oyun sonu altın satırı + sayma animasyonu, `SaveData.coins` + `totalCoins`. Testler + ekran görüntüsü. Ayrıntı: `3c.md`.
 
 ### Onay bekleyenler
 - **Android Build Support modülü** kurulmalı (Unity Hub → 6000.3.8f1 → Add modules). Sonra "Android build al" → cihazda test.

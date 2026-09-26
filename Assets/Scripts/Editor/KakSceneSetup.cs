@@ -91,6 +91,11 @@ public static class KakSceneSetup
             lm.spawnerVisuals[i] = lm.spawners[i].spawnerVisual;
         lm.difficultyManager = dm;
         lm.powerupSpawner = ps;
+        // Bölüm modu/tema referansları (Faz 2B): sahnede hazır olanlar
+        lm.screenComposer = Object.FindAnyObjectByType<ScreenComposer>();
+        lm.dungeonFrame = Object.FindAnyObjectByType<DungeonFrame>();
+        lm.projectilePrefabDefault = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Projectile.prefab");
+        lm.enemyShadow = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Player/Black.png");
         EditorUtility.SetDirty(lm);
 
         // GameManager referansları
