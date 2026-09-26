@@ -48,6 +48,10 @@ public static class Loc
         { "hud_score", new[] { "SKOR: {0}", "SCORE: {0}" } },
         { "near_miss", new[] { "YAKIN!", "CLOSE!" } },
         { "super_dodge", new[] { "SÜPER KAÇIŞ!", "SUPER DODGE!" } },
+        // İlk oyun ipuçları (OnboardingHints)
+        { "hint_move", new[] { "Parmağını sürükle,\ntaşlardan kaç!", "Drag your finger,\ndodge the rocks!" } },
+        { "hint_dash", new[] { "DASH ile taşların\niçinden geç!", "DASH straight\nthrough rocks!" } },
+        { "hint_near", new[] { "Kıl payı kaçış =\nbonus puan!", "Close call =\nbonus points!" } },
         { "pu_heal", new[] { "+1 CAN", "+1 LIFE" } },
         { "pu_shield", new[] { "KALKAN", "SHIELD" } },
         { "pu_speed", new[] { "HIZ!", "SPEED!" } },

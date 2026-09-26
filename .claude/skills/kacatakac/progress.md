@@ -54,7 +54,8 @@ Faz 2B altyapısı yarım (kod var, sahne/UI yok, commit 6f1618f), 3c'den sonra 
 - [x] **D1 Adil çarpışma:** `PlayerHitbox` (ayak izi r=0,2 duvarlar için + gövde kapsülü 0,36×0,80 taşlar için; eski tek daire r=0,40 gövdenin 2 katıydı), `ShieldBubble` (ölçek/renk yerine piksel balon), katı köşe kaideleri, bot gerçek ölçüleri okuyor. Testler 40/40 + 4/4.
 - [x] **D2 Temizlik:** 10 eski editör aracı + 3 InitializeOnLoad üretici silindi; ölü kod (FloatingText, CameraFitWidth, WaveManager/WaveData, TutorialInfo, Readme) ve 6 kullanılmayan UI sprite'ı; LevelData/MainMenuController/ArenaAutoLayout ölü alanları; **SampleScene → Game**, SampleSceneProfile → GameVolumeProfile (GUID korunarak). WorldPopup artık Nunito (önce LiberationSans), `Show(scale)` hatası, afişte gömülü materyal kopyası. Testler 40/40 + 4/4.
 - [x] **D3 Performans (ölçerek):** SRP Batcher kapalı + dinamik batching → draw 75 → 43 (tepe 194 → 96), CPU aynı. Mobile URP render ölçeği 0,8 → 1 (piksel sanatı bulanıktı), HDR/gölge kapalı, Bloom çeyrek + 4 geçiş. Fontlar statik atlas (açılışta glif üretimi yok, git gürültüsü bitti), TMP varsayılan Nunito. Powerup havuzu, küçük tahsisler. Bench'e kırılım + `-kakuncapped`. Testler 41/41 + 6/6. Ayrıntı: `denetim.md` D3 tablosu.
-- [ ] D4 Oyuncu bilgisi (HUD powerup göstergesi, ilk oyun ipuçları) → D5 Doğrulama (sahne denetimi testi, denge ölçümü) → D6 Belgeler
+- [x] **D4 Oyuncu bilgisi:** aktif güçlendirme göstergesi (`PowerupHud`: arenanın altında ikon + süre halkası), ilk oyun ipuçları (`OnboardingHints`: hareket → dash → yakın geçiş, bir kez, deneyimli kayıtta yok; `SaveData.seen` = 3c adım adım açılmanın temeli). `PowerupPickup.Apply` statik, Dev menü "Tüm Powerup'ları Ver". Test kaydı artık her testte temiz. Testler 46/46 + 6/6.
+- [ ] D5 Doğrulama (sahne denetimi testi, denge ölçümü) → D6 Belgeler
 
 **Önceki: Faz 2B — Bölüm dünyaları için mimari** (yarım). Sonsuz Mod v1.0 hazır: 0 ✅ 1 ✅ 1.5 ✅ 3 ✅ 2A ✅ 5 ✅ 4 ✅ 10 ✅* (2026-09-25).
 Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
@@ -134,7 +135,7 @@ Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 - Varsayım: Kalkan "vurulana kadar" sürer (`ShieldData.duration` kullanılmıyor, davranış korunuyor)
 
 ### Sıradaki adım
-**D4 Oyuncu bilgisi** (dal `denetim-d4`): (1) HUD'da aktif powerup göstergesi: kalkan/hız/hayalet/yavaş çekim ikonları + kalan süre halkası (HudBand'de kalplerin yanında, palet renkleri, `GameEvents.PowerupCollected` + süre bitişi olayı), (2) ilk oyun ipuçları: ilk açılışta "Sürükle → kaç", ilk dash hazır olduğunda "Dash!" ipucu, ilk yakın geçişte açıklama; `SaveSystem.Data` bayrakları ile bir kez gösterilir (Faz 3c'deki adım adım açılma sisteminin temeli). Ekran görüntüsü + UI testleri.
+**D5 Doğrulama** (dal `denetim-d5`): (1) `KakSceneAudit`'i EditMode testine çevir (eksik script = 0, kopuk referans = 0; bilinen opsiyonel boş alanlar izin listesinde), (2) denge ölçümü (`python3 tools/kak_bridge.py denge`) — D1 çarpışma değişikliğinden sonra bot süreleri, yakın geçiş sıklığı; gerekirse ince ayar, (3) tam regresyon + 5 oranlı ekran görüntüsü seti (`shots d5`). Sonra **D6 Belgeler** (README, SKILL mimari haritası güncel değil: GameManager artık sahneye özel, WaveManager yok vb.) → **Faz 3c**.
 
 ### Onay bekleyenler
 - **Android Build Support modülü** kurulmalı (Unity Hub → 6000.3.8f1 → Add modules). Sonra "Android build al" → cihazda test.

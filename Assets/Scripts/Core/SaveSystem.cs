@@ -129,9 +129,19 @@ public class SaveData
 
     public SettingsData settings = new SettingsData();
 
+    // Bir kez gösterilen ipuçları ve adım adım açılan özellikler (id listesi)
+    public List<string> seen = new List<string>();
+    public bool HasSeen(string id) => seen != null && seen.Contains(id);
+    public void MarkSeen(string id)
+    {
+        if (seen == null) seen = new List<string>();
+        if (!seen.Contains(id)) seen.Add(id);
+    }
+
     public LevelProgress Level(string id)
     {
         if (levels == null) levels = new List<LevelProgress>();
+        if (seen == null) seen = new List<string>();
         foreach (var l in levels) if (l.id == id) return l;
         return null;
     }

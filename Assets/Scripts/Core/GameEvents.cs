@@ -13,6 +13,8 @@ public static class GameEvents
     public static event Action<Vector3> ShieldBlocked;
     public static event Action<Vector3> PlayerDied;
     public static event Action<PowerupData, Vector3> PowerupCollected;
+    /// <summary>Süreli etki başladı (veri, gerçek süre sn; 0 = vurulana kadar, ör. kalkan). Anlık etkilerde (can) çağrılmaz.</summary>
+    public static event Action<PowerupData, float> PowerupActivated;
     /// <summary>Mermi duvara çarpıp yok oldu (konum, hız).</summary>
     public static event Action<Vector3, Vector2> ProjectileHitWall;
     /// <summary>Gökten düşen taş yere indi (konum).</summary>
@@ -38,6 +40,7 @@ public static class GameEvents
     public static void RaiseShieldBlocked(Vector3 pos) => ShieldBlocked?.Invoke(pos);
     public static void RaisePlayerDied(Vector3 pos) => PlayerDied?.Invoke(pos);
     public static void RaisePowerupCollected(PowerupData data, Vector3 pos) => PowerupCollected?.Invoke(data, pos);
+    public static void RaisePowerupActivated(PowerupData data, float seconds) => PowerupActivated?.Invoke(data, seconds);
     public static void RaiseProjectileHitWall(Vector3 pos, Vector2 vel) => ProjectileHitWall?.Invoke(pos, vel);
     public static void RaiseMeteorLanded(Vector3 pos) => MeteorLanded?.Invoke(pos);
     public static void RaiseNearMiss(Vector3 pos, bool dashing) => NearMiss?.Invoke(pos, dashing);
@@ -55,6 +58,7 @@ public static class GameEvents
         ShieldBlocked = null;
         PlayerDied = null;
         PowerupCollected = null;
+        PowerupActivated = null;
         ProjectileHitWall = null;
         StageChanged = null;
         MeteorLanded = null;

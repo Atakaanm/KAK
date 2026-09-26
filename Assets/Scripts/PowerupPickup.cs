@@ -84,9 +84,12 @@ public class PowerupPickup : MonoBehaviour
         Despawn();
     }
 
-    private void ApplyEffect(GameObject player)
+    private void ApplyEffect(GameObject player) => Apply(powerupData, player, transform.position);
+
+    /// <summary>Güçlendirmeyi oyuncuya uygular (ses, olaylar, istatistik dahil). Toplayıcı nesneden bağımsız: test ve geliştirici menüsü de kullanır.</summary>
+    public static void Apply(PowerupData powerupData, GameObject player, Vector3 pos)
     {
-        if (powerupData == null) return;
+        if (powerupData == null || player == null) return;
 
         PlayerHealth health = player.GetComponent<PlayerHealth>();
         PlayerMovement2D movement = player.GetComponent<PlayerMovement2D>();
@@ -102,7 +105,7 @@ public class PowerupPickup : MonoBehaviour
 
         if (AudioManager.Instance != null) AudioManager.Instance.PlayScoreSfx(); // Geçici powerup sesi
         
-        GameEvents.RaisePowerupCollected(powerupData, transform.position);
+        GameEvents.RaisePowerupCollected(powerupData, pos);
         SaveSystem.Data.totalPowerups++;
 
         switch (powerupData.type)
@@ -127,6 +130,10 @@ public class PowerupPickup : MonoBehaviour
                 if (GameManager.Instance != null) GameManager.Instance.TimeSlow(powerupData.powerMultiplier, finalDuration);
                 break;
         }
+
+        // HUD göstergesi: süreli etkiler (kalkan = vurulana kadar)
+        if (powerupData.type == PowerupType.Shield) GameEvents.RaisePowerupActivated(powerupData, 0f);
+        else if (powerupData.type != PowerupType.Heal) GameEvents.RaisePowerupActivated(powerupData, finalDuration);
     }
 
 }

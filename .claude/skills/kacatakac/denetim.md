@@ -21,8 +21,8 @@
 | # | Bulgu | Faz |
 |---|---|---|
 | Y1 ✅ | Kalkan görseli karakteri düz camgöbeğine boyuyor (palet dışı, karakter okunmuyor). Hayalet sadece yarı saydam. Kalkan balonu olmalı. | D1 |
-| Y2 | Aktif powerup'ların kalan süresi HUD'da görünmüyor (kalkan var mı? hız ne kadar kaldı?) | D4 |
-| Y3 | İlk oyunda öğretici yok (sürükle, dash, yakın geçiş anlatılmıyor) | D4 → 3c |
+| Y2 ✅ | Aktif powerup'ların kalan süresi HUD'da görünmüyor (kalkan var mı? hız ne kadar kaldı?) | D4 |
+| Y3 ✅ | İlk oyunda öğretici yok (sürükle, dash, yakın geçiş anlatılmıyor) | D4 → 3c |
 | Y4 ✅ | Powerup'lar `Instantiate`/`Destroy` (havuz yok), `FloatingItem` her kare ölçek değiştiriyor | D3 |
 | Y5 ✅ | Performans: 82 batch (hedef < 60), Universal Renderer'da sprite birleşmesi yok. 2D Renderer denemesi gerekli (Karanlık dünya için de şart) | D3 |
 | Y6 ✅ | TMP fontları dinamik: `FontWarmup` çalışma zamanında glif ekliyor → font dosyaları editörde sürekli değişiyor (git gürültüsü), ilk açılışta maliyet. Statik atlas (TR+EN) daha doğru | D3 |
@@ -59,7 +59,7 @@
 | ✅ **D1 Adil çarpışma** | Oyuncu yarıçapı ~0,24 (temas < görsel), kalkan ölçek yerine balon efekti, hayalet görünümü, bot yarıçapı, kopya kod | Yeni test: görsel temas mesafesi ≥ çarpışma mesafesi; bot testi |
 | ✅ **D2 Temizlik** | Eski editör araçları ve InitializeOnLoad jeneratörleri kaldırılır; ölü dosyalar; sahne adı "Game" | Menüde sadece güncel araçlar, testler yeşil |
 | ✅ **D3 Performans** | Powerup havuzu, coroutine tahsisleri, GetComponent önbelleği, statik font atlası, 2D Renderer deneyi + build ölçümü | Build bench: batch, GC, en kötü kare |
-| **D4 Oyuncu bilgisi** | HUD'da aktif powerup ikonları ve süre halkaları, kalkan/hayalet görselleri, ilk oyun ipuçları | Ekran görüntüleri, UI testleri |
+| ✅ **D4 Oyuncu bilgisi** | HUD'da aktif powerup ikonları ve süre halkaları, kalkan/hayalet görselleri, ilk oyun ipuçları | Ekran görüntüleri, UI testleri |
 | **D5 Doğrulama** | Sahne denetimi testi (EditMode), yeniden denge ölçümü, tam regresyon | Tüm testler yeşil |
 | **D6 Belgeler** | README, skill, yol haritası | — |
 | **Faz 3c** | Derin araştırma → bağlılık ve meta ilerleme (altın, karakterler + istatistikler + kilitler, pet'ler, adım adım açılan özellikler, görevler/ödüller), görsel kalite ve his cilası. **Odak: Sonsuz Mod** | Ayrı plan (3c.md) |
@@ -85,3 +85,9 @@ Kırılım (SRP açıkken, grup kapatınca düşen draw): taşlar ~22, DungeonFr
 - ✅ Powerup havuzu (ProjectilePool genel havuz), PlayerStatus önbelleği, EndlessEventManager bekleme/liste önbelleği
 - ⚠️ Mac build'inde yalnızca "PC" kalite seviyesi var: Mobile ayarları cihazda ölçülmeli (Android modülü kurulunca)
 - ⬜ Kalan: gerçek cihazda ölçüm; en kötü kare 30-67 ms (tek seferlik; kaynağı henüz bilinmiyor, olay başlangıcı veya sahne yüklemesi olabilir)
+
+## D4 sonuçları
+- ✅ `PowerupHud`: arenanın altında çipler (ikon + boşalan süre halkası, son 1,5 sn turuncu yanıp söner; kalkan vurulana kadar). `GameEvents.PowerupActivated(data, sn)`
+- ✅ `OnboardingHints`: hareket → dash (10. sn, buton vurgulanır) → yakın geçiş; `SaveData.seen` ile bir kez; ≥5 oyun oynamış kayıtta gösterilmez
+- ✅ Test izolasyonu hatası: PlayMode test kaydı testler arasında kalıcıydı (oyun sayısı birikiyordu) → her test temiz kayıt
+- ✅ Tasarım hatası (testle bulundu): bileşen kendi nesnesini gizleyince Update duruyordu → yalnızca TMP bileşeni kapatılıyor

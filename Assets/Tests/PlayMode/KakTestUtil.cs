@@ -16,13 +16,12 @@ public static class KakTestUtil
     /// </summary>
     public static void ResetWorld()
     {
-        // Testler oyuncunun gerçek kaydına yazmasın
+        // Testler oyuncunun gerçek kaydına yazmasın ve her test temiz kayıtla başlasın
+        // (önceki testlerin oyun sayısı vb. birikmesin: ör. "deneyimli oyuncu" kuralı yanlış tetiklenir)
         string testSave = System.IO.Path.Combine(Application.temporaryCachePath, "kak_playmode_test_save.json");
-        if (SaveSystem.OverridePath != testSave)
-        {
-            SaveSystem.OverridePath = testSave;
-            SaveSystem.Unload();
-        }
+        SaveSystem.OverridePath = testSave;
+        if (System.IO.File.Exists(testSave)) System.IO.File.Delete(testSave);
+        SaveSystem.Unload();
         KakTime.ResetAll();
         GameSettings.Reset();
 
