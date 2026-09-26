@@ -129,6 +129,25 @@ public static class KakDevMenu
         if (p != null && int.TryParse(index, out int i)) p.OnCardAction(i);
     }
 
+    /// <summary>Peti açıp seçer, petleri açık sayar ve oyunu yeniden yükler. Köprü: invoke KakDevMenu PlayWithPet Firefly</summary>
+    public static void PlayWithPet(string id)
+    {
+        var d = SaveSystem.Data;
+        if (d.gamesPlayed < FeatureGate.PetsGames) d.gamesPlayed = FeatureGate.PetsGames;
+        if (!d.unlockedPets.Contains(id)) d.unlockedPets.Add(id);
+        d.selectedPet = id;
+        SceneLoader.LoadGame();
+    }
+
+    /// <summary>Açık pet panelinde bir kartın butonuna basar. Köprü: invoke KakDevMenu PressPetCard 0</summary>
+    public static void PressPetCard(string index)
+    {
+        var p = Object.FindAnyObjectByType<PetPanel>();
+        if (p != null && int.TryParse(index, out int i)) p.OnCardAction(i);
+    }
+
+    public static void OpenPets() { var m = Object.FindAnyObjectByType<MainMenuController>(); if (m != null) m.OnPetsClicked(); }
+
     [MenuItem("KacAtaKac/Dev/UI - Dili Değiştir (TR-EN)")]
     public static void ToggleLanguage() { Loc.Current = Loc.Current == Loc.Lang.TR ? Loc.Lang.EN : Loc.Lang.TR; }
 

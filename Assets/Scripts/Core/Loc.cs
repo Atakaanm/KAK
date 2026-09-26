@@ -83,6 +83,14 @@ public static class Loc
         { "mission_ReachStage", new[] { "{0} kademesine ulaş", "Reach {0}" } },
         { "mission_ShieldBlocks", new[] { "Kalkanla {0} taş engelle", "Block {0} rocks with a shield" } },
         { "mission_PlayGames", new[] { "{0} oyun oyna", "Play {0} games" } },
+        // Pet'ler (Faz 3c.5)
+        { "pets_title", new[] { "PETLER", "PETS" } },
+        { "pet_button", new[] { "PET", "PET" } },
+        { "pet_Firefly", new[] { "ATEŞBÖCEĞİ", "FIREFLY" } },
+        { "pet_Turtle", new[] { "KAPLUMBAĞA", "TURTLE" } },
+        { "pettrait_Firefly", new[] { "Yakındaki altını çeker", "Pulls nearby gold" } },
+        { "pettrait_Turtle", new[] { "45 sn'de bir kalkan verir", "A shield every 45s" } },
+        { "remove", new[] { "ÇIKAR", "REMOVE" } },
         // İlk oyun ipuçları (OnboardingHints)
         { "hint_move", new[] { "Parmağını sürükle,\ntaşlardan kaç!", "Drag your finger,\ndodge the rocks!" } },
         { "hint_dash", new[] { "DASH ile taşların\niçinden geç!", "DASH straight\nthrough rocks!" } },

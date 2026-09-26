@@ -29,6 +29,9 @@ public class LevelManager : MonoBehaviour
     public GameObject projectilePrefabDefault;
     public DungeonFrame dungeonFrame;
     public ScreenComposer screenComposer;
+    [Tooltip("Pet gölgesi ve ışığı (Faz 3c.5)")]
+    public Sprite petShadowSprite;
+    public Sprite petGlowSprite;
 
     /// <summary>Tema uygulandığında (karanlık, ışık vb. sistemler dinler).</summary>
     public static event System.Action<WorldTheme> ThemeApplied;
@@ -189,6 +192,10 @@ public class LevelManager : MonoBehaviour
         // Karakter: oyuncunun seçtiği (katalog), yoksa bölümün verisi
         CurrentCharacter = CharacterCatalog.Selected(level.playerData);
         ApplyPlayerData(CurrentCharacter);
+
+        // Pet (Faz 3c.5): özellik açık ve pet seçiliyse oyuncunun yanında
+        var pet = FeatureGate.IsUnlocked(Feature.Pets) ? PetCatalog.Selected() : null;
+        if (pet != null && playerMovement != null) PetFollower.Spawn(pet, playerMovement.transform, petShadowSprite, petGlowSprite);
 
         // --- ARENA AYARLARI ---
         ApplyArenaData(level.arenaData);
