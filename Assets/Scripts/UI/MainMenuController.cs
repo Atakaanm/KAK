@@ -98,7 +98,7 @@ public class MainMenuController : MonoBehaviour
         Open(petsPanel);
     }
 
-    public void ClosePetsPanel() { PlayButtonSound(); Close(petsPanel); }
+    public void ClosePetsPanel() { PlayButtonSound(); Close(petsPanel); RefreshFeatures(); }
 
     public void OnSettingsClicked() { PlayButtonSound(); resetArmed = false; RefreshResetLabel(); Open(settingsPanel); }
 
@@ -109,7 +109,14 @@ public class MainMenuController : MonoBehaviour
     }
 
     public void CloseSettingsPanel() { PlayButtonSound(); Close(settingsPanel); }
-    public void CloseCharactersPanel() { PlayButtonSound(); Close(charactersPanel); }
+    public void CloseCharactersPanel() { PlayButtonSound(); Close(charactersPanel); RefreshFeatures(); }
+
+    /// <summary>Satın alma sonrası menü butonlarının kilit/YENİ/alınabilir durumları.</summary>
+    void RefreshFeatures()
+    {
+        if (charactersFeature != null) charactersFeature.Refresh();
+        if (petsFeature != null) petsFeature.Refresh();
+    }
 
     public void OnResetProgress()
     {

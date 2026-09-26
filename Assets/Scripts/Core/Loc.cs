@@ -96,6 +96,9 @@ public static class Loc
         { "daily_day", new[] { "GÜN {0}", "DAY {0}" } },
         { "daily_claim", new[] { "AL", "CLAIM" } },
         { "daily_hint", new[] { "Her gün gel, ödül büyüsün!", "Come back daily for bigger rewards!" } },
+        // Cila (Faz 3c.7)
+        { "goal_progress", new[] { "{0}: {1}/{2}", "{0}: {1}/{2}" } },
+        { "goal_ready", new[] { "{0} alınabilir!", "{0} is ready to buy!" } },
         // İlk oyun ipuçları (OnboardingHints)
         { "hint_move", new[] { "Parmağını sürükle,\ntaşlardan kaç!", "Drag your finger,\ndodge the rocks!" } },
         { "hint_dash", new[] { "DASH ile taşların\niçinden geç!", "DASH straight\nthrough rocks!" } },

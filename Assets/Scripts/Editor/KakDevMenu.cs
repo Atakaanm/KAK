@@ -162,6 +162,9 @@ public static class KakDevMenu
 
     public static void ClaimDaily() { var p = Object.FindAnyObjectByType<DailyRewardPanel>(); if (p != null) p.OnClaim(); }
 
+    /// <summary>Rekoru ayarlar (yeni rekor kutlamasını denemek için). Köprü: invoke KakDevMenu SetBest 10</summary>
+    public static void SetBest(string n) { if (int.TryParse(n, out int v)) SaveSystem.Data.bestScoreEndless = v; }
+
     [MenuItem("KacAtaKac/Dev/UI - Dili Değiştir (TR-EN)")]
     public static void ToggleLanguage() { Loc.Current = Loc.Current == Loc.Lang.TR ? Loc.Lang.EN : Loc.Lang.TR; }
 

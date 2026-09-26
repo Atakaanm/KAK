@@ -14,6 +14,8 @@ public class FeatureButton : MonoBehaviour
     [Tooltip("Kilitliyken soluklaşacak grafikler (zemin, ikon, yazı)")]
     public Graphic[] tintTargets;
     public RectTransform newBadge;
+    [Tooltip("Bu kategoride alınabilecek bir şey varsa küçük altın işaret (NextGoal.CanBuyIn)")]
+    public RectTransform buyDot;
     public TMP_Text lockHint;
     public Image icon;
     public Sprite lockSprite;
@@ -53,7 +55,9 @@ public class FeatureButton : MonoBehaviour
             lockHint.gameObject.SetActive(locked);
             if (locked) lockHint.text = FeatureGate.LockedHint(feature);
         }
-        if (newBadge != null) newBadge.gameObject.SetActive(!locked && FeatureGate.IsNew(feature));
+        bool isNew = !locked && FeatureGate.IsNew(feature);
+        if (newBadge != null) newBadge.gameObject.SetActive(isNew);
+        if (buyDot != null) buyDot.gameObject.SetActive(!locked && !isNew && NextGoal.CanBuyIn(feature));
     }
 
     /// <summary>Kilitliyse sallanır ve false döner; yeniyse tanıtıldı olarak işaretler.</summary>

@@ -19,14 +19,21 @@ public class GameOverScreen : MonoBehaviour
     [Tooltip("Bu oyunla yeni açılan özellik afişi (panelin üstünde)")]
     public RectTransform unlockBanner;
     public TMP_Text unlockText;
+    [Header("Cila (Faz 3c.7)")]
+    public UiConfetti confetti;
+    [Tooltip("Sıradaki satın alma hedefi: çubuk + '120/300 ÇEVİK'")]
+    public RectTransform goalRow;
+    public Image goalFill;
+    public TMP_Text goalText;
+
     [Header("Görevler (Faz 3c.4)")]
     public RectTransform missionsBlock;
     public TMP_Text[] missionTexts;
     public TMP_Text[] missionProgress;
     public Image[] missionChecks;
     [Tooltip("Görevler görünürken panel yüksekliği (butonlar alta sabit, satırlar araya girer)")]
-    public float heightWithMissions = 1480f;
-    public float heightWithoutMissions = 1240f;
+    public float heightWithMissions = 1530f;
+    public float heightWithoutMissions = 1290f;
     public RectTransform newBestBadge;
     public CanvasGroup buttons;
     public CanvasGroup dim;
@@ -111,6 +118,7 @@ public class GameOverScreen : MonoBehaviour
     {
         if (coinsRow != null) coinsRow.gameObject.SetActive(false);
         if (unlockBanner != null) unlockBanner.gameObject.SetActive(false);
+        if (goalRow != null) goalRow.gameObject.SetActive(false);
         // Sonsuz/başarısız düzen: yıldızlar ve SONRAKİ gizli, başlık "OYUN BİTTİ"
         if (titleText != null) { titleText.text = Loc.T("game_over"); titleText.color = KakPalette.Tehlike; }
         if (scoreLabel != null) scoreLabel.text = Loc.T("score");
@@ -156,6 +164,8 @@ public class GameOverScreen : MonoBehaviour
         if (newBest && newBestBadge != null)
         {
             newBestBadge.gameObject.SetActive(true);
+            if (confetti != null) confetti.Burst();
+            if (AudioManager.Instance != null) AudioManager.Instance.PlaySfx(AudioManager.Instance.stageSfx, 1.1f);
             for (float t = 0f; t < 0.3f; t += Time.unscaledDeltaTime)
             {
                 float k = t / 0.3f;
@@ -179,6 +189,25 @@ public class GameOverScreen : MonoBehaviour
             }
             coinsText.SetText(Loc.T("coins_run"), coins, wallet);
             coinsRow.localScale = Vector3.one;
+        }
+
+        // Sıradaki hedef: kazanılanla dolan çubuk (hedefe yaklaşma etkisi)
+        var goal = coins >= 0 ? NextGoal.Find() : null;
+        if (goal.HasValue && goalRow != null && goalFill != null && goalText != null)
+        {
+            var g = goal.Value;
+            goalRow.gameObject.SetActive(true);
+            float from = Mathf.Clamp01((wallet - Mathf.Max(0, coins)) / (float)g.price), to = Mathf.Clamp01(wallet / (float)g.price);
+            bool ready = wallet >= g.price;
+            goalText.text = ready ? string.Format(Loc.T("goal_ready"), g.name) : string.Format(Loc.T("goal_progress"), g.name, wallet, g.price);
+            goalText.color = ready ? KakPalette.AltinAcik : KakPalette.Sis;
+            for (float t = 0f; t < 0.5f; t += Time.unscaledDeltaTime)
+            {
+                goalFill.fillAmount = Mathf.Lerp(from, to, 1f - (1f - t / 0.5f) * (1f - t / 0.5f));
+                yield return null;
+            }
+            goalFill.fillAmount = to;
+            goalFill.color = ready ? KakPalette.AltinAcik : KakPalette.Altin;
         }
 
         // Yeni açılan özellik: afiş taşarak belirir (adım adım açılmanın ödül anı)
