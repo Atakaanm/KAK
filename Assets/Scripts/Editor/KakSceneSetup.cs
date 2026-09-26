@@ -21,6 +21,36 @@ public static class KakSceneSetup
         Debug.Log(SetupManagers());
     }
 
+    [MenuItem("KacAtaKac/Oyuncu Çarpışmasını Kur")]
+    public static void SetupPlayerHitboxMenu() => Debug.Log(SetupPlayerHitbox());
+
+    /// <summary>
+    /// Oyuncuya PlayerHitbox ekler: ayak izi (duvar) + gövde (taş) collider'ları. Sahneyi kaydeder.
+    /// Köprü: python3 tools/kak_bridge.py invoke KakSceneSetup SetupPlayerHitbox
+    /// </summary>
+    public static string SetupPlayerHitbox()
+    {
+        if (Application.isPlaying) return "HATA: Play modunda çalıştırılamaz.";
+        var scene = EditorSceneManager.GetActiveScene();
+        if (scene.path != GameScenePath)
+        {
+            KakEditorUtil.SaveNamedScenes();
+            scene = EditorSceneManager.OpenScene(GameScenePath, OpenSceneMode.Single);
+        }
+        var health = Object.FindAnyObjectByType<PlayerHealth>();
+        if (health == null) return "HATA: PlayerHealth bulunamadı.";
+        var go = health.gameObject;
+        var hb = go.GetComponent<PlayerHitbox>();
+        if (hb == null) hb = Undo.AddComponent<PlayerHitbox>(go);
+        Undo.RegisterFullObjectHierarchyUndo(go, "Oyuncu çarpışması");
+        hb.Apply();
+        EditorUtility.SetDirty(go);
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+        var foot = go.GetComponent<CircleCollider2D>();
+        return $"[KakSceneSetup] PlayerHitbox kuruldu: ayak r={foot.radius:F3} (yerel) ofset={foot.offset}, gövde={hb.HurtCollider.size} (yerel)";
+    }
+
     public static string SetupManagers()
     {
         if (Application.isPlaying) return "HATA: Play modunda çalıştırılamaz.";
@@ -28,7 +58,7 @@ public static class KakSceneSetup
         var scene = EditorSceneManager.GetActiveScene();
         if (scene.path != GameScenePath)
         {
-            EditorSceneManager.SaveOpenScenes();
+            KakEditorUtil.SaveNamedScenes();
             scene = EditorSceneManager.OpenScene(GameScenePath, OpenSceneMode.Single);
         }
 

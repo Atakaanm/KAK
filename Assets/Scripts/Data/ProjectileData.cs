@@ -39,6 +39,15 @@ public class ProjectileData : ScriptableObject
     public float meteorStartHeight = 7f;
     public float meteorRadius = 0.55f;
 
+    [Header("Etki")]
+    public ProjectileEffect effect = ProjectileEffect.Damage;
+    [Tooltip("Slow/Freeze/YellowCard süresi (sn)")]
+    public float effectDuration = 1.5f;
+    [Tooltip("Slow: hız çarpanı (0.5 = yarı hız)")]
+    public float effectStrength = 0.5f;
+    [Tooltip("Döndürme yerine düz uçsun (kart gibi)")]
+    public bool noSpin = false;
+
     [Header("Görsel")]
     [Tooltip("Prefab ölçeğine çarpan (zorluk kademesi çarpanıyla birlikte uygulanır)")]
     public float visualScale = 1f;

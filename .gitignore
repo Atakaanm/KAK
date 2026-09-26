@@ -80,3 +80,9 @@ Thumbs.db
 
 # Claude köprüsü (yerel komut/sonuç dosyaları, ekran görüntüleri)
 /.claude-bridge/
+
+# IDE çözüm dosyası (Unity üretir)
+*.slnx
+
+# Unity Version Control (Plastic) çalışma alanı: bu proje git kullanıyor
+/.plastic/

@@ -1,4 +1,0 @@
-repository "KacAtaKac/KacAtaKac@18968380181471@cloud"
-  path "/"
-    br "/main"
-    co "/main"

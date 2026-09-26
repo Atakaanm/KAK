@@ -30,7 +30,7 @@ public static class KakScreenSetup
         var scene = EditorSceneManager.GetActiveScene();
         if (scene.path != GameScenePath)
         {
-            EditorSceneManager.SaveOpenScenes();
+            KakEditorUtil.SaveNamedScenes();
             scene = EditorSceneManager.OpenScene(GameScenePath, OpenSceneMode.Single);
         }
         var log = new StringBuilder("[KakScreenSetup] ");

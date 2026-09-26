@@ -57,6 +57,24 @@ public static class KakDevMenu
         ph.TakeDamage(1);
     }
 
+    [MenuItem("KacAtaKac/Dev/Kalkan Ver")]
+    public static void GiveShield() { var h = Object.FindAnyObjectByType<PlayerHealth>(); if (h != null) h.ActivateShield(); }
+
+    /// <summary>Oyuncuyu sürekli bir yöne yürütür (görsel kontrol: duvar kenarları). Köprü: invoke KakDevMenu WalkPlayer up|down|left|right|stop</summary>
+    public static void WalkPlayer(string dir)
+    {
+        var m = Object.FindAnyObjectByType<PlayerMovement2D>();
+        if (m == null) return;
+        switch (dir)
+        {
+            case "up": m.InputOverride = Vector2.up; break;
+            case "down": m.InputOverride = Vector2.down; break;
+            case "left": m.InputOverride = Vector2.left; break;
+            case "right": m.InputOverride = Vector2.right; break;
+            default: m.InputOverride = null; break;
+        }
+    }
+
     [MenuItem("KacAtaKac/Dev/UI - Dili Değiştir (TR-EN)")]
     public static void ToggleLanguage() { Loc.Current = Loc.Current == Loc.Lang.TR ? Loc.Lang.EN : Loc.Lang.TR; }
 

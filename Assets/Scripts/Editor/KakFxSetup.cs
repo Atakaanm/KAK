@@ -34,7 +34,7 @@ public static class KakFxSetup
         var scene = EditorSceneManager.GetActiveScene();
         if (scene.path != GameScenePath)
         {
-            EditorSceneManager.SaveOpenScenes();
+            KakEditorUtil.SaveNamedScenes();
             scene = EditorSceneManager.OpenScene(GameScenePath, OpenSceneMode.Single);
         }
         var chips = SetupFeedback(log);

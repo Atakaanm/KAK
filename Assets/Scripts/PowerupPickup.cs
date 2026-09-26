@@ -70,13 +70,15 @@ public class PowerupPickup : MonoBehaviour
         }
     }
 
+    bool collected;
+
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
-        {
-            ApplyEffect(other.gameObject);
-            Destroy(gameObject);
-        }
+        // Oyuncunun iki collider'ı var (ayak izi + gövde): aynı adımda ikisi de değebilir, bir kez topla
+        if (collected || !other.CompareTag("Player")) return;
+        collected = true;
+        ApplyEffect(other.attachedRigidbody != null ? other.attachedRigidbody.gameObject : other.gameObject);
+        Destroy(gameObject);
     }
 
     private void ApplyEffect(GameObject player)

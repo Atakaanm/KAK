@@ -24,7 +24,7 @@ public static class KakEndlessSetup
         var scene = EditorSceneManager.GetActiveScene();
         if (scene.path != GameScenePath)
         {
-            EditorSceneManager.SaveOpenScenes();
+            KakEditorUtil.SaveNamedScenes();
             scene = EditorSceneManager.OpenScene(GameScenePath, OpenSceneMode.Single);
         }
         var log = new StringBuilder("[KakEndlessSetup] ");

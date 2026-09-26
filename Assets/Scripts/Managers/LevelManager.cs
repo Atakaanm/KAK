@@ -24,6 +24,17 @@ public class LevelManager : MonoBehaviour
     public PowerupSpawner powerupSpawner;
     public WaveManager waveManager;
 
+    [Header("Bölüm modu")]
+    [Tooltip("Düşman gölgesi ve varsayılan mermi prefab'ı")]
+    public Sprite enemyShadow;
+    public GameObject projectilePrefabDefault;
+    public DungeonFrame dungeonFrame;
+    public ScreenComposer screenComposer;
+
+    /// <summary>Tema uygulandığında (karanlık, ışık vb. sistemler dinler).</summary>
+    public static event System.Action<WorldTheme> ThemeApplied;
+    public WorldTheme CurrentTheme { get; private set; }
+
     [Header("Varsayılan Level (Build için)")]
     public LevelData defaultLevel;
 
@@ -184,6 +195,7 @@ public class LevelManager : MonoBehaviour
 
         // --- ARENA AYARLARI ---
         ApplyArenaData(level.arenaData);
+        if (level.theme != null) ApplyTheme(level.theme);
 
         // --- SPAWNER AYARLARI ---
         ApplySpawnerData(level.spawnerDataList);
@@ -223,6 +235,14 @@ public class LevelManager : MonoBehaviour
         SetupProjectileBounds();
 
         if (powerupSpawner != null) powerupSpawner.RefreshArenaBounds();
+
+        // --- BÖLÜM (Stage) ---
+        bool stage = level.levelType == LevelType.Stage;
+        if (stage) SetupStage(level);
+        var lmc = LevelModeController.Instance != null ? LevelModeController.Instance : FindAnyObjectByType<LevelModeController>();
+        if (lmc != null) lmc.Begin(level);
+        var events = FindAnyObjectByType<EndlessEventManager>();
+        if (events != null) events.enabled = !stage;
 
         // Oyun sırasında Instantiate olmasın (parçalanan taşlar ve taş yağmuru için pay)
         if (ProjectilePool.Instance != null && spawners != null && spawners.Length > 0 && spawners[0] != null && spawners[0].projectilePrefab != null)
@@ -279,6 +299,67 @@ public class LevelManager : MonoBehaviour
         }
 
         KakLog.Info("[LevelManager] Player istatistikleri ayarlandi: " + data.playerName);
+    }
+
+    /// <summary>Dünya teması: arena görseli, oynanabilir alan, zemin fiziği, çerçeve karoları, ortam.</summary>
+    public void ApplyTheme(WorldTheme t)
+    {
+        CurrentTheme = t;
+        if (arenaLayout != null)
+        {
+            if (t.arenaSprite != null && arenaLayout.arenaSpriteRenderer != null) arenaLayout.arenaSpriteRenderer.sprite = t.arenaSprite;
+            if (arenaLayout.arenaSpriteRenderer != null) arenaLayout.arenaSpriteRenderer.color = t.arenaTint;
+            arenaLayout.playableAreaNormalized = t.playableAreaNormalized;
+            arenaLayout.useSpawnerAnchors = t.useSpawnerAnchors;
+        }
+        if (playerMovement != null)
+        {
+            playerMovement.arenaFriction = t.floorFriction;
+            playerMovement.arenaSpeedMultiplier = t.floorSpeedMultiplier;
+        }
+        var frame = dungeonFrame != null ? dungeonFrame : FindAnyObjectByType<DungeonFrame>();
+        if (frame != null)
+        {
+            if (t.backdropTile != null && frame.backdrop != null) frame.backdrop.sprite = t.backdropTile;
+            if (t.corridorTile != null && frame.corridorFloor != null) frame.corridorFloor.sprite = t.corridorTile;
+            if (t.corridorWall != null)
+            {
+                if (frame.corridorWallLeft != null) frame.corridorWallLeft.sprite = t.corridorWall;
+                if (frame.corridorWallRight != null) frame.corridorWallRight.sprite = t.corridorWall;
+            }
+            if (t.ledgeTile != null && frame.ledge != null) frame.ledge.sprite = t.ledgeTile;
+            frame.torchesEnabled = t.torches;
+        }
+        var composer = screenComposer != null ? screenComposer : FindAnyObjectByType<ScreenComposer>();
+        if (composer != null) composer.backgroundColor = t.cameraBackground;
+        ThemeApplied?.Invoke(t);
+        KakLog.Info("[LevelManager] Tema: " + t.themeId);
+    }
+
+    /// <summary>Bölüm kurulumu: köşe fırlatıcıları (sayı/aralık/taş) ve bölüm düşmanları.</summary>
+    void SetupStage(LevelData level)
+    {
+        if (spawners != null)
+        {
+            for (int i = 0; i < spawners.Length; i++)
+            {
+                if (spawners[i] == null) continue;
+                bool on = i < level.cornerShooters;
+                spawners[i].gameObject.SetActive(on);
+                spawners[i].shootInterval = level.cornerInterval;
+                spawners[i].overrideProjectile = level.cornerProjectile;
+            }
+        }
+
+        var parent = transform.Find("Enemies");
+        if (parent == null) { parent = new GameObject("Enemies").transform; parent.SetParent(transform, false); }
+        for (int i = parent.childCount - 1; i >= 0; i--) Destroy(parent.GetChild(i).gameObject);
+        if (level.enemies == null || arenaLayout == null) return;
+        Rect play = arenaLayout.PlayableWorldRect;
+        GameObject prefab = projectilePrefabDefault;
+        if (prefab == null && spawners != null && spawners.Length > 0 && spawners[0] != null) prefab = spawners[0].projectilePrefab;
+        foreach (var e in level.enemies)
+            if (e != null && e.data != null) EnemyFactory.Create(e, play, prefab, enemyShadow, parent);
     }
 
     void ApplyArenaData(ArenaData data)

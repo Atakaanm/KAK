@@ -34,10 +34,10 @@ public static class KakBuild
         PlayerSettings.allowedAutorotateToLandscapeRight = false;
         PlayerSettings.statusBarHidden = true;
 
-        // Android: IL2CPP + ARM64 (Google Play gereği), minimum Android 7.0
+        // Android: IL2CPP + ARM64 (Google Play gereği), minimum Android 7.1
         PlayerSettings.SetScriptingBackend(NamedBuildTarget.Android, ScriptingImplementation.IL2CPP);
         PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
-        PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel24;
+        PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel25;
         PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevelAuto;
         PlayerSettings.iOS.targetOSVersionString = "14.0";
 

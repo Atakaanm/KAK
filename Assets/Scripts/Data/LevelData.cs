@@ -34,6 +34,22 @@ public class LevelData : ScriptableObject
     [Header("Zorluk Asamalari (Endless mod)")]
     public DifficultyStageData[] difficultyStages;
 
+    [Header("Bölüm (Stage)")]
+    public string levelId = "";
+    public LevelGoal goal = LevelGoal.Survive;
+    [Tooltip("Survive: bu kadar saniye hayatta kal")]
+    public float surviveSeconds = 45f;
+    [Tooltip("Goals: bu kadar gol at")]
+    public int goalsToWin = 3;
+    public WorldTheme theme;
+    [Tooltip("Köşe fırlatıcıları bu bölümde çalışsın mı (kaç tanesi)")]
+    public int cornerShooters = 0;
+    [Tooltip("Köşe fırlatıcılarının atış aralığı ve taşı")]
+    public float cornerInterval = 2f;
+    public ProjectileData cornerProjectile;
+    public EnemySpawn[] enemies;
+    [TextArea] public string introKeyTR = "";
+
     [Header("Stage Mod Ayarlari")]
     public int targetScore = 0;        // Stage modda kazanma kosulu (0 = yok)
     public float timeLimit = 0f;       // Sure siniri (0 = sinir yok)
@@ -48,6 +64,20 @@ public class LevelData : ScriptableObject
     [Header("Magaza / Kilit")]
     public bool isLocked = false;
     public int unlockPrice = 0;
+}
+
+public enum LevelGoal
+{
+    Survive, // süre dolana kadar hayatta kal
+    Goals    // N gol at (Futbol)
+}
+
+[System.Serializable]
+public class EnemySpawn
+{
+    public EnemyData data;
+    [Tooltip("Oynanabilir alan içinde normalize konum (0-1)")]
+    public Vector2 position = new Vector2(0.5f, 0.9f);
 }
 
 public enum LevelType

@@ -78,17 +78,25 @@ public class ArenaTests
         KakTestUtil.MakePlayerSafe();
         Rect play = Arena().PlayableWorldRect;
         var player = Object.FindAnyObjectByType<PlayerMovement2D>();
+        var rb = player.GetComponent<Rigidbody2D>();
+        var hb = player.GetComponent<PlayerHitbox>();
+        Assert.IsNotNull(hb, "Oyuncuda PlayerHitbox yok");
+        // Merkezin gidebileceği alan: ayak izi duvarlara değene kadar (üstte gövde duvarın önüne taşar)
+        Rect reach = hb.CenterBounds(play);
 
         var dirs = new[] { Vector2.right, Vector2.left, Vector2.up, Vector2.down };
         foreach (var d in dirs)
         {
+            // Her yön merkezden: köşe kaidelerine takılmadan düz duvara gider
+            rb.position = play.center;
+            player.transform.position = play.center;
             player.InputOverride = d;
             yield return KakTestUtil.WaitReal(2.5f);
             Vector2 p = player.transform.position;
-            // Oyuncu merkezi alanın içinde kalmalı ve duvara 1 birimden fazla uzak durmamalı
-            Assert.IsTrue(play.Contains(p), $"Oyuncu oynanabilir alanın dışına çıktı: {p} alan {play} yön {d}");
-            float gap = d.x > 0 ? play.xMax - p.x : d.x < 0 ? p.x - play.xMin : d.y > 0 ? play.yMax - p.y : p.y - play.yMin;
-            Assert.Less(gap, 1.0f, $"Oyuncu duvara ulaşamadı (görünmez duvar?) boşluk {gap:F2} yön {d}");
+            Rect tol = Rect.MinMaxRect(reach.xMin - 0.05f, reach.yMin - 0.05f, reach.xMax + 0.05f, reach.yMax + 0.05f);
+            Assert.IsTrue(tol.Contains(p), $"Oyuncu duvarın içine girdi: {p} erişim {reach} yön {d}");
+            float gap = d.x > 0 ? reach.xMax - p.x : d.x < 0 ? p.x - reach.xMin : d.y > 0 ? reach.yMax - p.y : p.y - reach.yMin;
+            Assert.Less(gap, 0.1f, $"Oyuncu duvara ulaşamadı (görünmez duvar?) boşluk {gap:F2} yön {d}");
         }
         player.InputOverride = null;
     }

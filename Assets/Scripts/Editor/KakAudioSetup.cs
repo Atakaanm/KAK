@@ -61,7 +61,7 @@ public class KakAudioSetup : AssetPostprocessor
 
         // Menü sahnesindeki eski obje
         var active = EditorSceneManager.GetActiveScene().path;
-        EditorSceneManager.SaveOpenScenes();
+        KakEditorUtil.SaveNamedScenes();
         var menu = EditorSceneManager.OpenScene("Assets/Scenes/MainMenu.unity", OpenSceneMode.Single);
         foreach (var old in Object.FindObjectsByType<AudioManager>(FindObjectsInactive.Include, FindObjectsSortMode.None))
             Object.DestroyImmediate(old.gameObject);

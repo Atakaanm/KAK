@@ -25,6 +25,12 @@ public static class GameEvents
     public static event Action<float> ComboChanged;
     /// <summary>Sonsuz mod olayı başladı (görünen ad).</summary>
     public static event Action<string> EndlessEventStarted;
+    /// <summary>Kırmızı kart (Futbol): top düşer.</summary>
+    public static event Action<Vector3> RedCard;
+    /// <summary>Gol atıldı (toplam gol).</summary>
+    public static event Action<int> GoalScored;
+    /// <summary>Bölüm tamamlandı (yıldız).</summary>
+    public static event Action<int> LevelCompleted;
     /// <summary>Zorluk kademesi değişti (kademe adı, indeks).</summary>
     public static event Action<string, int> StageChanged;
 
@@ -38,6 +44,9 @@ public static class GameEvents
     public static void RaiseDashUsed(Vector3 pos, Vector2 dir) => DashUsed?.Invoke(pos, dir);
     public static void RaiseComboChanged(float mult) => ComboChanged?.Invoke(mult);
     public static void RaiseEndlessEventStarted(string name) => EndlessEventStarted?.Invoke(name);
+    public static void RaiseRedCard(Vector3 pos) => RedCard?.Invoke(pos);
+    public static void RaiseGoalScored(int total) => GoalScored?.Invoke(total);
+    public static void RaiseLevelCompleted(int stars) => LevelCompleted?.Invoke(stars);
     public static void RaiseStageChanged(string name, int index) => StageChanged?.Invoke(name, index);
 
     public static void ClearAll()
@@ -53,5 +62,8 @@ public static class GameEvents
         DashUsed = null;
         ComboChanged = null;
         EndlessEventStarted = null;
+        RedCard = null;
+        GoalScored = null;
+        LevelCompleted = null;
     }
 }

@@ -5,7 +5,7 @@
 ## Proje ayarları
 - ✅ Ürün adı "Kaç Ata Kaç", şirket "Atakaan", paket kimliği `com.atakaan.kacatakac`, sürüm 0.9.0 (KacAtaKac/Yayın/Oyuncu Ayarlarını Uygula)
 - ✅ Sadece dikey, durum çubuğu gizli, ekran kararmaz (oyun sırasında)
-- ✅ Android: IL2CPP + ARM64, min Android 7.0 (API 24), hedef API otomatik · iOS: min 14.0
+- ✅ Android: IL2CPP + ARM64, min Android 7.1 (API 25), hedef API otomatik · iOS: min 14.0
 - ✅ Uygulama ikonu (`Assets/Art/Icon/app_icon.png`), açılış ekranı koyu
 - ✅ TR/EN dil (cihaz diline göre; Ayarlar'dan değiştirilebilir)
 - ✅ Performans (macOS dev build, Apple M4): ~60 FPS, GC ≈ 30 B/kare, en kötü kare 33 ms, 82 batch

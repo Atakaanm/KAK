@@ -86,7 +86,7 @@ SampleScene
       Powerups    → PowerupSpawner.Init
       sonra: ArenaAutoLayout.ApplyLayout → CameraFitWidth.ForceRecalculate → Projectile.SetArenaBounds
   CornerShooter ─► ProjectilePool.Get ─► Projectile (Kinematic RB, trigger, arena dışına çıkınca havuza döner)
-  Projectile.OnTriggerEnter2D("Player") ─► PlayerHealth.TakeDamage ─► 0 can → GameManager.GameOver
+  Projectile.OnTriggerEnter2D(PlayerHitbox.Hurt) ─► PlayerHealth.TakeDamage ─► 0 can → GameManager.GameOver
   PowerupSpawner ─► PowerupPickup (+FloatingItem, 8 sn ömür, son 3 sn yanıp söner)
   PauseManager (timeScale 0, uygulama arka plana gidince otomatik durur)
   HUD: HealthUI (kalp animasyonları), ScoreText, Joystick, GameOverPanel, PausePanel
@@ -98,6 +98,7 @@ SampleScene
 
 **Taşlar (Faz 2A):** `Projectile.Launch(prefab, data, from, dir, speedMult, scaleMult)` / `LaunchMeteor(...)`. Davranış `ProjectileData.motion` (Straight/Bounce/Homing/Split/Meteor). Türler `Assets/Data/Projectiles/`, kademe listeleri `DifficultyStageData.availableProjectiles + projectileWeights`, seçim `DifficultyManager.PickProjectile()`.
 **Olaylar:** `GameEvents` (PlayerDamaged, ShieldBlocked, PlayerDied, PowerupCollected, ProjectileHitWall, MeteorLanded, StageChanged). **Zaman:** `KakTime` (temel ölçek × pause × hit-stop). **Kayıt:** `SaveSystem.Data` (+ `Save()`).
+**Çarpışma (D1):** oyuncuda `PlayerHitbox`: kökteki `CircleCollider2D` = ayak izi (katı, r 0,2, ayaklarda; duvar/kaide), çocuk `Hurtbox` = gövde kapsülü (trigger, 0,36×0,80, etiket Player). Taşlar yalnızca `PlayerHitbox.Hurt`'a vurur. Kalkan = `ShieldBubble` (oyuncuyu ölçekleme/boyama yok). Köşe kaideleri katı (`ArenaAutoLayout.solidPedestals`, oyun sırasında kurulur). Kurulum: `KacAtaKac/Oyuncu Çarpışmasını Kur`. Testler: `CarpismaTests`.
 **His:** `FeedbackManager` (Managers altında, tek ParticleSystem `FxChips`), `KakCameraShake` (kamera), `PlayerJuice` (oyuncu).
 
 **Önemli singleton'lar:** `GameManager`, `LevelManager`, `DifficultyManager`, `WaveManager`, `ProjectilePool`, `AudioManager` — hepsi `Instance` statik alanı ile.
@@ -129,6 +130,8 @@ SampleScene
 - Unity 6 API'si: `rb.linearVelocity` (velocity değil), `FindAnyObjectByType`/`FindObjectsByType`.
 - Yeni oynanış parametresi → önce ilgili ScriptableObject'e alan ekle, sonra LevelManager'ın `Apply*` metodunda uygula.
 - Mermiler **her zaman** `ProjectilePool` üzerinden; `Instantiate/Destroy` sadece fallback.
+- Otomasyon/editör aracında **`EditorSceneManager.SaveOpenScenes()` yasak** (adsız sahnede modal pencere → editör kilitlenir). `KakEditorUtil.SaveNamedScenes()` kullan. Editör araçlarında `EditorUtility.DisplayDialog` da yasak (köprüden çağrılınca kilitler); sonucu string döndür/logla.
+- Oyuncunun durumu (kalkan, hayalet, yavaşlama) karakteri ölçeklememeli; çarpışma alanı sabit kalır. Görsel geri bildirim ayrı katmanda.
 - `Time.timeScale` değiştiren her yer `Time.fixedDeltaTime = 0.02f * Time.timeScale` ile eşlenir.
 
 ## 6. Çalışma kuralları (Claude için)

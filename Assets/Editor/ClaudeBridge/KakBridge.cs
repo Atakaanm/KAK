@@ -40,9 +40,12 @@ public static class KakBridge
 
     const string PendingKey = "KakBridge.Pending";
     const string TestCmdKey = "KakBridge.TestCmdId";
+    const string RestoreSceneKey = "KakBridge.RestoreScene";
+    const string DefaultScene = "Assets/Scenes/SampleScene.unity";
 
     static double lastPoll;
     static double lastBeat;
+    static double testsFinishedAt;
     static readonly object logLock = new object();
     static readonly List<string> compileErrors = new List<string>();
     static readonly List<string> compileWarnings = new List<string>();
@@ -222,6 +225,7 @@ public static class KakBridge
                 ProcessPending();
                 return; // bekleyen iş bitene kadar yeni komut alma
             }
+            if (t - testsFinishedAt > 1.5) RestoreSceneAfterTests();
 
             if (!Directory.Exists(Inbox)) return;
             var files = Directory.GetFiles(Inbox, "*.json").OrderBy(f => f).ToArray();
@@ -326,13 +330,13 @@ public static class KakBridge
 
             case "openScene":
                 if (EditorApplication.isPlaying) { Reply(c, false, "Play modunda sahne açılamaz"); break; }
-                EditorSceneManager.SaveOpenScenes();
+                SaveNamedScenes();
                 EditorSceneManager.OpenScene(c.arg, OpenSceneMode.Single);
                 Reply(c, true, "açıldı: " + c.arg);
                 break;
 
             case "saveScenes":
-                bool saved = EditorSceneManager.SaveOpenScenes();
+                bool saved = SaveNamedScenes();
                 AssetDatabase.SaveAssets();
                 Reply(c, saved, "sahneler ve asset'ler kaydedildi");
                 break;
@@ -584,6 +588,34 @@ public static class KakBridge
     // -------------------------------------------------------
     // Testler
     // -------------------------------------------------------
+    /// <summary>
+    /// Sadece diske kayıtlı ve değişmiş sahneleri kaydeder. EditorSceneManager.SaveOpenScenes adsız (Untitled)
+    /// sahnede "Farklı Kaydet" penceresi açıp editörü kilitliyor (2026-09-26'da 10 dk kilit).
+    /// </summary>
+    static bool SaveNamedScenes()
+    {
+        bool ok = true;
+        for (int i = 0; i < EditorSceneManager.sceneCount; i++)
+        {
+            var s = EditorSceneManager.GetSceneAt(i);
+            if (s.isDirty && IsRealScene(s.path)) ok &= EditorSceneManager.SaveScene(s);
+        }
+        return ok;
+    }
+
+    static bool IsRealScene(string path) => !string.IsNullOrEmpty(path) && !path.Contains("InitTestScene") && File.Exists(path);
+
+    /// <summary>Testlerden sonra editör adsız/geçici sahnede kaldıysa kullanıcının sahnesini geri aç.</summary>
+    static void RestoreSceneAfterTests()
+    {
+        string path = SessionState.GetString(RestoreSceneKey, "");
+        if (string.IsNullOrEmpty(path) || EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isCompiling) return;
+        SessionState.EraseString(RestoreSceneKey);
+        if (IsRealScene(EditorSceneManager.GetActiveScene().path) || !File.Exists(path)) return;
+        EditorSceneManager.OpenScene(path, OpenSceneMode.Single);
+        AppendLog("BRIDGE", "testlerden sonra sahne geri açıldı: " + path);
+    }
+
     static void StartTests(Cmd c)
     {
         if (EditorApplication.isPlaying) { Reply(c, false, "önce Play modundan çık"); return; }
@@ -593,7 +625,12 @@ public static class KakBridge
 
         SessionState.SetString(TestCmdKey, c.id + "|" + c.cmd);
         SetPending(c, "tests-running");
-        EditorSceneManager.SaveOpenScenes();
+        SaveNamedScenes();
+        // Test aracı bitişte sahne düzenini geri yükleyemezse (bilinen hata: editör geçici InitTestScene'de kalır)
+        // Tick içinde bu sahne yeniden açılır.
+        string active = EditorSceneManager.GetActiveScene().path;
+        if (!IsRealScene(active)) { EditorSceneManager.OpenScene(DefaultScene, OpenSceneMode.Single); active = DefaultScene; }
+        SessionState.SetString(RestoreSceneKey, active);
         var api = ScriptableObject.CreateInstance<TestRunnerApi>();
         api.Execute(new ExecutionSettings(filter));
     }
@@ -610,6 +647,7 @@ public static class KakBridge
                           + ", atlandı " + result.SkipCount + ", süre " + result.Duration.ToString("F1") + " sn");
             Collect(result, sb);
             AppendLog("TESTS", "bitti: " + result.TestStatus);
+            testsFinishedAt = EditorApplication.timeSinceStartup;
 
             if (!string.IsNullOrEmpty(key))
             {

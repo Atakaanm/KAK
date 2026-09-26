@@ -25,6 +25,8 @@ public class DungeonFrame : MonoBehaviour
     public float firstTorchOffset = 1.4f;       // arena altından ilk meşaleye mesafe
     public float torchWallGap = 0.05f;
     public float margin = 1f;                    // kamera dışına taşma payı
+    [Tooltip("Tema meşale istemiyorsa kapalı")]
+    public bool torchesEnabled = true;
 
     public void Layout(Rect cam, Rect arenaRect)
     {
@@ -78,7 +80,7 @@ public class DungeonFrame : MonoBehaviour
             for (int i = 0; i < pairs; i++)
             {
                 float y = arenaRect.yMin - firstTorchOffset - i * torchSpacing;
-                bool on = hasCorridor && y > cam.yMin + 0.4f;
+                bool on = torchesEnabled && hasCorridor && y > cam.yMin + 0.4f;
                 PlaceTorch(torches[i * 2], new Vector2(xL, y), on, false);
                 PlaceTorch(torches[i * 2 + 1], new Vector2(xR, y), on, true);
             }

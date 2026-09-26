@@ -19,8 +19,8 @@ public class KakAutoPilot : MonoBehaviour
     [Range(0f, 1f)] public float skill = 1f;
     [Tooltip("En yüksek beceride kaç saniye ileriyi tahmin eder")]
     public float maxLookAhead = 0.8f;
-    [Tooltip("Oyuncu çarpışma yarıçapı (dünya birimi)")]
-    public float playerRadius = 0.25f;
+    [Tooltip("Oyuncu gövdesinin yaklaşık yarıçapı (dünya). PlayerHitbox varsa ondan okunur.")]
+    public float playerRadius = 0.29f;
 
     // Rapor
     public float SurvivalTime { get; private set; }
@@ -29,7 +29,9 @@ public class KakAutoPilot : MonoBehaviour
 
     PlayerMovement2D movement;
     PlayerHealth health;
-    Rect area;
+    Rect area;       // oyuncu merkezinin gidebileceği alan
+    Rect playRect;   // oynanabilir alan (taşlar bunun içinde seker)
+    PlayerHitbox hitbox;
     float decisionTimer;
     int lastHealth;
 
@@ -51,6 +53,8 @@ public class KakAutoPilot : MonoBehaviour
     {
         movement = GetComponent<PlayerMovement2D>();
         health = GetComponent<PlayerHealth>();
+        hitbox = GetComponent<PlayerHitbox>();
+        if (hitbox != null) playerRadius = hitbox.ApproxHurtRadius;
         lastHealth = health != null ? health.currentHealth : 0;
         area = FindPlayableArea();
         Debug.Log($"[KakAutoPilot] Başladı. skill={skill:F2} alan={area}");
@@ -62,10 +66,13 @@ public class KakAutoPilot : MonoBehaviour
         if (arena != null && arena.arenaSpriteRenderer != null)
         {
             Rect r = arena.PlayableWorldRect;
-            // Oyuncu merkezi duvara bu kadar yaklaşabilir
+            playRect = r;
+            // Oyuncu merkezi duvara ayak izi kadar yaklaşabilir
+            if (hitbox != null) return hitbox.CenterBounds(r);
             return Rect.MinMaxRect(r.xMin + playerRadius, r.yMin + playerRadius, r.xMax - playerRadius, r.yMax - playerRadius);
         }
-        return new Rect(transform.position.x - 3f, transform.position.y - 3f, 6f, 6f);
+        playRect = new Rect(transform.position.x - 3f, transform.position.y - 3f, 6f, 6f);
+        return playRect;
     }
 
     void OnDisable()
@@ -188,9 +195,9 @@ public class KakAutoPilot : MonoBehaviour
     /// <summary>Seken taş için duvardan yansıyan tahmini konum (oynanabilir alan içinde katlama).</summary>
     Vector2 Reflect(Vector2 q)
     {
-        Rect a = area;
-        float w = a.width + 2f * playerRadius, h = a.height + 2f * playerRadius;
-        float x0 = a.xMin - playerRadius, y0 = a.yMin - playerRadius;
+        Rect a = playRect;
+        float w = a.width, h = a.height;
+        float x0 = a.xMin, y0 = a.yMin;
         float fx = Mathf.PingPong(q.x - x0, w) + x0;
         float fy = Mathf.PingPong(q.y - y0, h) + y0;
         return new Vector2(fx, fy);
