@@ -15,6 +15,9 @@ public class GameOverScreen : MonoBehaviour
     [Tooltip("Altın satırı: '+12' ve cüzdan toplamı (altın kilitliyse gizli)")]
     public RectTransform coinsRow;
     public TMP_Text coinsText;
+    [Tooltip("Bu oyunla yeni açılan özellik afişi (panelin üstünde)")]
+    public RectTransform unlockBanner;
+    public TMP_Text unlockText;
     public RectTransform newBestBadge;
     public CanvasGroup buttons;
     public CanvasGroup dim;
@@ -87,16 +90,18 @@ public class GameOverScreen : MonoBehaviour
 
     /// <param name="coins">Bu oyunda kazanılan altın (-1: altın kilitli, satır gizli)</param>
     /// <param name="wallet">Cüzdandaki toplam altın (kazanılan dahil)</param>
-    public void Show(int score, int best, bool newBest, float seconds, int nearMiss, float maxCombo, int coins = -1, int wallet = 0)
+    /// <param name="unlock">Yeni açılan özellik metni ("YENİ AÇILDI: GÖREVLER!"), yoksa null</param>
+    public void Show(int score, int best, bool newBest, float seconds, int nearMiss, float maxCombo, int coins = -1, int wallet = 0, string unlock = null)
     {
         gameObject.SetActive(true);
         StopAllCoroutines();
-        StartCoroutine(Run(score, best, newBest, seconds, nearMiss, maxCombo, coins, wallet));
+        StartCoroutine(Run(score, best, newBest, seconds, nearMiss, maxCombo, coins, wallet, unlock));
     }
 
-    IEnumerator Run(int score, int best, bool newBest, float seconds, int nearMiss, float maxCombo, int coins = -1, int wallet = 0)
+    IEnumerator Run(int score, int best, bool newBest, float seconds, int nearMiss, float maxCombo, int coins = -1, int wallet = 0, string unlock = null)
     {
         if (coinsRow != null) coinsRow.gameObject.SetActive(false);
+        if (unlockBanner != null) unlockBanner.gameObject.SetActive(false);
         // Sonsuz/başarısız düzen: yıldızlar ve SONRAKİ gizli, başlık "OYUN BİTTİ"
         if (titleText != null) { titleText.text = Loc.T("game_over"); titleText.color = KakPalette.Tehlike; }
         if (scoreLabel != null) scoreLabel.text = Loc.T("score");
@@ -165,6 +170,22 @@ public class GameOverScreen : MonoBehaviour
             }
             coinsText.SetText(Loc.T("coins_run"), coins, wallet);
             coinsRow.localScale = Vector3.one;
+        }
+
+        // Yeni açılan özellik: afiş taşarak belirir (adım adım açılmanın ödül anı)
+        if (!string.IsNullOrEmpty(unlock) && unlockBanner != null && unlockText != null)
+        {
+            unlockText.text = unlock;
+            unlockBanner.gameObject.SetActive(true);
+            if (AudioManager.Instance != null) AudioManager.Instance.PlaySfx(AudioManager.Instance.stageSfx);
+            for (float t = 0f; t < 0.35f; t += Time.unscaledDeltaTime)
+            {
+                float k = t / 0.35f;
+                float s = k < 0.6f ? Mathf.Lerp(0f, 1.2f, k / 0.6f) : Mathf.Lerp(1.2f, 1f, (k - 0.6f) / 0.4f);
+                unlockBanner.localScale = new Vector3(s, s, 1f);
+                yield return null;
+            }
+            unlockBanner.localScale = Vector3.one;
         }
 
         for (float t = 0f; t < 0.25f; t += Time.unscaledDeltaTime)

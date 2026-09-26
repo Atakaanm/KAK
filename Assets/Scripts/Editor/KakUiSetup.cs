@@ -124,6 +124,7 @@ public static class KakUiSetup
         gos.panel = gpanel; gos.scoreText = scoreT; gos.bestText = bestT; gos.statsText = statsT;
         gos.newBestBadge = badge; gos.buttons = cg; gos.dim = dimGroup;
         BuildCoinsRow(gpanel, gos);
+        BuildUnlockBanner(gpanel, gos);
         if (gm != null)
         {
             OnClick(retry, gm.RetryGame);
@@ -216,6 +217,8 @@ public static class KakUiSetup
         var sett = Button(Place(Rect(safe, "SettingsButton"), new Vector2(0.5f, 0f), new Vector2(175f, 360f), new Vector2(330f, 150f)), "@settings", Style.Stone, 38, "icon_settings.png");
         var levels = Button(Place(Rect(safe, "LevelsButton"), new Vector2(0.5f, 0f), new Vector2(0f, 180f), new Vector2(680f, 130f)), "@levels_soon", Style.Stone, 40, "icon_lock.png");
         levels.GetComponent<Image>().color = new Color(0.7f, 0.7f, 0.75f, 1f);
+        var charsFeature = BuildFeatureButton(chars, Feature.Characters);
+        BuildWallet(safe);
 
         // Ayarlar paneli
         var (sroot, spanel) = Modal(canvas, "SettingsPanel", new Vector2(860f, 1400f));
@@ -253,6 +256,7 @@ public static class KakUiSetup
             mmc.charactersButton = chars;
             mmc.settingsButton = sett;
             mmc.levelsButton = levels;
+            mmc.charactersFeature = charsFeature;
             mmc.settingsPanel = sroot.gameObject;
             mmc.charactersPanel = croot.gameObject;
             mmc.bestScoreText = bestT;
@@ -301,5 +305,56 @@ public static class KakUiSetup
         gos.coinsText = text;
         row.gameObject.SetActive(false); // GameOverScreen altın açıksa gösterir
         EditorUtility.SetDirty(gos);
+    }
+
+    /// <summary>Oyun sonu: yeni açılan özellik afişi (panelin hemen üstünde, rozet zemin).</summary>
+    public static void BuildUnlockBanner(RectTransform gpanel, GameOverScreen gos)
+    {
+        var banner = Place(Rect(gpanel, "UnlockBanner"), new Vector2(0.5f, 1f), new Vector2(0f, 75f), new Vector2(780f, 110f));
+        Img(banner, S("badge_9s.png"), true);
+        var text = Text(Stretch(Rect(banner, "Label")), "YENİ AÇILDI", 46, KakPalette.AltinAcik);
+        gos.unlockBanner = banner;
+        gos.unlockText = text;
+        banner.gameObject.SetActive(false);
+        EditorUtility.SetDirty(gos);
+    }
+
+    /// <summary>Menü butonuna özellik kapısı: kilit ikonu + kalan koşul yazısı + "YENİ!" rozeti.</summary>
+    public static FeatureButton BuildFeatureButton(Button button, Feature feature)
+    {
+        var rt = (RectTransform)button.transform;
+        var hint = Text(Place(Rect(rt, "LockHint"), new Vector2(0.5f, 0f), new Vector2(0f, 24f), new Vector2(300f, 34f)),
+                        "", 26, KakPalette.Sis, TextAlignmentOptions.Center, false, false);
+        var badge = Place(Rect(rt, "NewBadge"), new Vector2(1f, 1f), new Vector2(-20f, -4f), new Vector2(150f, 58f));
+        badge.localRotation = Quaternion.Euler(0f, 0f, -8f);
+        Img(badge, S("badge_9s.png"), true);
+        Text(Stretch(Rect(badge, "Label")), "@new_badge", 30, KakPalette.AltinAcik);
+        var fb = GetOrAdd<FeatureButton>(rt.gameObject);
+        fb.feature = feature;
+        var icon = rt.Find("Icon") != null ? rt.Find("Icon").GetComponent<Image>() : null;
+        var label = rt.Find("Label") != null ? rt.Find("Label").GetComponent<TMP_Text>() : null;
+        fb.tintTargets = new Graphic[] { button.GetComponent<Image>(), icon, label };
+        fb.icon = icon;
+        fb.lockSprite = S("icon_lock.png");
+        fb.lockHint = hint;
+        fb.newBadge = badge;
+        EditorUtility.SetDirty(fb);
+        return fb;
+    }
+
+    /// <summary>Menü sol üst: cüzdan (altın ikonu + miktar).</summary>
+    public static WalletHud BuildWallet(RectTransform safe)
+    {
+        var root = Place(Rect(safe, "Wallet"), new Vector2(0f, 1f), new Vector2(40f, -60f), new Vector2(300f, 80f), new Vector2(0f, 0.5f));
+        var content = Stretch(Rect(root, "Content"));
+        Img(Place(Rect(content, "Icon"), new Vector2(0f, 0.5f), new Vector2(34f, 0f), new Vector2(60f, 60f)),
+            AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Pickups/coin_0.png"), false);
+        var amount = Text(Place(Rect(content, "Amount"), new Vector2(0f, 0.5f), new Vector2(170f, 0f), new Vector2(200f, 80f)),
+                          "0", 54, KakPalette.AltinAcik, TextAlignmentOptions.MidlineLeft);
+        var w = GetOrAdd<WalletHud>(root.gameObject);
+        w.content = content;
+        w.amount = amount;
+        EditorUtility.SetDirty(w);
+        return w;
     }
 }

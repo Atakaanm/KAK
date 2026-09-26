@@ -14,6 +14,8 @@ public class MainMenuController : MonoBehaviour
     public Button charactersButton;
     public Button settingsButton;
     public Button levelsButton;
+    [Tooltip("Karakter butonunun kilit/YENİ durumu (FeatureGate)")]
+    public FeatureButton charactersFeature;
 
     [Header("Paneller")]
     public GameObject settingsPanel;
@@ -72,7 +74,12 @@ public class MainMenuController : MonoBehaviour
         SceneLoader.LoadGame();
     }
 
-    public void OnCharactersClicked() { PlayButtonSound(); Open(charactersPanel); }
+    public void OnCharactersClicked()
+    {
+        PlayButtonSound();
+        if (charactersFeature != null && !charactersFeature.TryUse()) return; // kilitli: buton sallanır
+        Open(charactersPanel);
+    }
     public void OnSettingsClicked() { PlayButtonSound(); resetArmed = false; RefreshResetLabel(); Open(settingsPanel); }
 
     public void OnLevelsClicked()

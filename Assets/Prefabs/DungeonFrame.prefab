@@ -892,6 +892,7 @@ MonoBehaviour:
   firstTorchOffset: 1.4
   torchWallGap: 0.05
   margin: 1
+  torchesEnabled: 1
 --- !u!1 &4998484048704264474
 GameObject:
   m_ObjectHideFlags: 0

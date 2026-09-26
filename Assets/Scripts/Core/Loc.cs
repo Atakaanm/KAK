@@ -51,6 +51,17 @@ public static class Loc
         // Altın (Faz 3c.1)
         { "coins_run", new[] { "+{0} ALTIN   •   TOPLAM {1}", "+{0} GOLD   •   TOTAL {1}" } },
         { "hint_coin", new[] { "Altınları topla!", "Grab the gold!" } },
+        // Adım adım açılan özellikler (FeatureGate)
+        { "feat_Coins", new[] { "ALTIN", "GOLD" } },
+        { "feat_Missions", new[] { "GÖREVLER", "MISSIONS" } },
+        { "feat_Characters", new[] { "KARAKTERLER", "HEROES" } },
+        { "feat_DailyReward", new[] { "GÜNLÜK ÖDÜL", "DAILY REWARD" } },
+        { "feat_Pets", new[] { "PETLER", "PETS" } },
+        { "locked_games", new[] { "{0} oyun sonra", "in {0} games" } },
+        { "locked_tomorrow", new[] { "yarın", "tomorrow" } },
+        { "new_badge", new[] { "YENİ!", "NEW!" } },
+        { "unlock_new", new[] { "YENİ AÇILDI: {0}!", "UNLOCKED: {0}!" } },
+        { "locked_toast", new[] { "Kilitli: {0}", "Locked: {0}" } },
         // İlk oyun ipuçları (OnboardingHints)
         { "hint_move", new[] { "Parmağını sürükle,\ntaşlardan kaç!", "Drag your finger,\ndodge the rocks!" } },
         { "hint_dash", new[] { "DASH ile taşların\niçinden geç!", "DASH straight\nthrough rocks!" } },

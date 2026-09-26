@@ -100,6 +100,12 @@ public static class KakDevMenu
         }
     }
 
+    /// <summary>Kayıttaki oyun sayısını ayarlar (açılma takvimini denemek için; Play'de geçici kayda yazar). Köprü: invoke KakDevMenu SetGamesPlayed 4</summary>
+    public static void SetGamesPlayed(string n)
+    {
+        if (int.TryParse(n, out int v)) SaveSystem.Data.gamesPlayed = v;
+    }
+
     [MenuItem("KacAtaKac/Dev/UI - Dili Değiştir (TR-EN)")]
     public static void ToggleLanguage() { Loc.Current = Loc.Current == Loc.Lang.TR ? Loc.Lang.EN : Loc.Lang.TR; }
 

@@ -89,6 +89,17 @@ public static class SaveSystem
     /// <summary>Bellekteki kaydı bırakır (bir sonraki erişimde dosyadan okunur). Testler için.</summary>
     public static void Unload() => data = null;
 
+    /// <summary>Bugün ilk kez oynanıyorsa oyun günü sayısını artırır (yerel tarih).</summary>
+    public static void TouchPlayDay()
+    {
+        int today = (int)(System.DateTime.Now.Date.Ticks / System.TimeSpan.TicksPerDay);
+        var d = Data;
+        if (d.lastPlayDay == today) return;
+        d.lastPlayDay = today;
+        d.playDays++;
+        Save();
+    }
+
     /// <summary>Tüm ilerlemeyi siler (Ayarlar → Sıfırla).</summary>
     public static void ResetAll()
     {
@@ -123,6 +134,8 @@ public class SaveData
     [Header("İlerleme")]
     public int coins;          // cüzdan (harcanabilir)
     public int totalCoins;     // şimdiye kadar kazanılan toplam (istatistik, açılma koşulları)
+    public int playDays;       // farklı günlerde oynama sayısı
+    public int lastPlayDay;    // son oynanan gün (gün numarası)
     public string selectedCharacter = "Boy";
     public List<string> unlockedCharacters = new List<string> { "Boy" };
 

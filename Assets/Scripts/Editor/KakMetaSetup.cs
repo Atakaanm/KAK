@@ -64,7 +64,12 @@ public static class KakMetaSetup
 
         // ── Oyun sonu: altın satırı ──
         var gos = Object.FindAnyObjectByType<GameOverScreen>(FindObjectsInactive.Include);
-        if (gos != null && gos.panel != null) { KakUiSetup.BuildCoinsRow(gos.panel, gos); log.Append("Oyun sonu altın satırı. "); }
+        if (gos != null && gos.panel != null)
+        {
+            KakUiSetup.BuildCoinsRow(gos.panel, gos);
+            KakUiSetup.BuildUnlockBanner(gos.panel, gos);
+            log.Append("Oyun sonu altın satırı + açılış afişi. ");
+        }
 
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);
