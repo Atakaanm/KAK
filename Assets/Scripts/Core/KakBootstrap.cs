@@ -9,6 +9,7 @@ public static class KakBootstrap
     static void AfterLoad()
     {
         FontWarmup.Run();
+        SaveSystem.TouchPlayDay(); // farklı günlerde oynama sayısı (günlük ödül açılması)
     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]

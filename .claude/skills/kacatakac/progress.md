@@ -61,6 +61,7 @@ Faz 2B altyapısı yarım (kod var, sahne/UI yok, commit 6f1618f), 3c'den sonra 
 
 ### Faz 3c sonucu (sürüyor)
 - [x] **3c.1 Altın:** arenada altın kümeleri, HUD sayacı, ses/parıltı, oyun sonu altın satırı ve cüzdan, `FeatureGate` (1. oyun saf kaçış). Rekoru ≥1000 olan oyuncu da "deneyimli" (temel ipuçları yok). Testler 50/50 + 8/8.
+- [x] **3c.2 Özellik kapısı:** açılma takvimi (altın → görevler → karakterler → günlük ödül → pet'ler), menüde kilitli/YENİ! butonu (şimdilik Karakter), cüzdan, oyun sonunda "YENİ AÇILDI" afişi, oyun günü sayacı. Kullanıcının kaydı: 3 oyun → karakterler 2 oyun sonra açılır. Testler 53/53 + 12/12.
 
 **Önceki: Faz 2B — Bölüm dünyaları için mimari** (yarım). Sonsuz Mod v1.0 hazır: 0 ✅ 1 ✅ 1.5 ✅ 3 ✅ 2A ✅ 5 ✅ 4 ✅ 10 ✅* (2026-09-25).
 Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
@@ -140,7 +141,7 @@ Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 - Varsayım: Kalkan "vurulana kadar" sürer (`ShieldData.duration` kullanılmıyor, davranış korunuyor)
 
 ### Sıradaki adım
-**Faz 3c.2 FeatureGate + tanıtım** (dal `faz-3c-kapi`): `Feature` listesini genişlet (Missions: 3. oyun sonu, Characters: 150 toplam altın veya 5. oyun, DailyReward: 2. takvim günü, Pets: 10. oyun veya 2. karakter); menüde kilitli özellik butonları gri + kilit ikonu, açılınca "YENİ!" rozeti ve kısa tanıtım paneli (bir kez); menüde cüzdan (altın) göstergesi. Sonra 3c.3 Karakterler. Ayrıntı: `3c.md`.
+**Faz 3c.3 Karakterler** (dal `faz-3c-karakter`): `PlayerData` istatistikleri (can, hız çarpanı, dash bekleme, gövde ölçeği, altın çarpanı, başlangıç kalkanı, fiyat, id), 3 yeni karakter (Çevik 300, Tank 800, Şanslı 1500; palet içi renk varyasyonu `kak_art_pass.py` ile), seçili karakterin oyunda uygulanması (LevelManager → PlayerData), gerçek karakter paneli (kart: görsel, isim, istatistik çubukları, fiyat/SATIN AL/SEÇ, kilit), `SaveData.unlockedCharacters/selectedCharacter`. Testler + ekran görüntüsü. Ayrıntı: `3c.md`.
 
 ### Onay bekleyenler
 - **Android Build Support modülü** kurulmalı (Unity Hub → 6000.3.8f1 → Add modules). Sonra "Android build al" → cihazda test.

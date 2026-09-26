@@ -38,6 +38,7 @@ public class GameManager : MonoBehaviour
         Instance = this;
 
         KakTime.ResetAll();
+        unlockMaskAtStart = FeatureGate.UnlockedMask();
 
         if (scoreManager == null) scoreManager = GetComponent<ScoreManager>();
         if (scoreManager == null) scoreManager = FindAnyObjectByType<ScoreManager>();
@@ -104,6 +105,11 @@ public class GameManager : MonoBehaviour
             save.coins += RunCoins + RunCoinBonus;
             save.totalCoins += RunCoins + RunCoinBonus;
         }
+        // Adım adım açılma: bu oyunla yeni açılan ilk özellik
+        NewlyUnlocked = -1;
+        int gained = FeatureGate.UnlockedMask() & ~unlockMaskAtStart;
+        foreach (var f in FeatureGate.All)
+            if ((gained & (1 << (int)f)) != 0) { NewlyUnlocked = (int)f; break; }
         SaveSystem.Save();
 
         StartCoroutine(DeathSequence(finalScore, bestScore));
@@ -115,6 +121,9 @@ public class GameManager : MonoBehaviour
     public int RunCoins { get; private set; }
     public int RunCoinBonus { get; private set; }
     private bool coinsActiveThisRun;
+    private int unlockMaskAtStart;
+    /// <summary>Bu oyunun sonunda yeni açılan özellik (yoksa -1). Oyun sonu ekranında afiş.</summary>
+    public int NewlyUnlocked { get; private set; } = -1;
 
     private System.Collections.IEnumerator DeathSequence(int finalScore, int bestScore)
     {
@@ -128,8 +137,9 @@ public class GameManager : MonoBehaviour
         {
             int near = scoreManager != null ? scoreManager.NearMissCount : 0;
             float combo = scoreManager != null ? scoreManager.MaxCombo : 1f;
+            string unlock = NewlyUnlocked >= 0 ? string.Format(Loc.T("unlock_new"), FeatureGate.Name((Feature)NewlyUnlocked)) : null;
             gameOverScreen.Show(finalScore, bestScore, IsNewBest, lastSeconds, near, combo,
-                                coinsActiveThisRun ? RunCoins + RunCoinBonus : -1, SaveSystem.Data.coins);
+                                coinsActiveThisRun ? RunCoins + RunCoinBonus : -1, SaveSystem.Data.coins, unlock);
         }
         else
         {
