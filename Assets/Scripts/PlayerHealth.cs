@@ -66,6 +66,18 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
+    /// <summary>Karakter canını ayarlar ve doldurur (LevelManager; Start sırasından bağımsız).</summary>
+    public void SetMaxHealth(int max)
+    {
+        maxHealth = Mathf.Max(1, max);
+        currentHealth = maxHealth;
+        if (healthUI != null)
+        {
+            healthUI.InitHearts(maxHealth);
+            healthUI.UpdateHearts(currentHealth);
+        }
+    }
+
     /// <summary>Can verir (Max canı geçemez).</summary>
     public void Heal(int amount)
     {

@@ -106,6 +106,29 @@ public static class KakDevMenu
         if (int.TryParse(n, out int v)) SaveSystem.Data.gamesPlayed = v;
     }
 
+    /// <summary>Cüzdandaki altını ayarlar (Play'de geçici kayda). Köprü: invoke KakDevMenu SetCoins 900</summary>
+    public static void SetCoins(string n)
+    {
+        if (int.TryParse(n, out int v)) SaveSystem.Data.coins = v;
+        foreach (var w in Object.FindObjectsByType<WalletHud>(FindObjectsSortMode.None)) w.Refresh();
+    }
+
+    /// <summary>Karakteri açıp seçer ve oyun sahnesini yeniden yükler (Play'de). Köprü: invoke KakDevMenu PlayAs Tank</summary>
+    public static void PlayAs(string id)
+    {
+        var d = SaveSystem.Data;
+        if (!d.unlockedCharacters.Contains(id)) d.unlockedCharacters.Add(id);
+        d.selectedCharacter = id;
+        SceneLoader.LoadGame();
+    }
+
+    /// <summary>Açık karakter panelinde bir kartın butonuna basar (0-3). Köprü: invoke KakDevMenu PressCharacterCard 1</summary>
+    public static void PressCharacterCard(string index)
+    {
+        var p = Object.FindAnyObjectByType<CharacterPanel>();
+        if (p != null && int.TryParse(index, out int i)) p.OnCardAction(i);
+    }
+
     [MenuItem("KacAtaKac/Dev/UI - Dili Değiştir (TR-EN)")]
     public static void ToggleLanguage() { Loc.Current = Loc.Current == Loc.Lang.TR ? Loc.Lang.EN : Loc.Lang.TR; }
 

@@ -55,7 +55,26 @@ public class PlayerData : ScriptableObject
 
     [Header("Magaza / Kilit")]
     public bool isLocked = false;
+    [Tooltip("0 = başlangıç karakteri (sahip olunur)")]
     public int unlockPrice = 0;
+
+    [Header("Karakter (Faz 3c)")]
+    [Tooltip("Kayıt anahtarı (SaveData.selectedCharacter / unlockedCharacters)")]
+    public string id = "Boy";
+    public string nameKey = "char_Boy";
+    [Tooltip("Özel yetenek açıklaması (Loc anahtarı, boş olabilir)")]
+    public string traitKey = "";
+    [Tooltip("Dash bekleme süresi (sn); 0 = varsayılan")]
+    public float dashCooldown = 0f;
+    [Tooltip("Gövde (hurtbox) ölçeği: küçük = taşlar daha zor vurur")]
+    public float hurtboxScale = 1f;
+    [Tooltip("Oyun sonunda toplanan altın çarpanı")]
+    public float coinMultiplier = 1f;
+    public bool startWithShield = false;
+    [Tooltip("Menüde karakter kartındaki portre (boşsa güney idle)")]
+    public Sprite portrait;
+
+    public Sprite Portrait => portrait != null ? portrait : (south != null ? south.idle : null);
 }
 
 public enum PlayerType

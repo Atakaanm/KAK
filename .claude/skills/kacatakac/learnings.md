@@ -4,6 +4,16 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-09-26 — Faz 3c.3: karakterler
+
+- **Okunurluk birinci kural:** yeşil gömlekli varyant yeşil zeminde kayboluyordu → pembe-mor. Yeni renk seçerken zemin rengine karşı kontrol et; sıcak renkler (kırmızı/turuncu) tehlikeye (taş) ayrılmış.
+- **Eski gizli hata (karakterler ortaya çıkardı):** `HealthUI.hearts` dizisinde yalnızca Heart1 vardı; `InitHearts` Heart1'i klonlayıp Heart2/3'ün üstüne koyuyordu → 5 kalp üst üste 3 gibi görünüyordu, can kaybında alttakiler kalıyordu. Artık tüm "Heart" çocukları x'e göre sıralanıp yönetiliyor; `KarakterTests.HasarAlinca_GorunenKalpAzalir` regresyon testi.
+- Başlama sırası garanti değil (LevelManager.Start vs PlayerHealth.Start): istatistik uygulayan metotlar sıradan bağımsız olmalı (`PlayerHealth.SetMaxHealth` canı doldurur ve kalpleri yeniden çizer).
+- HUD bandı tek satırda kalabalık: 4-5 kalp + altın + 5 haneli skor + pause sığmıyor → altın sayacı kalplerin altında (combo'nun simetriği).
+- Piksel portreler tam sayı ölçekte (48 px → 192 = 4×); tam sayı olmayan ölçek pikselleri eşitsiz yapar.
+- Karakter varyantları `Assets/Sprites/Characters` altında (Assets/Art değil: oradaki içe aktarma kuralı PPU 41,667 verir, karakterler PPU 100 + görsel ölçek 3 standardında). Atlas'a eklenmeleri gerekir (`KakAtlasSetup`).
+- Editör araçları arasında sıra bağımlılığı riski: `KakScreenSetup` joystick bölgesini yeniden kurar, `KakEndlessSetup` sonradan daraltır. Tek aracı baştan çalıştırmadan önce etkisini düşün.
+
 ## 2026-09-26 — Faz 3c.1: altın
 
 - **Yanlış varsayım düzeltildi:** kullanıcının kaydında `gamesPlayed` = 3 (4775 rekoru eski PlayerPrefs'ten taşındı, oyun sayısı taşınmadı). "Deneyimli oyuncu" kuralına rekor ≥ 1000 eklendi. Kayıt istatistiklerinden varsayım yapmadan önce gerçek değeri kontrol et (köprü Play'de gerçek kaydı geçici dosyaya kopyalıyor: menüdeki "EN İYİ" ve "N oyun" gerçek değerlerdir).
