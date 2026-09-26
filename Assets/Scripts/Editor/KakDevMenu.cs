@@ -148,6 +148,20 @@ public static class KakDevMenu
 
     public static void OpenPets() { var m = Object.FindAnyObjectByType<MainMenuController>(); if (m != null) m.OnPetsClicked(); }
 
+    /// <summary>Günlük ödülü açık sayar ve paneli açar (Play'de, menüde). Köprü: invoke KakDevMenu OpenDaily 3 (seri)</summary>
+    public static void OpenDaily(string streak)
+    {
+        var d = SaveSystem.Data;
+        if (d.playDays < FeatureGate.DailyDays) d.playDays = FeatureGate.DailyDays;
+        int.TryParse(streak, out int st);
+        d.dailyStreak = st;
+        d.lastClaimDay = st > 0 ? DailyReward.Today - 1 : -1;
+        var m = Object.FindAnyObjectByType<MainMenuController>();
+        if (m != null && m.dailyPanel != null) m.dailyPanel.gameObject.SetActive(true);
+    }
+
+    public static void ClaimDaily() { var p = Object.FindAnyObjectByType<DailyRewardPanel>(); if (p != null) p.OnClaim(); }
+
     [MenuItem("KacAtaKac/Dev/UI - Dili Değiştir (TR-EN)")]
     public static void ToggleLanguage() { Loc.Current = Loc.Current == Loc.Lang.TR ? Loc.Lang.EN : Loc.Lang.TR; }
 

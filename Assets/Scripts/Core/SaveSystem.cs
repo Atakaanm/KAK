@@ -138,6 +138,8 @@ public class SaveData
     public string selectedPet = "";
     public List<MissionState> missions = new List<MissionState>(); // aktif görevler (MissionSystem)
     public int missionsCompleted;
+    public int dailyStreak;    // günlük ödül serisi (1-7), DailyReward
+    public int lastClaimDay = -1;
     public int playDays;       // farklı günlerde oynama sayısı
     public int lastPlayDay;    // son oynanan gün (gün numarası)
     public string selectedCharacter = "Boy";

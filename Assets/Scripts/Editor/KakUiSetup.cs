@@ -240,6 +240,7 @@ public static class KakUiSetup
         // Karakter paneli (Faz 3c.3): katalogdaki karakterler, satın al / seç
         var (croot, closeC) = BuildCharacterPanel(canvas, wallet);
         var (proot, closeP) = BuildPetPanel(canvas, wallet);
+        var daily = BuildDailyPanel(canvas, wallet);
 
         // Kontrolcü bağlantıları
         var mmc = Object.FindAnyObjectByType<MainMenuController>();
@@ -253,6 +254,7 @@ public static class KakUiSetup
             mmc.charactersFeature = charsFeature;
             mmc.petsFeature = petsFeature;
             mmc.petsPanel = proot.gameObject;
+            mmc.dailyPanel = daily;
             OnClick(pets, mmc.OnPetsClicked);
             OnClick(closeP, mmc.ClosePetsPanel);
             mmc.settingsPanel = sroot.gameObject;
@@ -277,6 +279,8 @@ public static class KakUiSetup
         croot.SetAsLastSibling();
         proot.SetAsLastSibling();
         proot.gameObject.SetActive(false);
+        daily.transform.SetAsLastSibling();
+        daily.gameObject.SetActive(false);
         sroot.gameObject.SetActive(false);
         croot.gameObject.SetActive(false);
 
@@ -489,5 +493,45 @@ public static class KakUiSetup
         pp.goldSprite = S("btn_gold_9s.png"); pp.stoneSprite = S("btn_stone_9s.png");
         EditorUtility.SetDirty(pp);
         return (root, close);
+    }
+
+    /// <summary>Günlük ödül paneli: 7 gün kutusu (4 + 3, 7. gün çift genişlik), AL/KAPAT.</summary>
+    public static DailyRewardPanel BuildDailyPanel(Transform canvas, WalletHud menuWallet)
+    {
+        var old = canvas.Find("DailyPanel");
+        if (old != null) Object.DestroyImmediate(old.gameObject);
+        var (root, panel) = Modal(canvas, "DailyPanel", new Vector2(920f, 1000f));
+        Text(Place(Rect(panel, "Title"), new Vector2(0.5f, 1f), new Vector2(0f, -100f), new Vector2(860f, 110f)), "@daily_title", 72, KakPalette.Altin);
+        Text(Place(Rect(panel, "Hint"), new Vector2(0.5f, 1f), new Vector2(0f, -180f), new Vector2(860f, 50f)), "@daily_hint", 30, KakPalette.Sis,
+             TextAlignmentOptions.Center, false, false);
+        var coinSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Pickups/coin_0.png");
+        var tiles = new DailyRewardPanel.Tile[7];
+        for (int i = 0; i < 7; i++)
+        {
+            bool big = i == 6;
+            int row = i < 4 ? 0 : 1, col = i < 4 ? i : i - 4;
+            float w = big ? 400f : 190f;
+            float x = row == 0 ? -300f + col * 200f : (col == 0 ? -300f : col == 1 ? -100f : 200f);
+            var tile = Place(Rect(panel, "Day" + (i + 1)), new Vector2(0.5f, 1f), new Vector2(x, row == 0 ? -380f : -640f), new Vector2(w, 230f));
+            var bg = Img(tile, S("btn_stone_9s.png"), true);
+            var day = Text(Place(Rect(tile, "Day"), new Vector2(0.5f, 1f), new Vector2(0f, -36f), new Vector2(w - 10f, 40f)), "GÜN 1", 28, KakPalette.Sis,
+                           TextAlignmentOptions.Center, false, false);
+            Img(Place(Rect(tile, "Coin"), new Vector2(0.5f, 0.5f), new Vector2(0f, 4f), new Vector2(big ? 84f : 64f, big ? 84f : 64f)), coinSprite, false);
+            var amount = Text(Place(Rect(tile, "Amount"), new Vector2(0.5f, 0f), new Vector2(0f, 38f), new Vector2(w - 10f, 50f)), "0", big ? 44f : 38f,
+                              KakPalette.AltinAcik);
+            var check = Img(Place(Rect(tile, "Check"), new Vector2(1f, 1f), new Vector2(-18f, -18f), new Vector2(32f, 32f)), S("icon_check.png"), false,
+                            KakPalette.AcikYesil);
+            tiles[i] = new DailyRewardPanel.Tile { root = tile, background = bg, check = check, dayText = day, amountText = amount };
+        }
+        var claim = Button(Place(Rect(panel, "ClaimButton"), new Vector2(0.5f, 0f), new Vector2(0f, 110f), new Vector2(600f, 140f)), "AL", Style.Gold, 66);
+        var dp = GetOrAdd<DailyRewardPanel>(root.gameObject);
+        dp.tiles = tiles;
+        dp.claimButton = claim;
+        dp.claimLabel = claim.transform.Find("Label").GetComponent<TMP_Text>();
+        dp.goldSprite = S("btn_gold_9s.png"); dp.stoneSprite = S("btn_stone_9s.png");
+        dp.menuWallet = menuWallet;
+        OnClick(claim, dp.OnClaim);
+        EditorUtility.SetDirty(dp);
+        return dp;
     }
 }
