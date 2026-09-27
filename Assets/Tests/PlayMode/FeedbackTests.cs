@@ -22,6 +22,7 @@ public class FeedbackTests
         Assert.IsNotNull(fb.chips, "Parçacık sistemi yok");
         var composer = Object.FindAnyObjectByType<ScreenComposer>();
         var ph = Object.FindAnyObjectByType<PlayerHealth>();
+        ph.SetMaxHealth(3); // G3: tek canla ilk vuruş ölümdü
 
         ph.TakeDamage(1);
         yield return null;

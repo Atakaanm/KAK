@@ -16,8 +16,8 @@ MonoBehaviour:
   minSeconds: 0
   minScore: 0
   maxScore: -1
-  activeSpawnerCount: 2
-  shootIntervalMultiplier: 1.2
+  activeSpawnerCount: 1
+  shootIntervalMultiplier: 1.1
   projectileSpeedMultiplier: 0.88
   projectileScaleMultiplier: 1
   playerSpeedMultiplier: 1

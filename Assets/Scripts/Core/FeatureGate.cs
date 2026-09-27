@@ -8,8 +8,8 @@ public enum Feature { Coins, Missions, Characters, DailyReward, Pets }
 public static class FeatureGate
 {
     public const int MissionsGames = 3;
-    public const int CharactersGames = 5;
-    public const int CharactersCoins = 150;
+    public const int CharactersGames = 2;   // G3: tek canla başlanıyor, gelişim ekranı erken açılmalı
+    public const int CharactersCoins = 60;
     public const int DailyDays = 2;
     public const int PetsGames = 10;
 
@@ -38,17 +38,20 @@ public static class FeatureGate
     }
 
     /// <summary>Kilitli özellik için kalan koşul (menüde "2 oyun sonra" gibi). Açıksa boş.</summary>
+    /// <summary>"N oyun sonra" (EN tekil/çoğul: "in 1 game" / "in 3 games").</summary>
+    static string Games(int n) => string.Format(Loc.T(n == 1 ? "locked_game_1" : "locked_games"), n);
+
     public static string LockedHint(Feature f)
     {
         if (IsUnlocked(f)) return "";
         var d = SaveSystem.Data;
         switch (f)
         {
-            case Feature.Coins: return string.Format(Loc.T("locked_games"), 1 - d.gamesPlayed);
-            case Feature.Missions: return string.Format(Loc.T("locked_games"), MissionsGames - d.gamesPlayed);
-            case Feature.Characters: return string.Format(Loc.T("locked_games"), CharactersGames - d.gamesPlayed);
+            case Feature.Coins: return Games(1 - d.gamesPlayed);
+            case Feature.Missions: return Games(MissionsGames - d.gamesPlayed);
+            case Feature.Characters: return Games(CharactersGames - d.gamesPlayed);
             case Feature.DailyReward: return Loc.T("locked_tomorrow");
-            case Feature.Pets: return string.Format(Loc.T("locked_games"), PetsGames - d.gamesPlayed);
+            case Feature.Pets: return Games(PetsGames - d.gamesPlayed);
             default: return "";
         }
     }

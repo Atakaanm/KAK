@@ -13,7 +13,10 @@ public class PlayerData : ScriptableObject
     public PlayerType playerType = PlayerType.Boy;
 
     [Header("Base İstatistikler")]
+    [Tooltip("G3: yükseltmelerle ulaşılabilecek en fazla can (üst sınır)")]
     public int maxHealth = 3;
+    [Tooltip("G3: yükseltmesiz başlangıç canı (oyuncu adım adım güçlenir)")]
+    public int startHealth = 1;
     public float moveSpeed = 5f;
     public float invincibilityDuration = 0.35f;
 

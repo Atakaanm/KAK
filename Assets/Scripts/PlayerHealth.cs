@@ -24,6 +24,10 @@ public class PlayerHealth : MonoBehaviour
     public bool IsGhost => isGhost;
     private bool isDead = false;
     public bool IsDead => isDead;
+    public int MaxHealth => maxHealth;
+    public int CurrentHealth => currentHealth;
+    /// <summary>G3: karakterin ulaşabileceği en fazla can (oyun içi kalp toplama bu sınıra kadar büyütür).</summary>
+    [System.NonSerialized] public int HealthCap = 3;
     public float invincibilityDuration = 0.35f;
 
     private Coroutine hitFlashCoroutine;
@@ -48,7 +52,8 @@ public class PlayerHealth : MonoBehaviour
     {
         if (playerData != null)
         {
-            maxHealth = playerData.maxHealth;
+            maxHealth = CharacterProgress.Hearts(playerData); // G3
+            HealthCap = playerData.maxHealth;
             invincibilityDuration = playerData.invincibilityDuration;
         }
 
@@ -59,6 +64,20 @@ public class PlayerHealth : MonoBehaviour
             originalColor = playerSpriteRenderer.color;
         }
 
+        if (healthUI != null)
+        {
+            healthUI.InitHearts(maxHealth);
+            healthUI.UpdateHearts(currentHealth);
+        }
+    }
+
+    /// <summary>G3: can doluyken kalp toplayınca bu oyunluk kalp sayısı büyür (HealthCap'e kadar).</summary>
+    public void GrowMaxHealth(int n)
+    {
+        int grow = Mathf.Min(n, HealthCap - maxHealth);
+        if (grow <= 0) return;
+        maxHealth += grow;
+        currentHealth += grow;
         if (healthUI != null)
         {
             healthUI.InitHearts(maxHealth);

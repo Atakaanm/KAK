@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerData
   playerName: Ada
   playerType: 1
-  maxHealth: 3
-  moveSpeed: 4
+  maxHealth: 2
+  startHealth: 1
+  moveSpeed: 4.3
   invincibilityDuration: 0.35
   powerupDurationMultiplier: 1
   powerupSpawnRateMultiplier: 1
@@ -87,7 +88,7 @@ MonoBehaviour:
   traitKey: trait_Ada
   hasDash: 0
   dashCooldown: 0
-  hurtboxScale: 1
+  hurtboxScale: 0.92
   coinMultiplier: 1
   startWithShield: 0
   portrait: {fileID: 0}

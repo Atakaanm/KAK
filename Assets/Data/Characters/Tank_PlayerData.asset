@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerData
   playerName: Tank
   playerType: 0
-  maxHealth: 4
-  moveSpeed: 3.6
+  maxHealth: 5
+  startHealth: 2
+  moveSpeed: 3.5
   invincibilityDuration: 0.35
   powerupDurationMultiplier: 1
   powerupSpawnRateMultiplier: 1
@@ -86,8 +87,8 @@ MonoBehaviour:
   nameKey: char_Tank
   traitKey: trait_Tank
   hasDash: 0
-  dashCooldown: 3.2
-  hurtboxScale: 1
+  dashCooldown: 0
+  hurtboxScale: 1.2
   coinMultiplier: 1
   startWithShield: 1
   portrait: {fileID: 0}

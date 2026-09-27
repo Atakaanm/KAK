@@ -98,7 +98,7 @@ public class PowerupPickup : MonoBehaviour
         float durationMultiplier = 1.0f;
         if (movement != null && movement.playerData != null)
         {
-            durationMultiplier = movement.playerData.powerupDurationMultiplier;
+            durationMultiplier = movement.playerData.powerupDurationMultiplier * CharacterProgress.PowerMult(movement.playerData);
         }
 
         float finalDuration = powerupData.duration * durationMultiplier;
@@ -111,7 +111,10 @@ public class PowerupPickup : MonoBehaviour
         switch (powerupData.type)
         {
             case PowerupType.Heal:
-                if (health != null) health.Heal(powerupData.healthAmount);
+                // G3: can doluyken kalp bu oyunluk +1 kalp verir (karakterin üst sınırına kadar): oyun içinde büyüme
+                if (health != null && health.CurrentHealth >= health.MaxHealth && health.MaxHealth < health.HealthCap)
+                    health.GrowMaxHealth(1);
+                else if (health != null) health.Heal(powerupData.healthAmount);
                 break;
 
             case PowerupType.Shield:

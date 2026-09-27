@@ -238,7 +238,7 @@ public static class KakEndlessSetup
     public static string SetupStages()
     {
         //                                                   sn    spawner aralık× hız×  boyut× oyuncu× skor×
-        SetStage("Assets/Data/Stage1_Baslangic.asset",       0f,   2, 1.20f, 0.88f, 1.00f, 1.00f, 1.00f);
+        SetStage("Assets/Data/Stage1_Baslangic.asset",       0f,   1, 1.10f, 0.88f, 1.00f, 1.00f, 1.00f); // G3: tek canla ısınma, tek fırlatıcı
         SetStage("Assets/Data/Stage2_Kolay.asset",          30f,   2, 1.05f, 0.96f, 1.00f, 1.02f, 1.10f);
         SetStage("Assets/Data/Stage3_Orta.asset",           75f,   3, 0.95f, 1.05f, 1.04f, 1.04f, 1.20f);
         SetStage("Assets/Data/Stage4_Zor.asset",           150f,   3, 0.84f, 1.15f, 1.08f, 1.06f, 1.35f);

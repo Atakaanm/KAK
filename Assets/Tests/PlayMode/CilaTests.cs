@@ -17,7 +17,7 @@ public class CilaTests
     {
         var d = SaveSystem.Data;
         d.gamesPlayed = FeatureGate.CharactersGames; // karakterler açık → hedef: en ucuz karakter
-        d.coins = 100;
+        d.coins = 10; // G3: en ucuz hedef artık can yükseltmesi (60); yetmeyen altınla ilerleme metni
         d.bestScoreEndless = 0;
         yield return KakTestUtil.LoadGameWithLevel();
         yield return KakTestUtil.WaitReal(1.2f); // skor > 0 → yeni rekor

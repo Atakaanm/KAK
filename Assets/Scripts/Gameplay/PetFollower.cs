@@ -24,6 +24,9 @@ public class PetFollower : MonoBehaviour
     public float ShieldTimer => shieldTimer; // testler için
 
     /// <summary>Pet nesnesini koddan kurar (prefab gerekmez).</summary>
+    /// <summary>G3: pet seviyesi (0-3); etkiyi güçlendirir.</summary>
+    [System.NonSerialized] public int level;
+
     public static PetFollower Spawn(PetData data, Transform player, Sprite shadowSprite, Sprite glowSprite)
     {
         if (data == null || player == null) return null;
@@ -31,6 +34,7 @@ public class PetFollower : MonoBehaviour
         var pf = go.AddComponent<PetFollower>();
         pf.data = data;
         pf.player = player;
+        pf.level = CharacterProgress.PetLevelOf(data.id); // G3
         pf.body = new GameObject("Body").AddComponent<SpriteRenderer>();
         pf.body.transform.SetParent(go.transform, false);
         pf.body.sprite = data.frames != null && data.frames.Length > 0 ? data.frames[0] : null;
@@ -107,7 +111,8 @@ public class PetFollower : MonoBehaviour
 
     void Magnet()
     {
-        float r2 = data.magnetRadius * data.magnetRadius;
+        float radius = data.magnetRadius * (1f + 0.2f * level); // G3: seviye başına +%20 çekim alanı
+        float r2 = radius * radius;
         var list = Coin.Active;
         for (int i = 0; i < list.Count; i++)
         {
@@ -122,7 +127,7 @@ public class PetFollower : MonoBehaviour
         if (health == null) return;
         if (health.HasShield) { shieldTimer = 0f; return; }
         shieldTimer += dt;
-        if (shieldTimer >= data.shieldInterval)
+        if (shieldTimer >= data.shieldInterval * (1f - 0.15f * level)) // G3: seviye başına %15 daha sık
         {
             shieldTimer = 0f;
             health.ActivateShield();

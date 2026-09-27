@@ -250,14 +250,15 @@ public class LevelManager : MonoBehaviour
 
         if (playerMovement != null)
         {
-            playerMovement.SetMoveSpeed(data.moveSpeed);
+            playerMovement.SetMoveSpeed(data.moveSpeed * CharacterProgress.SpeedMult(data)); // G3: hız yükseltmesi
         }
 
         if (playerMovement != null) playerMovement.playerData = data; // powerup süre çarpanı buradan okunur
 
         if (playerHealth != null)
         {
-            playerHealth.SetMaxHealth(data.maxHealth);
+            playerHealth.SetMaxHealth(CharacterProgress.Hearts(data)); // G3: tek canla başla, yükselttikçe artar
+            playerHealth.HealthCap = data.maxHealth;
             playerHealth.invincibilityDuration = data.invincibilityDuration;
             if (data.startWithShield) playerHealth.ActivateShield();
         }

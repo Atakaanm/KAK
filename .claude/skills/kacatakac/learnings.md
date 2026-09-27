@@ -4,6 +4,14 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-09-27 — G3: adım adım güçlenme
+
+- Tek canla başlangıçta **ilk 30 sn** her şeyi belirliyor: iki fırlatıcıyla usta bot bile 24. saniyede ölüyordu → ısınma kademesi tek fırlatıcı. Sonuç: acemi ~78 sn, usta ~88 sn (yükseltmesiz), yükselttikçe uzuyor.
+- Dolu canla kalp = bu oyunluk +1 kalp: tek canlı başlangıcı affedici yapıyor ve oyun içi "büyüme" hissi veriyor (Survivor.io'nun koşu içi güçlenmesinin kaçış versiyonu).
+- `Kalp.png` 1280×698 ve solunda 351 px boşluk var: küçük kutuda minik görünüyordu. HUD düzeni bozulmasın diye içe aktarmayı değiştirmek yerine kırpılmış kopya (`Art/UI/heart_ui.png`).
+- Yeni modal açılırken `SetAsLastSibling` şart: kurulum aracı sonradan başka panelleri en üste alıyor (croot/proot) ve detay paneli arkada kalırdı.
+- İngilizce tekil/çoğul hataları tekrar tekrar çıkıyor ("in 1 games"): sayı alan her EN metninde `_1` anahtarı düşün.
+
 ## 2026-09-27 — G2: zorluk ve skor
 
 - **Zorluk skora bağlıyken skor hızlandırıcıları zorluğu da hızlandırıyordu** (kullanıcı fark etti). Zorluk süreye, skor çarpanı oyuncu becerisine (yakın geçiş) bağlı: ikisi ayrı eksen.

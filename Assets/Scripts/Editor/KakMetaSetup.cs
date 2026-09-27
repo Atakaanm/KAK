@@ -128,19 +128,20 @@ public static class KakMetaSetup
 
     struct CharDef
     {
-        public string id; public int hp; public float speed, dash, hurt, coin, puRate, puDur; public bool shield; public int price;
+        public string id; public int hp, start; public float speed, dash, hurt, coin, puRate, puDur; public bool shield; public int price;
         public bool girl;
     }
 
     // Ödünleşimli istatistikler (düz güç değil): 3c.md
     static readonly CharDef[] Chars =
     {
-        // ADA: ücretsiz başlangıç seçeneği, Ata ile aynı istatistikler (kız/erkek seçimi görünüm tercihi, güç farkı değil)
+        // ADA: ücretsiz ikinci başlangıç seçeneği; G3'te ince ve hızlı (2 can) → Ata'nın dengeli (3 can) alternatifi
         // Görseller: tools/kak_gen_girl.py (esmer, uzun koyu saçlı, zayıf; 8 yön + 8×4 koşu)
-        new CharDef { id = "Ada", hp = 3, speed = 4f, dash = 0f, hurt = 1f, coin = 1f, puRate = 1f, puDur = 1f, price = 0, girl = true },
-        new CharDef { id = "Swift", hp = 2, speed = 4.6f, dash = 2.0f, hurt = 0.85f, coin = 1f, puRate = 1f, puDur = 1f, price = 300 },
-        new CharDef { id = "Tank", hp = 4, speed = 3.6f, dash = 3.2f, hurt = 1f, coin = 1f, puRate = 1f, puDur = 1f, shield = true, price = 800 },
-        new CharDef { id = "Lucky", hp = 3, speed = 4f, dash = 0f, hurt = 1f, coin = 1.25f, puRate = 1.3f, puDur = 1.2f, price = 1500 },
+        // G3 arketipleri: hp = yükseltmeyle ulaşılan üst sınır, start = başlangıç canı, hurt = gövde (küçük = avantaj)
+        new CharDef { id = "Ada", hp = 2, start = 1, speed = 4.3f, dash = 0f, hurt = 0.92f, coin = 1f, puRate = 1f, puDur = 1f, price = 0, girl = true },
+        new CharDef { id = "Swift", hp = 2, start = 1, speed = 4.6f, dash = 0f, hurt = 0.8f, coin = 1f, puRate = 1f, puDur = 1f, price = 300 },
+        new CharDef { id = "Tank", hp = 5, start = 2, speed = 3.5f, dash = 0f, hurt = 1.2f, coin = 1f, puRate = 1f, puDur = 1f, shield = true, price = 800 },
+        new CharDef { id = "Lucky", hp = 3, start = 1, speed = 4f, dash = 0f, hurt = 1f, coin = 1.25f, puRate = 1.3f, puDur = 1.2f, price = 1500 },
     };
 
     [MenuItem("KacAtaKac/Karakterleri Kur (Faz 3c)")]
@@ -157,6 +158,7 @@ public static class KakMetaSetup
         if (boy == null) return "HATA: Boy_PlayerData yok.";
         boy.id = "Boy"; boy.nameKey = "char_Boy"; boy.traitKey = "trait_Boy"; boy.unlockPrice = 0; boy.isLocked = false;
         boy.moveSpeed = 4f; // G1: telefonda fazla hızlıydı (5)
+        boy.maxHealth = 3; boy.startHealth = 1; boy.hurtboxScale = 1f; // G3: tek canla başla, 3'e kadar gelişir
         EditorUtility.SetDirty(boy);
 
         // 1) Varyant sprite'ların içe aktarma ayarları = kaynak (PPU 100, nokta filtre, merkez pivot)
@@ -197,7 +199,7 @@ public static class KakMetaSetup
             pd.name = c.id + "_PlayerData";
             pd.playerName = c.id;
             pd.id = c.id; pd.nameKey = "char_" + c.id; pd.traitKey = "trait_" + c.id;
-            pd.maxHealth = c.hp; pd.moveSpeed = c.speed; pd.dashCooldown = c.dash; pd.hurtboxScale = c.hurt;
+            pd.maxHealth = c.hp; pd.startHealth = c.start; pd.moveSpeed = c.speed; pd.dashCooldown = c.dash; pd.hurtboxScale = c.hurt;
             pd.coinMultiplier = c.coin; pd.powerupSpawnRateMultiplier = c.puRate; pd.powerupDurationMultiplier = c.puDur;
             pd.startWithShield = c.shield; pd.unlockPrice = c.price; pd.isLocked = c.price > 0; pd.portrait = null;
             pd.playerType = c.girl ? PlayerType.Girl : PlayerType.Boy;

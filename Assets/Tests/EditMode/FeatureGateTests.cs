@@ -30,14 +30,15 @@ public class FeatureGateTests
     public void Takvim_OyunSayisiVeAltinlaAcilir()
     {
         var d = SaveSystem.Data;
+        // G3 takvimi: altın (1) → karakter/gelişim (2 oyun ya da ilk yükseltmelik altın) → görevler (3)
         d.gamesPlayed = 1;
         Assert.IsTrue(FeatureGate.IsUnlocked(Feature.Coins));
-        Assert.IsFalse(FeatureGate.IsUnlocked(Feature.Missions));
-        d.gamesPlayed = FeatureGate.MissionsGames;
-        Assert.IsTrue(FeatureGate.IsUnlocked(Feature.Missions));
         Assert.IsFalse(FeatureGate.IsUnlocked(Feature.Characters));
+        Assert.IsFalse(FeatureGate.IsUnlocked(Feature.Missions));
         d.totalCoins = FeatureGate.CharactersCoins;          // altınla erken açılır
         Assert.IsTrue(FeatureGate.IsUnlocked(Feature.Characters));
+        d.gamesPlayed = FeatureGate.MissionsGames;
+        Assert.IsTrue(FeatureGate.IsUnlocked(Feature.Missions));
         Assert.IsFalse(FeatureGate.IsUnlocked(Feature.Pets));
         d.unlockedCharacters.Add("Cevik");                    // ikinci karakter → pet'ler
         Assert.IsTrue(FeatureGate.IsUnlocked(Feature.Pets));
@@ -58,8 +59,9 @@ public class FeatureGateTests
     [Test]
     public void KilitIpucu_KalanOyunuSoyler()
     {
-        SaveSystem.Data.gamesPlayed = 2;
-        StringAssert.Contains("3", FeatureGate.LockedHint(Feature.Characters));
+        SaveSystem.Data.gamesPlayed = 0;
+        StringAssert.Contains("2", FeatureGate.LockedHint(Feature.Characters));
+        SaveSystem.Data.gamesPlayed = 1;
         Assert.AreEqual("", FeatureGate.LockedHint(Feature.Coins));
     }
 }
