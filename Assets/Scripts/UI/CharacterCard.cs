@@ -19,6 +19,10 @@ public class CharacterCard : MonoBehaviour
     public TMP_Text actionText;
     public Image actionCoin;
     public Sprite goldSprite, stoneSprite;
+    [Tooltip("G3: karta dokununca detay/gelişim ekranı")]
+    public Button openButton;
+    [Tooltip("G3: alınabilir yükseltme varsa görünen işaret")]
+    public GameObject upgradeDot;
 
     [HideInInspector] public int index;
     [HideInInspector] public CharacterPanel panel;
@@ -28,6 +32,7 @@ public class CharacterCard : MonoBehaviour
     void Awake()
     {
         if (actionButton != null) actionButton.onClick.AddListener(() => { if (panel != null) panel.OnCardAction(index); });
+        if (openButton != null) openButton.onClick.AddListener(() => { if (panel != null) panel.OpenDetail(index); });
     }
 
     public void Bind(PlayerData p)
@@ -44,10 +49,18 @@ public class CharacterCard : MonoBehaviour
         }
         if (nameText != null) nameText.text = Loc.T(p.nameKey);
         if (traitText != null) traitText.text = string.IsNullOrEmpty(p.traitKey) ? "" : Loc.T(p.traitKey);
+        // G3: dolu = şu anki başlangıç canı, soluk = yükseltmeyle açılabilecek (üst sınır)
+        int cur = CharacterProgress.Hearts(p);
         if (hearts != null)
-            for (int i = 0; i < hearts.Length; i++) if (hearts[i] != null) hearts[i].gameObject.SetActive(i < p.maxHealth);
+            for (int i = 0; i < hearts.Length; i++)
+            {
+                if (hearts[i] == null) continue;
+                hearts[i].gameObject.SetActive(i < p.maxHealth);
+                hearts[i].color = i < cur ? Color.white : new Color(0.22f, 0.24f, 0.36f, 1f);
+            }
+        if (upgradeDot != null) upgradeDot.SetActive(owned && CharacterProgress.AnyUpgradeAffordable(p));
         // Hız ve dash göstergeleri: karakterler arasında göreli (0.3-1)
-        if (speedFill != null) speedFill.fillAmount = Mathf.InverseLerp(4f, 6.25f, p.moveSpeed) * 0.7f + 0.3f;
+        if (speedFill != null) speedFill.fillAmount = Mathf.InverseLerp(3.3f, 5f, p.moveSpeed * CharacterProgress.SpeedMult(p)) * 0.7f + 0.3f;
         float cd = p.dashCooldown > 0f ? p.dashCooldown : 2.6f;
         if (dashFill != null)
         {

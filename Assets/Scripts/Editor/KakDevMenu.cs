@@ -191,6 +191,21 @@ public static class KakDevMenu
         if (s != null && s.scoreText != null) s.scoreText.SetText(Loc.T("hud_score"), s.ScoreInt);
     }
 
+    /// <summary>G3: karakter detay ekranını açar (karakter paneli açık olmalı). Köprü: invoke KakDevMenu OpenCharacterDetail 0</summary>
+    public static void OpenCharacterDetail(string index)
+    {
+        var p = Object.FindAnyObjectByType<CharacterPanel>();
+        if (p != null && int.TryParse(index, out int i)) p.OpenDetail(i);
+    }
+
+    /// <summary>G3: açık detay ekranında yükseltme düğmesine basar (Health/Speed/Power). Köprü: invoke KakDevMenu PressUpgrade Health</summary>
+    public static void PressUpgrade(string stat)
+    {
+        var d = Object.FindAnyObjectByType<CharacterDetailPanel>();
+        if (d == null) return;
+        if (stat == "Speed") d.OnUpgradeSpeed(); else if (stat == "Power") d.OnUpgradePower(); else d.OnUpgradeHealth();
+    }
+
     /// <summary>Oyuncunun çevresine 3 göktaşı düşürür ("!" uyarısını görmek için). Köprü: invoke KakDevMenu DropMeteors</summary>
     [MenuItem("KacAtaKac/Dev/Göktaşı Düşür")]
     public static void DropMeteors()

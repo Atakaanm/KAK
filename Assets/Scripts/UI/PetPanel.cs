@@ -13,6 +13,10 @@ public class PetPanel : MonoBehaviour
         public TMP_Text nameText, traitText, actionText;
         public Button actionButton;
         public Image actionBackground, actionCoin;
+        // G3: pet gelişimi
+        public TMP_Text levelText, upgradeText;
+        public Button upgradeButton;
+        public Image upgradeBackground, upgradeCoin;
     }
 
     public Card[] cards;
@@ -28,6 +32,7 @@ public class PetPanel : MonoBehaviour
         {
             int k = i;
             if (cards[i].actionButton != null) cards[i].actionButton.onClick.AddListener(() => OnCardAction(k));
+            if (cards[i].upgradeButton != null) cards[i].upgradeButton.onClick.AddListener(() => OnUpgrade(k));
         }
     }
 
@@ -60,9 +65,42 @@ public class PetPanel : MonoBehaviour
             c.actionBackground.sprite = (!owned && afford) ? goldSprite : stoneSprite;
             c.actionBackground.color = (!owned && !afford) ? new Color(0.6f, 0.6f, 0.65f, 1f) : Color.white;
             c.actionText.color = (!owned && afford) ? KakPalette.Murekkep : (!owned ? KakPalette.ArduvazAcik : KakPalette.Krem);
+
+            // G3: seviye ve yükseltme (yalnız sahip olunan pette)
+            int lvl = CharacterProgress.PetLevelOf(p.id);
+            if (c.levelText != null)
+            {
+                c.levelText.gameObject.SetActive(owned);
+                c.levelText.text = string.Format(Loc.T("pet_level"), lvl + 1);
+                c.levelText.color = selected ? KakPalette.KahveKoyu : KakPalette.AltinAcik;
+            }
+            if (c.upgradeButton != null)
+            {
+                c.upgradeButton.gameObject.SetActive(owned);
+                int cost = CharacterProgress.PetCost(p);
+                bool can = cost >= 0 && SaveSystem.Data.coins >= cost;
+                if (c.upgradeText != null)
+                {
+                    if (cost < 0) c.upgradeText.text = Loc.T("stat_max");
+                    else c.upgradeText.SetText("+ {0}", cost);
+                    c.upgradeText.color = can ? KakPalette.Murekkep : KakPalette.Sis;
+                }
+                if (c.upgradeCoin != null) c.upgradeCoin.gameObject.SetActive(cost >= 0);
+                if (c.upgradeBackground != null) c.upgradeBackground.sprite = can ? goldSprite : stoneSprite;
+                c.upgradeButton.interactable = cost >= 0;
+            }
         }
         if (walletText != null) walletText.SetText("{0}", SaveSystem.Data.coins);
         if (menuWallet != null) menuWallet.Refresh();
+    }
+
+    public void OnUpgrade(int index)
+    {
+        if (catalog == null || catalog.pets == null || index >= catalog.pets.Length) return;
+        var am = AudioManager.Instance;
+        if (CharacterProgress.TryUpgradePet(catalog.pets[index])) { if (am != null) am.PlaySfx(am.stageSfx); }
+        else if (am != null) am.PlayButtonClick();
+        Refresh();
     }
 
     public void OnCardAction(int index)

@@ -133,4 +133,21 @@ public class HisTests
         yield return null; yield return null;
         Assert.AreEqual(2, dm.CurrentStageIndex, "Süre kademeyi ilerletmedi");
     }
+
+    [UnityTest]
+    public IEnumerator TekCanlaBaslar_DoluykenKalp_BuOyunlukBuyutur()
+    {
+        yield return KakTestUtil.LoadGameWithLevel();
+        StopShooters();
+        var ph = Object.FindAnyObjectByType<PlayerHealth>();
+        Assert.AreEqual(1, ph.MaxHealth, "G3: yükseltmesiz Ata tek canla başlamalı");
+        Assert.AreEqual(3, ph.HealthCap);
+        var heart = UnityEditor.AssetDatabase.LoadAssetAtPath<PowerupData>("Assets/Data/Powerups/HeartData.asset");
+        PowerupPickup.Apply(heart, ph.gameObject, ph.transform.position);
+        Assert.AreEqual(2, ph.MaxHealth, "Dolu canla kalp +1 kalp vermedi");
+        Assert.AreEqual(2, ph.CurrentHealth);
+        PowerupPickup.Apply(heart, ph.gameObject, ph.transform.position);
+        PowerupPickup.Apply(heart, ph.gameObject, ph.transform.position);
+        Assert.AreEqual(3, ph.MaxHealth, "Üst sınırı aştı");
+    }
 }

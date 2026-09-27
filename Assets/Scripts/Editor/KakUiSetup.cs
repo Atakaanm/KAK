@@ -388,7 +388,7 @@ public static class KakUiSetup
         var wtext = Text(Place(Rect(wrow, "Amount"), new Vector2(0.5f, 0.5f), new Vector2(40f, 0f), new Vector2(200f, 64f)),
                          "0", 50, KakPalette.AltinAcik, TextAlignmentOptions.MidlineLeft);
 
-        var heart = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/UI/Kalp.png");
+        var heart = S("heart_ui.png"); // G3: Kalp.png'nin solunda boşluk var, kırpılmış kopya
         var white = S("white_ui.png");
         // 3×2 ızgara (6 yuva; katalog büyüdükçe fazlası gizli). Portre 3× (48 px → 144, tam sayı ölçek)
         const int Cols = 3, Slots = 6;
@@ -413,7 +413,16 @@ public static class KakUiSetup
             var coin = Img(Place(Rect(btn.transform, "Coin"), new Vector2(0.5f, 0.5f), new Vector2(-72f, 0f), new Vector2(36f, 36f)),
                            AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Pickups/coin_0.png"), false);
 
+            // G3: karta dokununca detay ekranı; alınabilir yükseltme varsa "+" işareti
+            bg.raycastTarget = true;
+            var open = GetOrAdd<Button>(card.gameObject);
+            open.transition = Selectable.Transition.None;
+            open.targetGraphic = bg;
+            var dot = Img(Place(Rect(card, "UpgradeDot"), new Vector2(1f, 1f), new Vector2(-24f, -24f), new Vector2(52f, 52f)), S("btn_gold_9s.png"), true);
+            Text(Stretch(Rect(dot.rectTransform, "Plus")), "+", 44, KakPalette.Murekkep);
+
             var cc = GetOrAdd<CharacterCard>(card.gameObject);
+            cc.openButton = open; cc.upgradeDot = dot.gameObject;
             cc.background = bg; cc.portrait = portrait; cc.nameText = name; cc.traitText = trait; cc.hearts = hearts;
             cc.speedFill = speed; cc.dashFill = dash; cc.actionButton = btn; cc.actionBackground = btn.GetComponent<Image>();
             cc.actionText = btn.transform.Find("Label").GetComponent<TMP_Text>(); cc.actionCoin = coin;
@@ -426,8 +435,83 @@ public static class KakUiSetup
 
         var panel = GetOrAdd<CharacterPanel>(croot.gameObject);
         panel.cards = cards; panel.walletText = wtext; panel.menuWallet = menuWallet;
+        panel.detail = BuildCharacterDetailPanel(canvas, panel);
         EditorUtility.SetDirty(panel);
         return (croot, close);
+    }
+
+    /// <summary>G3: karakter detay / gelişim ekranı (Can, Hız, Güç süresi yükseltmeleri + kostüm yuvası).</summary>
+    static CharacterDetailPanel BuildCharacterDetailPanel(Transform canvas, CharacterPanel owner)
+    {
+        var old = canvas.Find("CharacterDetailPanel");
+        if (old != null) Object.DestroyImmediate(old.gameObject);
+        var (root, panel) = Modal(canvas, "CharacterDetailPanel", new Vector2(900f, 1560f), 0.8f);
+        var coinSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Pickups/coin_0.png");
+        var heart = S("heart_ui.png");
+        var white = S("white_ui.png");
+
+        var name = Text(Place(Rect(panel, "Name"), new Vector2(0.5f, 1f), new Vector2(0f, -95f), new Vector2(820f, 110f)), "ATA", 72, KakPalette.Altin);
+        var wrow = Place(Rect(panel, "Wallet"), new Vector2(0.5f, 1f), new Vector2(0f, -178f), new Vector2(360f, 60f));
+        Img(Place(Rect(wrow, "Icon"), new Vector2(0.5f, 0.5f), new Vector2(-70f, 0f), new Vector2(48f, 48f)), coinSprite, false);
+        var wtext = Text(Place(Rect(wrow, "Amount"), new Vector2(0.5f, 0.5f), new Vector2(40f, 0f), new Vector2(200f, 60f)),
+                         "0", 46, KakPalette.AltinAcik, TextAlignmentOptions.MidlineLeft);
+        // 48 px portre × 5 (tam sayı ölçek)
+        var portrait = Img(Place(Rect(panel, "Portrait"), new Vector2(0.5f, 1f), new Vector2(0f, -370f), new Vector2(240f, 240f)), null, false);
+        var trait = Text(Place(Rect(panel, "Trait"), new Vector2(0.5f, 1f), new Vector2(0f, -540f), new Vector2(800f, 50f)), "", 32, KakPalette.Krem,
+                         TextAlignmentOptions.Center, false, false);
+        Text(Place(Rect(panel, "Hint"), new Vector2(0.5f, 1f), new Vector2(0f, -592f), new Vector2(800f, 40f)), "@upgrade_hint", 24, KakPalette.Sis,
+             TextAlignmentOptions.Center, false, false);
+
+        var d = GetOrAdd<CharacterDetailPanel>(root.gameObject);
+        d.healthRow = StatRowUi(panel, "Health", "@stat_health", -700f, heart, 5, 58f, 52f, Color.white, coinSprite, d.OnUpgradeHealth);
+        d.speedRow = StatRowUi(panel, "Speed", "@stat_speed", -850f, white, CharacterProgress.SpeedLevels, 58f, 40f, KakPalette.Camgobegi, coinSprite, d.OnUpgradeSpeed);
+        d.powerRow = StatRowUi(panel, "Power", "@stat_power", -1000f, white, CharacterProgress.PowerLevels, 58f, 40f, KakPalette.Altin, coinSprite, d.OnUpgradePower);
+
+        // Kostüm yuvası (ileride kıyafet giydirme)
+        var costume = Img(Place(Rect(panel, "Costume"), new Vector2(0.5f, 1f), new Vector2(0f, -1140f), new Vector2(780f, 96f)), S("btn_stone_9s.png"), true,
+                          new Color(0.75f, 0.75f, 0.82f, 0.85f));
+        Img(Place(Rect(costume.rectTransform, "Lock"), new Vector2(0f, 0.5f), new Vector2(60f, 0f), new Vector2(40f, 40f)), S("icon_lock.png"), false, KakPalette.Sis);
+        Text(Stretch(Rect(costume.rectTransform, "Label")), "@costume_soon", 30, KakPalette.Sis);
+
+        var action = Button(Place(Rect(panel, "Action"), new Vector2(0.5f, 0f), new Vector2(0f, 255f), new Vector2(560f, 120f)), "SEÇ", Style.Gold, 52);
+        var acoin = Img(Place(Rect(action.transform, "Coin"), new Vector2(0.5f, 0.5f), new Vector2(-120f, 0f), new Vector2(52f, 52f)), coinSprite, false);
+        var close = Button(Place(Rect(panel, "CloseButton"), new Vector2(0.5f, 0f), new Vector2(0f, 105f), new Vector2(440f, 100f)), "@close", Style.Stone, 44);
+
+        d.nameText = name; d.traitText = trait; d.walletText = wtext; d.portrait = portrait; d.body = panel;
+        d.actionButton = action; d.actionBackground = action.GetComponent<Image>();
+        d.actionText = action.transform.Find("Label").GetComponent<TMP_Text>(); d.actionCoin = acoin;
+        d.goldSprite = S("btn_gold_9s.png"); d.stoneSprite = S("btn_stone_9s.png");
+        d.panel = owner;
+        OnClick(action, d.OnAction);
+        OnClick(close, d.Close);
+        EditorUtility.SetDirty(d);
+        root.gameObject.SetActive(false);
+        return d;
+    }
+
+    static CharacterDetailPanel.StatRow StatRowUi(RectTransform panel, string name, string label, float y, Sprite pipSprite, int pipCount,
+                                                  float pipGap, float pipSize, Color filled, Sprite coinSprite, UnityEngine.Events.UnityAction onClick)
+    {
+        var row = Place(Rect(panel, name + "Row"), new Vector2(0.5f, 1f), new Vector2(0f, y), new Vector2(800f, 130f));
+        Text(Place(Rect(row, "Label"), new Vector2(0f, 0.5f), new Vector2(20f, 0f), new Vector2(250f, 60f), new Vector2(0f, 0.5f)), label, 32, KakPalette.Krem,
+             TextAlignmentOptions.MidlineLeft);
+        var pips = new Image[pipCount];
+        float x0 = -40f - (pipCount - 1) * pipGap * 0.5f;
+        for (int i = 0; i < pipCount; i++)
+        {
+            pips[i] = Img(Place(Rect(row, "Pip" + i), new Vector2(0.5f, 0.5f), new Vector2(x0 + i * pipGap, 0f), new Vector2(pipSize, pipSize)), pipSprite, false);
+            pips[i].preserveAspect = true;
+        }
+        var btn = Button(Place(Rect(row, "Upgrade"), new Vector2(1f, 0.5f), new Vector2(-20f, 0f), new Vector2(230f, 100f), new Vector2(1f, 0.5f)),
+                         "60", Style.Gold, 38);
+        var coin = Img(Place(Rect(btn.transform, "Coin"), new Vector2(0.5f, 0.5f), new Vector2(-62f, 0f), new Vector2(40f, 40f)), coinSprite, false);
+        var price = btn.transform.Find("Label").GetComponent<TMP_Text>();
+        price.rectTransform.anchoredPosition = new Vector2(20f, 0f);
+        OnClick(btn, onClick);
+        return new CharacterDetailPanel.StatRow
+        {
+            pips = pips, button = btn, buttonBackground = btn.GetComponent<Image>(), priceText = price, coin = coin, filledColor = filled
+        };
     }
 
     /// <summary>Etiketli yatay gösterge çubuğu (zemin + dolum). Dolum Image'ını döndürür.</summary>
@@ -498,10 +582,19 @@ public static class KakUiSetup
             var btn = Button(Place(Rect(card, "Action"), new Vector2(0.5f, 0f), new Vector2(0f, 60f), new Vector2(340f, 90f)), "SEÇ", Style.Stone, 40);
             var coin = Img(Place(Rect(btn.transform, "Coin"), new Vector2(0.5f, 0.5f), new Vector2(-95f, 0f), new Vector2(42f, 42f)),
                            AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Pickups/coin_0.png"), false);
+            // G3: seviye + yükseltme
+            var lvl = Text(Place(Rect(card, "Level"), new Vector2(0f, 1f), new Vector2(24f, -34f), new Vector2(200f, 40f), new Vector2(0f, 0.5f)), "SEV. 1", 26,
+                           KakPalette.AltinAcik, TextAlignmentOptions.MidlineLeft, false, false);
+            var up = Button(Place(Rect(card, "Upgrade"), new Vector2(0.5f, 0f), new Vector2(0f, 165f), new Vector2(300f, 76f)), "+ 150", Style.Gold, 32);
+            var ucoin = Img(Place(Rect(up.transform, "Coin"), new Vector2(0.5f, 0.5f), new Vector2(-80f, 0f), new Vector2(36f, 36f)),
+                            AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Pickups/coin_0.png"), false);
+            var ulabel = up.transform.Find("Label").GetComponent<TMP_Text>();
+            ulabel.rectTransform.anchoredPosition = new Vector2(18f, 0f);
             cards[i] = new PetPanel.Card
             {
                 root = card, background = bg, portrait = portrait, nameText = name, traitText = trait,
-                actionButton = btn, actionBackground = btn.GetComponent<Image>(), actionText = btn.transform.Find("Label").GetComponent<TMP_Text>(), actionCoin = coin
+                actionButton = btn, actionBackground = btn.GetComponent<Image>(), actionText = btn.transform.Find("Label").GetComponent<TMP_Text>(), actionCoin = coin,
+                levelText = lvl, upgradeButton = up, upgradeBackground = up.GetComponent<Image>(), upgradeText = ulabel, upgradeCoin = ucoin
             };
         }
         var close = Button(Place(Rect(panel, "CloseButton"), new Vector2(0.5f, 0f), new Vector2(0f, 95f), new Vector2(560f, 120f)), "@close", Style.Gold, 58);

@@ -144,6 +144,8 @@ public class SaveData
     public int lastPlayDay;    // son oynanan gün (gün numarası)
     public string selectedCharacter = "Boy";
     public List<string> unlockedCharacters = new List<string> { "Boy" };
+    public List<CharLevels> charLevels = new List<CharLevels>(); // G3: kalıcı yükseltmeler
+    public List<PetLevel> petLevels = new List<PetLevel>();       // G3: pet seviyeleri
 
     public List<LevelProgress> levels = new List<LevelProgress>();
 

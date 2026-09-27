@@ -15,6 +15,7 @@ MonoBehaviour:
   playerName: Lucky
   playerType: 0
   maxHealth: 3
+  startHealth: 1
   moveSpeed: 4
   invincibilityDuration: 0.35
   powerupDurationMultiplier: 1.2

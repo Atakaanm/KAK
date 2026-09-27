@@ -151,7 +151,7 @@ Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 **Faz 11 — telefon geri bildirimi** (`prompts/faz-11-oyuncu-geri-bildirimi.md`), sırayla:
 - [x] G1 His ve kontrol (ölümde donma, çapraz koşu histerezisi, hız 5→4 + hız güçlendirmesi ×1,25, göktaşı "!", altın tek tek + aralıklı, dash rafa, kontrol boyutu ayarı). Testler 81/81 + 23/23
 - [x] G2 Zorluk süreye bağlı (0/30/75/150/240/360 sn, `KakEndlessSetup.SetupStages`) + taş dağılımı yumuşak + ekranda en fazla 2 büyük taş + yakın geçiş skor çarpanı (+0,1, en fazla ×3, hasarda yarıya). Bot (3 can): usta 232 sn ortanca, acemi 135 sn → G3 tek canla yeniden ölç
-- [ ] G3 Tek can başlangıç + karakter detay/yükseltme ekranı + arketipler + pet gelişimi
+- [x] G3 Tek can başlangıç + kalıcı yükseltmeler (Can/Hız/Güç süresi, `CharacterProgress`) + karakter detay ekranı (karta dokun) + arketipler (Ata 1→3, Ada 1→2 hızlı-ince, Çevik 1→2 küçük-çok hızlı, Tank 2→5 hantal-kalkanlı, Şanslı 1→3 altın) + dolu canla kalp = bu oyunluk +1 kalp + pet seviyeleri + karakter ekranı 2. oyunda. Bot (1 can): usta ortanca 88 sn, acemi 78 sn. Testler 83/83 + 27/27
 - [ ] G4 Pranga (yavaşlatan kötü eşya)
 - [ ] G5 İki kişilik yerel mod (Ata + Ada, 10 sn sonra dönüş)
 - [ ] G6 Hafif hikâye / evren

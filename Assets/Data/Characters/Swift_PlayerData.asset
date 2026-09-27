@@ -15,6 +15,7 @@ MonoBehaviour:
   playerName: Swift
   playerType: 0
   maxHealth: 2
+  startHealth: 1
   moveSpeed: 4.6
   invincibilityDuration: 0.35
   powerupDurationMultiplier: 1
@@ -86,8 +87,8 @@ MonoBehaviour:
   nameKey: char_Swift
   traitKey: trait_Swift
   hasDash: 0
-  dashCooldown: 2
-  hurtboxScale: 0.85
+  dashCooldown: 0
+  hurtboxScale: 0.8
   coinMultiplier: 1
   startWithShield: 0
   portrait: {fileID: 0}

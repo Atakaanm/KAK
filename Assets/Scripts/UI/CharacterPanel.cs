@@ -10,6 +10,12 @@ public class CharacterPanel : MonoBehaviour
     public CharacterCard[] cards;
     public TMP_Text walletText;
     public WalletHud menuWallet;
+    public CharacterDetailPanel detail; // G3
+
+    public void OpenDetail(int index)
+    {
+        if (detail != null) detail.Open(index);
+    }
 
     CharacterCatalog catalog;
 

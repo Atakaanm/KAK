@@ -12,6 +12,15 @@ public static class NextGoal
         if (FeatureGate.IsUnlocked(Feature.Characters))
         {
             var cat = CharacterCatalog.Load();
+            // G3: seçili karakterin en ucuz kalıcı yükseltmesi de hedef olabilir (adım adım güçlenme)
+            var sel = CharacterCatalog.Selected();
+            if (sel != null)
+                foreach (var s in new[] { CharStat.Health, CharStat.Speed, CharStat.Power })
+                {
+                    int c = CharacterProgress.Cost(sel, s);
+                    if (c >= 0 && (best == null || c < best.Value.price))
+                        best = new Goal { name = string.Format(Loc.T(s == CharStat.Health ? "goal_hp" : s == CharStat.Speed ? "goal_speed" : "goal_power"), Loc.T(sel.nameKey)), price = c };
+                }
             if (cat != null && cat.characters != null)
                 foreach (var c in cat.characters)
                     if (c != null && !CharacterCatalog.Owned(c) && (best == null || c.unlockPrice < best.Value.price))
@@ -35,6 +44,8 @@ public static class NextGoal
         if (f == Feature.Characters)
         {
             var cat = CharacterCatalog.Load();
+            if (cat != null && cat.characters != null)
+                foreach (var c in cat.characters) if (c != null && CharacterCatalog.Owned(c) && CharacterProgress.AnyUpgradeAffordable(c)) return true;
             if (cat != null && cat.characters != null)
                 foreach (var c in cat.characters) if (c != null && !CharacterCatalog.Owned(c) && CharacterCatalog.CanAfford(c)) return true;
         }
