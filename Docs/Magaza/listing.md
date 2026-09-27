@@ -22,6 +22,8 @@ Yeniden üretmek için (Unity açık): `python3 tools/kak_store_shots.py all` (�
 - **Tanıtım metni, App Store (170):** Tek parmakla kaç, taşların hemen yanından sıyrıl, altın topla. 5 kahraman, sadık petler, görevler ve günlük ödüllerle her oyun biraz daha heyecanlı!
 - **Açıklama (4000):**
 
+  Ata ile Ada, unutulmuş Taş Zindanı'nda efsanevi altınları arıyordu. İlk altına dokundukları an Taş Muhafızlar uyandı ve lanet onları her yerde kovalamaya başladı. Saldıramazsın: tek çare kaçmak, altınları toplamak ve laneti kırmak!
+
   Karanlık bir zindanın ortasındasın ve dört köşedeki muhafızlar sana taş fırlatıyor.
   Tek parmakla kaç, doğru anda dash at, taşların hemen yanından sıyrılarak bonus topla.
   Hayatta kaldıkça oyun hızlanır: çakıllar, dev kayalar, duvardan seken taşlar, ikiye bölünenler, gökten düşen göktaşları…
@@ -49,6 +51,8 @@ Yeniden üretmek için (Unity açık): `python3 tools/kak_store_shots.py all` (�
 - **Short description, Google Play (80):** Rocks from every corner! Dodge, dash, pick your hero and beat your best.
 - **Promotional text, App Store (170):** Dodge with one thumb, graze rocks for bonus points and grab gold. 5 heroes, loyal pets, missions and daily rewards make every run a little more exciting!
 - **Description (4000):**
+
+  Ata and Ada were searching the forgotten Stone Dungeon for legendary gold. The moment they touched the first coin, the Stone Guardians woke up, and now the curse chases them everywhere. You can't fight back: run, grab the gold and break the curse!
 
   You're trapped in a dark dungeon and four guards are hurling rocks at you.
   Dodge with one thumb, dash at the perfect moment and graze rocks for bonus points.

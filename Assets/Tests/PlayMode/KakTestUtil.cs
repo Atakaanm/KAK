@@ -23,6 +23,7 @@ public static class KakTestUtil
         SaveSystem.OverridePath = testSave;
         if (System.IO.File.Exists(testSave)) System.IO.File.Delete(testSave);
         SaveSystem.Unload();
+        SaveSystem.Data.MarkSeen(IntroStory.SeenKey); // G6: menü testlerini ilk açılış hikâyesi örtmesin
         KakTime.ResetAll();
         GameSettings.Reset();
         AdService.ResetForTests();
