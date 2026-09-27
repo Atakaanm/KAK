@@ -231,7 +231,7 @@ public static class KakUiSetup
         var wallet = BuildWallet(safe);
 
         // Ayarlar paneli
-        var (sroot, spanel) = Modal(canvas, "SettingsPanel", new Vector2(860f, 1520f));
+        var (sroot, spanel) = Modal(canvas, "SettingsPanel", new Vector2(860f, 1640f));
         Text(Place(Rect(spanel, "Title"), new Vector2(0.5f, 1f), new Vector2(0f, -110f), new Vector2(800f, 120f)), "@settings", 80, KakPalette.Altin);
         ToggleRow(spanel, "MusicRow", "@music", KakToggle.Setting.Music, -250f);
         ToggleRow(spanel, "SfxRow", "@sfx", KakToggle.Setting.Sfx, -370f);
@@ -241,6 +241,7 @@ public static class KakUiSetup
         ControlSizeRow(spanel, -870f);
         var reset = Button(Place(Rect(spanel, "ResetButton"), new Vector2(0.5f, 0f), new Vector2(0f, 330f), new Vector2(700f, 120f)), "@reset", Style.Stone, 40);
         var privacy = Button(Place(Rect(spanel, "PrivacyButton"), new Vector2(0.5f, 0f), new Vector2(0f, 480f), new Vector2(560f, 96f)), "@privacy", Style.Stone, 34);
+        var story = Button(Place(Rect(spanel, "StoryButton"), new Vector2(0.5f, 0f), new Vector2(0f, 610f), new Vector2(560f, 96f)), "@story", Style.Stone, 34); // G6
         var closeS = Button(Place(Rect(spanel, "CloseButton"), new Vector2(0.5f, 0f), new Vector2(0f, 150f), new Vector2(620f, 150f)), "@close", Style.Gold, 64);
 
         // Karakter paneli (Faz 3c.3): katalogdaki karakterler, satın al / seç
@@ -273,6 +274,8 @@ public static class KakUiSetup
             if (mmc.defaultLevel == null) mmc.defaultLevel = AssetDatabase.LoadAssetAtPath<LevelData>("Assets/Data/Endless_Level1_LevelData.asset");
             OnClick(closeS, mmc.CloseSettingsPanel);
             OnClick(privacy, mmc.OnPrivacyClicked);
+            OnClick(story, mmc.OnStoryClicked);
+            mmc.intro = BuildIntroPanel(canvas, mmc);
             OnClick(closeC, mmc.CloseCharactersPanel);
             EditorUtility.SetDirty(mmc);
         }
@@ -379,6 +382,94 @@ public static class KakUiSetup
     }
 
     /// <summary>Karakter paneli: başlık, cüzdan, 2x2 kart ızgarası, kapat. Kartları CharacterPanel çalışma anında doldurur.</summary>
+    /// <summary>G6: ilk açılış hikâyesi — 3 kart (mevcut piksel sprite'larla kurulu sahneler), İLERİ/BAŞLA, ATLA.</summary>
+    static IntroStory BuildIntroPanel(Transform canvas, MainMenuController mmc)
+    {
+        var old = canvas.Find("IntroPanel");
+        if (old != null) Object.DestroyImmediate(old.gameObject);
+        var (root, panel) = Modal(canvas, "IntroPanel", new Vector2(940f, 1560f), 0.9f);
+        Sprite P(string path) => AssetDatabase.LoadAssetAtPath<Sprite>(path);
+        var arenaSprite = P("Assets/Sprites/Arena/Dungeon_arena_01.png");
+
+        // Resim alanı (çerçeve + zindan zemini)
+        var frame = Img(Place(Rect(panel, "ArtFrame"), new Vector2(0.5f, 1f), new Vector2(0f, -470f), new Vector2(860f, 780f)), S("btn_stone_9s.png"), true,
+                        new Color(0.55f, 0.55f, 0.62f, 1f));
+        var art = Place(Rect(frame.rectTransform, "Art"), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(820f, 740f));
+        GetOrAdd<RectMask2D>(art.gameObject);
+        var bg = Img(Stretch(Rect(art, "Floor")), arenaSprite, false, new Color(0.62f, 0.66f, 0.7f, 1f));
+        bg.preserveAspect = false;
+        bg.rectTransform.sizeDelta = new Vector2(420f, 420f); // zemini yakınlaştır (arena ortası)
+
+        // Tam sayı ölçekli piksel sprite yerleştirme
+        Image Put(RectTransform parent, string name, Sprite sp, Vector2 pos, int scale, bool flip = false)
+        {
+            if (sp == null) return null;
+            var im = Img(Place(Rect(parent, name), new Vector2(0.5f, 0.5f), pos,
+                               new Vector2(sp.rect.width * scale, sp.rect.height * scale)), sp, false);
+            if (flip) im.rectTransform.localScale = new Vector3(-1f, 1f, 1f);
+            return im;
+        }
+        var ataS = P("Assets/Sprites/Player/South/south.png");
+        var adaS = P("Assets/Sprites/Characters/Ada/South/south.png");
+        var ataRun = P("Assets/Sprites/Player/East/East_Run_2.png");
+        var adaRun = P("Assets/Sprites/Characters/Ada/East/East_Run_4.png");
+        var guard = P("Assets/Sprites/Spawner/South/south.png");
+        var rock = P("Assets/Art/Projectiles/rock.png");
+        var coin = P("Assets/Art/Pickups/coin_0.png");
+        var torch = P("Assets/Art/Tiles/Dungeon/torch_0.png");
+        var warn = P("Assets/Art/Projectiles/warn_mark.png");
+        var glow = P("Assets/Art/Tiles/Dungeon/glow.png");
+
+        var pages = new GameObject[3];
+        // 1: hazine — Ata ve Ada, ortada parlayan altın, meşaleler
+        var p1 = Stretch(Rect(art, "Page1"));
+        if (glow != null) Img(Place(Rect(p1, "Glow"), new Vector2(0.5f, 0.5f), new Vector2(0f, 150f), new Vector2(360f, 360f)), glow, false, new Color(1f, 0.85f, 0.35f, 0.7f));
+        Put(p1, "Coin", coin, new Vector2(0f, 150f), 8);
+        Put(p1, "TorchL", torch, new Vector2(-330f, 170f), 5);
+        Put(p1, "TorchR", torch, new Vector2(330f, 170f), 5, true);
+        Put(p1, "Ata", ataS, new Vector2(-120f, -150f), 5);
+        Put(p1, "Ada", adaS, new Vector2(120f, -150f), 5);
+        pages[0] = p1.gameObject;
+        // 2: uyanış — iki muhafız, taşlar, uyarı; çocuklar aşağıda
+        var p2 = Stretch(Rect(art, "Page2"));
+        Put(p2, "GuardL", guard, new Vector2(-220f, 130f), 5);
+        Put(p2, "GuardR", guard, new Vector2(220f, 130f), 5, true);
+        Put(p2, "Warn", warn, new Vector2(0f, 150f), 4);
+        Put(p2, "Rock1", rock, new Vector2(-90f, -10f), 4);
+        Put(p2, "Rock2", rock, new Vector2(110f, 40f), 5);
+        Put(p2, "Ata", ataS, new Vector2(-80f, -230f), 4);
+        Put(p2, "Ada", adaS, new Vector2(80f, -230f), 4);
+        pages[1] = p2.gameObject;
+        // 3: kaç! — koşan Ata ve Ada, arkada taşlar, önde altınlar
+        var p3 = Stretch(Rect(art, "Page3"));
+        Put(p3, "Rock1", rock, new Vector2(-300f, 170f), 5);
+        Put(p3, "Rock2", rock, new Vector2(-330f, -160f), 4);
+        Put(p3, "Rock3", rock, new Vector2(-180f, 250f), 3);
+        Put(p3, "Coin1", coin, new Vector2(300f, 60f), 5);
+        Put(p3, "Coin2", coin, new Vector2(340f, -140f), 4);
+        Put(p3, "Ata", ataRun, new Vector2(-40f, -40f), 5);
+        Put(p3, "Ada", adaRun, new Vector2(150f, -60f), 5);
+        pages[2] = p3.gameObject;
+
+        var text = Text(Place(Rect(panel, "StoryText"), new Vector2(0.5f, 1f), new Vector2(0f, -1000f), new Vector2(840f, 180f)), "", 44, KakPalette.Krem,
+                        TextAlignmentOptions.Center, false, false);
+        text.textWrappingMode = TextWrappingModes.Normal;
+        var dots = new Image[3];
+        for (int i = 0; i < 3; i++)
+            dots[i] = Img(Place(Rect(panel, "Dot" + i), new Vector2(0.5f, 1f), new Vector2((i - 1) * 44f, -1130f), new Vector2(24f, 24f)), S("white_ui.png"), false, KakPalette.Gece);
+        var next = Button(Place(Rect(panel, "Next"), new Vector2(0.5f, 0f), new Vector2(0f, 150f), new Vector2(560f, 130f)), "@story_next", Style.Gold, 60);
+        var skip = Button(Place(Rect(panel, "Skip"), new Vector2(1f, 1f), new Vector2(-130f, -70f), new Vector2(200f, 80f)), "@story_skip", Style.Stone, 32);
+
+        var intro = GetOrAdd<IntroStory>(root.gameObject);
+        intro.pages = pages; intro.storyText = text; intro.dots = dots; intro.art = art;
+        intro.nextLabel = next.transform.Find("Label").GetComponent<TMP_Text>();
+        OnClick(next, intro.OnNext);
+        OnClick(skip, intro.OnSkip);
+        EditorUtility.SetDirty(intro);
+        root.gameObject.SetActive(false);
+        return intro;
+    }
+
     public static (RectTransform root, Button close) BuildCharacterPanel(Transform canvas, WalletHud menuWallet)
     {
         var old = canvas.Find("CharactersPanel");

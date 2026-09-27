@@ -21,6 +21,7 @@ public class MainMenuController : MonoBehaviour
     public GameObject petsPanel;
     [Tooltip("Günlük ödül paneli (Faz 3c.6): alınabiliyorsa menü açılınca kendiliğinden açılır")]
     public DailyRewardPanel dailyPanel;
+    public IntroStory intro; // G6
 
     [Header("Paneller")]
     public GameObject settingsPanel;
@@ -49,10 +50,13 @@ public class MainMenuController : MonoBehaviour
         if (settingsPanel != null) settingsPanel.SetActive(false);
         if (charactersPanel != null) charactersPanel.SetActive(false);
         if (petsPanel != null) petsPanel.SetActive(false);
-        if (dailyPanel != null)
+        if (dailyPanel != null) dailyPanel.gameObject.SetActive(false);
+        // G6: ilk açılışta hikâye; günlük ödül ondan sonra
+        if (intro != null && IntroStory.ShouldShow) intro.Show(TryOpenDaily);
+        else
         {
-            dailyPanel.gameObject.SetActive(false);
-            if (DailyReward.CanClaim()) StartCoroutine(OpenDailyDelayed());
+            if (intro != null) intro.gameObject.SetActive(false);
+            TryOpenDaily();
         }
 
         if (playButton != null) playButton.onClick.AddListener(OnPlayClicked);
@@ -145,6 +149,19 @@ public class MainMenuController : MonoBehaviour
     void RefreshResetLabel()
     {
         if (resetProgressLabel != null) resetProgressLabel.SetText(Loc.T(resetArmed ? "reset_confirm" : "reset"));
+    }
+
+    void TryOpenDaily()
+    {
+        if (dailyPanel != null && DailyReward.CanClaim()) StartCoroutine(OpenDailyDelayed());
+    }
+
+    /// <summary>G6: ayarlardan hikâyeyi tekrar izle.</summary>
+    public void OnStoryClicked()
+    {
+        PlayButtonSound();
+        if (settingsPanel != null) settingsPanel.SetActive(false);
+        if (intro != null) intro.Show();
     }
 
     // ── Panel animasyonu ─────────────────────────────────

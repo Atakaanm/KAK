@@ -206,6 +206,9 @@ public static class KakDevMenu
         if (stat == "Speed") d.OnUpgradeSpeed(); else if (stat == "Power") d.OnUpgradePower(); else d.OnUpgradeHealth();
     }
 
+    /// <summary>G6: hikâyede sonraki karta geçer / kapatır. Köprü: invoke KakDevMenu IntroNext</summary>
+    public static void IntroNext() { var i = Object.FindAnyObjectByType<IntroStory>(); if (i != null) i.OnNext(); }
+
     /// <summary>G5: iki kişilik oyunu başlatır. Köprü: invoke KakDevMenu PlayTwoPlayer</summary>
     public static void PlayTwoPlayer() { GameSettings.TwoPlayer = true; SceneLoader.LoadGame(); }
 
