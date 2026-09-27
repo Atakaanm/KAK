@@ -93,3 +93,6 @@ __pycache__/
 
 # Unity Android build araçlarının geçici klasörü
 /.utmp/
+
+# Mono çökme dökümleri (editör kapanırken)
+mono_crash.*.json

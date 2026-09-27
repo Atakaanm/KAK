@@ -60,6 +60,8 @@ public class SonsuzModIcerikTests
         StopShooters();
         var dash = Object.FindAnyObjectByType<PlayerDash>();
         Assert.IsNotNull(dash, "PlayerDash yok");
+        Assert.IsFalse(dash.TryDash(), "G1: dash rafta, varsayılan karakterde kapalı olmalı");
+        dash.available = true; // dash yetenekli bir karakter gibi
         var move = dash.GetComponent<PlayerMovement2D>();
         var ph = dash.GetComponent<PlayerHealth>();
         move.InputOverride = Vector2.right;

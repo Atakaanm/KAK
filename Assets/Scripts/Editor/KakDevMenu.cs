@@ -191,6 +191,18 @@ public static class KakDevMenu
         if (s != null && s.scoreText != null) s.scoreText.SetText(Loc.T("hud_score"), s.ScoreInt);
     }
 
+    /// <summary>Oyuncunun çevresine 3 göktaşı düşürür ("!" uyarısını görmek için). Köprü: invoke KakDevMenu DropMeteors</summary>
+    [MenuItem("KacAtaKac/Dev/Göktaşı Düşür")]
+    public static void DropMeteors()
+    {
+        var data = AssetDatabase.LoadAssetAtPath<ProjectileData>("Assets/Data/Projectiles/Meteor_Goktasi.asset");
+        var prefab = data != null && data.projectilePrefab != null ? data.projectilePrefab : AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Projectile.prefab");
+        var target = Projectile.PlayerTarget;
+        if (data == null || prefab == null || target == null) return;
+        for (int i = 0; i < 3; i++)
+            Projectile.LaunchMeteor(prefab, data, target.position + (Vector3)(Random.insideUnitCircle * 1.6f));
+    }
+
     /// <summary>Oyun zamanını dondurur/çözer (aynı anı farklı dil ve boyutlarda çekmek için). Köprü: invoke KakDevMenu Freeze 1</summary>
     public static void Freeze(string on) { Time.timeScale = on == "1" ? 0f : 1f; }
 

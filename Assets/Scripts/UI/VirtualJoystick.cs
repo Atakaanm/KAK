@@ -57,6 +57,14 @@ public class VirtualJoystick : MonoBehaviour, IDragHandler, IPointerDownHandler,
         if (img != null) img.raycastTarget = true;
     }
 
+    void OnEnable() { ControlSettings.Changed += ApplySize; ApplySize(); }
+
+    /// <summary>Kontrol boyutu ayarı (G1). Sürükleme hesabı tabanın yerel uzayında: ölçek girdiyi bozmaz.</summary>
+    void ApplySize()
+    {
+        if (background != null && background != zone) background.localScale = Vector3.one * ControlSettings.Scale;
+    }
+
     void Start()
     {
         if (background != null) restPosition = background.anchoredPosition;
@@ -123,6 +131,7 @@ public class VirtualJoystick : MonoBehaviour, IDragHandler, IPointerDownHandler,
 
     void OnDisable()
     {
+        ControlSettings.Changed -= ApplySize;
         activePointer = int.MinValue;
         inputDirection = Vector2.zero;
     }

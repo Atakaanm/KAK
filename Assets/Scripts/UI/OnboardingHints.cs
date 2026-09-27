@@ -66,7 +66,8 @@ public class OnboardingHints : MonoBehaviour
         {
             if (nearPending) { nearPending = false; if (!d.HasSeen(Near)) Show(Near); }
             else if (!d.HasSeen(Dash) && d.HasSeen(Move) && elapsed >= dashHintAfter
-                     && dashButton != null && dashButton.dash != null && dashButton.dash.Ready)
+                     && dashButton != null && dashButton.isActiveAndEnabled && dashButton.dash != null
+                     && dashButton.dash.available && dashButton.dash.Ready)
                 Show(Dash);
             return;
         }

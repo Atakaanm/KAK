@@ -49,7 +49,15 @@ public class CharacterCard : MonoBehaviour
         // Hız ve dash göstergeleri: karakterler arasında göreli (0.3-1)
         if (speedFill != null) speedFill.fillAmount = Mathf.InverseLerp(4f, 6.25f, p.moveSpeed) * 0.7f + 0.3f;
         float cd = p.dashCooldown > 0f ? p.dashCooldown : 2.6f;
-        if (dashFill != null) dashFill.fillAmount = Mathf.InverseLerp(3.6f, 1.6f, cd) * 0.7f + 0.3f;
+        if (dashFill != null)
+        {
+            dashFill.fillAmount = Mathf.InverseLerp(3.6f, 1.6f, cd) * 0.7f + 0.3f;
+            // G1: dash rafta → dash yoksa çubuk ve etiketi gizli
+            var bar = dashFill.transform.parent;
+            bar.gameObject.SetActive(p.hasDash);
+            var label = bar.parent != null ? bar.parent.Find("DashLabel") : null;
+            if (label != null) label.gameObject.SetActive(p.hasDash);
+        }
         if (background != null) background.sprite = selected ? goldSprite : stoneSprite;
         // Altın zeminde açık renk yazı okunmaz: seçili kartta koyu
         Color soft = selected ? KakPalette.KahveKoyu : KakPalette.Sis;

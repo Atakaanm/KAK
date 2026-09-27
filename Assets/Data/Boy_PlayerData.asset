@@ -15,7 +15,7 @@ MonoBehaviour:
   playerName: Boy
   playerType: 0
   maxHealth: 3
-  moveSpeed: 5
+  moveSpeed: 4
   invincibilityDuration: 0.35
   powerupDurationMultiplier: 1
   powerupSpawnRateMultiplier: 1
@@ -85,6 +85,7 @@ MonoBehaviour:
   id: Boy
   nameKey: char_Boy
   traitKey: trait_Boy
+  hasDash: 0
   dashCooldown: 0
   hurtboxScale: 1
   coinMultiplier: 1

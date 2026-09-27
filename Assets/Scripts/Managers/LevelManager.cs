@@ -267,7 +267,13 @@ public class LevelManager : MonoBehaviour
         if (player != null)
         {
             var dash = player.GetComponent<PlayerDash>();
-            if (dash != null && data.dashCooldown > 0f) dash.cooldown = data.dashCooldown;
+            if (dash != null)
+            {
+                dash.available = data.hasDash;
+                if (data.dashCooldown > 0f) dash.cooldown = data.dashCooldown;
+            }
+            var dashButton = FindAnyObjectByType<DashButton>(FindObjectsInactive.Include);
+            if (dashButton != null) dashButton.gameObject.SetActive(data.hasDash);
             var hb = player.GetComponent<PlayerHitbox>();
             if (hb != null && !Mathf.Approximately(data.hurtboxScale, 1f))
             {

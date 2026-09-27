@@ -53,7 +53,7 @@ public class PetTests
         var player = Object.FindAnyObjectByType<PlayerHealth>().transform;
 
         var cs = Object.FindAnyObjectByType<CoinSpawner>();
-        Assert.Greater(cs.SpawnCluster(), 0);
+        Assert.Greater(cs.SpawnCoin(), 0);
         yield return null;
         var coin = Coin.Active[0];
         coin.transform.position = player.position + new Vector3(1.6f, 0f, 0f);

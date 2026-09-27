@@ -43,7 +43,7 @@ public class DashButton : MonoBehaviour, IPointerDownHandler
         {
             float amp = highlight ? 0.1f : 0.03f;
             float idle = dash.Ready ? 1f + Mathf.Sin(Time.unscaledTime * (highlight ? 7f : 4f)) * amp : 1f;
-            visual.localScale = Vector3.one * (idle - pulse * 0.12f);
+            visual.localScale = Vector3.one * ((idle - pulse * 0.12f) * ControlSettings.Scale);
         }
     }
 }

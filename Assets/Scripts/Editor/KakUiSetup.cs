@@ -229,13 +229,14 @@ public static class KakUiSetup
         var wallet = BuildWallet(safe);
 
         // Ayarlar paneli
-        var (sroot, spanel) = Modal(canvas, "SettingsPanel", new Vector2(860f, 1400f));
+        var (sroot, spanel) = Modal(canvas, "SettingsPanel", new Vector2(860f, 1520f));
         Text(Place(Rect(spanel, "Title"), new Vector2(0.5f, 1f), new Vector2(0f, -110f), new Vector2(800f, 120f)), "@settings", 80, KakPalette.Altin);
         ToggleRow(spanel, "MusicRow", "@music", KakToggle.Setting.Music, -250f);
         ToggleRow(spanel, "SfxRow", "@sfx", KakToggle.Setting.Sfx, -370f);
         ToggleRow(spanel, "VibrationRow", "@vibration", KakToggle.Setting.Vibration, -490f);
         ToggleRow(spanel, "ShakeRow", "@shake", KakToggle.Setting.ScreenShake, -610f);
         LanguageRow(spanel, -740f);
+        ControlSizeRow(spanel, -870f);
         var reset = Button(Place(Rect(spanel, "ResetButton"), new Vector2(0.5f, 0f), new Vector2(0f, 330f), new Vector2(700f, 120f)), "@reset", Style.Stone, 40);
         var privacy = Button(Place(Rect(spanel, "PrivacyButton"), new Vector2(0.5f, 0f), new Vector2(0f, 480f), new Vector2(560f, 96f)), "@privacy", Style.Stone, 34);
         var closeS = Button(Place(Rect(spanel, "CloseButton"), new Vector2(0.5f, 0f), new Vector2(0f, 150f), new Vector2(620f, 150f)), "@close", Style.Gold, 64);

@@ -209,6 +209,8 @@ public class PlayerHealth : MonoBehaviour
         {
             currentHealth = 0;
             isDead = true;
+            var mv = GetComponent<PlayerMovement2D>();
+            if (mv != null) mv.StopImmediately(); // son pozda donsun
 
             if (healthUI != null)
             {

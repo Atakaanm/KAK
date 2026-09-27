@@ -43,8 +43,8 @@ public class AltinTests
         var hud = Object.FindAnyObjectByType<CoinHud>();
         Assert.IsTrue(hud.content.gameObject.activeSelf);
 
-        int n = cs.SpawnCluster();
-        Assert.Greater(n, 0, "küme doğmadı");
+        int n = cs.SpawnCoin();
+        Assert.Greater(n, 0, "altın doğmadı");
         yield return null;
         Assert.AreEqual(n, Coin.Active.Count);
 
@@ -78,7 +78,7 @@ public class AltinTests
         Quiet();
         var cs = Object.FindAnyObjectByType<CoinSpawner>();
         cs.enabled = false;
-        cs.SpawnCluster();
+        cs.SpawnCoin();
         yield return null;
         var coin = Coin.Active[0];
         var go = coin.gameObject;

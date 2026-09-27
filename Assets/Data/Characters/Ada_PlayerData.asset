@@ -15,7 +15,7 @@ MonoBehaviour:
   playerName: Ada
   playerType: 1
   maxHealth: 3
-  moveSpeed: 5
+  moveSpeed: 4
   invincibilityDuration: 0.35
   powerupDurationMultiplier: 1
   powerupSpawnRateMultiplier: 1
@@ -85,6 +85,7 @@ MonoBehaviour:
   id: Ada
   nameKey: char_Ada
   traitKey: trait_Ada
+  hasDash: 0
   dashCooldown: 0
   hurtboxScale: 1
   coinMultiplier: 1

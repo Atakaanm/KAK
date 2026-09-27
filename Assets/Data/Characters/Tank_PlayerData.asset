@@ -15,7 +15,7 @@ MonoBehaviour:
   playerName: Tank
   playerType: 0
   maxHealth: 4
-  moveSpeed: 4.5
+  moveSpeed: 3.6
   invincibilityDuration: 0.35
   powerupDurationMultiplier: 1
   powerupSpawnRateMultiplier: 1
@@ -85,6 +85,7 @@ MonoBehaviour:
   id: Tank
   nameKey: char_Tank
   traitKey: trait_Tank
+  hasDash: 0
   dashCooldown: 3.2
   hurtboxScale: 1
   coinMultiplier: 1

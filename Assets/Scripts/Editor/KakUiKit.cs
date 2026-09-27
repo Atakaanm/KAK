@@ -201,6 +201,22 @@ public static class KakUiKit
         return lb;
     }
 
+    /// <summary>Kontrol boyutu satırı (G1): solda "Kontroller", sağda KÜÇÜK/ORTA/BÜYÜK düğmesi.</summary>
+    public static ControlSizeButton ControlSizeRow(RectTransform parent, float y)
+    {
+        var row = Place(Rect(parent, "ControlSizeRow"), new Vector2(0.5f, 1f), new Vector2(0f, y), new Vector2(640f, 110f));
+        var lbl = Place(Rect(row, "Label"), new Vector2(0f, 0.5f), Vector2.zero, new Vector2(300f, 100f), new Vector2(0f, 0.5f));
+        Text(lbl, "@control_size", 52, KakPalette.Krem, TextAlignmentOptions.MidlineLeft);
+        var btnRt = Place(Rect(row, "Button"), new Vector2(1f, 0.5f), Vector2.zero, new Vector2(300f, 96f), new Vector2(1f, 0.5f));
+        Img(btnRt, S("btn_stone_9s.png"), true, null, true);
+        var lblT = Text(Stretch(Rect(btnRt, "Label")), "ORTA", 40, KakPalette.Krem);
+        var cb = btnRt.GetComponent<ControlSizeButton>();
+        if (cb == null) cb = btnRt.gameObject.AddComponent<ControlSizeButton>();
+        cb.label = lblT;
+        if (btnRt.GetComponent<ButtonScaleAnimation>() == null) btnRt.gameObject.AddComponent<ButtonScaleAnimation>();
+        return cb;
+    }
+
     public static KakToggle ToggleRow(RectTransform parent, string name, string label, KakToggle.Setting setting, float y)
     {
         var row = Place(Rect(parent, name), new Vector2(0.5f, 1f), new Vector2(0f, y), new Vector2(640f, 110f));
