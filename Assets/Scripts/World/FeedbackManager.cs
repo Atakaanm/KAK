@@ -30,6 +30,7 @@ public class FeedbackManager : MonoBehaviour
         GameEvents.PlayerDamaged += OnPlayerDamaged;
         GameEvents.ShieldBlocked += OnShieldBlocked;
         GameEvents.PlayerDied += OnPlayerDied;
+        GameEvents.PlayerDowned += OnPlayerDied; // G5: iki kişilikte düşme de aynı his
         GameEvents.PowerupCollected += OnPowerup;
         GameEvents.ProjectileHitWall += OnWallHit;
         GameEvents.StageChanged += OnStageChanged;
@@ -42,6 +43,7 @@ public class FeedbackManager : MonoBehaviour
         GameEvents.PlayerDamaged -= OnPlayerDamaged;
         GameEvents.ShieldBlocked -= OnShieldBlocked;
         GameEvents.PlayerDied -= OnPlayerDied;
+        GameEvents.PlayerDowned -= OnPlayerDied;
         GameEvents.PowerupCollected -= OnPowerup;
         GameEvents.ProjectileHitWall -= OnWallHit;
         GameEvents.StageChanged -= OnStageChanged;

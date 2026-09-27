@@ -81,6 +81,16 @@ public class MainMenuController : MonoBehaviour
     public void OnPlayClicked()
     {
         PlayButtonSound();
+        GameSettings.TwoPlayer = false;
+        if (defaultLevel != null) GameSettings.SelectedLevel = defaultLevel;
+        SceneLoader.LoadGame();
+    }
+
+    /// <summary>G5: tek telefonda iki kişi (Ata sol, Ada sağ).</summary>
+    public void OnTwoPlayerClicked()
+    {
+        PlayButtonSound();
+        GameSettings.TwoPlayer = true;
         if (defaultLevel != null) GameSettings.SelectedLevel = defaultLevel;
         SceneLoader.LoadGame();
     }

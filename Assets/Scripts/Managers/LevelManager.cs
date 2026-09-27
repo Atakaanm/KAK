@@ -37,6 +37,8 @@ public class LevelManager : MonoBehaviour
     public static event System.Action<WorldTheme> ThemeApplied;
     /// <summary>Bu oyunda oynanan karakter (altın çarpanı vb. için).</summary>
     public PlayerData CurrentCharacter { get; private set; }
+    /// <summary>G5: iki kişilikte 2. oyuncu (yoksa null).</summary>
+    public PlayerMovement2D SecondPlayer { get; private set; }
     public WorldTheme CurrentTheme { get; private set; }
 
     [Header("Varsayılan Level (Build için)")]
@@ -191,10 +193,22 @@ public class LevelManager : MonoBehaviour
         // --- PLAYER AYARLARI ---
         // Karakter: oyuncunun seçtiği (katalog), yoksa bölümün verisi
         CurrentCharacter = CharacterCatalog.Selected(level.playerData);
-        ApplyPlayerData(CurrentCharacter);
+        bool twoPlayer = GameSettings.TwoPlayer && level.levelType == LevelType.Endless && playerMovement != null;
+        if (twoPlayer)
+        {
+            // G5: tek telefonda iki kişi — Ata (sol joystick / WASD) ve Ada (sağ joystick / oklar), yeteneksiz, petsiz
+            var cat = CharacterCatalog.Load();
+            var ata = cat != null ? cat.Find("Boy") : null;
+            var ada = cat != null ? cat.Find("Ada") : null;
+            if (ata != null) CurrentCharacter = ata;
+            ApplyPlayerData(CurrentCharacter);
+            var p2 = TwoPlayerMode.SpawnSecond(playerMovement, ada != null ? ada : CurrentCharacter, this);
+            SecondPlayer = p2;
+        }
+        else ApplyPlayerData(CurrentCharacter);
 
-        // Pet (Faz 3c.5): özellik açık ve pet seçiliyse oyuncunun yanında
-        var pet = FeatureGate.IsUnlocked(Feature.Pets) ? PetCatalog.Selected() : null;
+        // Pet (Faz 3c.5): özellik açık ve pet seçiliyse oyuncunun yanında (iki kişilikte yok)
+        var pet = !twoPlayer && FeatureGate.IsUnlocked(Feature.Pets) ? PetCatalog.Selected() : null;
         if (pet != null && playerMovement != null) PetFollower.Spawn(pet, playerMovement.transform, petShadowSprite, petGlowSprite);
 
         // --- ARENA AYARLARI ---
@@ -244,27 +258,32 @@ public class LevelManager : MonoBehaviour
         KakLog.Info("[LevelManager] Level hazirlandi: " + level.levelName);
     }
 
-    void ApplyPlayerData(PlayerData data)
+    void ApplyPlayerData(PlayerData data) => ApplyPlayerDataTo(data, playerMovement, playerHealth, playerVisual, true);
+
+    /// <summary>Karakter verisini bir oyuncu nesnesine uygular (G5: iki kişilikte ikinci oyuncuya da). global = sahne geneli
+    /// ayarlar (dash düğmesi, powerup sıklığı) yalnız 1. oyuncu için.</summary>
+    public void ApplyPlayerDataTo(PlayerData data, PlayerMovement2D mv, PlayerHealth ph, PlayerDirectionSprite vis, bool global)
     {
         if (data == null) return;
 
-        if (playerMovement != null)
+        if (mv != null)
         {
-            playerMovement.SetMoveSpeed(data.moveSpeed * CharacterProgress.SpeedMult(data)); // G3: hız yükseltmesi
+            mv.SetMoveSpeed(data.moveSpeed * CharacterProgress.SpeedMult(data)); // G3: hız yükseltmesi
         }
 
-        if (playerMovement != null) playerMovement.playerData = data; // powerup süre çarpanı buradan okunur
+        if (mv != null) mv.playerData = data; // powerup süre çarpanı buradan okunur
 
-        if (playerHealth != null)
+        if (ph != null)
         {
-            playerHealth.SetMaxHealth(CharacterProgress.Hearts(data)); // G3: tek canla başla, yükselttikçe artar
-            playerHealth.HealthCap = data.maxHealth;
-            playerHealth.invincibilityDuration = data.invincibilityDuration;
-            if (data.startWithShield) playerHealth.ActivateShield();
+            ph.SetMaxHealth(CharacterProgress.Hearts(data)); // G3: tek canla başla, yükselttikçe artar
+            ph.HealthCap = data.maxHealth;
+            ph.StartHearts = CharacterProgress.Hearts(data);
+            ph.invincibilityDuration = data.invincibilityDuration;
+            if (data.startWithShield) ph.ActivateShield();
         }
 
         // Karakter istatistikleri (Faz 3c.3): dash, gövde, powerup sıklığı
-        var player = playerMovement != null ? playerMovement.gameObject : null;
+        var player = mv != null ? mv.gameObject : null;
         if (player != null)
         {
             var dash = player.GetComponent<PlayerDash>();
@@ -273,8 +292,11 @@ public class LevelManager : MonoBehaviour
                 dash.available = data.hasDash;
                 if (data.dashCooldown > 0f) dash.cooldown = data.dashCooldown;
             }
-            var dashButton = FindAnyObjectByType<DashButton>(FindObjectsInactive.Include);
-            if (dashButton != null) dashButton.gameObject.SetActive(data.hasDash);
+            if (global)
+            {
+                var dashButton = FindAnyObjectByType<DashButton>(FindObjectsInactive.Include);
+                if (dashButton != null) dashButton.gameObject.SetActive(data.hasDash);
+            }
             var hb = player.GetComponent<PlayerHitbox>();
             if (hb != null && !Mathf.Approximately(data.hurtboxScale, 1f))
             {
@@ -282,33 +304,33 @@ public class LevelManager : MonoBehaviour
                 hb.Apply();
             }
         }
-        if (powerupSpawner != null && data.powerupSpawnRateMultiplier > 0f && !Mathf.Approximately(data.powerupSpawnRateMultiplier, 1f))
+        if (global && powerupSpawner != null && data.powerupSpawnRateMultiplier > 0f && !Mathf.Approximately(data.powerupSpawnRateMultiplier, 1f))
             powerupSpawner.SetSpawnInterval(powerupSpawner.spawnIntervalMin / data.powerupSpawnRateMultiplier,
                                             powerupSpawner.spawnIntervalMax / data.powerupSpawnRateMultiplier);
 
-        if (playerVisual != null)
+        if (vis != null)
         {
             // SADECE Data içinde bir görsel (en azından South yönü için) atanmışsa üzerine yaz.
             // Atanmamışsa sahnedeki Player objesinin mevcut animasyonlarını bozma.
             if (data.south != null && data.south.idle != null)
             {
-                playerVisual.north.idle      = data.north.idle;
-                playerVisual.south.idle      = data.south.idle;
-                playerVisual.east.idle       = data.east.idle;
-                playerVisual.west.idle       = data.west.idle;
-                playerVisual.northEast.idle  = data.northEast.idle;
-                playerVisual.northWest.idle  = data.northWest.idle;
-                playerVisual.southEast.idle  = data.southEast.idle;
-                playerVisual.southWest.idle  = data.southWest.idle;
+                vis.north.idle      = data.north.idle;
+                vis.south.idle      = data.south.idle;
+                vis.east.idle       = data.east.idle;
+                vis.west.idle       = data.west.idle;
+                vis.northEast.idle  = data.northEast.idle;
+                vis.northWest.idle  = data.northWest.idle;
+                vis.southEast.idle  = data.southEast.idle;
+                vis.southWest.idle  = data.southWest.idle;
 
-                playerVisual.north.runFrames     = data.north.runFrames;
-                playerVisual.south.runFrames     = data.south.runFrames;
-                playerVisual.east.runFrames      = data.east.runFrames;
-                playerVisual.west.runFrames      = data.west.runFrames;
-                playerVisual.northEast.runFrames = data.northEast.runFrames;
-                playerVisual.northWest.runFrames = data.northWest.runFrames;
-                playerVisual.southEast.runFrames = data.southEast.runFrames;
-                playerVisual.southWest.runFrames = data.southWest.runFrames;
+                vis.north.runFrames     = data.north.runFrames;
+                vis.south.runFrames     = data.south.runFrames;
+                vis.east.runFrames      = data.east.runFrames;
+                vis.west.runFrames      = data.west.runFrames;
+                vis.northEast.runFrames = data.northEast.runFrames;
+                vis.northWest.runFrames = data.northWest.runFrames;
+                vis.southEast.runFrames = data.southEast.runFrames;
+                vis.southWest.runFrames = data.southWest.runFrames;
                 
                 KakLog.Info("[LevelManager] Player görselleri Data'dan yüklendi: " + data.playerName);
             }
@@ -332,10 +354,10 @@ public class LevelManager : MonoBehaviour
             arenaLayout.playableAreaNormalized = t.playableAreaNormalized;
             arenaLayout.useSpawnerAnchors = t.useSpawnerAnchors;
         }
-        if (playerMovement != null)
+        foreach (var mv in FindObjectsByType<PlayerMovement2D>(FindObjectsSortMode.None)) // G5: iki oyuncu
         {
-            playerMovement.arenaFriction = t.floorFriction;
-            playerMovement.arenaSpeedMultiplier = t.floorSpeedMultiplier;
+            mv.arenaFriction = t.floorFriction;
+            mv.arenaSpeedMultiplier = t.floorSpeedMultiplier;
         }
         var frame = dungeonFrame != null ? dungeonFrame : FindAnyObjectByType<DungeonFrame>();
         if (frame != null)

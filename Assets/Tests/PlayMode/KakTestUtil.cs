@@ -16,6 +16,7 @@ public static class KakTestUtil
     /// </summary>
     public static void ResetWorld()
     {
+        GameSettings.TwoPlayer = false; // G5
         // Testler oyuncunun gerçek kaydına yazmasın ve her test temiz kayıtla başlasın
         // (önceki testlerin oyun sayısı vb. birikmesin: ör. "deneyimli oyuncu" kuralı yanlış tetiklenir)
         string testSave = System.IO.Path.Combine(Application.temporaryCachePath, "kak_playmode_test_save.json");
@@ -79,9 +80,12 @@ public static class KakTestUtil
         if (ph != null) ph.MakeGhost(9999f);
     }
 
-    public static void KillPlayer()
+    public static void KillPlayer() => KillPlayer(null);
+
+    /// <summary>Belirli oyuncuyu öldürür (G5: iki kişilik testleri); null = sahnedeki ilk oyuncu.</summary>
+    public static void KillPlayer(PlayerHealth ph)
     {
-        var ph = Object.FindAnyObjectByType<PlayerHealth>();
+        if (ph == null) ph = Object.FindAnyObjectByType<PlayerHealth>();
         Assert.IsNotNull(ph, "PlayerHealth bulunamadı");
         // Hayalet/ölümsüzlük korumalarını aşmak için canı doğrudan bitir
         ph.currentHealth = 1;

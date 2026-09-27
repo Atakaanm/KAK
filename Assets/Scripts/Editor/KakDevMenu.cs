@@ -206,6 +206,19 @@ public static class KakDevMenu
         if (stat == "Speed") d.OnUpgradeSpeed(); else if (stat == "Power") d.OnUpgradePower(); else d.OnUpgradeHealth();
     }
 
+    /// <summary>G5: iki kişilik oyunu başlatır. Köprü: invoke KakDevMenu PlayTwoPlayer</summary>
+    public static void PlayTwoPlayer() { GameSettings.TwoPlayer = true; SceneLoader.LoadGame(); }
+
+    /// <summary>G5: 1. (0) ya da 2. (1) oyuncuya ölümcül hasar (dönüş sayacını görmek için). Köprü: invoke KakDevMenu DownPlayer 0</summary>
+    public static void DownPlayer(string index)
+    {
+        if (!int.TryParse(index, out int i) || i < 0 || i >= PlayerRegistry.All.Count) return;
+        var ph = PlayerRegistry.All[i];
+        ph.currentHealth = 1;
+        typeof(PlayerHealth).GetField("invulnerableUntil", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(ph, -1f);
+        ph.TakeDamage(1);
+    }
+
     /// <summary>G4: oyuncunun yanına Pranga bırakır (görsel kontrol). Köprü: invoke KakDevMenu DropShackle</summary>
     [MenuItem("KacAtaKac/Dev/Pranga Bırak")]
     public static void DropShackle()

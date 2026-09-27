@@ -300,9 +300,10 @@ public class Projectile : MonoBehaviour
     {
         if (motion == ProjectileMotion.Meteor) return;
 
-        if (motion == ProjectileMotion.Homing && data != null && age < data.homingDuration && PlayerTarget != null)
+        var homeTo = motion == ProjectileMotion.Homing ? HomingTarget() : null;
+        if (motion == ProjectileMotion.Homing && data != null && age < data.homingDuration && homeTo != null)
         {
-            Vector2 to = (Vector2)PlayerTarget.position - (Vector2)transform.position;
+            Vector2 to = (Vector2)homeTo.position - (Vector2)transform.position;
             if (to.sqrMagnitude > 0.01f)
             {
                 float maxStep = data.homingTurnRate * Time.fixedDeltaTime;
@@ -381,14 +382,15 @@ public class Projectile : MonoBehaviour
         if (k >= 1f)
         {
             // İniş: alan hasarı + kırıntı
-            if (PlayerTarget != null && Vector2.Distance(PlayerTarget.position, transform.position) <= data.meteorRadius)
+            // G5: inişte yarıçaptaki her yaşayan oyuncu hasar alır
+            var players = PlayerRegistry.All;
+            for (int i = players.Count - 1; i >= 0; i--)
             {
-                var ph = PlayerTarget.GetComponent<PlayerHealth>();
-                if (ph != null && !ph.IsGhost)
-                {
-                    PlayerHealth.LastHitSource = "Göktaşı";
-                    ph.TakeDamage(damage);
-                }
+                var ph = players[i];
+                if (ph == null || ph.IsDead || ph.IsGhost) continue;
+                if (Vector2.Distance(ph.transform.position, transform.position) > data.meteorRadius) continue;
+                PlayerHealth.LastHitSource = "Göktaşı";
+                ph.TakeDamage(damage);
             }
             GameEvents.RaiseProjectileHitWall(transform.position, Vector2.zero);
             GameEvents.RaiseMeteorLanded(transform.position);
@@ -418,6 +420,9 @@ public class Projectile : MonoBehaviour
             ReturnToPool();
         }
     }
+
+    /// <summary>Güdümlü taş hedefi: en yakın yaşayan oyuncu (tek oyuncuda o oyuncu).</summary>
+    Transform HomingTarget() => PlayerRegistry.All.Count > 1 ? PlayerRegistry.NearestAlive(transform.position) : PlayerTarget;
 
     void ReturnToPool()
     {

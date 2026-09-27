@@ -133,6 +133,7 @@ public class SaveData
 
     [Header("İlerleme")]
     public int coins;          // cüzdan (harcanabilir)
+    public int bestScore2P;    // G5: iki kişilik mod rekoru (tek kişilik rekordan ayrı)
     public int totalCoins;     // şimdiye kadar kazanılan toplam (istatistik, açılma koşulları)
     public List<string> unlockedPets = new List<string>();
     public string selectedPet = "";

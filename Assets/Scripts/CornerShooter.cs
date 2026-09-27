@@ -100,6 +100,8 @@ public class CornerShooter : MonoBehaviour
     void Shoot(float angleOffset = 0f)
     {
         if (target == null) target = Projectile.PlayerTarget;
+        // G5: iki kişilikte düşmüş oyuncuya atış yok; hedef yaşayan oyunculardan
+        if (GameSettings.TwoPlayer && (target == null || !IsAlive(target))) target = PlayerRegistry.RandomAlive();
         if (projectilePrefab == null || target == null) return;
 
         if (AudioManager.Instance != null) AudioManager.Instance.PlayShootSfx();
@@ -119,6 +121,7 @@ public class CornerShooter : MonoBehaviour
         {
             Vector3 ground = target.position + (Vector3)(Random.insideUnitCircle * meteorScatter);
             Projectile.LaunchMeteor(prefab, data, ground, scaleMult);
+            NextTarget();
             return;
         }
 
@@ -127,5 +130,20 @@ public class CornerShooter : MonoBehaviour
         Vector2 dir = (Vector2)(targetPos - spawnPos);
         if (Mathf.Abs(angleOffset) > 0.01f) dir = Quaternion.Euler(0f, 0f, angleOffset) * dir;
         Projectile.Launch(prefab, data, spawnPos, dir, speedMult, scaleMult);
+        NextTarget();
+    }
+
+    /// <summary>G5: iki kişilikte bir sonraki atışın hedefi (uyarı dönüşü doğru kişiye baksın).</summary>
+    void NextTarget()
+    {
+        if (!GameSettings.TwoPlayer) return;
+        var t = PlayerRegistry.RandomAlive();
+        if (t != null) target = t;
+    }
+
+    static bool IsAlive(Transform t)
+    {
+        var h = t != null ? t.GetComponent<PlayerHealth>() : null;
+        return h != null && !h.IsDead;
     }
 }

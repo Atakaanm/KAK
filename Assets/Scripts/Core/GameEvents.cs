@@ -21,6 +21,8 @@ public static class GameEvents
     public static event Action<int, Vector3> CoinCollected;
     /// <summary>Arenada altın kümesi belirdi (küme merkezi).</summary>
     public static event Action<Vector3> CoinClusterSpawned;
+    /// <summary>G5: iki kişilikte bir oyuncu düştü (oyun sürüyor, 10 sn sonra döner).</summary>
+    public static event Action<Vector3> PlayerDowned;
     /// <summary>Mermi duvara çarpıp yok oldu (konum, hız).</summary>
     public static event Action<Vector3, Vector2> ProjectileHitWall;
     /// <summary>Gökten düşen taş yere indi (konum).</summary>
@@ -50,6 +52,7 @@ public static class GameEvents
     public static void RaisePowerupActivated(PowerupData data, float seconds) => PowerupActivated?.Invoke(data, seconds);
     public static void RaiseCoinCollected(int runTotal, Vector3 pos) => CoinCollected?.Invoke(runTotal, pos);
     public static void RaiseCoinClusterSpawned(Vector3 pos) => CoinClusterSpawned?.Invoke(pos);
+    public static void RaisePlayerDowned(Vector3 pos) => PlayerDowned?.Invoke(pos);
     public static void RaiseProjectileHitWall(Vector3 pos, Vector2 vel) => ProjectileHitWall?.Invoke(pos, vel);
     public static void RaiseMeteorLanded(Vector3 pos) => MeteorLanded?.Invoke(pos);
     public static void RaiseNearMiss(Vector3 pos, bool dashing) => NearMiss?.Invoke(pos, dashing);
@@ -72,6 +75,7 @@ public static class GameEvents
         ProjectileHitWall = null;
         CoinCollected = null;
         CoinClusterSpawned = null;
+        PlayerDowned = null;
         StageChanged = null;
         MeteorLanded = null;
         NearMiss = null;

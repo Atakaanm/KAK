@@ -83,6 +83,12 @@ public class HealthUI : MonoBehaviour
         }
     }
 
+    /// <summary>G5: düşmüş oyuncuda kalpler gizlenir (dönüş sayacı görünür).</summary>
+    public void SetHeartsVisible(bool visible)
+    {
+        for (int i = 0; i < activeHearts.Count; i++) if (activeHearts[i] != null) activeHearts[i].enabled = visible;
+    }
+
     public void UpdateHearts(int currentHealth)
     {
         // Geriye dönük uyumluluk
