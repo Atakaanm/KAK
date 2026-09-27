@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PowerupData
   powerupName: Speed
   type: 2
-  duration: 6
-  powerMultiplier: 1.5
+  duration: 5
+  powerMultiplier: 1.25
   healthAmount: 0
   spawnChanceWeight: 0.8
   icon: {fileID: 21300000, guid: 60e47a6058e1748b8b238b55abe13986, type: 3}

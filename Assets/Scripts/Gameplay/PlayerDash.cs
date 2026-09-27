@@ -11,6 +11,8 @@ public class PlayerDash : MonoBehaviour
     public float distance = 1.7f;
     public float duration = 0.14f;
     public float cooldown = 2.6f;
+    [Tooltip("Karakterin dash yeteneği var mı (LevelManager, PlayerData.hasDash'ten ayarlar)")]
+    public bool available = true;
     [Tooltip("Dash bittikten sonra ek ölümsüzlük")]
     public float graceAfter = 0.08f;
 
@@ -55,7 +57,7 @@ public class PlayerDash : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space)) TryDash();
+        if (available && Input.GetKeyDown(KeyCode.Space)) TryDash();
 
         // Kopyaların sönmesi
         for (int i = 0; i < ghosts.Length; i++)
@@ -81,7 +83,7 @@ public class PlayerDash : MonoBehaviour
 
     public bool TryDash()
     {
-        if (!Ready) return false;
+        if (!available || !Ready) return false;
         if (GameManager.Instance != null && GameManager.Instance.IsGameOver) return false;
         if (KakTime.Paused) return false;
         if (health != null && health.IsDead) return false;

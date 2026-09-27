@@ -60,6 +60,8 @@ public class Projectile : MonoBehaviour
     private int bouncesLeft;
     private bool splitDone;
     private Vector3 shadowBaseScale = Vector3.one;
+    private SpriteRenderer warningRenderer; // göktaşı "!" uyarısı (ilk göktaşında oluşturulur)
+    private const float WarningHeight = 0.42f; // yerden yükseklik (dünya birimi)
     private Vector3 visualBasePos;
     private Color baseTint = Color.white;
     private SpriteRenderer visualRenderer;
@@ -103,6 +105,7 @@ public class Projectile : MonoBehaviour
     {
         Active.Remove(this);
         if (trailRenderer != null) trailRenderer.emitting = false;
+        if (warningRenderer != null) warningRenderer.enabled = false;
     }
 
     void Start()
@@ -164,6 +167,7 @@ public class Projectile : MonoBehaviour
         if (d.noSpin && visual != null) visual.localRotation = Quaternion.identity;
 
         if (d.projectileSprite != null && visualRenderer != null) visualRenderer.sprite = d.projectileSprite;
+        if (motion == ProjectileMotion.Meteor && d.warningSprite != null) ShowWarning(d.warningSprite);
         if (visualRenderer != null) visualRenderer.color = baseTint * d.tint;
     }
 
@@ -187,6 +191,43 @@ public class Projectile : MonoBehaviour
         if (shadow != null) shadow.localScale = shadowBaseScale;
         if (visualRenderer != null) visualRenderer.color = baseTint;
         if (trailRenderer != null) trailRenderer.Clear();
+        if (warningRenderer != null) warningRenderer.enabled = false;
+    }
+
+    void ShowWarning(Sprite sprite)
+    {
+        if (warningRenderer == null)
+        {
+            var go = new GameObject("Warning");
+            go.transform.SetParent(transform, false);
+            warningRenderer = go.AddComponent<SpriteRenderer>();
+            if (visualRenderer != null)
+            {
+                warningRenderer.sortingLayerID = visualRenderer.sortingLayerID;
+                warningRenderer.sharedMaterial = visualRenderer.sharedMaterial; // aynı atlas/materyal: batch bozulmasın
+            }
+        }
+        warningRenderer.sprite = sprite;
+        warningRenderer.color = Color.white;
+        warningRenderer.enabled = true;
+        UpdateWarning(0f);
+    }
+
+    /// <summary>Uyarı: kök ölçeğinden bağımsız sabit boy, inişe yaklaştıkça hızlanan yanıp sönme.</summary>
+    void UpdateWarning(float k)
+    {
+        if (warningRenderer == null || !warningRenderer.enabled) return;
+        float inv = 1f / Mathf.Max(0.01f, transform.localScale.x);
+        float freq = Mathf.Lerp(7f, 24f, k);
+        float pulse = 0.5f + 0.5f * Mathf.Sin(age * freq);
+        var t = warningRenderer.transform;
+        t.localPosition = new Vector3(0f, WarningHeight * inv, 0f);
+        t.localRotation = Quaternion.identity;
+        t.localScale = Vector3.one * inv * Mathf.Lerp(0.9f, 1.1f, pulse);
+        var c = warningRenderer.color;
+        c.a = Mathf.Lerp(0.45f, 1f, pulse);
+        warningRenderer.color = c;
+        if (visualRenderer != null) warningRenderer.sortingOrder = visualRenderer.sortingOrder + 5;
     }
 
     // -------------------------------------------------------
@@ -335,6 +376,7 @@ public class Projectile : MonoBehaviour
         if (col != null) col.enabled = false;
         if (visual != null) visual.localPosition = visualBasePos + new Vector3(0f, height, 0f);
         if (shadow != null) shadow.localScale = shadowBaseScale * Mathf.Lerp(0.25f, 1.4f, k);
+        UpdateWarning(k);
 
         if (k >= 1f)
         {

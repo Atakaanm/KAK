@@ -137,10 +137,10 @@ public static class KakMetaSetup
     {
         // ADA: ücretsiz başlangıç seçeneği, Ata ile aynı istatistikler (kız/erkek seçimi görünüm tercihi, güç farkı değil)
         // Görseller: tools/kak_gen_girl.py (esmer, uzun koyu saçlı, zayıf; 8 yön + 8×4 koşu)
-        new CharDef { id = "Ada", hp = 3, speed = 5f, dash = 0f, hurt = 1f, coin = 1f, puRate = 1f, puDur = 1f, price = 0, girl = true },
-        new CharDef { id = "Swift", hp = 2, speed = 5.75f, dash = 2.0f, hurt = 0.85f, coin = 1f, puRate = 1f, puDur = 1f, price = 300 },
-        new CharDef { id = "Tank", hp = 4, speed = 4.5f, dash = 3.2f, hurt = 1f, coin = 1f, puRate = 1f, puDur = 1f, shield = true, price = 800 },
-        new CharDef { id = "Lucky", hp = 3, speed = 5f, dash = 0f, hurt = 1f, coin = 1.25f, puRate = 1.3f, puDur = 1.2f, price = 1500 },
+        new CharDef { id = "Ada", hp = 3, speed = 4f, dash = 0f, hurt = 1f, coin = 1f, puRate = 1f, puDur = 1f, price = 0, girl = true },
+        new CharDef { id = "Swift", hp = 2, speed = 4.6f, dash = 2.0f, hurt = 0.85f, coin = 1f, puRate = 1f, puDur = 1f, price = 300 },
+        new CharDef { id = "Tank", hp = 4, speed = 3.6f, dash = 3.2f, hurt = 1f, coin = 1f, puRate = 1f, puDur = 1f, shield = true, price = 800 },
+        new CharDef { id = "Lucky", hp = 3, speed = 4f, dash = 0f, hurt = 1f, coin = 1.25f, puRate = 1.3f, puDur = 1.2f, price = 1500 },
     };
 
     [MenuItem("KacAtaKac/Karakterleri Kur (Faz 3c)")]
@@ -156,6 +156,7 @@ public static class KakMetaSetup
         var boy = AssetDatabase.LoadAssetAtPath<PlayerData>(BoyData);
         if (boy == null) return "HATA: Boy_PlayerData yok.";
         boy.id = "Boy"; boy.nameKey = "char_Boy"; boy.traitKey = "trait_Boy"; boy.unlockPrice = 0; boy.isLocked = false;
+        boy.moveSpeed = 4f; // G1: telefonda fazla hızlıydı (5)
         EditorUtility.SetDirty(boy);
 
         // 1) Varyant sprite'ların içe aktarma ayarları = kaynak (PPU 100, nokta filtre, merkez pivot)

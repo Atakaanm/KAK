@@ -34,7 +34,7 @@ public class GorevTests
         {
             MissionSystem.Create(MissionType.PlayGames, 0),
             MissionSystem.Create(MissionType.NearMisses, 0),
-            MissionSystem.Create(MissionType.Dashes, 0),
+            MissionSystem.Create(MissionType.SurviveSeconds, 0),
         };
         d.missions[0].progress = d.missions[0].target - 1; // bu oyunla tamamlanacak
         int reward = d.missions[0].reward;

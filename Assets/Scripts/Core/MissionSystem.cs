@@ -33,7 +33,8 @@ public static class MissionSystem
 
     static readonly MissionType[] Pool =
     {
-        MissionType.SurviveSeconds, MissionType.NearMisses, MissionType.Dashes,
+        // G1: dash rafta → "dash at" görevi üretilmez (tür kayıt uyumu için duruyor)
+        MissionType.SurviveSeconds, MissionType.NearMisses,
         MissionType.CoinsInRun, MissionType.ReachStage, MissionType.ShieldBlocks, MissionType.PlayGames
     };
 
@@ -48,7 +49,7 @@ public static class MissionSystem
     {
         var d = SaveSystem.Data;
         if (d.missions == null) d.missions = new List<MissionState>();
-        d.missions.RemoveAll(m => m == null || m.done);
+        d.missions.RemoveAll(m => m == null || m.done || m.type == MissionType.Dashes);
         int guard = 0;
         while (d.missions.Count < ActiveCount && guard++ < 50)
         {

@@ -4,6 +4,21 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-09-27 — G1: his düzeltmeleri
+
+- **Ölümde kayma:** ölüm yavaş çekiminde `PlayerMovement2D` hem girdiyi uyguluyordu hem de yavaş çekimi telafi ettiği için (`currentSpeed /= slow`) karakter tam hızla kayıyordu. Durum bayrağı (IsDead) hareket kodunda da kontrol edilmeli.
+- Sahnede kayıtlı alanların varsayılanı kodla değişmez: davranış değişince **alan adını değiştir** (CoinSpawner `intervalMin` → `spawnEveryMin`) ya da kurulum aracıyla ayarla. Aksi hâlde sahnedeki eski değerler geçerli kalır.
+- Elle oluşturulmuş veri dosyalarının (güçlendirmeler) değerleri hiçbir araçta yoktu → `KakBalance` (denge sayıları tek yerde, tekrar çalıştırılabilir).
+- Havuzlanan nesneye sonradan eklenen çocuk (göktaşı "!") hem ResetState'te hem OnDisable'da kapatılmalı; yoksa havuzdan başka türde çıkan nesnede görünür.
+- Dev: `DropMeteors`, `Freeze`, `SetLanguage`, `AddScore` görsel kontrolü hızlandırıyor.
+
+## 2026-09-27 — Kullanıcının ilk telefon testi ve tasarım yönü
+
+- **Kullanıcı tercihi:** büyük işleri önce faz faz kâğıda dök (prompt dosyası), sonra uygula. Plan: `prompts/faz-11-oyuncu-geri-bildirimi.md`.
+- **Tasarım ilkesi (kullanıcı):** oyun her şeyi hemen vermemeli; tek canla başla, altınla adım adım güçlen. Oyunun kimliği "saldıramazsın, kaçarsın" korunur; Survivor.io'dan harita değil, ilerleme ve seçim hissi alınır. Uzay/nişancı fikri ana oyunu değiştirmez, ileride ayrı dünya olabilir.
+- **His hataları telefonda çıktı, editörde görünmüyordu:** çapraz koşuda sprite titremesi (joystick sınırda), ölümde kayma, fazla hız. Editörde klavye tam 8 yön verdiği için titreme olmuyor → joystick benzeri analog girdiyle test et.
+- iPhone'a ücretsiz Personal Team ile kurulum: Geliştirici Modu (telefonda, kullanıcı açar), Xcode Accounts (kullanıcı), Team ID `KakBuild.SetAppleTeam`; `xcodebuild -destination generic/platform=iOS -allowProvisioningUpdates DEVELOPMENT_TEAM=...` + `xcrun devicectl device install app`. Xcode telefondan ~8 GB sembol kopyalıyor (iOS DeviceSupport) → disk.
+
 ## 2026-09-26 — Xcode 26.6, iOS simülatörü ve Android build hattı
 
 - **Disk dar:** Unity Hub "ERROR_NOT_ENOUGH_SPACE_TO_DOWNLOAD" verdi. Asıl sebep, Claude masaüstü uygulamasının VM görüntüsü güncellenirken geçici olarak kullandığı ~10 GB'tı; `df` birkaç dakika içinde 20 GB → 2 GB → 37 GB oynadı. Büyük iş öncesi `df` ve `diskutil info /` (Container Free) bak. Silme kararı kullanıcının: yeniden indirilebilir kalemleri boyutlarıyla listeleyip sor (WebGL modülü 4,8 GB, eski simülatör 7,8 GB).

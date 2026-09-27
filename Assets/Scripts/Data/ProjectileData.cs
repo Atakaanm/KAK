@@ -38,6 +38,8 @@ public class ProjectileData : ScriptableObject
     public float meteorFallTime = 1.1f;
     public float meteorStartHeight = 7f;
     public float meteorRadius = 0.55f;
+    [Tooltip("Düşeceği yerde yanıp sönen uyarı işareti (G1: gölge tek başına yetmiyordu)")]
+    public Sprite warningSprite;
 
     [Header("Etki")]
     public ProjectileEffect effect = ProjectileEffect.Damage;

@@ -15,7 +15,7 @@ MonoBehaviour:
   playerName: Lucky
   playerType: 0
   maxHealth: 3
-  moveSpeed: 5
+  moveSpeed: 4
   invincibilityDuration: 0.35
   powerupDurationMultiplier: 1.2
   powerupSpawnRateMultiplier: 1.3
@@ -85,6 +85,7 @@ MonoBehaviour:
   id: Lucky
   nameKey: char_Lucky
   traitKey: trait_Lucky
+  hasDash: 0
   dashCooldown: 0
   hurtboxScale: 1
   coinMultiplier: 1.25

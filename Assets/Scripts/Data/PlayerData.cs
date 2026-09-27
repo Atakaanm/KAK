@@ -64,6 +64,8 @@ public class PlayerData : ScriptableObject
     public string nameKey = "char_Boy";
     [Tooltip("Özel yetenek açıklaması (Loc anahtarı, boş olabilir)")]
     public string traitKey = "";
+    [Tooltip("Dash yeteneği var mı (G1: dash rafa kalktı; ileride karakterlere özel yetenek olarak dönebilir)")]
+    public bool hasDash = false;
     [Tooltip("Dash bekleme süresi (sn); 0 = varsayılan")]
     public float dashCooldown = 0f;
     [Tooltip("Gövde (hurtbox) ölçeği: küçük = taşlar daha zor vurur")]

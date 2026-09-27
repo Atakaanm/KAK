@@ -86,6 +86,9 @@ public class OyuncuBilgisiTests
         yield return KakTestUtil.WaitUntil(() => SaveSystem.Data.HasSeen(OnboardingHints.Move), 4f, "hareket edince ipucu bitmedi");
         move.InputOverride = null;
 
+        // G1: dash rafta; bu test dash yetenekli bir karakteri taklit eder
+        ph.GetComponent<PlayerDash>().available = true;
+        hints.dashButton.gameObject.SetActive(true);
         hints.dashHintAfter = 0.5f;
         float t0 = Time.realtimeSinceStartup;
         while (hints.Current != OnboardingHints.Dash && Time.realtimeSinceStartup - t0 < 4f) yield return null;

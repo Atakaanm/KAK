@@ -17,6 +17,10 @@ public class PlayerMovement2D : MonoBehaviour
 
     private Rigidbody2D rb;
     private PlayerStatus status;
+    private PlayerHealth health;
+
+    /// <summary>Ölüyken karakter olduğu yerde donar (G1: ölümde kayma ölüm hissini öldürüyordu).</summary>
+    public bool Frozen => health != null && health.IsDead;
     private Vector2 movementInput;
     private float baseMoveSpeed;
 
@@ -48,6 +52,15 @@ public class PlayerMovement2D : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         status = GetComponent<PlayerStatus>();
+        health = GetComponent<PlayerHealth>();
+    }
+
+    /// <summary>Hızı ve atılmayı anında sıfırlar (ölüm anı).</summary>
+    public void StopImmediately()
+    {
+        movementInput = Vector2.zero;
+        dashTimer = 0f;
+        if (rb != null) rb.linearVelocity = Vector2.zero;
     }
 
     /// <summary>PlayerStatus sonradan eklenirse kendini bağlar (bölüm modu).</summary>
@@ -64,6 +77,7 @@ public class PlayerMovement2D : MonoBehaviour
 
     void Update()
     {
+        if (Frozen) { movementInput = Vector2.zero; return; }
         if (InputOverride.HasValue)
         {
             movementInput = Vector2.ClampMagnitude(InputOverride.Value, 1f);
@@ -121,6 +135,7 @@ public class PlayerMovement2D : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (Frozen) { rb.linearVelocity = Vector2.zero; dashTimer = 0f; return; }
         if (movementInput.sqrMagnitude > 0.01f) LastDirection = movementInput.normalized;
         if (dashTimer > 0f)
         {

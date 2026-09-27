@@ -148,7 +148,15 @@ Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 - Varsayım: Kalkan "vurulana kadar" sürer (`ShieldData.duration` kullanılmıyor, davranış korunuyor)
 
 ### Sıradaki adım
-**Yayın hazırlığı Y1-Y6 tamam** (Y6: Xcode 26.6 + iOS/Android modülleri; oyun iPhone simülatöründe çalıştı, Android test APK'sı API 36 / 16 KB uyumlu). Sıradaki iş kullanıcıda: keystore, Play Console + 12 test kullanıcısı, Apple Developer. İsterse kendi iPhone'unda ücretsiz Personal Team ile deneme (Xcode → Accounts) veya Android telefona test APK (`adb install Builds/Android/KacAtaKac-test.apk`). Sonra cihaz testi + denge geri bildirimi → Faz 2B (bölüm seçimi) → Buz / Futbol / Karanlık dünyaları.
+**Faz 11 — telefon geri bildirimi** (`prompts/faz-11-oyuncu-geri-bildirimi.md`), sırayla:
+- [x] G1 His ve kontrol (ölümde donma, çapraz koşu histerezisi, hız 5→4 + hız güçlendirmesi ×1,25, göktaşı "!", altın tek tek + aralıklı, dash rafa, kontrol boyutu ayarı). Testler 81/81 + 23/23
+- [ ] G2 Zorluk süreye bağlı + taş dengesi + yakın geçiş skor çarpanı
+- [ ] G3 Tek can başlangıç + karakter detay/yükseltme ekranı + arketipler + pet gelişimi
+- [ ] G4 Pranga (yavaşlatan kötü eşya)
+- [ ] G5 İki kişilik yerel mod (Ata + Ada, 10 sn sonra dönüş)
+- [ ] G6 Hafif hikâye / evren
+- [ ] G7 Buz arenası (kayma, kardan adam, büyüyen kartopu, eldiven, buz ayakkabısı, ateş/donma)
+Her alt faz sonunda: testler + bot ölçümü + PR + (kullanıcı kablo takınca) telefona kurulum.
 
 ### Onay bekleyenler
 - **Android Build Support modülü** kurulmalı (Unity Hub → 6000.3.8f1 → Add modules). Sonra "Android build al" → cihazda test.

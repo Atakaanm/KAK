@@ -179,6 +179,18 @@ public static class KakBuild
         }
     }
 
+    /// <summary>
+    /// Apple ekip kimliğini kaydeder (Xcode → Signing'de seçilen; ücretsiz "Personal Team" de olur). Sonraki iOS projeleri
+    /// otomatik imzaya hazır çıkar. Köprü: invoke KakBuild SetAppleTeam 2V4773K623
+    /// </summary>
+    public static string SetAppleTeam(string teamId)
+    {
+        PlayerSettings.iOS.appleDeveloperTeamID = teamId;
+        PlayerSettings.iOS.appleEnableAutomaticSigning = true;
+        AssetDatabase.SaveAssets();
+        return "[KakBuild] Apple ekip kimliği: " + teamId;
+    }
+
     /// <summary>Etkin platformu değiştirir (derleme tanımları: UNITY_IOS / UNITY_ANDROID). Sonra derlemeyi bekle (köprü: refresh).</summary>
     public static string SwitchToIos() => Switch(BuildTargetGroup.iOS, BuildTarget.iOS);
     public static string SwitchToAndroid() => Switch(BuildTargetGroup.Android, BuildTarget.Android);

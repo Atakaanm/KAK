@@ -24,8 +24,13 @@ public class PlayerDirectionSprite : MonoBehaviour
 
     [Header("Animation Settings")]
     public float runFrameRate = 0.12f;
+    [Tooltip("runFrameRate bu hızda (birim/sn) geçerli; daha hızlı koşunca kareler hızlanır, yavaşta yavaşlar")]
+    public float referenceSpeed = 4f;
+    [Tooltip("Yön sınırında titreme payı (derece)")]
+    public float directionHysteresis = 12f;
 
     private Vector2 lastDirection = Vector2.down;
+    private int octant = 6; // Güney
     private float animationTimer = 0f;
     private int currentRunFrame = 0;
 
@@ -33,6 +38,7 @@ public class PlayerDirectionSprite : MonoBehaviour
     {
         if (movement == null || spriteRenderer == null)
             return;
+        if (movement.Frozen) return; // ölüm: son karede kal
 
         Vector2 input = movement.MovementInput;
         bool isMoving = input.sqrMagnitude > 0.01f;
@@ -40,9 +46,10 @@ public class PlayerDirectionSprite : MonoBehaviour
         if (isMoving)
         {
             lastDirection = input.normalized;
+            octant = DirectionUtil.OctantSticky(lastDirection, octant, directionHysteresis);
         }
 
-        DirectionAnimation currentAnim = GetAnimationForDirection(lastDirection);
+        DirectionAnimation currentAnim = DirectionUtil.PickOctant(octant, east, northEast, north, northWest, west, southWest, south, southEast);
 
         if (currentAnim == null)
             return;
@@ -58,8 +65,11 @@ public class PlayerDirectionSprite : MonoBehaviour
             if (currentAnim.runFrames != null && currentAnim.runFrames.Length > 0)
             {
                 animationTimer += Time.deltaTime;
+                // Kare hızı gerçek koşu hızına bağlı (hız güçlendirmesi, zemin, yavaşlama)
+                float speedRatio = Mathf.Clamp(movement.CurrentSpeed / Mathf.Max(0.1f, referenceSpeed), 0.6f, 1.6f);
+                float frameTime = runFrameRate / speedRatio;
 
-                if (animationTimer >= runFrameRate)
+                if (animationTimer >= frameTime)
                 {
                     animationTimer = 0f;
                     currentRunFrame++;
@@ -79,8 +89,4 @@ public class PlayerDirectionSprite : MonoBehaviour
         }
     }
 
-    DirectionAnimation GetAnimationForDirection(Vector2 dir)
-    {
-        return DirectionUtil.Pick(dir, east, northEast, north, northWest, west, southWest, south, southEast);
-    }
 }

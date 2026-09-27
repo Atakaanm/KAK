@@ -54,6 +54,7 @@ SpriteAtlas:
     - {fileID: 21300000, guid: dddc54ec51ed5465f848a08e4cac30ae, type: 3}
     - {fileID: 21300000, guid: be5aef597b85f4655a748502ac53e5c3, type: 3}
     - {fileID: 21300000, guid: 5ba4783dbfc6c45d2a38d90715e9033f, type: 3}
+    - {fileID: 21300000, guid: 2b92185a054d64919bc65c64054e6861, type: 3}
     - {fileID: 21300000, guid: c4e33e74da05843f59291ed625c95c2f, type: 3}
     - {fileID: 21300000, guid: fce279938f67e495caa737373991341f, type: 3}
     - {fileID: 21300000, guid: 0796e686be33a4488ad642b96a5eb3e4, type: 3}
@@ -488,6 +489,7 @@ SpriteAtlas:
     - 3db56d1a6b99b47e09a175425751b503: 21300000
     - 988fb92aaa35a42e398180910f0f4b47: 21300000
     - 7ce23a3a541b44b0680b7307d7cbb3c6: 21300000
+    - 2b92185a054d64919bc65c64054e6861: 21300000
     - 35c6e07a8e94049a59fc75d9fe0c071d: 21300000
     - 661f039a01bb9409fbc01eb311d82695: 21300000
     - 0c2f599a928f24b4aa88d2e369be83ec: 21300000
@@ -763,6 +765,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 3db56d1a6b99b47e09a175425751b503, type: 3}
   - {fileID: 21300000, guid: 988fb92aaa35a42e398180910f0f4b47, type: 3}
   - {fileID: 21300000, guid: 7ce23a3a541b44b0680b7307d7cbb3c6, type: 3}
+  - {fileID: 21300000, guid: 2b92185a054d64919bc65c64054e6861, type: 3}
   - {fileID: 21300000, guid: 35c6e07a8e94049a59fc75d9fe0c071d, type: 3}
   - {fileID: 21300000, guid: 661f039a01bb9409fbc01eb311d82695, type: 3}
   - {fileID: 21300000, guid: 0c2f599a928f24b4aa88d2e369be83ec, type: 3}
@@ -1037,6 +1040,7 @@ SpriteAtlas:
   - North_East_Run_1
   - North_Attack_3
   - south-west
+  - warn_mark
   - South_East_Run_4
   - North_West_Run_2
   - south-east
