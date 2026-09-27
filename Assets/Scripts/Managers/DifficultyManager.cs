@@ -127,12 +127,13 @@ public class DifficultyManager : MonoBehaviour
         if (!isActive || scoreManager == null || stages == null || stages.Length == 0)
             return;
 
-        int currentScore = scoreManager.ScoreInt;
+        // G2: kademe oyun süresine bağlı (skora değil): yakın geçiş skor çarpanı zorluğu hızlandırmasın
+        float t = scoreManager.ElapsedSeconds;
 
         // Hangi stage'deyiz kontrol et
         for (int i = stages.Length - 1; i >= 0; i--)
         {
-            if (stages[i] != null && currentScore >= stages[i].minScore)
+            if (stages[i] != null && t >= stages[i].minSeconds)
             {
                 if (i != currentStageIndex)
                 {
@@ -159,7 +160,7 @@ public class DifficultyManager : MonoBehaviour
         currentStage = stages[stageIndex];
 
         KakLog.Info("[DifficultyManager] ⚡ STAGE GEÇİŞİ: " + currentStage.stageName
-            + " (Skor >= " + currentStage.minScore + ")"
+            + " (≥ " + currentStage.minSeconds + " sn)"
             + " | Ateş Çarpanı: " + currentStage.shootIntervalMultiplier
             + " | Mermi Hız Çarpanı: " + currentStage.projectileSpeedMultiplier
             + " | Aktif Spawner: " + currentStage.activeSpawnerCount);
@@ -203,7 +204,31 @@ public class DifficultyManager : MonoBehaviour
     }
 
     /// <summary>Mevcut kademenin taş listesinden ağırlıklı rastgele seçim; liste boşsa null.</summary>
+    [Header("Taş dengesi (G2)")]
+    [Tooltip("Bu görsel ölçekten büyük taşlar 'büyük' sayılır")]
+    public float largeScaleThreshold = 1.4f;
+    [Tooltip("Ekranda aynı anda en fazla bu kadar büyük taş (fazlasında seçim yeniden yapılır)")]
+    public int maxLargeOnScreen = 2;
+
     public ProjectileData PickProjectile()
+    {
+        var d = PickWeighted();
+        // Aynı anda çok sayıda dev kaya "bir büyük bir küçük" dengesizliği yaratıyordu: sınırı aşarsa küçük olanı seç
+        for (int tries = 0; tries < 4 && d != null && d.visualScale >= largeScaleThreshold && LargeOnScreen() >= maxLargeOnScreen; tries++)
+            d = PickWeighted();
+        return d;
+    }
+
+    int LargeOnScreen()
+    {
+        int n = 0;
+        var act = Projectile.Active;
+        for (int i = 0; i < act.Count; i++)
+            if (act[i] != null && act[i].Data != null && act[i].Data.visualScale >= largeScaleThreshold) n++;
+        return n;
+    }
+
+    ProjectileData PickWeighted()
     {
         if (currentStage == null || currentStage.availableProjectiles == null || currentStage.availableProjectiles.Length == 0)
             return null;

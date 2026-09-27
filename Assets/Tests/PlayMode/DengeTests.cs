@@ -7,12 +7,12 @@ using UnityEngine.TestTools;
 /// <summary>
 /// Denge ölçümü (uzun): usta ve acemi bot birkaç tam oyun oynar, 2x hızda.
 /// Sadece istenince çalışır: python3 tools/kak_bridge.py denge
-/// Hedef (progress.md): acemi 60-90 sn, usta 180-300 sn.
+/// Hedef (Faz 11 G2): acemi 60-90 sn, usta 180-300 sn.
 /// </summary>
 public class DengeTests
 {
     const float Speed = 2f;
-    const float CapSeconds = 300f; // oyun süresi üst sınırı
+    const float CapSeconds = 420f; // oyun süresi üst sınırı (G2: İmkansız 6. dakikada)
 
     [UnitySetUp]
     public IEnumerator SetUp()
@@ -65,9 +65,9 @@ public class DengeTests
     public IEnumerator Usta_ve_Acemi_Bot()
     {
         var results = new System.Collections.Generic.List<string>();
-        for (int i = 0; i < 3; i++) yield return PlayOne(1f, results, true);
+        // G1: dash rafta → yalnız dash'siz oyun
         for (int i = 0; i < 3; i++) yield return PlayOne(1f, results, false);
-        for (int i = 0; i < 2; i++) yield return PlayOne(0.25f, results, false);
+        for (int i = 0; i < 3; i++) yield return PlayOne(0.25f, results, false);
         Debug.Log("[DengeTests] ÖZET\n" + string.Join("\n", results));
         Assert.Pass(string.Join("\n", results));
     }

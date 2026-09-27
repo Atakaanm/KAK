@@ -42,16 +42,17 @@ public class SonsuzModIcerikTests
     }
 
     [UnityTest]
-    public IEnumerator Combo_Artar_HasarlaSifirlanir()
+    public IEnumerator Carpan_YakinGecisleArtar_HasarlaYariyaIner()
     {
         StopShooters();
         var sm = GameManager.Instance.scoreManager;
-        sm.comboStepSeconds = 0.3f;
-        yield return KakTestUtil.WaitReal(1f);
-        Assert.Greater(sm.ComboMultiplier, 1.15f, "Combo artmadı");
+        sm.survivalStepSeconds = 9999f; // yalnız yakın geçiş etkisi
+        Vector3 pl = Projectile.PlayerTarget.position;
+        for (int i = 0; i < 4; i++) GameEvents.RaiseNearMiss(pl, false);
+        Assert.AreEqual(1.4f, sm.ComboMultiplier, 0.001f, "Yakın geçiş skor çarpanını artırmadı");
         Object.FindAnyObjectByType<PlayerHealth>().TakeDamage(1);
         yield return null;
-        Assert.AreEqual(1f, sm.ComboMultiplier, 0.001f, "Hasarda combo sıfırlanmadı");
+        Assert.AreEqual(1.2f, sm.ComboMultiplier, 0.001f, "Hasarda kazanç yarıya inmedi");
     }
 
     [UnityTest]

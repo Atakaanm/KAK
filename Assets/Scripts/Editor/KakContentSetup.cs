@@ -59,12 +59,13 @@ public static class KakContentSetup
         homing.homingTurnRate = 100f;
 
         // Kademe dağılımı (Faz 5 planı: kademeli tanıtım)
+        // G2 (2026-09-27): "bir büyük bir küçük" dengesizliği → tek tek tanıtım, dev kaya Orta'dan, seyrek; ekranda en fazla 2 büyük (DifficultyManager)
         Assign("Assets/Data/Stage1_Baslangic.asset", (rock, 1f));
-        Assign("Assets/Data/Stage2_Kolay.asset", (rock, 3f), (pebble, 1.5f), (boulder, 1f));
-        Assign("Assets/Data/Stage3_Orta.asset", (rock, 3f), (pebble, 2f), (boulder, 1f), (bouncer, 1.2f));
-        Assign("Assets/Data/Stage4_Zor.asset", (rock, 2.5f), (pebble, 2f), (boulder, 1f), (bouncer, 1.2f), (splitter, 1f), (meteor, 0.8f));
-        Assign("Assets/Data/Stage5_Cehennem.asset", (rock, 2f), (pebble, 2f), (boulder, 1.2f), (bouncer, 1.3f), (splitter, 1.2f), (meteor, 1f), (homing, 0.8f));
-        Assign("Assets/Data/Stage6_Imkansiz.asset", (rock, 1.5f), (pebble, 2f), (boulder, 1.3f), (bouncer, 1.5f), (splitter, 1.5f), (meteor, 1.3f), (homing, 1.2f));
+        Assign("Assets/Data/Stage2_Kolay.asset", (rock, 3f), (pebble, 1f));
+        Assign("Assets/Data/Stage3_Orta.asset", (rock, 3f), (pebble, 1.3f), (boulder, 0.5f), (bouncer, 0.7f));
+        Assign("Assets/Data/Stage4_Zor.asset", (rock, 2.6f), (pebble, 1.5f), (boulder, 0.7f), (bouncer, 1f), (splitter, 0.7f), (meteor, 0.6f));
+        Assign("Assets/Data/Stage5_Cehennem.asset", (rock, 2.2f), (pebble, 1.6f), (boulder, 0.9f), (bouncer, 1.1f), (splitter, 1f), (meteor, 0.8f), (homing, 0.5f));
+        Assign("Assets/Data/Stage6_Imkansiz.asset", (rock, 1.8f), (pebble, 1.8f), (boulder, 1f), (bouncer, 1.3f), (splitter, 1.2f), (meteor, 1f), (homing, 0.9f));
 
         AssetDatabase.SaveAssets();
         return "[KakContentSetup] 7 taş türü ve 6 kademe dağılımı güncellendi.";

@@ -13,14 +13,15 @@ MonoBehaviour:
   m_Name: Stage6_Imkansiz
   m_EditorClassIdentifier: Assembly-CSharp::DifficultyStageData
   stageName: Imkansiz
-  minScore: 2600
+  minSeconds: 360
+  minScore: 0
   maxScore: -1
   activeSpawnerCount: 4
-  shootIntervalMultiplier: 0.52
-  projectileSpeedMultiplier: 1.55
-  projectileScaleMultiplier: 1.3
-  playerSpeedMultiplier: 1.2
-  scoreSpeedMultiplier: 1.8
+  shootIntervalMultiplier: 0.64
+  projectileSpeedMultiplier: 1.38
+  projectileScaleMultiplier: 1.2
+  playerSpeedMultiplier: 1.1
+  scoreSpeedMultiplier: 1.75
   availableProjectiles:
   - {fileID: 11400000, guid: c2e7e644fcf354e079d42082c04a0732, type: 2}
   - {fileID: 11400000, guid: 5d86f6155978a44ef9fbfa89bb440c99, type: 2}
@@ -30,10 +31,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2b91002100aa341ee8ac70e60416fe5c, type: 2}
   - {fileID: 11400000, guid: c868304a7c75f460bb60a748e112d812, type: 2}
   projectileWeights:
-  - 1.5
-  - 2
-  - 1.3
-  - 1.5
-  - 1.5
+  - 1.8
+  - 1.8
+  - 1
   - 1.3
   - 1.2
+  - 1
+  - 0.9

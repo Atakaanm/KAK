@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Stage1_Baslangic
   m_EditorClassIdentifier: Assembly-CSharp::DifficultyStageData
   stageName: Baslangic
+  minSeconds: 0
   minScore: 0
-  maxScore: 199
+  maxScore: -1
   activeSpawnerCount: 2
-  shootIntervalMultiplier: 1
-  projectileSpeedMultiplier: 1
+  shootIntervalMultiplier: 1.2
+  projectileSpeedMultiplier: 0.88
   projectileScaleMultiplier: 1
   playerSpeedMultiplier: 1
   scoreSpeedMultiplier: 1

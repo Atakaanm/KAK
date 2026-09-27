@@ -155,15 +155,7 @@ public static class KakEndlessSetup
             if (zone != null) { zone.anchorMin = Vector2.zero; zone.anchorMax = new Vector2(0.6f, 1f); }
         }
 
-        // ── Denge: kademe eşikleri süreye yayılır ──────
-        // Denge v2 (2026-09-25, bot ölçümüne göre): zorluk artık çeşitlilikten (taş türleri, olaylar) de geliyor,
-        // bu yüzden hız/sıklık çarpanları eskisinden yumuşak.   eşik      spawner aralık× hız×  boyut× oyuncu× skor×
-        SetStage("Assets/Data/Stage1_Baslangic.asset", 0, 199,     2, 1.00f, 1.00f, 1.00f, 1.00f, 1.0f);
-        SetStage("Assets/Data/Stage2_Kolay.asset", 200, 474,       2, 0.90f, 1.10f, 1.00f, 1.05f, 1.1f);
-        SetStage("Assets/Data/Stage3_Orta.asset", 475, 899,        3, 0.82f, 1.20f, 1.08f, 1.08f, 1.2f);
-        SetStage("Assets/Data/Stage4_Zor.asset", 900, 1549,        3, 0.72f, 1.30f, 1.15f, 1.12f, 1.3f);
-        SetStage("Assets/Data/Stage5_Cehennem.asset", 1550, 2599,  4, 0.62f, 1.42f, 1.22f, 1.16f, 1.5f);
-        SetStage("Assets/Data/Stage6_Imkansiz.asset", 2600, -1,    4, 0.52f, 1.55f, 1.30f, 1.20f, 1.8f);
+        SetupStages();
         AssetDatabase.SaveAssets();
 
         EditorSceneManager.MarkSceneDirty(scene);
@@ -238,12 +230,31 @@ public static class KakEndlessSetup
         return null;
     }
 
-    static void SetStage(string path, int min, int max, int spawners, float interval, float speed, float scale, float player, float score)
+    /// <summary>
+    /// Denge v3 (Faz 11 G2, 2026-09-27): kademeler **süreye** bağlı (skordan ayrı). Eskiden skor eşikleriyle ~1 dakikada
+    /// çok zor kademeye geliniyordu; artık İmkansız 6. dakikada. Başlangıç yumuşak (tek canla başlangıç G3'te geliyor). Köprü: invoke KakEndlessSetup SetupStages
+    /// </summary>
+    [MenuItem("KacAtaKac/Denge/Zorluk Kademelerini Ayarla")]
+    public static string SetupStages()
+    {
+        //                                                   sn    spawner aralık× hız×  boyut× oyuncu× skor×
+        SetStage("Assets/Data/Stage1_Baslangic.asset",       0f,   2, 1.20f, 0.88f, 1.00f, 1.00f, 1.00f);
+        SetStage("Assets/Data/Stage2_Kolay.asset",          30f,   2, 1.05f, 0.96f, 1.00f, 1.02f, 1.10f);
+        SetStage("Assets/Data/Stage3_Orta.asset",           75f,   3, 0.95f, 1.05f, 1.04f, 1.04f, 1.20f);
+        SetStage("Assets/Data/Stage4_Zor.asset",           150f,   3, 0.84f, 1.15f, 1.08f, 1.06f, 1.35f);
+        SetStage("Assets/Data/Stage5_Cehennem.asset",      240f,   4, 0.74f, 1.26f, 1.13f, 1.08f, 1.50f);
+        SetStage("Assets/Data/Stage6_Imkansiz.asset",      360f,   4, 0.64f, 1.38f, 1.20f, 1.10f, 1.75f);
+        AssetDatabase.SaveAssets();
+        return "[KakEndlessSetup] 6 kademe süreye göre ayarlandı (0/30/75/150/240/360 sn)";
+    }
+
+    static void SetStage(string path, float seconds, int spawners, float interval, float speed, float scale, float player, float score)
     {
         var st = AssetDatabase.LoadAssetAtPath<DifficultyStageData>(path);
         if (st == null) return;
-        st.minScore = min;
-        st.maxScore = max;
+        st.minSeconds = seconds;
+        st.minScore = 0;
+        st.maxScore = -1;
         st.activeSpawnerCount = spawners;
         st.shootIntervalMultiplier = interval;
         st.projectileSpeedMultiplier = speed;

@@ -117,4 +117,20 @@ public class HisTests
         ControlSettings.Set(1);
         Assert.AreEqual(1f, joy.background.localScale.x, 0.001f);
     }
+
+    [UnityTest]
+    public IEnumerator Zorluk_SureyeBagli_SkoraDegil()
+    {
+        yield return KakTestUtil.LoadGameWithLevel();
+        StopShooters();
+        KakTestUtil.MakePlayerSafe();
+        var sm = GameManager.Instance.scoreManager;
+        var dm = DifficultyManager.Instance;
+        sm.AddScore(50000); // G2: skor (yakın geçiş çarpanı) zorluğu hızlandırmamalı
+        yield return null; yield return null;
+        Assert.AreEqual(0, dm.CurrentStageIndex, "Skor kademeyi ilerletti");
+        sm.AdvanceTime(80f); // 75 sn = Orta
+        yield return null; yield return null;
+        Assert.AreEqual(2, dm.CurrentStageIndex, "Süre kademeyi ilerletmedi");
+    }
 }

@@ -4,6 +4,12 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-09-27 — G2: zorluk ve skor
+
+- **Zorluk skora bağlıyken skor hızlandırıcıları zorluğu da hızlandırıyordu** (kullanıcı fark etti). Zorluk süreye, skor çarpanı oyuncu becerisine (yakın geçiş) bağlı: ikisi ayrı eksen.
+- Dengeyi ölçerek kur: `python3 tools/kak_bridge.py denge` (~8 dk). 3 canla usta 232 sn / acemi 135 sn. Tek can (G3) acemiyi hedef aralığa (60-90 sn) indirecek; G3'ten sonra yeniden ölç.
+- Bot sayıları varyanslı (usta bir koşuda 91 sn): en az 3 koşu, ortanca kullan.
+
 ## 2026-09-27 — G1: his düzeltmeleri
 
 - **Ölümde kayma:** ölüm yavaş çekiminde `PlayerMovement2D` hem girdiyi uyguluyordu hem de yavaş çekimi telafi ettiği için (`currentSpeed /= slow`) karakter tam hızla kayıyordu. Durum bayrağı (IsDead) hareket kodunda da kontrol edilmeli.
