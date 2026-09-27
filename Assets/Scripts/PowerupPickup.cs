@@ -101,12 +101,18 @@ public class PowerupPickup : MonoBehaviour
             durationMultiplier = movement.playerData.powerupDurationMultiplier * CharacterProgress.PowerMult(movement.playerData);
         }
 
-        float finalDuration = powerupData.duration * durationMultiplier;
+        // Kötü eşyayı güç süresi yükseltmesi uzatmaz
+        float finalDuration = powerupData.harmful ? powerupData.duration : powerupData.duration * durationMultiplier;
 
-        if (AudioManager.Instance != null) AudioManager.Instance.PlayScoreSfx(); // Geçici powerup sesi
-        
+        var am = AudioManager.Instance;
+        if (am != null)
+        {
+            if (powerupData.harmful) am.PlaySfx(am.hitSfx);
+            else am.PlayScoreSfx(); // Geçici powerup sesi
+        }
+
         GameEvents.RaisePowerupCollected(powerupData, pos);
-        SaveSystem.Data.totalPowerups++;
+        if (!powerupData.harmful) SaveSystem.Data.totalPowerups++;
 
         switch (powerupData.type)
         {
@@ -131,6 +137,11 @@ public class PowerupPickup : MonoBehaviour
 
             case PowerupType.TimeSlow:
                 if (GameManager.Instance != null) GameManager.Instance.TimeSlow(powerupData.powerMultiplier, finalDuration);
+                break;
+
+            case PowerupType.Shackle:
+                // G4: Pranga — hız kanalını kullanır (hız güçlendirmesini iptal eder, tersi de geçerli)
+                if (movement != null) movement.ApplySpeedBoost(powerupData.powerMultiplier, finalDuration);
                 break;
         }
 

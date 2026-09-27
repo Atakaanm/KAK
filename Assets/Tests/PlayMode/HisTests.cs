@@ -150,4 +150,24 @@ public class HisTests
         PowerupPickup.Apply(heart, ph.gameObject, ph.transform.position);
         Assert.AreEqual(3, ph.MaxHealth, "Üst sınırı aştı");
     }
+
+    [UnityTest]
+    public IEnumerator Pranga_Yavaslatir_HiziIptalEder_KirmiziGosterilir()
+    {
+        yield return KakTestUtil.LoadGameWithLevel();
+        StopShooters();
+        KakTestUtil.MakePlayerSafe();
+        var move = Object.FindAnyObjectByType<PlayerMovement2D>();
+        var speed = UnityEditor.AssetDatabase.LoadAssetAtPath<PowerupData>("Assets/Data/Powerups/SpeedData.asset");
+        var shackle = UnityEditor.AssetDatabase.LoadAssetAtPath<PowerupData>("Assets/Data/Powerups/ShackleData.asset");
+        Assert.IsTrue(shackle.harmful);
+        Assert.GreaterOrEqual(shackle.minStage, 1, "Pranga ısınma kademesinde çıkmamalı");
+        float normal = move.CurrentSpeed;
+        PowerupPickup.Apply(speed, move.gameObject, move.transform.position);
+        PowerupPickup.Apply(shackle, move.gameObject, move.transform.position); // hız iptal, yavaşlar
+        yield return null;
+        Assert.AreEqual(normal * shackle.powerMultiplier, move.CurrentSpeed, 0.01f, "Pranga yavaşlatmadı / hızı iptal etmedi");
+        var hud = Object.FindAnyObjectByType<PowerupHud>();
+        Assert.AreEqual(1, hud.ActiveCount, "Hız ve Pranga çipi aynı anda görünüyor");
+    }
 }

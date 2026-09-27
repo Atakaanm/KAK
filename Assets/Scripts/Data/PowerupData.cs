@@ -17,6 +17,12 @@ public class PowerupData : ScriptableObject
 
     [Header("Doğma Oranı (Spawn)")]
     public float spawnChanceWeight = 1f;    // 1f normal, 0.1f nadir
+    [Tooltip("G4: bu zorluk kademesinden önce çıkmaz (0 = Başlangıç)")]
+    public int minStage = 0;
+
+    [Header("Kötü eşya (G4)")]
+    [Tooltip("Alınmaması gereken eşya (Pranga): güç süresi yükseltmesi uzatmaz, kırmızı gösterilir")]
+    public bool harmful = false;
 
     [Header("Görsel & Obje")]
     public Sprite icon;                     // UI ikon
@@ -29,5 +35,6 @@ public enum PowerupType
     Shield,         // Tek kullanımlık kalkan verir
     SpeedBoost,     // Hızlandırır (Hız botu)
     TimeSlow,       // Zamanı yavaşlatır
-    Ghost           // İçlerinden geçilebilir hayalet olma durumu
+    Ghost,          // İçlerinden geçilebilir hayalet olma durumu
+    Shackle         // G4: Pranga (kötü eşya) — yavaşlatır. Sona eklendi: kayıtlı enum değerleri değişmesin
 }

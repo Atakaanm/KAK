@@ -140,16 +140,18 @@ public class PowerupSpawner : MonoBehaviour
 
     private void SpawnRandomPowerup()
     {
-        // Ağırlıklı rastgele seçim
+        // Ağırlıklı rastgele seçim (G4: kademesi gelmemiş eşya çıkmaz)
+        int stage = DifficultyManager.Instance != null ? DifficultyManager.Instance.CurrentStageIndex : 0;
         float totalWeight = 0f;
         foreach (var p in availablePowerups)
-            totalWeight += p.spawnChanceWeight;
+            if (p != null && stage >= p.minStage) totalWeight += p.spawnChanceWeight;
 
         float randomVal = Random.Range(0f, totalWeight);
         PowerupData selectedPowerup = null;
 
         foreach (var p in availablePowerups)
         {
+            if (p == null || stage < p.minStage) continue;
             if (randomVal <= p.spawnChanceWeight)
             {
                 selectedPowerup = p;

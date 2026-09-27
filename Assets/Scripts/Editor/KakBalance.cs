@@ -38,4 +38,66 @@ public static class KakBalance
         AssetDatabase.SaveAssets();
         return "[KakBalance] " + n + " göktaşına uyarı işareti bağlandı";
     }
+
+    /// <summary>
+    /// G4: Pranga (kötü eşya) — ikon içe aktarma, ShackleData, ShacklePickup prefab'ı (kalp prefab'ından), Sonsuz bölüme ekleme.
+    /// Alınırsa 4 sn %40 yavaşlatır; Kolay kademeden sonra seyrek çıkar.
+    /// </summary>
+    [MenuItem("KacAtaKac/Denge/Prangayı Kur")]
+    public static string SetupShackle()
+    {
+        const string IconPath = "Assets/Sprites/Powerups/ShackleIcon.png";
+        const string DataPath = "Assets/Data/Powerups/ShackleData.asset";
+        const string PrefabPath = "Assets/Prefabs/Powerups/ShacklePickup.prefab";
+
+        // İkon: kalp ikonuyla aynı içe aktarma
+        var ti = AssetImporter.GetAtPath(IconPath) as TextureImporter;
+        var heartTi = AssetImporter.GetAtPath("Assets/Sprites/Powerups/HeartIcon.png") as TextureImporter;
+        if (ti == null || heartTi == null) return "HATA: ikon içe aktarılamadı";
+        var settings = new TextureImporterSettings();
+        heartTi.ReadTextureSettings(settings);
+        ti.SetTextureSettings(settings);
+        ti.textureType = TextureImporterType.Sprite;
+        ti.spriteImportMode = SpriteImportMode.Single;
+        ti.SaveAndReimport();
+        var icon = AssetDatabase.LoadAssetAtPath<Sprite>(IconPath);
+
+        var data = AssetDatabase.LoadAssetAtPath<PowerupData>(DataPath);
+        if (data == null)
+        {
+            data = ScriptableObject.CreateInstance<PowerupData>();
+            AssetDatabase.CreateAsset(data, DataPath);
+        }
+        data.powerupName = "Shackle";
+        data.type = PowerupType.Shackle;
+        data.duration = 4f;
+        data.powerMultiplier = 0.6f;
+        data.healthAmount = 0;
+        data.spawnChanceWeight = 0.7f;
+        data.minStage = 1;
+        data.harmful = true;
+        data.icon = icon;
+
+        if (AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath) == null)
+            AssetDatabase.CopyAsset("Assets/Prefabs/Powerups/HeartPickup.prefab", PrefabPath);
+        var root = PrefabUtility.LoadPrefabContents(PrefabPath);
+        root.name = "ShacklePickup";
+        foreach (var sr in root.GetComponentsInChildren<SpriteRenderer>(true)) if (sr.sprite != null && sr.sprite.name.Contains("Heart")) sr.sprite = icon;
+        var pick = root.GetComponentInChildren<PowerupPickup>(true);
+        if (pick != null) pick.powerupData = data;
+        PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
+        PrefabUtility.UnloadPrefabContents(root);
+        data.visualPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+        EditorUtility.SetDirty(data);
+
+        var level = AssetDatabase.LoadAssetAtPath<LevelData>("Assets/Data/Endless_Level1_LevelData.asset");
+        if (level != null && System.Array.IndexOf(level.availablePowerups, data) < 0)
+        {
+            var list = new System.Collections.Generic.List<PowerupData>(level.availablePowerups) { data };
+            level.availablePowerups = list.ToArray();
+            EditorUtility.SetDirty(level);
+        }
+        AssetDatabase.SaveAssets();
+        return "[KakBalance] Pranga kuruldu (" + (level != null ? level.availablePowerups.Length : 0) + " eşya Sonsuz bölümde)";
+    }
 }

@@ -23,6 +23,7 @@ public class PowerupHud : MonoBehaviour
         public RectTransform root;
         public Image ring, icon;
         public PowerupType type;
+        public bool harmful;
         public float total, remaining; // total 0 = süresiz (kalkan)
         public bool active;
         public float appear;
@@ -92,10 +93,14 @@ public class PowerupHud : MonoBehaviour
         Chip c = Find(data.type);
         if (c == null)
         {
+            // Hız ve Pranga aynı kanal: biri gelince diğerinin çipi kapanır
+            if (data.type == PowerupType.Shackle) { var sp = Find(PowerupType.SpeedBoost); if (sp != null) Hide(sp); }
+            if (data.type == PowerupType.SpeedBoost) { var sh = Find(PowerupType.Shackle); if (sh != null) Hide(sh); }
             c = FreeChip();
             if (c == null) return;
             c.active = true;
             c.type = data.type;
+            c.harmful = data.harmful;
             c.appear = 0f;
             c.root.gameObject.SetActive(true);
             activeCount++;
@@ -182,7 +187,8 @@ public class PowerupHud : MonoBehaviour
             c.ring.fillAmount = c.remaining / c.total;
             bool warn = c.remaining < warnTime;
             float a = warn ? (Mathf.Sin(Time.unscaledTime * 18f) > 0f ? 1f : 0.25f) : 1f;
-            c.ring.color = KakPalette.WithAlpha(warn ? KakPalette.Turuncu : KakPalette.CamgobegiParlak, a);
+            // Kötü eşya kırmızı halka (iyi = camgöbeği, sanat-rehberi renk rolleri)
+            c.ring.color = KakPalette.WithAlpha(c.harmful ? KakPalette.Tehlike : (warn ? KakPalette.Turuncu : KakPalette.CamgobegiParlak), a);
         }
     }
 

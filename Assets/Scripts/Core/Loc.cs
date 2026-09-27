@@ -86,6 +86,7 @@ public static class Loc
         { "upgrade_hint", new[] { "Altınla geliştir, adım adım güçlen", "Spend gold, grow step by step" } },
         { "pet_level", new[] { "SEV. {0}", "LV {0}" } },
         { "goal_hp", new[] { "{0} +1 CAN", "{0} +1 HEART" } },
+        { "pu_shackle", new[] { "PRANGA!", "SHACKLED!" } },
         { "goal_speed", new[] { "{0} HIZ +1", "{0} SPEED +1" } },
         { "goal_power", new[] { "{0} GÜÇ +1", "{0} POWER +1" } },
         { "select", new[] { "SEÇ", "SELECT" } },
