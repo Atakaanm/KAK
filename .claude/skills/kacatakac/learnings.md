@@ -4,6 +4,12 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-09-27 — Disk temizliği (kullanıcı: "gereksizleri sen boşalt")
+
+- Güvenle silinen, yeniden oluşan önbellekler (14 GB): `~/Library/Caches/com.openai.codex/org.sparkle-project.Sparkle` (eski güncelleme indirmeleri, 3,5 GB), güncelleyici önbellekleri (unityhub-updater, *.ShipIt, antigravity/unicourse-updater), Chrome `Cache/Code Cache/GPUCache`, pip/Homebrew/CocoaPods/`~/.npm/_cacache`, `xcrun simctl delete unavailable`.
+- Dokunulmayanlar: Çöp Sepeti (boşaltmak kullanıcıda), Claude uygulama verisi, iOS DeviceSupport (telefon takılınca Xcode geri kopyalar), Puppeteer/Codex çalışma ortamları, kişisel dosyalar.
+- Telefon build'i ~4,6 GB (Unity dışa aktarım + DerivedData) ister; disk 5 GB altındaysa önce temizlik.
+
 ## 2026-09-27 — G7: Buz Gölü
 
 - **Statik tekil referans iki kişilikte sessizce bozuluyordu:** `PlayerHitbox.Hurt` son oyuncuyu tutuyor, 1. oyuncu taşlardan etkilenmiyordu. G5 testleri hasarı doğrudan verdiği için yakalamadı. Çok oyunculu özellikte **gerçek çarpışmayla** test yaz.
