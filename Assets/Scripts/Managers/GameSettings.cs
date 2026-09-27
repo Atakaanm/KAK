@@ -13,6 +13,9 @@ public static class GameSettings
     // Secili karakter — menu'den atanir (opsiyonel, LevelData icerisinde de olabilir)
     public static PlayerData SelectedPlayer;
 
+    /// <summary>G5: tek telefonda iki kişilik mod (Ata sol, Ada sağ). Menüden seçilir.</summary>
+    public static bool TwoPlayer;
+
     // En iyi skor (SaveSystem'de tutulur)
     public static int BestScore
     {

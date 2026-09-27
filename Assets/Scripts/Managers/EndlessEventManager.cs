@@ -116,9 +116,10 @@ public class EndlessEventManager : MonoBehaviour
             Rect r = Play;
             Vector3 pos;
             nearTimer -= 0.35f;
-            if (nearTimer <= 0f && Projectile.PlayerTarget != null)
+            var near = GameSettings.TwoPlayer ? PlayerRegistry.RandomAlive() : Projectile.PlayerTarget;
+            if (nearTimer <= 0f && near != null)
             {
-                pos = Projectile.PlayerTarget.position + (Vector3)(Random.insideUnitCircle * 1.2f);
+                pos = near.position + (Vector3)(Random.insideUnitCircle * 1.2f);
                 nearTimer = 1.1f;
             }
             else pos = new Vector3(Random.Range(r.xMin + 0.4f, r.xMax - 0.4f), Random.Range(r.yMin + 0.4f, r.yMax - 0.4f), 0f);

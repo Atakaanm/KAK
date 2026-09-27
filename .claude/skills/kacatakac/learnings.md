@@ -4,6 +4,13 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-09-27 — G5: iki kişilik mod
+
+- Tek oyuncu varsayımı 7 dosyada `Projectile.PlayerTarget` olarak duruyordu. Hepsini değiştirmek yerine `PlayerRegistry` ekleyip yalnız hedef seçimi gereken yerleri (nişan, güdüm, göktaşı, olay, altın) ona bağladım; tek oyuncuda davranış birebir aynı kaldı (bütün eski testler geçti).
+- Oyuncu kopyalanınca iç referanslar (çocuk SpriteRenderer, hitbox) Unity tarafından yeniden eşlenir, sahne referansları (HealthUI, joystick) **eşlenmez**: kopyada elle yeniden bağla.
+- `PlayerDirectionSprite` kök nesnede değil alt nesnede: `GetComponent` null döndü, ikinci oyuncu Ata göründü. Kopyalanan nesnede bileşen ararken `GetComponentInChildren`, testte de görseli doğrula (yalnız veri kimliği yetmedi).
+- Düşme ≠ ölüm: ayrı olay (`PlayerDowned`) açmak, oyun sonu dinleyicilerini (HUD çiplerini temizleme, ipuçları) yanlış tetiklememek için şart.
+
 ## 2026-09-27 — G4: Pranga
 
 - Yeni enum değeri **sona** eklenir: Unity enum'ları sayı olarak kaydeder, araya eklemek mevcut verileri kaydırır.

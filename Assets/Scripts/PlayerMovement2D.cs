@@ -10,6 +10,8 @@ public class PlayerMovement2D : MonoBehaviour
 
     [Header("Mobil Kontrol")]
     public VirtualJoystick joystick; // Inspector'dan baglanir
+    [Tooltip("G5: klavye 0 = WASD + oklar, 1 = yalnız WASD (1. oyuncu), 2 = yalnız oklar (2. oyuncu)")]
+    public int keyboardScheme = 0;
 
     [Header("Arena Zemin Fizikleri")]
     public float arenaFriction = 1.0f;          // 1.0 = Normal zemin, kuculdukce (or. 0.1) kayganlasir
@@ -92,8 +94,22 @@ public class PlayerMovement2D : MonoBehaviour
         else
         {
             // Klavye inputu (editorde test icin)
-            float x = Input.GetAxisRaw("Horizontal");
-            float y = Input.GetAxisRaw("Vertical");
+            float x, y;
+            if (keyboardScheme == 0)
+            {
+                x = Input.GetAxisRaw("Horizontal");
+                y = Input.GetAxisRaw("Vertical");
+            }
+            else if (keyboardScheme == 1)
+            {
+                x = (Input.GetKey(KeyCode.D) ? 1f : 0f) - (Input.GetKey(KeyCode.A) ? 1f : 0f);
+                y = (Input.GetKey(KeyCode.W) ? 1f : 0f) - (Input.GetKey(KeyCode.S) ? 1f : 0f);
+            }
+            else
+            {
+                x = (Input.GetKey(KeyCode.RightArrow) ? 1f : 0f) - (Input.GetKey(KeyCode.LeftArrow) ? 1f : 0f);
+                y = (Input.GetKey(KeyCode.UpArrow) ? 1f : 0f) - (Input.GetKey(KeyCode.DownArrow) ? 1f : 0f);
+            }
             movementInput = new Vector2(x, y).normalized;
         }
     }

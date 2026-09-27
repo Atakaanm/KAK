@@ -37,8 +37,16 @@ public class PlayerHealth : MonoBehaviour
     static readonly WaitForSeconds BlinkWait = new WaitForSeconds(0.1f);
     const float GhostAlpha = 0.5f;
 
-    void OnEnable() { Projectile.PlayerTarget = transform; }
-    void OnDisable() { if (Projectile.PlayerTarget == transform) Projectile.PlayerTarget = null; }
+    void OnEnable()
+    {
+        if (Projectile.PlayerTarget == null || !Projectile.PlayerTarget.gameObject.activeInHierarchy) Projectile.PlayerTarget = transform;
+        PlayerRegistry.Register(this);
+    }
+    void OnDisable()
+    {
+        if (Projectile.PlayerTarget == transform) Projectile.PlayerTarget = null;
+        PlayerRegistry.Unregister(this);
+    }
 
     /// <summary>Son vuruşun kaynağı (denge analizi ve ileride ölüm ekranı: "Göktaşı seni yakaladı").</summary>
     public static string LastHitSource = "";
@@ -69,6 +77,19 @@ public class PlayerHealth : MonoBehaviour
             healthUI.InitHearts(maxHealth);
             healthUI.UpdateHearts(currentHealth);
         }
+    }
+
+    /// <summary>G5: dönüşte kullanılacak başlangıç canı (LevelManager ayarlar).</summary>
+    [System.NonSerialized] public int StartHearts = 1;
+    /// <summary>G5: düşmüşken dönüşe kalan saniye (HUD sayacı); 0 = düşmüş değil.</summary>
+    [System.NonSerialized] public float RespawnRemaining;
+
+    /// <summary>G5: iki kişilikte düşmüş oyuncu yarı saydam ve gri; gövdesi taşlara çarpmaz.</summary>
+    public void SetDownVisual(bool down)
+    {
+        if (playerSpriteRenderer != null) playerSpriteRenderer.color = down ? new Color(0.55f, 0.55f, 0.65f, 0.35f) : originalColor;
+        foreach (var c in GetComponentsInChildren<Collider2D>(true)) if (c.isTrigger) c.enabled = !down;
+        if (!down) RefreshTint();
     }
 
     /// <summary>G3: can doluyken kalp toplayınca bu oyunluk kalp sayısı büyür (HealthCap'e kadar).</summary>
@@ -246,6 +267,12 @@ public class PlayerHealth : MonoBehaviour
                 playerSpriteRenderer.color = hitColor;
             }
 
+            // G5: iki kişilikte diğeri yaşıyorsa oyun bitmez, bu oyuncu 10 sn sonra döner
+            if (GameManager.Instance != null && GameManager.Instance.HandlePlayerDown(this))
+            {
+                GameEvents.RaisePlayerDowned(transform.position);
+                return;
+            }
             GameEvents.RaisePlayerDied(transform.position);
             if (GameManager.Instance != null)
             {

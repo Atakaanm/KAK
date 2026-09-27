@@ -82,9 +82,12 @@ public class GameManager : MonoBehaviour
         if (difficultyManager != null) difficultyManager.StopDifficulty();
         if (AudioManager.Instance != null) AudioManager.Instance.PlayDeathSfx();
 
+        foreach (var c in respawns) if (c != null) StopCoroutine(c);
+        respawns.Clear();
+
         // Reklamla devam teklifi varsa kayıt (altın, görev, rekor) bekletilir: oyuncu reddedince bir kez yapılır.
-        // Teklif yoksa (varsayılan: reklam kapalı) eskisi gibi hemen.
-        reviveOffered = !IsLevelMode && continuePanel != null && AdService.CanShow(AdPlacement.Revive);
+        // Teklif yoksa (varsayılan: reklam kapalı) eskisi gibi hemen. İki kişilikte teklif yok (G5).
+        reviveOffered = !IsLevelMode && !GameSettings.TwoPlayer && continuePanel != null && AdService.CanShow(AdPlacement.Revive);
         if (!reviveOffered) FinalizeRun();
         StartCoroutine(DeathSequence());
     }
@@ -97,13 +100,19 @@ public class GameManager : MonoBehaviour
         int finalScore = scoreManager != null ? scoreManager.ScoreInt : 0;
         float seconds = scoreManager != null ? scoreManager.ElapsedSeconds : 0f;
         var save = SaveSystem.Data;
-        int bestScore = save.bestScoreEndless;
+        bool two = GameSettings.TwoPlayer;
+        int bestScore = two ? save.bestScore2P : save.bestScoreEndless;
         IsNewBest = false;
         if (!IsLevelMode)
         {
             IsNewBest = finalScore > bestScore;
-            if (IsNewBest) bestScore = save.bestScoreEndless = finalScore;
-            if (seconds > save.bestTimeEndless) save.bestTimeEndless = seconds;
+            if (IsNewBest)
+            {
+                bestScore = finalScore;
+                if (two) save.bestScore2P = finalScore; // G5: iki kişilik rekor ayrı
+                else save.bestScoreEndless = finalScore;
+            }
+            if (!two && seconds > save.bestTimeEndless) save.bestTimeEndless = seconds;
         }
         save.gamesPlayed++;
         save.totalPlaySeconds += seconds;
@@ -160,6 +169,50 @@ public class GameManager : MonoBehaviour
     [Tooltip("Canlanınca verilen can ve dokunulmazlık süresi")]
     public int reviveHealth = 1;
     public float reviveInvulnerable = 2.5f;
+
+    [Header("İki kişilik mod (G5)")]
+    [Tooltip("Düşen oyuncu bu kadar saniye sonra döner")]
+    public float respawnSeconds = 10f;
+    [Tooltip("Dönünce dokunulmazlık (sn)")]
+    public float respawnInvulnerable = 2.5f;
+    readonly System.Collections.Generic.List<Coroutine> respawns = new System.Collections.Generic.List<Coroutine>();
+
+    /// <summary>
+    /// G5: iki kişilikte bir oyuncu öldüğünde çağrılır. Diğeri yaşıyorsa oyun sürer, bu oyuncu respawnSeconds sonra
+    /// döner (true). İkisi de düştüyse false → normal oyun sonu.
+    /// </summary>
+    public bool HandlePlayerDown(PlayerHealth ph)
+    {
+        if (!GameSettings.TwoPlayer || isGameOver || ph == null) return false;
+        if (PlayerRegistry.AliveCount == 0) return false;
+        respawns.Add(StartCoroutine(RespawnRoutine(ph)));
+        return true;
+    }
+
+    System.Collections.IEnumerator RespawnRoutine(PlayerHealth ph)
+    {
+        ph.SetDownVisual(true);
+        float until = Time.time + respawnSeconds;
+        while (Time.time < until)
+        {
+            ph.RespawnRemaining = until - Time.time;
+            yield return null;
+        }
+        ph.RespawnRemaining = 0f;
+        if (isGameOver || ph == null) yield break;
+        // Arenanın ortasında, kısa dokunulmazlıkla döner (başlangıç canıyla)
+        var arena = FindAnyObjectByType<ArenaAutoLayout>();
+        if (arena != null)
+        {
+            Vector2 c = arena.PlayableWorldRect.center;
+            var rb = ph.GetComponent<Rigidbody2D>();
+            if (rb != null) rb.position = c;
+            ph.transform.position = c;
+        }
+        ph.SetDownVisual(false);
+        ph.Revive(Mathf.Max(1, ph.StartHearts), respawnInvulnerable);
+        GameEvents.RaisePlayerRevived(ph.transform.position);
+    }
     /// <summary>Bu oyunda reklamla canlanıldı mı (testler, analitik).</summary>
     public int Revives { get; private set; }
 

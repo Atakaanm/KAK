@@ -215,7 +215,9 @@ public static class KakUiSetup
         var stats = Place(Rect(safe, "Stats"), new Vector2(0.5f, 1f), new Vector2(0f, -550f), new Vector2(900f, 56f));
         var statsT = Text(stats, "", 38, KakPalette.Sis, TextAlignmentOptions.Center, false, false);
 
-        var play = Button(Place(Rect(safe, "PlayButton"), new Vector2(0.5f, 0f), new Vector2(0f, 560f), new Vector2(680f, 200f)), "@play", Style.Gold, 96, "icon_play.png");
+        var play = Button(Place(Rect(safe, "PlayButton"), new Vector2(0.5f, 0f), new Vector2(-105f, 560f), new Vector2(470f, 200f)), "@play", Style.Gold, 88, "icon_play.png");
+        // G5: iki kişilik mod (tek telefon, Ata + Ada)
+        var two = Button(Place(Rect(safe, "TwoPlayerButton"), new Vector2(0.5f, 0f), new Vector2(240f, 560f), new Vector2(200f, 200f)), "@two_player", Style.Stone, 36);
         var chars = Button(Place(Rect(safe, "CharactersButton"), new Vector2(0.5f, 0f), new Vector2(-175f, 360f), new Vector2(330f, 150f)), "@character", Style.Stone, 38, "icon_character.png");
         var sett = Button(Place(Rect(safe, "SettingsButton"), new Vector2(0.5f, 0f), new Vector2(175f, 360f), new Vector2(330f, 150f)), "@settings", Style.Stone, 38, "icon_settings.png");
         // 2. satır: PET (Faz 3c.5, kilitli/YENİ) + BÖLÜMLER (yakında)
@@ -252,6 +254,7 @@ public static class KakUiSetup
         {
             Undo.RecordObject(mmc, "menu");
             mmc.playButton = play;
+            OnClick(two, mmc.OnTwoPlayerClicked);
             mmc.charactersButton = chars;
             mmc.settingsButton = sett;
             mmc.levelsButton = levels;

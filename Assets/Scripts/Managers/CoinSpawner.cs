@@ -64,7 +64,8 @@ public class CoinSpawner : MonoBehaviour
         if (coinPrefab == null || arena == null) return 0;
         Rect play = arena.PlayableWorldRect;
         Rect area = Rect.MinMaxRect(play.xMin + edgeMargin, play.yMin + edgeMargin, play.xMax - edgeMargin, play.yMax - edgeMargin);
-        Vector2 player = Projectile.PlayerTarget != null ? (Vector2)Projectile.PlayerTarget.position : area.center;
+        var pt = GameSettings.TwoPlayer ? PlayerRegistry.RandomAlive() : Projectile.PlayerTarget;
+        Vector2 player = pt != null ? (Vector2)pt.position : area.center;
 
         for (int attempt = 0; attempt < 20; attempt++)
         {
