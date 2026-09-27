@@ -154,7 +154,7 @@ Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 - [x] G3 Tek can başlangıç + kalıcı yükseltmeler (Can/Hız/Güç süresi, `CharacterProgress`) + karakter detay ekranı (karta dokun) + arketipler (Ata 1→3, Ada 1→2 hızlı-ince, Çevik 1→2 küçük-çok hızlı, Tank 2→5 hantal-kalkanlı, Şanslı 1→3 altın) + dolu canla kalp = bu oyunluk +1 kalp + pet seviyeleri + karakter ekranı 2. oyunda. Bot (1 can): usta ortanca 88 sn, acemi 78 sn. Testler 83/83 + 27/27
 - [x] G4 Pranga (PowerupType.Shackle, harmful, minStage 1; 4 sn ×0,6 hız, hız güçlendirmesiyle aynı kanal; kırmızı ikon/çip/yazı). Testler 84/84 + 27/27
 - [x] G5 İki kişilik yerel mod: menüde 2 KİŞİ, Ata (sol joystick/WASD) + Ada (sağ/oklar), yeteneksiz ve petsiz, düşen 10 sn sonra 2,5 sn dokunulmaz döner, ikisi düşerse biter, ayrı rekor (`bestScore2P`), reklamla devam yok. Testler 86/86 + 27/27. İleride: online battle royale (not)
-- [~] G6 Hafif hikâye (dal `faz-11-g6-hikaye`, commit edildi, **birleştirilmedi**): Taş Muhafızlar laneti, ilk açılışta 3 kart (`IntroStory`, atlanabilir, ayarlarda HİKÂYE), mağaza metnine eklendi, HikayeTests geçti. **Kalan:** tam regresyon → learnings/SKILL notu → PR + birleştir. Sonra G7 Buz
+- [x] G6 Hafif hikâye: Ata ile Ada Taş Zindanı'nda altına dokunur → Taş Muhafızlar uyanır, lanet onları her yerde kovalar (yeni dünyaların gerekçesi). İlk açılışta 3 kart (`IntroStory`, atlanabilir, günlük ödülden önce), ayarlarda HİKÂYE, mağaza metninde. Testler 87/87 + 27/27
 - [ ] G7 Buz arenası (kayma, kardan adam, büyüyen kartopu, eldiven, buz ayakkabısı, ateş/donma)
 Her alt faz sonunda: testler + bot ölçümü + PR + (kullanıcı kablo takınca) telefona kurulum.
 

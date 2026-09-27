@@ -4,6 +4,12 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-09-27 — G6: hikâye
+
+- Hikâye oyunun kurallarını açıklamalı: altın = laneti kırmanın yolu, saldıramazsın = muhafızlar taştan, yeni dünyalar = lanetin yayıldığı yerler. Kullanıcı Subway Surfers örneğini verdi: tek cümlelik bir sebep yeter.
+- İlk açılış paneli, otomatik açılan başka panellerle (günlük ödül) çakışmasın: sıraya koy (kapanınca geri çağırma).
+- Yeni bir ilk-açılış ekranı eski menü testlerini örtebilir: test yardımcısında "görüldü" say, ekranın kendisini ayrı test et.
+
 ## 2026-09-27 — G5: iki kişilik mod
 
 - Tek oyuncu varsayımı 7 dosyada `Projectile.PlayerTarget` olarak duruyordu. Hepsini değiştirmek yerine `PlayerRegistry` ekleyip yalnız hedef seçimi gereken yerleri (nişan, güdüm, göktaşı, olay, altın) ona bağladım; tek oyuncuda davranış birebir aynı kaldı (bütün eski testler geçti).
