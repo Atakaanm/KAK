@@ -41,6 +41,14 @@ public class ProjectileData : ScriptableObject
     [Tooltip("Düşeceği yerde yanıp sönen uyarı işareti (G1: gölge tek başına yetmiyordu)")]
     public Sprite warningSprite;
 
+    [Header("Kartopu (G7)")]
+    [Tooltip("Yol aldıkça büyüme (saniyede ölçek artışı; 0 = büyümez)")]
+    public float growPerSecond = 0f;
+    [Tooltip("Büyümenin üst sınırı (başlangıç ölçeğinin katı)")]
+    public float maxGrowScale = 1f;
+    [Tooltip("Eldivenle yakalanabilir (kartopu)")]
+    public bool catchable = false;
+
     [Header("Etki")]
     public ProjectileEffect effect = ProjectileEffect.Damage;
     [Tooltip("Slow/Freeze/YellowCard süresi (sn)")]

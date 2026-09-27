@@ -23,6 +23,10 @@ public static class GameEvents
     public static event Action<Vector3> CoinClusterSpawned;
     /// <summary>G5: iki kişilikte bir oyuncu düştü (oyun sürüyor, 10 sn sonra döner).</summary>
     public static event Action<Vector3> PlayerDowned;
+    /// <summary>G7: fırlatılan kartopu bir düşman mermisini parçaladı.</summary>
+    public static event Action<Vector3> SnowballSmashed;
+    /// <summary>G7: oyuncu soğuktan dondu.</summary>
+    public static event Action<Vector3> PlayerFrozen;
     /// <summary>Mermi duvara çarpıp yok oldu (konum, hız).</summary>
     public static event Action<Vector3, Vector2> ProjectileHitWall;
     /// <summary>Gökten düşen taş yere indi (konum).</summary>
@@ -53,6 +57,8 @@ public static class GameEvents
     public static void RaiseCoinCollected(int runTotal, Vector3 pos) => CoinCollected?.Invoke(runTotal, pos);
     public static void RaiseCoinClusterSpawned(Vector3 pos) => CoinClusterSpawned?.Invoke(pos);
     public static void RaisePlayerDowned(Vector3 pos) => PlayerDowned?.Invoke(pos);
+    public static void RaiseSnowballSmashed(Vector3 pos) => SnowballSmashed?.Invoke(pos);
+    public static void RaisePlayerFrozen(Vector3 pos) => PlayerFrozen?.Invoke(pos);
     public static void RaiseProjectileHitWall(Vector3 pos, Vector2 vel) => ProjectileHitWall?.Invoke(pos, vel);
     public static void RaiseMeteorLanded(Vector3 pos) => MeteorLanded?.Invoke(pos);
     public static void RaiseNearMiss(Vector3 pos, bool dashing) => NearMiss?.Invoke(pos, dashing);
@@ -76,6 +82,8 @@ public static class GameEvents
         CoinCollected = null;
         CoinClusterSpawned = null;
         PlayerDowned = null;
+        SnowballSmashed = null;
+        PlayerFrozen = null;
         StageChanged = null;
         MeteorLanded = null;
         NearMiss = null;

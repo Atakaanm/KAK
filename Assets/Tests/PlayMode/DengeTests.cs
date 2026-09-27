@@ -42,7 +42,14 @@ public class DengeTests
         };
         GameEvents.PlayerDamaged += onHit;
         KakTestUtil.ResetWorld();
-        yield return KakTestUtil.LoadGameWithLevel();
+        // G7: bayrak dosyasındaki dünya (denge ice → Buz Gölü)
+        string world = File.Exists(".claude-bridge/run_denge") ? File.ReadAllText(".claude-bridge/run_denge").Trim() : "dungeon";
+        if (world == "ice")
+        {
+            GameSettings.SelectedLevel = UnityEditor.AssetDatabase.LoadAssetAtPath<LevelData>("Assets/Data/Worlds/Ice/Endless_Ice_LevelData.asset");
+            yield return KakTestUtil.LoadScene(KakTestUtil.GameScene);
+        }
+        else yield return KakTestUtil.LoadGameWithLevel();
         KakTime.SetTestSpeed(Speed);
         var player = Object.FindAnyObjectByType<PlayerMovement2D>();
         var bot = player.gameObject.AddComponent<KakAutoPilot>();
@@ -54,7 +61,7 @@ public class DengeTests
         GameEvents.PlayerDamaged -= onHit;
         var hitList = new System.Collections.Generic.List<string>();
         foreach (var kv in hits) hitList.Add(kv.Key + ":" + kv.Value);
-        string r = $"{(useDash ? "dash" : "dashsiz")} skill={skill:F2} vuran=[{string.Join(",", hitList)}] süre={sm.ElapsedSeconds:F0}sn skor={sm.ScoreInt} kademe={stage} vuruş={bot.HitsTaken} yakın={sm.NearMissCount} combo={sm.ComboMultiplier:F1}{(bot.Finished ? "" : " (üst sınır)")}";
+        string r = $"{(useDash ? "dash" : "dashsiz")} {(GameSettings.SelectedLevel != null ? GameSettings.SelectedLevel.levelName : "?")} skill={skill:F2} vuran=[{string.Join(",", hitList)}] süre={sm.ElapsedSeconds:F0}sn skor={sm.ScoreInt} kademe={stage} vuruş={bot.HitsTaken} yakın={sm.NearMissCount} combo={sm.ComboMultiplier:F1}{(bot.Finished ? "" : " (üst sınır)")}";
         results.Add(r);
         Debug.Log("[DengeTests] " + r);
         KakTime.SetTestSpeed(1f);

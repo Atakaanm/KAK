@@ -160,11 +160,17 @@ public class PowerupSpawner : MonoBehaviour
             randomVal -= p.spawnChanceWeight;
         }
 
+        SpawnSpecific(selectedPowerup);
+    }
+
+    /// <summary>Belirli bir eşyayı uygun bir yerde doğurur (G7: Buz Gölü'nde garantili ateş). Doğarsa true.</summary>
+    public bool SpawnSpecific(PowerupData selectedPowerup)
+    {
         if (selectedPowerup == null || selectedPowerup.visualPrefab == null)
         {
             if (selectedPowerup != null)
                 Debug.LogWarning($"[PowerupSpawner] '{selectedPowerup.powerupName}' visualPrefab boş!");
-            return;
+            return false;
         }
 
         // Çakışma kontrolü — oyuncu/spawner üstüne düşmesin
@@ -199,7 +205,7 @@ public class PowerupSpawner : MonoBehaviour
         if (!validPosition)
         {
             Debug.LogWarning($"[PowerupSpawner] Uygun spawn noktası bulunamadı! Son denenen yer: {spawnPos}. Duvar/Player/Spawner çakışması olabilir.");
-            return; // 10 denemede uygun yer bulunamadı, bu turu atla
+            return false; // 10 denemede uygun yer bulunamadı, bu turu atla
         }
 
         // Havuzdan (ProjectilePool prefab'a göre genel havuzdur); PowerupPickup kendini iade eder
@@ -249,5 +255,6 @@ public class PowerupSpawner : MonoBehaviour
         floater.SetStartPosition(spawnPos);
 
         KakLog.Info($"[PowerupSpawner] '{selectedPowerup.powerupName}' oluşturuldu → {spawnPos}  scale={obj.transform.localScale.x:F2}");
+        return true;
     }
 }

@@ -24,8 +24,14 @@ public class PlayerHitbox : MonoBehaviour
     public Vector2 hurtSize = new Vector2(0.36f, 0.8f);
     public float hurtOffsetY = 0f;
 
-    /// <summary>Sahnedeki oyuncunun gövde collider'ı (taşlar yalnızca buna vurur).</summary>
+    /// <summary>Sahnedeki (son etkinleşen) oyuncunun gövde collider'ı. İki kişilikte tek değil: IsHurtbox kullan.</summary>
     public static Collider2D Hurt { get; private set; }
+
+    /// <summary>G5 düzeltmesi: tüm oyuncuların gövdeleri (taşlar yalnızca bunlara vurur). Statik tek referans iki kişilikte
+    /// yalnız son oyuncuyu tutuyordu → 1. oyuncu taşlardan etkilenmiyordu.</summary>
+    static readonly System.Collections.Generic.HashSet<Collider2D> hurtboxes = new System.Collections.Generic.HashSet<Collider2D>();
+    public static bool AnyRegistered => hurtboxes.Count > 0;
+    public static bool IsHurtbox(Collider2D c) => c != null && hurtboxes.Contains(c);
 
     public CapsuleCollider2D HurtCollider { get; private set; }
 
@@ -33,8 +39,8 @@ public class PlayerHitbox : MonoBehaviour
     public float ApproxHurtRadius => (hurtSize.x + hurtSize.y) * 0.25f;
 
     void Awake() { Apply(); }
-    void OnEnable() { if (HurtCollider != null) Hurt = HurtCollider; }
-    void OnDisable() { if (Hurt == HurtCollider) Hurt = null; }
+    void OnEnable() { if (HurtCollider != null) { Hurt = HurtCollider; hurtboxes.Add(HurtCollider); } }
+    void OnDisable() { if (Hurt == HurtCollider) Hurt = null; hurtboxes.Remove(HurtCollider); }
 
     /// <summary>Collider'ları ayarlar, gövde çocuğunu yoksa oluşturur. Tekrar çağrılabilir.</summary>
     public void Apply()
@@ -66,8 +72,9 @@ public class PlayerHitbox : MonoBehaviour
         cap.size = new Vector2(hurtSize.x / sx, hurtSize.y / sy);
         cap.offset = new Vector2(0f, hurtOffsetY / sy);
 
+        if (HurtCollider != null && HurtCollider != cap) hurtboxes.Remove(HurtCollider);
         HurtCollider = cap;
-        if (isActiveAndEnabled) Hurt = cap;
+        if (isActiveAndEnabled) { Hurt = cap; hurtboxes.Add(cap); }
     }
 
     /// <summary>Oynanabilir alan içinde oyuncu MERKEZİNİN gidebileceği dikdörtgen (ayak izine göre).</summary>

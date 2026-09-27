@@ -206,6 +206,39 @@ public static class KakDevMenu
         if (stat == "Speed") d.OnUpgradeSpeed(); else if (stat == "Power") d.OnUpgradePower(); else d.OnUpgradeHealth();
     }
 
+    /// <summary>G7: eldiven verir ve oyuncunun üstüne bir kartopu atar (yakala → fırlat düğmesi). Köprü: invoke KakDevMenu TestGlove</summary>
+    public static void TestGlove()
+    {
+        var ph = Object.FindAnyObjectByType<PlayerHealth>();
+        var glove = AssetDatabase.LoadAssetAtPath<PowerupData>("Assets/Data/Powerups/GloveData.asset");
+        var snow = AssetDatabase.LoadAssetAtPath<ProjectileData>("Assets/Data/Worlds/Ice/Snowball_Kartopu.asset");
+        if (ph == null || glove == null || snow == null) return;
+        PowerupPickup.Apply(glove, ph.gameObject, ph.transform.position);
+        Projectile.Launch(snow.projectilePrefab, snow, ph.transform.position + new Vector3(0f, 1.6f, 0f), Vector2.down, 2f);
+    }
+
+    /// <summary>G7: oyuncunun yanına ateş bırakır. Köprü: invoke KakDevMenu DropFire</summary>
+    public static void DropFire()
+    {
+        var sp = Object.FindAnyObjectByType<PowerupSpawner>();
+        var fire = AssetDatabase.LoadAssetAtPath<PowerupData>("Assets/Data/Powerups/FireData.asset");
+        if (sp != null && fire != null) sp.SpawnSpecific(fire);
+    }
+
+    /// <summary>G7: DÜNYALAR panelini açar. Köprü: invoke KakDevMenu OpenWorlds</summary>
+    public static void OpenWorlds() { var m = Object.FindAnyObjectByType<MainMenuController>(); if (m != null) m.OnLevelsClicked(); }
+
+    /// <summary>G7: bir dünyayı başlatır (dungeon / ice). Köprü: invoke KakDevMenu PlayWorld ice</summary>
+    public static void PlayWorld(string id)
+    {
+        var cat = EndlessWorlds.Load();
+        var w = cat != null ? cat.Find(id) : null;
+        if (w == null || w.level == null) return;
+        SaveSystem.Data.selectedWorld = id;
+        GameSettings.SelectedLevel = w.level;
+        SceneLoader.LoadGame();
+    }
+
     /// <summary>G6: hikâyede sonraki karta geçer / kapatır. Köprü: invoke KakDevMenu IntroNext</summary>
     public static void IntroNext() { var i = Object.FindAnyObjectByType<IntroStory>(); if (i != null) i.OnNext(); }
 

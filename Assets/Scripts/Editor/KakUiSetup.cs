@@ -222,10 +222,12 @@ public static class KakUiSetup
         var sett = Button(Place(Rect(safe, "SettingsButton"), new Vector2(0.5f, 0f), new Vector2(175f, 360f), new Vector2(330f, 150f)), "@settings", Style.Stone, 38, "icon_settings.png");
         // 2. satır: PET (Faz 3c.5, kilitli/YENİ) + BÖLÜMLER (yakında)
         var pets = Button(Place(Rect(safe, "PetsButton"), new Vector2(0.5f, 0f), new Vector2(-175f, 190f), new Vector2(330f, 150f)), "@pet_button", Style.Stone, 38, "icon_pet.png");
-        var levels = Button(Place(Rect(safe, "LevelsButton"), new Vector2(0.5f, 0f), new Vector2(175f, 190f), new Vector2(330f, 150f)), "@levels", Style.Stone, 38, "icon_lock.png");
-        levels.GetComponent<Image>().color = new Color(0.7f, 0.7f, 0.75f, 1f);
-        Text(Place(Rect((RectTransform)levels.transform, "LockHint"), new Vector2(0.5f, 0f), new Vector2(0f, 24f), new Vector2(300f, 34f)),
-             "@soon", 26, KakPalette.Sis, TextAlignmentOptions.Center, false, false);
+        // G7: BÖLÜMLER (yakında) → DÜNYALAR (Sonsuz modun arenaları; açılma takvimli)
+        var oldHint = safe.Find("LevelsButton/LockHint");
+        if (oldHint != null) Object.DestroyImmediate(oldHint.gameObject);
+        var levels = Button(Place(Rect(safe, "LevelsButton"), new Vector2(0.5f, 0f), new Vector2(175f, 190f), new Vector2(330f, 150f)), "@worlds", Style.Stone, 38, "icon_world.png");
+        levels.GetComponent<Image>().color = Color.white;
+        var worldsFeature = BuildFeatureButton(levels, Feature.Worlds);
         var petsFeature = BuildFeatureButton(pets, Feature.Pets);
         var charsFeature = BuildFeatureButton(chars, Feature.Characters);
         var wallet = BuildWallet(safe);
@@ -275,6 +277,10 @@ public static class KakUiSetup
             OnClick(closeS, mmc.CloseSettingsPanel);
             OnClick(privacy, mmc.OnPrivacyClicked);
             OnClick(story, mmc.OnStoryClicked);
+            mmc.worldsFeature = worldsFeature;
+            var (wroot, closeW) = BuildWorldsPanel(canvas, mmc);
+            mmc.worldsPanel = wroot.gameObject;
+            OnClick(closeW, mmc.CloseWorldsPanel);
             mmc.intro = BuildIntroPanel(canvas, mmc);
             OnClick(closeC, mmc.CloseCharactersPanel);
             EditorUtility.SetDirty(mmc);
@@ -382,6 +388,44 @@ public static class KakUiSetup
     }
 
     /// <summary>Karakter paneli: başlık, cüzdan, 2x2 kart ızgarası, kapat. Kartları CharacterPanel çalışma anında doldurur.</summary>
+    /// <summary>G7: DÜNYALAR paneli — dünya kartları (önizleme, ad, açıklama, rekor, seç / kilit).</summary>
+    static (RectTransform root, Button close) BuildWorldsPanel(Transform canvas, MainMenuController mmc)
+    {
+        var old = canvas.Find("WorldsPanel");
+        if (old != null) Object.DestroyImmediate(old.gameObject);
+        var (root, panel) = Modal(canvas, "WorldsPanel", new Vector2(900f, 1400f));
+        Text(Place(Rect(panel, "Title"), new Vector2(0.5f, 1f), new Vector2(0f, -100f), new Vector2(800f, 110f)), "@worlds", 76, KakPalette.Altin);
+        var cards = new WorldsPanel.Card[2];
+        for (int i = 0; i < 2; i++)
+        {
+            var card = Place(Rect(panel, "Card" + i), new Vector2(0.5f, 1f), new Vector2(0f, i == 0 ? -420f : -850f), new Vector2(820f, 400f));
+            var bg = Img(card, S("btn_stone_9s.png"), true);
+            var frame = Img(Place(Rect(card, "Frame"), new Vector2(0f, 0.5f), new Vector2(40f, 0f), new Vector2(320f, 320f), new Vector2(0f, 0.5f)),
+                            S("white_ui.png"), false, KakPalette.Murekkep);
+            var prev = Img(Place(Rect(frame.rectTransform, "Preview"), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(308f, 308f)), null, false);
+            var name = Text(Place(Rect(card, "Name"), new Vector2(0f, 1f), new Vector2(390f, -60f), new Vector2(410f, 60f), new Vector2(0f, 0.5f)), "", 44,
+                            KakPalette.Altin, TextAlignmentOptions.MidlineLeft);
+            var desc = Text(Place(Rect(card, "Desc"), new Vector2(0f, 1f), new Vector2(390f, -140f), new Vector2(400f, 100f), new Vector2(0f, 0.5f)), "", 26,
+                            KakPalette.Sis, TextAlignmentOptions.MidlineLeft, false, false);
+            desc.textWrappingMode = TextWrappingModes.Normal;
+            var best = Text(Place(Rect(card, "Best"), new Vector2(0f, 1f), new Vector2(390f, -222f), new Vector2(400f, 44f), new Vector2(0f, 0.5f)), "", 30,
+                            KakPalette.AltinAcik, TextAlignmentOptions.MidlineLeft, false, false);
+            var btn = Button(Place(Rect(card, "Action"), new Vector2(0f, 0f), new Vector2(390f, 50f), new Vector2(300f, 90f), new Vector2(0f, 0f)), "SEÇ", Style.Gold, 38);
+            cards[i] = new WorldsPanel.Card
+            {
+                root = card, background = bg, preview = prev, nameText = name, descText = desc, bestText = best,
+                actionButton = btn, actionBackground = btn.GetComponent<Image>(), actionText = btn.transform.Find("Label").GetComponent<TMP_Text>()
+            };
+        }
+        var close = Button(Place(Rect(panel, "CloseButton"), new Vector2(0.5f, 0f), new Vector2(0f, 95f), new Vector2(560f, 120f)), "@close", Style.Gold, 58);
+        var wp = GetOrAdd<WorldsPanel>(root.gameObject);
+        wp.cards = cards; wp.menu = mmc;
+        wp.goldSprite = S("btn_gold_9s.png"); wp.stoneSprite = S("btn_stone_9s.png");
+        EditorUtility.SetDirty(wp);
+        root.gameObject.SetActive(false);
+        return (root, close);
+    }
+
     /// <summary>G6: ilk açılış hikâyesi — 3 kart (mevcut piksel sprite'larla kurulu sahneler), İLERİ/BAŞLA, ATLA.</summary>
     static IntroStory BuildIntroPanel(Transform canvas, MainMenuController mmc)
     {

@@ -16,13 +16,24 @@ public class PlayerMovement2D : MonoBehaviour
     [Header("Arena Zemin Fizikleri")]
     public float arenaFriction = 1.0f;          // 1.0 = Normal zemin, kuculdukce (or. 0.1) kayganlasir
     public float arenaSpeedMultiplier = 1.0f;   // 1.0 = Normal hiz, kuculdukce bataklik gibi yavaslatir
+    [Tooltip("G7: dikey hız çarpanı (buz: aşağı-yukarı daha hızlı)")]
+    public float verticalSpeedMultiplier = 1f;
+    /// <summary>G7: soğuk göstergesinin yavaşlatması (ColdMeter ayarlar).</summary>
+    [System.NonSerialized] public float coldSpeedMultiplier = 1f;
+    float gripUntil = -1f, iceFrozenUntil = -1f;
+    /// <summary>G7: buz ayakkabısı — süre boyunca kaymadan (normal zemin gibi) hareket.</summary>
+    public void Grip(float seconds) { gripUntil = Mathf.Max(gripUntil, Time.time + seconds); }
+    public bool Gripping => Time.time < gripUntil;
+    /// <summary>G7: soğuktan donma — kısa süre hareketsiz.</summary>
+    public void FreezeFor(float seconds) { iceFrozenUntil = Time.time + seconds; if (rb != null) rb.linearVelocity = Vector2.zero; }
+    public bool IceFrozen => Time.time < iceFrozenUntil;
 
     private Rigidbody2D rb;
     private PlayerStatus status;
     private PlayerHealth health;
 
     /// <summary>Ölüyken karakter olduğu yerde donar (G1: ölümde kayma ölüm hissini öldürüyordu).</summary>
-    public bool Frozen => health != null && health.IsDead;
+    public bool Frozen => (health != null && health.IsDead) || Time.time < iceFrozenUntil;
     private Vector2 movementInput;
     private float baseMoveSpeed;
 
@@ -125,7 +136,7 @@ public class PlayerMovement2D : MonoBehaviour
     {
         get
         {
-            float s = baseMoveSpeed * arenaSpeedMultiplier * currentSpeedBoostMult;
+            float s = baseMoveSpeed * arenaSpeedMultiplier * currentSpeedBoostMult * coldSpeedMultiplier;
             if (DifficultyManager.Instance != null && DifficultyManager.Instance.isActiveAndEnabled)
                 s *= DifficultyManager.Instance.GetPlayerSpeedMultiplier();
             return s;
@@ -160,7 +171,7 @@ public class PlayerMovement2D : MonoBehaviour
             return;
         }
 
-        float currentSpeed = baseMoveSpeed * arenaSpeedMultiplier * currentSpeedBoostMult * (status != null ? status.SpeedMultiplier : 1f);
+        float currentSpeed = baseMoveSpeed * arenaSpeedMultiplier * currentSpeedBoostMult * coldSpeedMultiplier * (status != null ? status.SpeedMultiplier : 1f);
         if (DifficultyManager.Instance != null && DifficultyManager.Instance.isActiveAndEnabled)
         {
             currentSpeed *= DifficultyManager.Instance.GetPlayerSpeedMultiplier();
@@ -175,8 +186,10 @@ public class PlayerMovement2D : MonoBehaviour
         }
 
         Vector2 targetVelocity = movementInput * currentSpeed;
+        targetVelocity.y *= verticalSpeedMultiplier;
+        float friction = Gripping ? 1f : arenaFriction;
 
-        if (arenaFriction >= 0.99f)
+        if (friction >= 0.99f)
         {
             // Normal zemin, hicbir takilma olmadan hizlanip durur (Anlik / Direct velocity)
             rb.linearVelocity = targetVelocity;
@@ -184,7 +197,7 @@ public class PlayerMovement2D : MonoBehaviour
         else
         {
             // Buzlu vb. zemin: ivmelenerek hizlanir, birakinca kaymaya devam eder (Lerp)
-            float lerpSpeed = arenaFriction * 10f; // 0.1 friction -> 1f lerp hizi (guzel bir kayma hissi)
+            float lerpSpeed = friction * 10f; // 0.1 friction -> 1f lerp hizi (guzel bir kayma hissi)
             rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, targetVelocity, lerpSpeed * Time.fixedDeltaTime);
         }
     }

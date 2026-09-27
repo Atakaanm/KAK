@@ -36,5 +36,8 @@ public enum PowerupType
     SpeedBoost,     // Hızlandırır (Hız botu)
     TimeSlow,       // Zamanı yavaşlatır
     Ghost,          // İçlerinden geçilebilir hayalet olma durumu
-    Shackle         // G4: Pranga (kötü eşya) — yavaşlatır. Sona eklendi: kayıtlı enum değerleri değişmesin
+    Shackle,        // G4: Pranga (kötü eşya) — yavaşlatır. Sona eklendi: kayıtlı enum değerleri değişmesin
+    Glove,          // G7: Eldiven — kartopunu yakala, geri fırlat
+    IceBoots,       // G7: Buz ayakkabısı — kaymadan hareket
+    Fire            // G7: Ateş — ısınırsın (soğuk göstergesi düşer)
 }

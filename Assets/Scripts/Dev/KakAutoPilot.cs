@@ -92,6 +92,7 @@ public class KakAutoPilot : MonoBehaviour
 
     void Update()
     {
+        ScanFire(transform.position);
         if (movement == null) return;
 
         bool over = GameManager.Instance != null && GameManager.Instance.IsGameOver;
@@ -192,11 +193,34 @@ public class KakAutoPilot : MonoBehaviour
                 if (pedestals[k].Contains(pp)) { cost += 3f * weight; break; }
         }
 
-        // Merkeze hafif çekim (manevra alanı)
-        cost += (p + dir * speed * horizon - area.center).sqrMagnitude * 0.015f;
+        // Merkeze hafif çekim (manevra alanı); G7: üşüdükçe en yakın ateşe çekim (gerçek oyuncu gibi)
+        Vector2 end = p + dir * speed * horizon;
+        cost += (end - area.center).sqrMagnitude * 0.015f;
+        if (coldMeter != null && coldMeter.Value > 0.4f && fireTarget.HasValue)
+            cost += (end - fireTarget.Value).sqrMagnitude * 0.12f * coldMeter.Value;
         // Düşük beceride karar gürültüsü
         cost += Random.value * (1f - skill) * 0.6f;
         return cost;
+    }
+
+    ColdMeter coldMeter;
+    Vector2? fireTarget;
+    float fireScanAt;
+
+    /// <summary>G7: en yakın ateş eşyası (yarım saniyede bir taranır; yalnız dev/test).</summary>
+    void ScanFire(Vector2 p)
+    {
+        if (coldMeter == null) coldMeter = GetComponent<ColdMeter>();
+        if (coldMeter == null || Time.time < fireScanAt) return;
+        fireScanAt = Time.time + 0.5f;
+        fireTarget = null;
+        float best = float.MaxValue;
+        foreach (var pu in FindObjectsByType<PowerupPickup>(FindObjectsSortMode.None))
+        {
+            if (pu.powerupData == null || pu.powerupData.type != PowerupType.Fire) continue;
+            float d = ((Vector2)pu.transform.position - p).sqrMagnitude;
+            if (d < best) { best = d; fireTarget = pu.transform.position; }
+        }
     }
 
     static float ProjectileRadius(Projectile pr)
