@@ -71,9 +71,10 @@ public class HudExtras : MonoBehaviour
             PowerupType.SpeedBoost => Loc.T("pu_speed"),
             PowerupType.TimeSlow => Loc.T("pu_slow"),
             PowerupType.Ghost => Loc.T("pu_ghost"),
+            PowerupType.Shackle => Loc.T("pu_shackle"),
             _ => data.powerupName
         };
-        WorldPopup.Show(name, pos, KakPalette.CamgobegiParlak, 1f);
+        WorldPopup.Show(name, pos, data.harmful ? KakPalette.Tehlike : KakPalette.CamgobegiParlak, 1f);
     }
 
     void ShowBanner(string text, Color color)

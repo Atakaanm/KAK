@@ -4,6 +4,12 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-09-27 — G4: Pranga
+
+- Yeni enum değeri **sona** eklenir: Unity enum'ları sayı olarak kaydeder, araya eklemek mevcut verileri kaydırır.
+- Kötü eşyanın okunurluğu: tehlike rengi kırmızı (sanat-rehberi renk rolleri) → ikon dış hattı, HUD halkası ve dünya yazısı kırmızı. İyi eşyalar camgöbeği kalır.
+- Dev komutuyla nesne doğururken oyunun kendi ölçek/sıralama kuralını uygula (spawner `itemWorldSize`); yoksa görsel kontrol yanıltır (Pranga nokta gibi görünmüştü).
+
 ## 2026-09-27 — G3: adım adım güçlenme
 
 - Tek canla başlangıçta **ilk 30 sn** her şeyi belirliyor: iki fırlatıcıyla usta bot bile 24. saniyede ölüyordu → ısınma kademesi tek fırlatıcı. Sonuç: acemi ~78 sn, usta ~88 sn (yükseltmesiz), yükselttikçe uzuyor.

@@ -96,7 +96,7 @@ public static class KakDevMenu
         foreach (var guid in AssetDatabase.FindAssets("t:PowerupData", new[] { "Assets/Data/Powerups" }))
         {
             var d = AssetDatabase.LoadAssetAtPath<PowerupData>(AssetDatabase.GUIDToAssetPath(guid));
-            if (d != null && d.type != PowerupType.Heal) PowerupPickup.Apply(d, player.gameObject, player.transform.position);
+            if (d != null && d.type != PowerupType.Heal && !d.harmful) PowerupPickup.Apply(d, player.gameObject, player.transform.position);
         }
     }
 
@@ -204,6 +204,24 @@ public static class KakDevMenu
         var d = Object.FindAnyObjectByType<CharacterDetailPanel>();
         if (d == null) return;
         if (stat == "Speed") d.OnUpgradeSpeed(); else if (stat == "Power") d.OnUpgradePower(); else d.OnUpgradeHealth();
+    }
+
+    /// <summary>G4: oyuncunun yanına Pranga bırakır (görsel kontrol). Köprü: invoke KakDevMenu DropShackle</summary>
+    [MenuItem("KacAtaKac/Dev/Pranga Bırak")]
+    public static void DropShackle()
+    {
+        var d = AssetDatabase.LoadAssetAtPath<PowerupData>("Assets/Data/Powerups/ShackleData.asset");
+        var t = Projectile.PlayerTarget;
+        if (d == null || d.visualPrefab == null || t == null) return;
+        var go = Object.Instantiate(d.visualPrefab, t.position + new Vector3(0.9f, 0.5f, 0f), Quaternion.identity);
+        var sr = go.GetComponentInChildren<SpriteRenderer>();
+        var sp = Object.FindAnyObjectByType<PowerupSpawner>();
+        if (sr != null && sr.sprite != null && sp != null) // spawner ile aynı boy
+        {
+            float s = sp.itemWorldSize / sr.sprite.bounds.size.x;
+            go.transform.localScale = new Vector3(s, s, 1f);
+            sr.sortingOrder = sp.powerupSortingOrder;
+        }
     }
 
     /// <summary>Oyuncunun çevresine 3 göktaşı düşürür ("!" uyarısını görmek için). Köprü: invoke KakDevMenu DropMeteors</summary>
