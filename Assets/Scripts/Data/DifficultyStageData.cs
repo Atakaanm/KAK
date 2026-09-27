@@ -11,7 +11,11 @@ public class DifficultyStageData : ScriptableObject
     [Header("Genel Bilgi")]
     public string stageName = "Kolay";
 
-    [Header("Skor Araligi")]
+    [Header("Süre eşiği (G2)")]
+    [Tooltip("Bu kademe oyunun kaçıncı saniyesinde başlar. Zorluk süreye bağlı: skor hızlandırıcıları (yakın geçiş) zorluğu hızlandırmaz")]
+    public float minSeconds = 0f;
+
+    [Header("Skor Araligi (eski, kullanılmıyor)")]
     public int minScore = 0;
     public int maxScore = 100; // -1 = sonsuz (son asama icin)
 

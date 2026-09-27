@@ -203,6 +203,13 @@ public static class KakDevMenu
             Projectile.LaunchMeteor(prefab, data, target.position + (Vector3)(Random.insideUnitCircle * 1.6f));
     }
 
+    /// <summary>Oyun süresini ileri sarar; zorluk süreye bağlı olduğu için kademe de ilerler (G2). Köprü: invoke KakDevMenu SkipTime 150</summary>
+    public static void SkipTime(string seconds)
+    {
+        var s = Object.FindAnyObjectByType<ScoreManager>();
+        if (s != null && float.TryParse(seconds, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float v)) s.AdvanceTime(v);
+    }
+
     /// <summary>Oyun zamanını dondurur/çözer (aynı anı farklı dil ve boyutlarda çekmek için). Köprü: invoke KakDevMenu Freeze 1</summary>
     public static void Freeze(string on) { Time.timeScale = on == "1" ? 0f : 1f; }
 

@@ -13,19 +13,18 @@ MonoBehaviour:
   m_Name: Stage2_Kolay
   m_EditorClassIdentifier: Assembly-CSharp::DifficultyStageData
   stageName: Kolay
-  minScore: 200
-  maxScore: 474
+  minSeconds: 30
+  minScore: 0
+  maxScore: -1
   activeSpawnerCount: 2
-  shootIntervalMultiplier: 0.9
-  projectileSpeedMultiplier: 1.1
+  shootIntervalMultiplier: 1.05
+  projectileSpeedMultiplier: 0.96
   projectileScaleMultiplier: 1
-  playerSpeedMultiplier: 1.05
+  playerSpeedMultiplier: 1.02
   scoreSpeedMultiplier: 1.1
   availableProjectiles:
   - {fileID: 11400000, guid: c2e7e644fcf354e079d42082c04a0732, type: 2}
   - {fileID: 11400000, guid: 5d86f6155978a44ef9fbfa89bb440c99, type: 2}
-  - {fileID: 11400000, guid: ab9757d4429b144d6931579d16af25f2, type: 2}
   projectileWeights:
   - 3
-  - 1.5
   - 1

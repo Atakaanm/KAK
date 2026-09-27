@@ -27,12 +27,15 @@ public class ScoreManager : MonoBehaviour
     /// <summary>Belirli bir skor eşiğine ulaşıldığında tetiklenir (pulse efekti için).</summary>
     public UnityEvent<int> onMilestoneReached;
 
-    [Header("Combo (hasar almadan geçen süre)")]
-    public float comboStepSeconds = 10f;
-    public float comboStep = 0.1f;
-    public float comboMax = 2f;
-    [Tooltip("Yakın geçiş combo süresine eklenen saniye")]
-    public float nearMissComboSeconds = 2f;
+    [Header("Skor çarpanı (G2: Subway Surfers gibi, yakın geçişle büyür)")]
+    [Tooltip("Her yakın geçişte skor hızına eklenen çarpan")]
+    public float nearMissMultStep = 0.1f;
+    [Tooltip("Hasar almadan geçen her bu kadar saniyede küçük artış")]
+    public float survivalStepSeconds = 20f;
+    public float survivalMultStep = 0.05f;
+    public float multMax = 3f;
+    [Tooltip("Hasar alınca çarpan kazancının bu oranı kalır (0 = sıfırlanır)")]
+    public float multKeepOnHit = 0.5f;
 
     [Header("Yakın Geçiş")]
     public int nearMissBonus = 5;
@@ -77,9 +80,18 @@ public class ScoreManager : MonoBehaviour
         comboTimer = 0f;
         if (ComboMultiplier > 1f)
         {
-            ComboMultiplier = 1f;
+            ComboMultiplier = 1f + (ComboMultiplier - 1f) * multKeepOnHit;
+            if (ComboMultiplier < 1.001f) ComboMultiplier = 1f;
             GameEvents.RaiseComboChanged(ComboMultiplier);
         }
+    }
+
+    void AddMult(float amount)
+    {
+        float before = ComboMultiplier;
+        ComboMultiplier = Mathf.Min(multMax, ComboMultiplier + amount);
+        if (ComboMultiplier > MaxCombo) MaxCombo = ComboMultiplier;
+        if (ComboMultiplier > before + 0.0001f) GameEvents.RaiseComboChanged(ComboMultiplier);
     }
 
     void OnNearMiss(Vector3 pos, bool dashing)
@@ -88,7 +100,7 @@ public class ScoreManager : MonoBehaviour
         NearMissCount++;
         float bonus = nearMissBonus * ComboMultiplier * (dashing ? dashNearMissMultiplier : 1f);
         AddScore(Mathf.RoundToInt(bonus));
-        comboTimer += nearMissComboSeconds;
+        AddMult(nearMissMultStep); // G2: yakın geçiş skor hızını artırır
     }
 
     [Header("Milestone Ayarları")]
@@ -112,12 +124,10 @@ public class ScoreManager : MonoBehaviour
         ElapsedSeconds += Time.deltaTime;
 
         comboTimer += Time.deltaTime;
-        while (comboTimer >= comboStepSeconds && ComboMultiplier < comboMax - 0.001f)
+        while (comboTimer >= survivalStepSeconds)
         {
-            comboTimer -= comboStepSeconds;
-            ComboMultiplier = Mathf.Min(comboMax, ComboMultiplier + comboStep);
-            if (ComboMultiplier > MaxCombo) MaxCombo = ComboMultiplier;
-            GameEvents.RaiseComboChanged(ComboMultiplier);
+            comboTimer -= survivalStepSeconds;
+            AddMult(survivalMultStep);
         }
 
         float currentScoreMult = ComboMultiplier;
@@ -162,6 +172,9 @@ public class ScoreManager : MonoBehaviour
     /// <summary>
     /// Oyun içi olaylardan (düşman öldürme, powerup vb.) puan ekler.
     /// </summary>
+    /// <summary>Oyun süresini ileri sarar (dev/test: zorluk süreye bağlı, G2).</summary>
+    public void AdvanceTime(float seconds) { ElapsedSeconds += Mathf.Max(0f, seconds); }
+
     public void AddScore(int amount)
     {
         currentScore += amount;

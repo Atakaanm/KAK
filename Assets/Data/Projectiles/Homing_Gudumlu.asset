@@ -28,6 +28,11 @@ MonoBehaviour:
   meteorFallTime: 1.1
   meteorStartHeight: 7
   meteorRadius: 0.55
+  warningSprite: {fileID: 0}
+  effect: 0
+  effectDuration: 1.5
+  effectStrength: 0.5
+  noSpin: 0
   visualScale: 0.95
   tint: {r: 0.95, g: 0.8, b: 1, a: 1}
   projectilePrefab: {fileID: 8748514831740309198, guid: ea2cad80380b74603b2cbf6f4f02c450, type: 3}

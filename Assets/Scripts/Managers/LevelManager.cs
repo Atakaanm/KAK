@@ -207,7 +207,7 @@ public class LevelManager : MonoBehaviour
         // --- ZORLUK SISTEMI (Endless mod) ---
         if (level.levelType == LevelType.Endless && level.enableDifficulty)
         {
-            System.Array.Sort(level.difficultyStages, (a, b) => a.minScore.CompareTo(b.minScore));
+            System.Array.Sort(level.difficultyStages, (a, b) => a.minSeconds.CompareTo(b.minSeconds));
             SetupDifficulty(level.difficultyStages);
         }
 
