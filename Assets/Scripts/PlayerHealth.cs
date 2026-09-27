@@ -176,8 +176,17 @@ public class PlayerHealth : MonoBehaviour
     {
         if (playerSpriteRenderer == null) return;
         Color c = originalColor;
+        if (coldTint > 0.01f) c = Color.Lerp(c, new Color(0.62f, 0.85f, 1f, c.a), coldTint); // G7: üşüyen oyuncu mavileşir
         if (isGhost) c.a = GhostAlpha;
         playerSpriteRenderer.color = c;
+    }
+
+    float coldTint;
+    /// <summary>G7: soğuk göstergesi (0-1) karakteri hafifçe maviye boyar. Vuruş flaşı sırasında dokunmaz.</summary>
+    public void SetColdTint(float v)
+    {
+        coldTint = Mathf.Clamp01(v);
+        if (hitFlashCoroutine == null && invincibilityCoroutine == null && !isDead) RefreshTint();
     }
 
     /// <summary>Mermilerin içinden geçmesini sağlayan hayalet formu.</summary>

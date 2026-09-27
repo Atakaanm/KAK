@@ -72,6 +72,9 @@ public class HudExtras : MonoBehaviour
             PowerupType.TimeSlow => Loc.T("pu_slow"),
             PowerupType.Ghost => Loc.T("pu_ghost"),
             PowerupType.Shackle => Loc.T("pu_shackle"),
+            PowerupType.Glove => Loc.T("pu_glove"),
+            PowerupType.IceBoots => Loc.T("pu_boots"),
+            PowerupType.Fire => Loc.T("pu_fire"),
             _ => data.powerupName
         };
         WorldPopup.Show(name, pos, data.harmful ? KakPalette.Tehlike : KakPalette.CamgobegiParlak, 1f);

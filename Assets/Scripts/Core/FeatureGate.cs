@@ -3,7 +3,7 @@
 /// yeni katmanlar açılır (Habby/Archero tarzı "drip-feed"). Koşullar kayıttaki istatistiklere bağlı;
 /// "YENİ!" tanıtımları SaveData.seen ile bir kez. Takvim ve gerekçe: .claude/skills/kacatakac/3c.md
 /// </summary>
-public enum Feature { Coins, Missions, Characters, DailyReward, Pets }
+public enum Feature { Coins, Missions, Characters, DailyReward, Pets, Worlds } // Worlds: G7 (sona eklendi)
 
 public static class FeatureGate
 {
@@ -12,8 +12,9 @@ public static class FeatureGate
     public const int CharactersCoins = 60;
     public const int DailyDays = 2;
     public const int PetsGames = 10;
+    public const int WorldsGames = 3;   // G7: Buz Gölü ve dünya seçimi
 
-    public static readonly Feature[] All = { Feature.Coins, Feature.Missions, Feature.Characters, Feature.DailyReward, Feature.Pets };
+    public static readonly Feature[] All = { Feature.Coins, Feature.Missions, Feature.Characters, Feature.DailyReward, Feature.Pets, Feature.Worlds };
 
     public static bool IsUnlocked(Feature f)
     {
@@ -25,6 +26,7 @@ public static class FeatureGate
             case Feature.Characters: return d.totalCoins >= CharactersCoins || d.gamesPlayed >= CharactersGames;
             case Feature.DailyReward: return d.playDays >= DailyDays;
             case Feature.Pets: return d.gamesPlayed >= PetsGames || (d.unlockedCharacters != null && d.unlockedCharacters.Count >= 2);
+            case Feature.Worlds: return d.gamesPlayed >= WorldsGames;
             default: return false;
         }
     }
@@ -52,6 +54,7 @@ public static class FeatureGate
             case Feature.Characters: return Games(CharactersGames - d.gamesPlayed);
             case Feature.DailyReward: return Loc.T("locked_tomorrow");
             case Feature.Pets: return Games(PetsGames - d.gamesPlayed);
+            case Feature.Worlds: return Games(WorldsGames - d.gamesPlayed);
             default: return "";
         }
     }

@@ -101,7 +101,8 @@ public class GameManager : MonoBehaviour
         float seconds = scoreManager != null ? scoreManager.ElapsedSeconds : 0f;
         var save = SaveSystem.Data;
         bool two = GameSettings.TwoPlayer;
-        int bestScore = two ? save.bestScore2P : save.bestScoreEndless;
+        bool ice = LevelManager.Instance != null && EndlessWorlds.WorldIdOf(LevelManager.Instance.currentLevel) == "ice"; // G7
+        int bestScore = two ? save.bestScore2P : ice ? save.bestScoreIce : save.bestScoreEndless;
         IsNewBest = false;
         if (!IsLevelMode)
         {
@@ -110,9 +111,10 @@ public class GameManager : MonoBehaviour
             {
                 bestScore = finalScore;
                 if (two) save.bestScore2P = finalScore; // G5: iki kişilik rekor ayrı
+                else if (ice) save.bestScoreIce = finalScore; // G7: dünya başına rekor
                 else save.bestScoreEndless = finalScore;
             }
-            if (!two && seconds > save.bestTimeEndless) save.bestTimeEndless = seconds;
+            if (!two && !ice && seconds > save.bestTimeEndless) save.bestTimeEndless = seconds;
         }
         save.gamesPlayed++;
         save.totalPlaySeconds += seconds;

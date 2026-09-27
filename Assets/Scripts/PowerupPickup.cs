@@ -143,11 +143,30 @@ public class PowerupPickup : MonoBehaviour
                 // G4: Pranga — hız kanalını kullanır (hız güçlendirmesini iptal eder, tersi de geçerli)
                 if (movement != null) movement.ApplySpeedBoost(powerupData.powerMultiplier, finalDuration);
                 break;
+
+            case PowerupType.Glove: // G7: süre boyunca kartopunu yakala
+            {
+                var catcher = player.GetComponent<SnowballCatcher>();
+                if (catcher == null) catcher = player.AddComponent<SnowballCatcher>();
+                catcher.Activate(finalDuration);
+                break;
+            }
+
+            case PowerupType.IceBoots: // G7: kaymadan hareket
+                if (movement != null) movement.Grip(finalDuration);
+                break;
+
+            case PowerupType.Fire: // G7: ısın (soğuk göstergesi düşer)
+            {
+                var cold = player.GetComponent<ColdMeter>();
+                if (cold != null) cold.Warm(powerupData.powerMultiplier);
+                break;
+            }
         }
 
         // HUD göstergesi: süreli etkiler (kalkan = vurulana kadar)
         if (powerupData.type == PowerupType.Shield) GameEvents.RaisePowerupActivated(powerupData, 0f);
-        else if (powerupData.type != PowerupType.Heal) GameEvents.RaisePowerupActivated(powerupData, finalDuration);
+        else if (powerupData.type != PowerupType.Heal && powerupData.type != PowerupType.Fire) GameEvents.RaisePowerupActivated(powerupData, finalDuration);
     }
 
 }

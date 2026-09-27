@@ -9,6 +9,9 @@ using UnityEngine.UI;
 public class DashButton : MonoBehaviour, IPointerDownHandler
 {
     public PlayerDash dash;
+    /// <summary>G7: eldivenle yakalanmış kartopu varken düğme "fırlat" olur.</summary>
+    [System.NonSerialized] public SnowballCatcher catcher;
+    Sprite dashIcon;
     public Image cooldownFill;      // Filled / Radial360
     public Image icon;
     public RectTransform visual;
@@ -19,6 +22,12 @@ public class DashButton : MonoBehaviour, IPointerDownHandler
 
     public void OnPointerDown(PointerEventData eventData)
     {
+        if (catcher != null && catcher.Holding)
+        {
+            catcher.Throw();
+            pulse = 1f;
+            return;
+        }
         if (dash == null) dash = FindAnyObjectByType<PlayerDash>();
         if (dash != null && dash.TryDash())
         {
@@ -29,6 +38,21 @@ public class DashButton : MonoBehaviour, IPointerDownHandler
 
     void Update()
     {
+        // G7: elde kartopu → ikon kartopu, düğme hazır parlar
+        if (icon != null)
+        {
+            if (dashIcon == null) dashIcon = icon.sprite;
+            bool throwing = catcher != null && catcher.Holding;
+            var want = throwing ? catcher.HeldSprite : dashIcon;
+            if (want != null && icon.sprite != want) { icon.sprite = want; icon.preserveAspect = true; }
+            if (throwing)
+            {
+                icon.color = Color.white;
+                pulse = Mathf.MoveTowards(pulse, 0f, Time.unscaledDeltaTime * 4f);
+                if (visual != null) visual.localScale = Vector3.one * ((1f + Mathf.Sin(Time.unscaledTime * 8f) * 0.08f - pulse * 0.12f) * ControlSettings.Scale);
+                return;
+            }
+        }
         if (dash == null) return;
         float cd = dash.Cooldown01;
         if (cooldownFill != null) cooldownFill.fillAmount = cd;

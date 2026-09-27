@@ -35,4 +35,14 @@ public class WorldTheme : ScriptableObject
 
     [Header("Meşaleler")]
     public bool torches = true;
+
+    [Header("Buz (Faz 11 G7)")]
+    [Tooltip("Dikey hareket çarpanı (buz: aşağı-yukarı daha hızlı ama kayar)")]
+    public float verticalSpeedMultiplier = 1f;
+    [Tooltip("Soğuk göstergesi: ateş toplanmazsa oyuncu yavaş yavaş donar")]
+    public bool coldEnabled = false;
+    [Tooltip("Sıfırdan tam donmaya kaç saniye")]
+    public float coldSeconds = 35f;
+    [Tooltip("Ortamda hafif kar yağışı")]
+    public bool snowfall = false;
 }

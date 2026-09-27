@@ -4,6 +4,18 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-09-27 — G7: Buz Gölü
+
+- **Statik tekil referans iki kişilikte sessizce bozuluyordu:** `PlayerHitbox.Hurt` son oyuncuyu tutuyor, 1. oyuncu taşlardan etkilenmiyordu. G5 testleri hasarı doğrudan verdiği için yakalamadı. Çok oyunculu özellikte **gerçek çarpışmayla** test yaz.
+- Yeni görsel dünya: zindan arenasının geometrisini (oynanabilir alan, kaide yerleri, alt girinti) ölç, aynısını çiz → ArenaData ve fırlatıcı duruşları değişmeden çalışır. Piksel yoğunluğu: 341 sanat pikseli × 6 = 2046 px, PPU 100, ölçek 0,4 → 0,024 dünya birimi.
+- İlk arena denemesi "dandik"ti (gelişigüzel lekeler). Piksel sanatında buz dili: kabartmalı levhalar (derz + açık kenar), çapraz parlama çizgisi, duvar dibinde kar, sarkıt. Önizlemeyle 3 turda iyileşti.
+- Değer kontrastı: beyaz kartopu için zemin koyu (donmuş göl); açık zeminde tehlike okunmazdı.
+- Mermi sprite'ı çarpışma alanıyla aynı ayak izinde olmalı (kartopu 28 px = taş); küçük sprite + aynı collider = haksız vuruş.
+- **Parçacık hız eğrileri aynı modda olmalı** (x aralık, y/z sabit → her karede hata). Yeni dünyaya "N sn hatasız oyun" testi ekle.
+- Tek canla "tam soğukta can gider" haksızdı (35. saniyede ölüm). Ceza = donup taşlara açık kalmak + garantili ateş.
+- Bot ataleti hesaba katmıyor → buzda olduğundan zor ölçer. Bota üşüyünce ateşe çekim eklendi; kademeler buzda ×1,5 uzun. Sonuç usta 92 / acemi 64 sn.
+- Faz 2B'de aynı adlı (`WorldCatalog`) bir sınıf vardı: yeni sınıf eklemeden önce ada grep at.
+
 ## 2026-09-27 — G6: hikâye
 
 - Hikâye oyunun kurallarını açıklamalı: altın = laneti kırmanın yolu, saldıramazsın = muhafızlar taştan, yeni dünyalar = lanetin yayıldığı yerler. Kullanıcı Subway Surfers örneğini verdi: tek cümlelik bir sebep yeter.

@@ -211,7 +211,7 @@ def main():
         return 0 if r["ok"] else 1
     if c == "denge":
         flag = os.path.join(BRIDGE, "run_denge")
-        open(flag, "w").write("1")
+        open(flag, "w").write(a[0] if a else "dungeon")  # G7: python3 tools/kak_bridge.py denge ice
         try:
             r = send("tests", arg="PlayMode", arg2="DengeTests", seconds=1600, timeout=1700)
         finally:

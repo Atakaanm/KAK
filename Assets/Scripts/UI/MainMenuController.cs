@@ -22,6 +22,7 @@ public class MainMenuController : MonoBehaviour
     [Tooltip("Günlük ödül paneli (Faz 3c.6): alınabiliyorsa menü açılınca kendiliğinden açılır")]
     public DailyRewardPanel dailyPanel;
     public IntroStory intro; // G6
+    public GameObject worldsPanel; // G7
 
     [Header("Paneller")]
     public GameObject settingsPanel;
@@ -72,7 +73,8 @@ public class MainMenuController : MonoBehaviour
     void UpdateStats()
     {
         var d = SaveSystem.Data;
-        if (bestScoreText != null) bestScoreText.SetText(Loc.T("best"), d.bestScoreEndless);
+        var world = EndlessWorlds.Selected(); // G7: seçili dünyanın rekoru
+        if (bestScoreText != null) bestScoreText.SetText(Loc.T("best"), world != null ? EndlessWorlds.Best(world.id) : d.bestScoreEndless);
         if (statsText != null)
         {
             int m = Mathf.FloorToInt(d.bestTimeEndless / 60f), s = Mathf.FloorToInt(d.bestTimeEndless % 60f);
@@ -86,7 +88,7 @@ public class MainMenuController : MonoBehaviour
     {
         PlayButtonSound();
         GameSettings.TwoPlayer = false;
-        if (defaultLevel != null) GameSettings.SelectedLevel = defaultLevel;
+        GameSettings.SelectedLevel = SelectedWorldLevel();
         SceneLoader.LoadGame();
     }
 
@@ -95,7 +97,7 @@ public class MainMenuController : MonoBehaviour
     {
         PlayButtonSound();
         GameSettings.TwoPlayer = true;
-        if (defaultLevel != null) GameSettings.SelectedLevel = defaultLevel;
+        GameSettings.SelectedLevel = SelectedWorldLevel();
         SceneLoader.LoadGame();
     }
 
@@ -119,10 +121,22 @@ public class MainMenuController : MonoBehaviour
 
     public void OnSettingsClicked() { PlayButtonSound(); resetArmed = false; RefreshResetLabel(); Open(settingsPanel); }
 
+    /// <summary>G7: DÜNYALAR — Sonsuz modun arenaları. Kilitliyse (ilk oyunlar) düğme sallanır.</summary>
     public void OnLevelsClicked()
     {
         PlayButtonSound();
-        if (levelsButton != null) WobbleLocked(levelsButton.transform);
+        if (worldsFeature != null && !worldsFeature.TryUse()) return; // kilitli: buton sallanır
+        if (worldsPanel != null) Open(worldsPanel);
+    }
+
+    public FeatureButton worldsFeature;
+    public void CloseWorldsPanel() { PlayButtonSound(); Close(worldsPanel); }
+    public void RefreshWorld() => UpdateStats();
+
+    LevelData SelectedWorldLevel()
+    {
+        var w = EndlessWorlds.Selected();
+        return w != null && w.level != null ? w.level : defaultLevel;
     }
 
     public void CloseSettingsPanel() { PlayButtonSound(); Close(settingsPanel); }

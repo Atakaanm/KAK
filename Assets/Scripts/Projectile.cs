@@ -61,6 +61,9 @@ public class Projectile : MonoBehaviour
     private bool splitDone;
     private Vector3 shadowBaseScale = Vector3.one;
     private SpriteRenderer warningRenderer; // göktaşı "!" uyarısı (ilk göktaşında oluşturulur)
+    private Vector3 baseScale = Vector3.one; // G7: büyüyen kartopu
+    /// <summary>G7: oyuncunun fırlattığı kartopu — oyuncuya değmez, çarptığı düşman mermisini yok eder.</summary>
+    [System.NonSerialized] public bool friendly;
     private const float WarningHeight = 0.42f; // yerden yükseklik (dünya birimi)
     private Vector3 visualBasePos;
     private Color baseTint = Color.white;
@@ -139,6 +142,7 @@ public class Projectile : MonoBehaviour
         p.speed *= speedMult;
         float vs = data != null ? data.visualScale : 1f;
         obj.transform.localScale = prefab.transform.localScale * scaleMult * vs;
+        p.baseScale = obj.transform.localScale;
         return p;
     }
 
@@ -192,6 +196,35 @@ public class Projectile : MonoBehaviour
         if (visualRenderer != null) visualRenderer.color = baseTint;
         if (trailRenderer != null) trailRenderer.Clear();
         if (warningRenderer != null) warningRenderer.enabled = false;
+        friendly = false;
+    }
+
+    /// <summary>G7: kartopu yol aldıkça büyür (collider da ölçekle büyür).</summary>
+    void UpdateGrowth()
+    {
+        if (data == null || data.growPerSecond <= 0f) return;
+        float k = Mathf.Min(Mathf.Max(1f, data.maxGrowScale), 1f + data.growPerSecond * age);
+        transform.localScale = baseScale * k;
+    }
+
+    /// <summary>G7: dost kartopu değdiği düşman mermisini (göktaşı hariç) yok eder, kendisi de dağılır.</summary>
+    void UpdateFriendly()
+    {
+        if (!friendly || col == null) return;
+        float r = col.bounds.extents.x;
+        var act = Active;
+        for (int i = act.Count - 1; i >= 0; i--)
+        {
+            var o = act[i];
+            if (o == null || o == this || o.friendly || o.motion == ProjectileMotion.Meteor || o.col == null) continue;
+            float rr = r + o.col.bounds.extents.x;
+            if (((Vector2)o.transform.position - (Vector2)transform.position).sqrMagnitude > rr * rr) continue;
+            GameEvents.RaiseProjectileHitWall(o.transform.position, Vector2.zero);
+            GameEvents.RaiseSnowballSmashed(o.transform.position);
+            o.ReturnToPool();
+            ReturnToPool();
+            return;
+        }
     }
 
     void ShowWarning(Sprite sprite)
@@ -269,6 +302,7 @@ public class Projectile : MonoBehaviour
             UpdateMeteor();
             return;
         }
+        UpdateGrowth();
 
         if (age >= lifeTime)
         {
@@ -299,6 +333,8 @@ public class Projectile : MonoBehaviour
     void FixedUpdate()
     {
         if (motion == ProjectileMotion.Meteor) return;
+        UpdateFriendly();
+        if (!gameObject.activeSelf) return;
 
         var homeTo = motion == ProjectileMotion.Homing ? HomingTarget() : null;
         if (motion == ProjectileMotion.Homing && data != null && age < data.homingDuration && homeTo != null)
@@ -404,13 +440,19 @@ public class Projectile : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (motion == ProjectileMotion.Meteor) return;
+        if (motion == ProjectileMotion.Meteor || friendly) return; // G7: oyuncunun kartopu oyuncuya değmez
         if (other.CompareTag("Player"))
         {
             // Taş yalnızca gövdeye vurur (ayak izi duvarlar içindir). Bkz. PlayerHitbox.
-            if (PlayerHitbox.Hurt != null && other != PlayerHitbox.Hurt) return;
+            if (PlayerHitbox.AnyRegistered && !PlayerHitbox.IsHurtbox(other)) return;
             PlayerHealth playerHealth = other.GetComponentInParent<PlayerHealth>();
             if (playerHealth != null && playerHealth.IsGhost) return; // hayalet: içinden geçer
+            // G7: eldiven — kartopu hasar vermez, yakalanır (fırlatma düğmesiyle geri atılır)
+            if (data != null && data.catchable)
+            {
+                var catcher = other.GetComponentInParent<SnowballCatcher>();
+                if (catcher != null && catcher.TryCatch(data)) { ReturnToPool(); return; }
+            }
             PlayerHealth.LastHitSource = data != null ? data.projectileName : "Taş";
             var status = other.GetComponentInParent<PlayerStatus>();
             if (status != null && data != null && data.effect != ProjectileEffect.Damage)

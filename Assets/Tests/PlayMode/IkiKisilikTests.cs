@@ -61,4 +61,23 @@ public class IkiKisilikTests
         Assert.AreEqual(1, PlayerRegistry.All.Count);
         Assert.IsNull(LevelManager.Instance.SecondPlayer);
     }
+
+    [UnityTest]
+    public IEnumerator TaslarIkiOyuncuyaDaVurur()
+    {
+        // Eski hata: statik PlayerHitbox.Hurt yalnız son oyuncuyu tutuyordu → 1. oyuncu taşlardan etkilenmiyordu
+        GameSettings.TwoPlayer = true;
+        yield return KakTestUtil.LoadGameWithLevel();
+        yield return null;
+        foreach (var s in Object.FindObjectsByType<CornerShooter>(FindObjectsSortMode.None)) s.enabled = false;
+        var prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Projectile.prefab");
+        foreach (var ph in PlayerRegistry.All.ToArray())
+        {
+            ph.SetMaxHealth(3);
+            int before = ph.CurrentHealth;
+            Vector3 p = ph.transform.position;
+            Projectile.Launch(prefab, null, p + new Vector3(0f, 2f, 0f), Vector2.down, 3f); // yukarıdan: diğer oyuncuya değmez
+            yield return KakTestUtil.WaitUntil(() => ph.CurrentHealth < before, 3f, ph.name + " taştan etkilenmedi");
+        }
+    }
 }

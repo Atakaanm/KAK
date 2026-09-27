@@ -148,14 +148,14 @@ Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 - Varsayım: Kalkan "vurulana kadar" sürer (`ShieldData.duration` kullanılmıyor, davranış korunuyor)
 
 ### Sıradaki adım
-**Faz 11 — telefon geri bildirimi** (`prompts/faz-11-oyuncu-geri-bildirimi.md`), sırayla:
+**Faz 11 — telefon geri bildirimi TAMAM** (`prompts/faz-11-oyuncu-geri-bildirimi.md`). Sıradaki: kullanıcı telefonda dener (kablo takınca kurulum), geri bildirime göre ince ayar; sonra Futbol / Boks ringi dünyaları, kostüm, karakter yetenekleri, online (notlar prompt dosyasında).
 - [x] G1 His ve kontrol (ölümde donma, çapraz koşu histerezisi, hız 5→4 + hız güçlendirmesi ×1,25, göktaşı "!", altın tek tek + aralıklı, dash rafa, kontrol boyutu ayarı). Testler 81/81 + 23/23
 - [x] G2 Zorluk süreye bağlı (0/30/75/150/240/360 sn, `KakEndlessSetup.SetupStages`) + taş dağılımı yumuşak + ekranda en fazla 2 büyük taş + yakın geçiş skor çarpanı (+0,1, en fazla ×3, hasarda yarıya). Bot (3 can): usta 232 sn ortanca, acemi 135 sn → G3 tek canla yeniden ölç
 - [x] G3 Tek can başlangıç + kalıcı yükseltmeler (Can/Hız/Güç süresi, `CharacterProgress`) + karakter detay ekranı (karta dokun) + arketipler (Ata 1→3, Ada 1→2 hızlı-ince, Çevik 1→2 küçük-çok hızlı, Tank 2→5 hantal-kalkanlı, Şanslı 1→3 altın) + dolu canla kalp = bu oyunluk +1 kalp + pet seviyeleri + karakter ekranı 2. oyunda. Bot (1 can): usta ortanca 88 sn, acemi 78 sn. Testler 83/83 + 27/27
 - [x] G4 Pranga (PowerupType.Shackle, harmful, minStage 1; 4 sn ×0,6 hız, hız güçlendirmesiyle aynı kanal; kırmızı ikon/çip/yazı). Testler 84/84 + 27/27
 - [x] G5 İki kişilik yerel mod: menüde 2 KİŞİ, Ata (sol joystick/WASD) + Ada (sağ/oklar), yeteneksiz ve petsiz, düşen 10 sn sonra 2,5 sn dokunulmaz döner, ikisi düşerse biter, ayrı rekor (`bestScore2P`), reklamla devam yok. Testler 86/86 + 27/27. İleride: online battle royale (not)
 - [x] G6 Hafif hikâye: Ata ile Ada Taş Zindanı'nda altına dokunur → Taş Muhafızlar uyanır, lanet onları her yerde kovalar (yeni dünyaların gerekçesi). İlk açılışta 3 kart (`IntroStory`, atlanabilir, günlük ödülden önce), ayarlarda HİKÂYE, mağaza metninde. Testler 87/87 + 27/27
-- [ ] G7 Buz arenası (kayma, kardan adam, büyüyen kartopu, eldiven, buz ayakkabısı, ateş/donma)
+- [x] G7 Buz Gölü: kayma (sürtünme 0,33, dikey ×1,2), 8 yönlü kardan adam (4 kare atış), büyüyen kartopları (5 tür: kartopu, küçük, dev, seken, buz sarkıtı "!"), eldiven (yakala → kartopu ikonlu düğmeyle fırlat, düşman kartopunu parçalar), buz ayakkabısı (tutuş), ateş + soğuk göstergesi (donma: can götürmez, hareketsiz kalırsın; garantili ateş), kar yağışı, DÜNYALAR paneli (3. oyunda açılır, dünya başına rekor). Bot (1 can): usta 92 sn, acemi 64 sn. **Yan bulgu:** iki kişilikte 1. oyuncu taşlardan etkilenmiyordu (statik hurtbox) → düzeltildi + test. Testler 95/95 + 27/27
 Her alt faz sonunda: testler + bot ölçümü + PR + (kullanıcı kablo takınca) telefona kurulum.
 
 ### Onay bekleyenler
