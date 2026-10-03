@@ -187,6 +187,7 @@ public class LevelManager : MonoBehaviour
         if (level == null) return;
 
         currentLevel = level;
+        DarkWorld.Reset(); // Faz 13 K1: statik karanlık bayrağı önceki bölümden kalmasın
 
         KakLog.Info("[LevelManager] Level yukleniyor: " + level.levelName);
 
@@ -381,6 +382,7 @@ public class LevelManager : MonoBehaviour
         IceWorld.Apply(t); // G7: dikey hız, soğuk göstergesi, kar yağışı (tema kapalıysa etkisiz)
         var events = FindAnyObjectByType<EndlessEventManager>();
         if (events != null) events.ApplyTheme(t); // Faz 12 H2: Sarkıt Yağmuru / Dev Kartopu
+        DarkWorld.Apply(t); // Faz 13 K1: karanlık + meşale (tema karanlık değilse etkisiz)
         ThemeApplied?.Invoke(t);
         KakLog.Info("[LevelManager] Tema: " + t.themeId);
     }

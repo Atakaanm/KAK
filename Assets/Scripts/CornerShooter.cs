@@ -43,6 +43,8 @@ public class CornerShooter : MonoBehaviour
     [Tooltip("Kör atışta arenanın içine doğru yayılma (yarım açı, derece)")]
     public float blindSpread = 50f;
     SpriteRenderer confusedMark;
+    /// <summary>Faz 13 K1: atış uyarısı (0 sakin → 1 atış anı); karanlıkta gözler buna göre yanar.</summary>
+    public float Telegraph01 => telegraphTime > 0f ? Mathf.Clamp01(1f - (shootInterval - timer) / telegraphTime) : 0f;
     /// <summary>Bu fırlatıcı şu an oyuncuyu göremiyor mu (testler ve "?" işareti).</summary>
     public bool Blind { get; private set; }
 
@@ -109,7 +111,7 @@ public class CornerShooter : MonoBehaviour
             go.transform.SetParent(transform, false);
             confusedMark = go.AddComponent<SpriteRenderer>();
             confusedMark.sprite = sprite;
-            confusedMark.sortingOrder = 120;
+            confusedMark.sortingOrder = DarkWorld.Active ? DarkWorld.GlowOrder : 120;
             // Fırlatıcıların kök ölçekleri farklı (1 / 4): dünyada hep aynı boyda, 1,5 kat piksel
             float ls = Mathf.Max(0.0001f, Mathf.Abs(transform.lossyScale.x));
             go.transform.localScale = Vector3.one * (1.5f / ls);

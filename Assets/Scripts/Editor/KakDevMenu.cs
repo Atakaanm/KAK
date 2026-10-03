@@ -245,6 +245,28 @@ public static class KakDevMenu
     /// <summary>G5: iki kişilik oyunu başlatır. Köprü: invoke KakDevMenu PlayTwoPlayer</summary>
     public static void PlayTwoPlayer() { GameSettings.TwoPlayer = true; SceneLoader.LoadGame(); }
 
+    /// <summary>Faz 13 K1: açık oyunu karartır (meşale denemesi). Köprü: invoke KakDevMenu DarkTest 0.93</summary>
+    public static void DarkTest(string darkness)
+    {
+        var t = ScriptableObject.CreateInstance<WorldTheme>();
+        t.darkness = float.Parse(darkness, System.Globalization.CultureInfo.InvariantCulture);
+        DarkWorld.Apply(t);
+    }
+
+    /// <summary>Faz 13 K1: karanlık katmanının durumu (teşhis). Köprü: invoke KakDevMenu ProbeDark</summary>
+    public static string ProbeDark()
+    {
+        var o = Object.FindAnyObjectByType<DarknessOverlay>();
+        if (o == null) return "karanlık yok";
+        var r = o.GetComponent<SpriteRenderer>();
+        var cam = Camera.main;
+        return $"en={r.enabled} col={r.color} ord={r.sortingOrder} mask={r.maskInteraction} mat={(r.sharedMaterial != null ? r.sharedMaterial.name + "/" + r.sharedMaterial.shader.name : "yok")} " +
+               $"bounds={r.bounds} spr={(r.sprite != null ? r.sprite.name + " " + r.sprite.bounds.size : "yok")} pos={o.transform.position} scale={o.transform.localScale} cam={(cam != null ? cam.name + " " + cam.transform.position + " ortho=" + cam.orthographicSize : "yok")}";
+    }
+
+    /// <summary>Faz 13 K1: meşale seviyesini ayarlar (0-3). Köprü: invoke KakDevMenu SetTorch 2</summary>
+    public static void SetTorch(string level) { SaveSystem.Data.torchLevel = int.Parse(level); }
+
     /// <summary>Faz 12: bir eşyayı oyuncuya verir (Assets/Data/Powerups/&lt;ad&gt;.asset). Köprü: invoke KakDevMenu GivePowerup InvisibleData</summary>
     public static void GivePowerup(string file)
     {

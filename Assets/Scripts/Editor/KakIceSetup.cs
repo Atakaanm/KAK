@@ -188,7 +188,7 @@ public static class KakIceSetup
         ti.SaveAndReimport();
     }
 
-    static void SpriteImport(string path, float ppu, bool point)
+    public static void SpriteImport(string path, float ppu, bool point)
     {
         var ti = AssetImporter.GetAtPath(path) as TextureImporter;
         if (ti == null) return;

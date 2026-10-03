@@ -74,6 +74,10 @@ public class Projectile : MonoBehaviour
     private Vector3 visualBasePos;
     private Color baseTint = Color.white;
     private SpriteRenderer visualRenderer;
+    private int baseVisualOrder;
+    // Faz 13 K1: karanlık dünyada taş parıltısı (DarkWorld açar)
+    public static bool DarkMode;
+    private SpriteRenderer glintRenderer;
 
     void Awake()
     {
@@ -97,7 +101,7 @@ public class Projectile : MonoBehaviour
             visualRenderer = visual.GetComponent<SpriteRenderer>();
         }
         else visualRenderer = GetComponent<SpriteRenderer>();
-        if (visualRenderer != null) baseTint = visualRenderer.color;
+        if (visualRenderer != null) { baseTint = visualRenderer.color; baseVisualOrder = visualRenderer.sortingOrder; }
     }
 
     void OnEnable()
@@ -151,7 +155,37 @@ public class Projectile : MonoBehaviour
         float vs = data != null ? data.visualScale : 1f;
         obj.transform.localScale = prefab.transform.localScale * scaleMult * vs;
         p.baseScale = obj.transform.localScale;
+        if (DarkMode) p.SetupDark();
         return p;
+    }
+
+    /// <summary>Faz 13 K1: karanlıkta küçük parıltı (yön okunur) ya da tamamen görünür (glowInDark).</summary>
+    void SetupDark()
+    {
+        if (data != null && data.glowInDark && visualRenderer != null) visualRenderer.sortingOrder = DarkWorld.GlowOrder;
+        if (glintRenderer == null)
+        {
+            var go = new GameObject("Glint");
+            go.transform.SetParent(transform, false);
+            glintRenderer = go.AddComponent<SpriteRenderer>();
+            glintRenderer.sprite = Resources.Load<Sprite>("Glint");
+            if (visualRenderer != null) glintRenderer.sharedMaterial = visualRenderer.sharedMaterial;
+            glintRenderer.sortingOrder = DarkWorld.GlowOrder - 2;
+        }
+        glintRenderer.color = data != null ? data.glowColor : new Color(1f, 0.62f, 0.3f, 0.85f);
+        glintRenderer.enabled = true;
+        UpdateGlint();
+    }
+
+    void UpdateGlint()
+    {
+        if (glintRenderer == null || !glintRenderer.enabled) return;
+        // Kök ölçeğinden bağımsız ~0,26 birim, hafif titreşim; göktaşında iniş noktası "!" ile yeter
+        if (motion == ProjectileMotion.Meteor) { glintRenderer.enabled = false; return; }
+        float ls = Mathf.Max(0.0001f, Mathf.Abs(transform.lossyScale.x));
+        float s = (0.26f + 0.04f * Mathf.Sin(age * 18f)) / 0.32f / ls;
+        glintRenderer.transform.localScale = new Vector3(s, s, 1f);
+        if (visual != null) glintRenderer.transform.position = visual.position;
     }
 
     /// <summary>Gökten düşen taş: hedef noktada gölge büyür, süre sonunda iner.</summary>
@@ -207,6 +241,8 @@ public class Projectile : MonoBehaviour
         if (visualRenderer != null) visualRenderer.color = baseTint;
         if (trailRenderer != null) trailRenderer.Clear();
         if (warningRenderer != null) warningRenderer.enabled = false;
+        if (glintRenderer != null) glintRenderer.enabled = false;
+        if (visualRenderer != null) visualRenderer.sortingOrder = baseVisualOrder;
         friendly = false;
     }
 
@@ -293,7 +329,7 @@ public class Projectile : MonoBehaviour
         var c = warningRenderer.color;
         c.a = Mathf.Lerp(0.45f, 1f, pulse);
         warningRenderer.color = c;
-        if (visualRenderer != null) warningRenderer.sortingOrder = visualRenderer.sortingOrder + 5;
+        if (visualRenderer != null) warningRenderer.sortingOrder = DarkMode ? DarkWorld.GlowOrder + 3 : visualRenderer.sortingOrder + 5;
     }
 
     // -------------------------------------------------------
@@ -339,6 +375,7 @@ public class Projectile : MonoBehaviour
             return;
         }
         UpdateGrowth();
+        UpdateGlint();
 
         if (age >= lifeTime)
         {
