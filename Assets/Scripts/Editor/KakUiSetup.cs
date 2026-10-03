@@ -206,29 +206,45 @@ public static class KakUiSetup
         var shade = Stretch(Rect(safe, "Shade"));
         Img(shade, S("white_ui.png"), false, KakPalette.WithAlpha(KakPalette.Murekkep, 0.35f)).preserveAspect = false;
 
-        var logo = Place(Rect(safe, "Logo"), new Vector2(0.5f, 1f), new Vector2(0f, -250f), new Vector2(1040f, 220f));
-        Text(logo, "KAÇ ATA KAÇ", 132, KakPalette.Altin, TextAlignmentOptions.Center, true);
-        var sub = Place(Rect(safe, "Subtitle"), new Vector2(0.5f, 1f), new Vector2(0f, -385f), new Vector2(900f, 60f));
-        Text(sub, "@subtitle", 42, KakPalette.Krem, TextAlignmentOptions.Center);
-        var best = Place(Rect(safe, "BestScore"), new Vector2(0.5f, 1f), new Vector2(0f, -475f), new Vector2(900f, 80f));
-        var bestT = Text(best, "EN İYİ 0", 62, KakPalette.AltinAcik);
-        var stats = Place(Rect(safe, "Stats"), new Vector2(0.5f, 1f), new Vector2(0f, -550f), new Vector2(900f, 56f));
-        var statsT = Text(stats, "", 38, KakPalette.Sis, TextAlignmentOptions.Center, false, false);
+        // Faz 14 Ö2: sade menü — piksel logo, tek satır rekor, tek büyük OYNA; altında KARAKTER ve 2 KİŞİ; ayarlar köşede dişli.
+        // (Eski: süslü Cinzel logo, alt başlık, istatistik satırı, 7 düğme + rozetler → "AI slop" hissi)
+        var logo = Place(Rect(safe, "Logo"), new Vector2(0.5f, 1f), new Vector2(0f, -270f), new Vector2(1000f, 158f));
+        var oldTmp = logo.GetComponent<TextMeshProUGUI>();
+        if (oldTmp != null) Object.DestroyImmediate(oldTmp);
+        var oldLoc = logo.GetComponent<LocText>();
+        if (oldLoc != null) Object.DestroyImmediate(oldLoc);
+        Img(logo, S("logo_pixel.png"), false);
+        foreach (var gone in new[] { "Subtitle", "Stats" })
+        {
+            var t = safe.Find(gone);
+            if (t != null) Undo.DestroyObjectImmediate(t.gameObject);
+        }
+        var best = Place(Rect(safe, "BestScore"), new Vector2(0.5f, 1f), new Vector2(0f, -410f), new Vector2(900f, 70f));
+        var bestT = Text(best, "EN İYİ 0", 54, KakPalette.AltinAcik);
+        TMP_Text statsT = null;
 
-        var play = Button(Place(Rect(safe, "PlayButton"), new Vector2(0.5f, 0f), new Vector2(-105f, 560f), new Vector2(470f, 200f)), "@play", Style.Gold, 88, "icon_play.png");
-        // G5: iki kişilik mod (tek telefon, Ata + Ada)
-        var two = Button(Place(Rect(safe, "TwoPlayerButton"), new Vector2(0.5f, 0f), new Vector2(240f, 560f), new Vector2(200f, 200f)), "@two_player", Style.Stone, 36);
-        var chars = Button(Place(Rect(safe, "CharactersButton"), new Vector2(0.5f, 0f), new Vector2(-175f, 360f), new Vector2(330f, 150f)), "@character", Style.Stone, 38, "icon_character.png");
-        var sett = Button(Place(Rect(safe, "SettingsButton"), new Vector2(0.5f, 0f), new Vector2(175f, 360f), new Vector2(330f, 150f)), "@settings", Style.Stone, 38, "icon_settings.png");
-        // 2. satır: PET (Faz 3c.5, kilitli/YENİ) + BÖLÜMLER (yakında)
-        var pets = Button(Place(Rect(safe, "PetsButton"), new Vector2(0.5f, 0f), new Vector2(-175f, 190f), new Vector2(330f, 150f)), "@pet_button", Style.Stone, 38, "icon_pet.png");
-        // G7: BÖLÜMLER (yakında) → DÜNYALAR (Sonsuz modun arenaları; açılma takvimli)
-        var oldHint = safe.Find("LevelsButton/LockHint");
-        if (oldHint != null) Object.DestroyImmediate(oldHint.gameObject);
-        var levels = Button(Place(Rect(safe, "LevelsButton"), new Vector2(0.5f, 0f), new Vector2(175f, 190f), new Vector2(330f, 150f)), "@worlds", Style.Stone, 38, "icon_world.png");
-        levels.GetComponent<Image>().color = Color.white;
-        var worldsFeature = BuildFeatureButton(levels, Feature.Worlds);
-        var petsFeature = BuildFeatureButton(pets, Feature.Pets);
+        var play = Button(Place(Rect(safe, "PlayButton"), new Vector2(0.5f, 0f), new Vector2(0f, 470f), new Vector2(680f, 210f)), "@play", Style.Gold, 96, "icon_play.png");
+        var chars = Button(Place(Rect(safe, "CharactersButton"), new Vector2(0.5f, 0f), new Vector2(-175f, 285f), new Vector2(330f, 130f)), "@character", Style.Stone, 38, "icon_character.png");
+        // G5: iki kişilik mod (tek telefon, Ata + Ada) — Faz 14: ikinci planda, KARAKTER ile aynı boyda
+        var two = Button(Place(Rect(safe, "TwoPlayerButton"), new Vector2(0.5f, 0f), new Vector2(175f, 285f), new Vector2(330f, 130f)), "@two_player", Style.Stone, 38);
+        var sett = Button(Place(Rect(safe, "SettingsButton"), new Vector2(1f, 1f), new Vector2(-82f, -66f), new Vector2(112f, 112f)), "", Style.Stone, 38, "icon_settings.png");
+        var settIcon = sett.transform.Find("Icon") as RectTransform;
+        if (settIcon != null) Place(settIcon, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(64f, 64f));
+        // Kapsam dışı (Faz 14): PET ve DÜNYALAR düğmeleri kurulmaz; KakScope açılınca eski satır geri gelir
+        Button pets = null, levels = null;
+        FeatureButton worldsFeature = null, petsFeature = null;
+        if (KakScope.Pets)
+        {
+            pets = Button(Place(Rect(safe, "PetsButton"), new Vector2(0.5f, 0f), new Vector2(-175f, 120f), new Vector2(330f, 130f)), "@pet_button", Style.Stone, 38, "icon_pet.png");
+            petsFeature = BuildFeatureButton(pets, Feature.Pets);
+        }
+        else { var t = safe.Find("PetsButton"); if (t != null) Undo.DestroyObjectImmediate(t.gameObject); }
+        if (KakScope.Worlds)
+        {
+            levels = Button(Place(Rect(safe, "LevelsButton"), new Vector2(0.5f, 0f), new Vector2(175f, 120f), new Vector2(330f, 130f)), "@worlds", Style.Stone, 38, "icon_world.png");
+            worldsFeature = BuildFeatureButton(levels, Feature.Worlds);
+        }
+        else { var t = safe.Find("LevelsButton"); if (t != null) Undo.DestroyObjectImmediate(t.gameObject); }
         var charsFeature = BuildFeatureButton(chars, Feature.Characters);
         var wallet = BuildWallet(safe);
 
@@ -265,7 +281,7 @@ public static class KakUiSetup
             mmc.petsFeature = petsFeature;
             mmc.petsPanel = proot.gameObject;
             mmc.dailyPanel = daily;
-            OnClick(pets, mmc.OnPetsClicked);
+            if (pets != null) OnClick(pets, mmc.OnPetsClicked);
             OnClick(closeP, mmc.ClosePetsPanel);
             mmc.settingsPanel = sroot.gameObject;
             mmc.charactersPanel = croot.gameObject;

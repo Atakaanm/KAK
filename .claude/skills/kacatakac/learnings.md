@@ -4,6 +4,11 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-10-04 — Faz 14 Ö2: menü
+
+- Süslü fantastik yazı tipi (Cinzel) piksel oyunla çelişiyordu; logo el yapımı piksel harflerle çizildi (oyunun rampası, kalın gövde, tek gölge). Menüde tek ana eylem (OYNA) + iki ikincil; geri kalan her şey köşeye ya da panele.
+- Bilinçli boş bırakılan sahne referansları `SahneDenetimTests.BilincliBos` listesine gerekçesiyle eklenir.
+
 ## 2026-10-04 — Yön değişikliği: odak ve kalite (kullanıcı: "AI slop, çok fazla")
 
 - Kullanıcı oyunun dağıldığını gördü; kararlar: tek dünya (Zindan) kusursuz, meta = altın + karakter gelişimi, 5 eşya / 3 olay, 2 kişilik ikinci planda. Plan: `prompts/faz-14-odak-kalite.md`.

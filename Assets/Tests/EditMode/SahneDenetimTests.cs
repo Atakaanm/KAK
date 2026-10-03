@@ -19,6 +19,9 @@ public class SahneDenetimTests
         // Faz 2B: bölüm sonu ekranı henüz kurulmadı (kurulunca bunları listeden çıkar)
         "GameOverScreen.titleText", "GameOverScreen.scoreLabel", "GameOverScreen.starOn",
         "GameOverScreen.starOff", "GameOverScreen.nextButton",
+        // Faz 14 odak sürümü: menüde PET/DÜNYALAR düğmeleri ve istatistik satırı yok (KakScope açılınca geri gelir)
+        "MainMenuController.levelsButton", "MainMenuController.petsFeature", "MainMenuController.worldsFeature",
+        "MainMenuController.statsText",
     };
 
     [Test]
