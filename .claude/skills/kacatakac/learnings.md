@@ -4,6 +4,15 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-10-03 — Faz 12 H3: serbest kontrol düzeni
+
+- Kullanıcı KÜÇÜK/ORTA/BÜYÜK'ü yetersiz buldu: istediği yere sürükleme (arenanın üstü dahil), boyut, sağ/sol el. Konumlar **ekran oranıyla** saklanıyor; düzen ekranı da tam kanvas olduğu için oyunda birebir aynı yere geliyor.
+- Hem menüde hem oyunda açılan ekranı sahneye gömmek yerine **Resources prefab'ı** (editör aracıyla KakUiKit kullanarak kurulur) + `Open(herhangi bir UI)`: sahne YAML'ına dokunmadan iki sahnede çalışır.
+- MonoBehaviour sınıfları kendi dosyasında olmalı (aynı dosyadaki ikinci sınıf prefab'a bağlanamaz) → `ControlHandle.cs`.
+- Pasif nesnenin `OnEnable`'ı çalışmaz: aksiyon düğmesi eldivenle görünene kadar düzeni uygulamaz (doğru davranış), test önce etkinleştirmeli.
+- `PointerEventData.pressEventCamera` salt okunur; testte kurmaya gerek yok (Overlay kanvas).
+- Yumuşaklık: serbest düzende dokunma alanı joystick çapının 2,1 katı (parmak kaysa da tutar); paneller (duraklat/oyun sonu) her zaman joystick'in üstünde kalır.
+
 ## 2026-10-03 — Faz 12 H2: Buz ayarları
 
 - "Çarpana kadar büyüsün" isteği tam büyüyen çarpışma alanıyla usta botu 92 → 67 sn düşürdü. Yumuşak çözüm: **görüntü tam büyür, çarpışma alanı yarısı kadar** (`growHitShare` 0,5) — görsel büyüklük > alan bağışlayıcıdır (tersi haksızdır). Büyüdükçe yavaşlama fazla olunca (0,7) yavaş kartoplar sahada birikip yoğunluğu artırdı → 0,82-0,9.
