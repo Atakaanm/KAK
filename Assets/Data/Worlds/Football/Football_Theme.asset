@@ -44,3 +44,5 @@ MonoBehaviour:
   eventSwarmTitleKey: ev_counter
   eventCalmTitleKey: ev_whistle
   redCardEliminates: 1
+  goalChance: 1
+  goalBallSprite: {fileID: 21300000, guid: ff70fbb2749604d91b3600ebc7f3ba72, type: 3}

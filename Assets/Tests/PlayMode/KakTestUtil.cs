@@ -26,6 +26,8 @@ public static class KakTestUtil
         SaveSystem.Data.MarkSeen(IntroStory.SeenKey); // G6: menü testlerini ilk açılış hikâyesi örtmesin
         KakTime.ResetAll();
         GameSettings.Reset();
+        PlayerHealth.DevGodMode = false; // Faz 13: testler arası sızmasın (köprü/ekran görüntüsü açık bırakabilir)
+        DarkWorld.Reset();
         AdService.ResetForTests();
 
         foreach (var gm in Object.FindObjectsByType<GameManager>(FindObjectsInactive.Include, FindObjectsSortMode.None))
