@@ -173,12 +173,12 @@ public class PlayerHealth : MonoBehaviour
 
     IEnumerator InvincibilityBlink(float seconds)
     {
-        float t = 0f;
-        while (t < seconds)
+        // Faz 14: süreye bağlı (eskiden 25 × 0,1 sn sayıyordu; yavaş karelerde dokunulmazlıktan uzun yanıp sönüyordu)
+        float end = Time.time + seconds;
+        while (Time.time < end)
         {
             if (playerSpriteRenderer != null) playerSpriteRenderer.enabled = !playerSpriteRenderer.enabled;
             yield return BlinkWait;
-            t += 0.1f;
         }
         if (playerSpriteRenderer != null) playerSpriteRenderer.enabled = true;
         invincibilityCoroutine = null;
@@ -386,13 +386,12 @@ public class PlayerHealth : MonoBehaviour
     IEnumerator InvincibilityRoutine()
     {
         isInvincible = true;
-        float elapsed = 0f;
-        while (elapsed < invincibilityDuration)
+        float end = Time.time + invincibilityDuration; // süreye bağlı (kare hızından bağımsız)
+        while (Time.time < end)
         {
             if (playerSpriteRenderer != null)
                 playerSpriteRenderer.enabled = !playerSpriteRenderer.enabled;
             yield return BlinkWait;
-            elapsed += 0.1f;
         }
         if (playerSpriteRenderer != null) playerSpriteRenderer.enabled = true;
         isInvincible = false;

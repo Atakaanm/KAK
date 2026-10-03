@@ -127,6 +127,10 @@ public static class KakBridge
             return;
         }
 
+        // Kullanıcı (2026-10-04): "sesi kullanmıyorsan off halinde çalış" — Claude'un Play/test/ekran görüntüsü oturumları
+        // sessiz. Kapatmak için: EditorPrefs "kak_mute_audio" = false ya da Game görünümünde "Mute Audio".
+        if (EditorPrefs.GetBool("kak_mute_audio", true)) EditorUtility.audioMasterMute = true;
+
         EditorApplication.update -= Tick;
         EditorApplication.update += Tick;
         Application.logMessageReceivedThreaded -= OnLog;
