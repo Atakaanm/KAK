@@ -1,6 +1,6 @@
 # KaçAtaKaç — İlerleme ve Durum
 
-> Her iş sonunda güncellenir. En son güncelleme: **2026-10-03**
+> Her iş sonunda güncellenir. En son güncelleme: **2026-10-04**
 
 ## Son durum (özet)
 
@@ -148,7 +148,8 @@ Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 - [x] Ö3 oyun içi sadelik: yakın geçişte "YAKIN!" yazısı yerine küçük altın "+5" + camgöbeği kıvılcım, eşya adı yalnız ilk alışta (`SaveData.seen` "pu_named_<tür>"), oyun sonu istatistik satırı "SÜRE · YAKIN GEÇİŞ" (COMBO kalktı), görevsiz panel 1370 (sıradaki hedef satırı TEKRAR'a değmiyordu). Kademe ve olay afişleri kaldı. Testler 131/131 + 27/27
 - [x] Ö4 görsel tutarlılık: 5 eşya ikonu tek stilde (`tools/kak_gen_icons.py`: 32 px, aynı kontur ve ışık, renk rolüne göre tek hâle), arayüz ikonları yeniden (oynat, karakter, dişli, duraklat, kilit, onay), karakter kartı sade (büyük karakter, açıklama yalnız detayda, dash çubuğu yok), taş türleri bakışta ayırt edilir (`tools/kak_gen_rocks.py`: güdümlü = kırmızı göz, parçalanan = parlayan çatlak, seken = yuvarlak mor taş `keepUpright`). Testler 131/131 + 27/27
 - [x] Ö5 his ve akış: HUD skoru yalnız sayı ("SKOR:" kalktı), ilk oyun ipuçları zaten dash'siz, dokunulmazlık yanıp sönmesi süreye bağlı (yavaş karelerde dokunulmazlıktan uzun sürüyordu), Zindan bot ölçümü usta 91-246 / acemi 135-295 sn (tek dünya, 1-4 dk seans hedefine uygun). Editör sesi kapalı (kullanıcı isteği). Testler 131/131 + 27/27
-- [ ] Ö6 telefon
+- [x] Ö6a mağaza: `Docs/Magaza/listing.md` TR/EN odak kapsamına göre (dash/pet/görev/günlük ödül/Sessizlik yok; 5 eşya, 3 olay, altınla güçlenme, tek telefonda 2 kişi; anahtar kelimede "pet" → "2 kişilik"; sınırlar 76-79/80, 119-124/170, 78-79/100). Görseller: 1 oyun (piksel logo), 2 karakter, 3 güç, 4 kıl payı kaçış (göktaşı "!"), 5 rekor, 6 iki kişilik; eski 4_pet ve 6_gunluk silindi. `GiveAllPowerups` yalnız bölümün eşya listesini verir. Testler 131/131 (+1 atlanan) + 27/27
+- [ ] Ö6b telefon: odak sürümünü iPhone'a kur, kullanıcı "AI slop" gözüyle değerlendirsin
 
 **Faz 13 — yeni dünyalar TAMAM** (`prompts/faz-13-yeni-dunyalar.md`, PR #41-#44). Faz 13 sürümü **iPhone'a kuruldu** (2026-10-03, iOS 26.7). Sıradaki: kullanıcının 4 dünyayı denemesi ve geri bildirimi; sonra boks ringi, kostümler, karakter yetenekleri, online (Faz 11 notları), 120 FPS ayarı, duraklat menüsünden kontrol düzeni.
 - [x] K1 karanlık sistemi (`DarkWorld`: tema `darkness` → karanlık katmanı SpriteMask dışında, `PlayerLight` meşale deliği + yumuşak kenar + hâle + elde meşale, `TorchProgress` Sv1-4 yarıçap 1,7/2,1/2,5/2,9, fiyat 250/600/1200, ipuçları: taş parıltısı, fırlatıcı gözleri (atıştan önce yanar), "!", altın, eşya). Testler 115/115 + 27/27
@@ -175,6 +176,7 @@ Her alt faz sonunda: testler + bot ölçümü + PR + (kullanıcı kablo takınca
 - [x] (2026-10-03) Dış eklentiler kuruldu: Unity resmi eklentisi + skill-creator (kullanım kuralları SKILL.md §6.7). Faz 11 sürümü telefonda kurulu; kullanıcının oyun geri bildirimi bekleniyor.
 
 ### Onay bekleyenler
+- **Faz 14 odak sürümü (telefon):** tek dünya, 5 eşya, 3 olay, piksel logo, sade menü/HUD → kullanıcı "hâlâ AI slop mu?" gözüyle oynasın; mağaza metni ve görselleri (`Docs/Magaza`) de yeni kapsamla.
 - **Faz 11 telefon testi:** tek can başlangıcı, yükseltme hızı, Pranga, 2 kişilik, Buz Gölü kayması → kullanıcının geri bildirimi.
 - **Ücretsiz Apple hesabı:** telefondaki uygulama 7 günde bir yeniden kurulmalı (kablo takılınca `xcrun devicectl device install app`).
 - **Sesler** prosedürel üretildi, Claude dinleyemedi. Kulağa hoş gelmeyen varsa söyle (`tools/kak_gen_audio.py` ile yeniden üretilir).

@@ -4,6 +4,12 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-10-04 — Faz 14 Ö6a: mağaza
+
+- Kapsam daralınca mağaza metni ve görselleri de daralmalı: gizlenen özelliği (pet, görev, günlük ödül, dash) vaat etmek oyuncuyu yanıltır ve inceleme reddine yol açabilir. Her kapsam değişikliğinde `listing.md` + `kak_store_shots.py` birlikte gözden geçirilir.
+- Mağaza çekiminde ölümsüzlüğü **oyun başlar başlamaz** aç (2 kalpli karakter ısınmada 4 sn'de ölebiliyor); dil başına ayrı kurulan sahnelerde (per_lang) bot süresi dile göre farklı geçer, sonuç ekranı için önce ölümsüzlük, sonra `Oyuncuyu Öldür`.
+- Olay anı gibi zamanlamaya duyarlı karelerde `capture <id> --takes 4` + `pick <id> <k>` ile en okunur an seçilir.
+
 ## 2026-10-04 — Faz 14 Ö5 + kullanıcı tercihi: ses kapalı
 
 - **Kullanıcı tercihi:** "sesi kullanmıyorsan off halinde çalış" → köprü açılışta editör sesini kapatır (`EditorPrefs kak_mute_audio`, varsayılan açık-kapalı = kapalı); `invoke KakEditorUtil Mute 0/1`. Claude'un Play/test oturumlarında müzik çalmasın.

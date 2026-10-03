@@ -93,11 +93,11 @@ public static class KakDevMenu
     {
         var player = Object.FindAnyObjectByType<PlayerMovement2D>();
         if (player == null) return;
-        foreach (var guid in AssetDatabase.FindAssets("t:PowerupData", new[] { "Assets/Data/Powerups" }))
-        {
-            var d = AssetDatabase.LoadAssetAtPath<PowerupData>(AssetDatabase.GUIDToAssetPath(guid));
+        // Faz 14: yalnız bu bölümün eşyaları (gizli dünyaların eşyaları değil)
+        var level = LevelManager.Instance != null ? LevelManager.Instance.currentLevel : null;
+        if (level == null || level.availablePowerups == null) return;
+        foreach (var d in level.availablePowerups)
             if (d != null && d.type != PowerupType.Heal && !d.harmful) PowerupPickup.Apply(d, player.gameObject, player.transform.position);
-        }
     }
 
     /// <summary>Kayıttaki oyun sayısını ayarlar (açılma takvimini denemek için; Play'de geçici kayda yazar). Köprü: invoke KakDevMenu SetGamesPlayed 4</summary>

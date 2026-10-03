@@ -55,30 +55,32 @@ BASE = [
 SHOTS = [
     {"id": "1_oyun", "logo": True,
      "cap": ("KAÇ ATA KAÇ", "Taş yağmurundan kaç, rekorunu kır!", "KAÇ ATA KAÇ", "Dodge the endless rock storm!"),
-     "setup": [["invoke", "KakDevMenu", "PlayAs", "Ada"], ["wait", 2], ["invoke", "KakDevMenu", "PlayWithPet", "Firefly"],
-               ["wait", 3], ["menu", "KacAtaKac/Dev/Ölümsüzlük Aç-Kapa"], ["invoke", "KakDevMenu", "SkipTime", "200"], ["invoke", "KakDevMenu", "AddScore", "760"],
+     "setup": [["invoke", "KakDevMenu", "PlayAs", "Ada"],
+               ["wait", 1], ["menu", "KacAtaKac/Dev/Ölümsüzlük Aç-Kapa"], ["wait", 4], ["invoke", "KakDevMenu", "SkipTime", "200"], ["invoke", "KakDevMenu", "AddScore", "760"],
                ["menu", "KacAtaKac/Dev/Test Botunu Başlat (usta)"], ["wait", 6]]},
     {"id": "2_karakter", "per_lang": True,
-     "cap": ("5 kahraman, 5 oyun tarzı", "Altın topla, yenilerinin kilidini aç", "5 heroes, 5 play styles", "Collect gold to unlock new heroes"),
+     "cap": ("5 kahraman, 5 oyun tarzı", "Altın topla, kahramanını güçlendir", "5 heroes, 5 play styles", "Collect gold, power up your hero"),
      "setup": [["invoke", "SceneLoader", "LoadMenu"], ["wait", 2], ["menu", "KacAtaKac/Dev/UI - Karakterleri Aç"], ["wait", 1],
                ["invoke", "KakDevMenu", "PressCharacterCard", "1"], ["wait", 1]]},
     {"id": "3_guc",
-     "cap": ("Güçlendirmeleri kap", "Kalkan, hız, yavaş çekim, hayalet, can", "Grab power-ups", "Shield, speed, slow-mo, ghost, extra life"),
+     "cap": ("Güçlendirmeleri kap", "Kalkan, yavaş çekim, hayalet, can", "Grab power-ups", "Shield, slow-mo, ghost, extra life"),
      "setup": [["invoke", "KakDevMenu", "PlayAs", "Tank"], ["wait", 3], ["menu", "KacAtaKac/Dev/Ölümsüzlük Aç-Kapa"],
                ["invoke", "KakDevMenu", "SkipTime", "160"], ["invoke", "KakDevMenu", "AddScore", "620"], ["menu", "KacAtaKac/Dev/Test Botunu Başlat (usta)"], ["wait", 5],
                ["menu", "KacAtaKac/Dev/Tüm Powerup'ları Ver"], ["wait", 0.6]], "take_gap": 0.4},
-    {"id": "4_pet", "per_lang": True,
-     "cap": ("Petin hep yanında", "Ateşböceği altın çeker, kaplumbağa korur", "Your pet has your back", "Firefly pulls gold, turtle shields you"),
-     "setup": [["invoke", "SceneLoader", "LoadMenu"], ["wait", 2], ["invoke", "KakDevMenu", "OpenPets"], ["wait", 1],
-               ["invoke", "KakDevMenu", "PressPetCard", "0"], ["wait", 1]]},
+    {"id": "4_kacis",
+     "cap": ("Kıl payı kaç", "Göktaşının yerini \"!\" söyler", "Graze the danger", "The \"!\" shows where it lands"),
+     "setup": [["invoke", "KakDevMenu", "PlayAs", "Boy"], ["wait", 3], ["menu", "KacAtaKac/Dev/Ölümsüzlük Aç-Kapa"],
+               ["invoke", "KakDevMenu", "SkipTime", "120"], ["invoke", "KakDevMenu", "AddScore", "540"],
+               ["menu", "KacAtaKac/Dev/Test Botunu Başlat (usta)"], ["wait", 4], ["invoke", "KakDevMenu", "StartEvent", "0"], ["wait", 2.8]], "take_gap": 0.5},
     {"id": "5_rekor", "per_lang": True,
-     "cap": ("Rekorunu kır", "Görevleri bitir, altınları topla", "Beat your best", "Finish missions, earn gold"),
-     "setup": [["invoke", "KakDevMenu", "PlayAs", "Swift"], ["wait", 3], ["invoke", "KakDevMenu", "SetBest", "900"],
+     "cap": ("Rekorunu kır", "Her oyun bir öncekinden uzun", "Beat your best", "Every run lasts a little longer"),
+     "setup": [["invoke", "KakDevMenu", "PlayAs", "Swift"], ["wait", 3], ["invoke", "KakDevMenu", "SetBest", "900"], ["menu", "KacAtaKac/Dev/Ölümsüzlük Aç-Kapa"],
                ["menu", "KacAtaKac/Dev/Test Botunu Başlat (usta)"], ["wait", 38], ["invoke", "KakDevMenu", "AddScore", "1050"],
                ["wait", 1], ["menu", "KacAtaKac/Dev/Oyuncuyu Öldür"], ["wait", 4.5]]},
-    {"id": "6_gunluk", "per_lang": True,
-     "cap": ("Her gün yeni ödül", "7 günlük seriyi tamamla", "Rewards every day", "Complete the 7-day streak"),
-     "setup": [["invoke", "SceneLoader", "LoadMenu"], ["wait", 2], ["invoke", "KakDevMenu", "OpenDaily", "3"], ["wait", 1.5]]},
+    {"id": "6_iki",
+     "cap": ("Tek telefonda 2 kişi", "Ata ve Ada birlikte kaçar", "2 players, 1 phone", "Ata and Ada run together"),
+     "setup": [["invoke", "KakDevMenu", "PlayTwoPlayer"], ["wait", 3], ["menu", "KacAtaKac/Dev/Ölümsüzlük Aç-Kapa"],
+               ["invoke", "KakDevMenu", "SkipTime", "90"], ["invoke", "KakDevMenu", "AddScore", "430"], ["wait", 5]]},
 ]
 
 
@@ -195,12 +197,14 @@ def text_layer(size, text, f, fill_top, fill_bottom, strokes, shadow=None):
 
 
 def logo(w, h, size, text="KAÇ ATA KAÇ"):
-    """Menüdeki logonun benzeri: Cinzel Decorative, altın dolgu, açık iç kontur, yeşil dış kontur, koyu gölge."""
-    f = fit_font("CinzelDecorative-Black.ttf", text, int(w * 0.92), size)
-    s = max(2, f.size // 22)
-    return text_layer((w, h), text, f, GOLD_LIGHT, LOGO_FILL,
-                      [(INK, s * 3), (GREEN, s * 2), ((0xE8, 0xF5, 0xE0), max(1, s // 2))],
-                      shadow=((0x0B, 0x0A, 0x12), s * 2, s * 2))
+    """Faz 14: oyundaki piksel logonun kendisi (Art/UI/logo_pixel.png), tam sayı ölçekle (bulanıklaşmaz), ortalı."""
+    src = Image.open(os.path.join(ROOT, "Assets", "Art", "UI", "logo_pixel.png")).convert("RGBA")
+    base = src.resize((src.width // 8, src.height // 8), Image.NEAREST)   # 1 sanat pikseli
+    k = max(1, min(int(w * 0.94) // base.width, h // base.height))
+    big = base.resize((base.width * k, base.height * k), Image.NEAREST)
+    out = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    out.alpha_composite(big, ((w - big.width) // 2, (h - big.height) // 2))
+    return out
 
 
 def caption_band(w, h, top_color, head, sub, use_logo, scale):
@@ -314,7 +318,6 @@ def feature():
             drop_shadow(c, spr, (x, y), ellipse=(x + (bx0 + bx1) // 2, foot - 2, 70, 11), alpha=150)
             placed.append((x + bx0, y + by0, x + bx1, y + by1))
         assert placed[1][2] <= W - 24, "Ata kenara taştı"
-        drop_shadow(c, load_sprite("Assets/Art/Pets/firefly_0.png", 5), (placed[0][0] + 40, placed[0][1] - 96))
         # arkadan (sol üst) gelen taşlar, izleriyle; yüzlerden uzak
         for sc, pos, st in ((4, (596, 22), (26, 14)), (3, (772, 104), (22, 12)), (5, (880, 12), (30, 16))):
             trail(c, rock(sc), pos, st)
