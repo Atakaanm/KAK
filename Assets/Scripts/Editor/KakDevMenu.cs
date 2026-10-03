@@ -245,6 +245,19 @@ public static class KakDevMenu
     /// <summary>G5: iki kişilik oyunu başlatır. Köprü: invoke KakDevMenu PlayTwoPlayer</summary>
     public static void PlayTwoPlayer() { GameSettings.TwoPlayer = true; SceneLoader.LoadGame(); }
 
+    /// <summary>Faz 13 F2: gol fırsatı topunu hemen düşürür. Köprü: invoke KakDevMenu GoalChanceNow</summary>
+    public static void GoalChanceNow() { var g = Object.FindAnyObjectByType<GoalChance>(); if (g != null) g.SpawnNow(); }
+
+    /// <summary>Faz 13 F2: oyuncuyu topun üstüne ışınlar (sürmeyi görmek için). Köprü: invoke KakDevMenu TakeBall</summary>
+    public static void TakeBall()
+    {
+        var g = Object.FindAnyObjectByType<GoalChance>();
+        var ph = Object.FindAnyObjectByType<PlayerHealth>();
+        if (g == null || ph == null) return;
+        var rb = ph.GetComponent<Rigidbody2D>();
+        rb.position = g.BallPosition; ph.transform.position = g.BallPosition;
+    }
+
     /// <summary>Faz 13 K1: açık oyunu karartır (meşale denemesi). Köprü: invoke KakDevMenu DarkTest 0.93</summary>
     public static void DarkTest(string darkness)
     {

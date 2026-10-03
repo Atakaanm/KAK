@@ -106,6 +106,8 @@ public static class KakFootballSetup
         theme.eventSwarmData = ball; theme.eventSwarmTitleKey = "ev_counter"; // takip eden sarı kart sürüsü kaçılmaz olurdu
         theme.eventCalmTitleKey = "ev_whistle";
         theme.redCardEliminates = true;
+        theme.goalChance = true;          // F2: ara sıra serbest top → üst kaleye GOL!
+        theme.goalBallSprite = Art("ball");
         EditorUtility.SetDirty(theme);
 
         // ── Seviye ──
@@ -160,6 +162,7 @@ public static class KakFootballSetup
         SpriteImport(PreviewSprite, 100f, false);
         SpriteImport("Assets/Resources/StatusYellow.png", 100f, true);
         SpriteImport("Assets/Resources/StatusRed.png", 100f, true);
+        SpriteImport("Assets/Resources/BallMarker.png", KakArtImportRules.ArtPixelPPU, true);
         var playerRef = AssetImporter.GetAtPath("Assets/Sprites/Player/South/south.png") as TextureImporter;
         foreach (var d in Dirs)
         {

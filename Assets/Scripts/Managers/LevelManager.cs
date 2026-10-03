@@ -418,6 +418,7 @@ public class LevelManager : MonoBehaviour
         var events = FindAnyObjectByType<EndlessEventManager>();
         if (events != null) events.ApplyTheme(t); // Faz 12 H2: Sarkıt Yağmuru / Dev Kartopu
         DarkWorld.Apply(t); // Faz 13 K1: karanlık + meşale (tema karanlık değilse etkisiz)
+        if (t.goalChance && (currentLevel == null || currentLevel.levelType == LevelType.Endless)) GoalChance.Create(t.goalBallSprite); // Faz 13 F2: gol fırsatı
         ThemeApplied?.Invoke(t);
         KakLog.Info("[LevelManager] Tema: " + t.themeId);
     }

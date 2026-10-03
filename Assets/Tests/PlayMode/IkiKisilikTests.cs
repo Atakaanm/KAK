@@ -98,7 +98,7 @@ public class IkiKisilikTests
             }
             KakTestUtil.KillPlayer(ph);
             yield return new WaitForSeconds(0.5f);
-            Assert.IsTrue(ph.IsDead);
+            Assert.IsTrue(ph.IsDead, $"Öldürülen oyuncu düşmedi: {Durum(ph)} ölümsüzlük={PlayerHealth.DevGodMode} hp={ph.CurrentHealth}");
             var sr = ph.playerSpriteRenderer;
             Assert.IsTrue(sr == null || !sr.enabled || sr.color.a < 0.05f, "Düşen oyuncu sahada görünüyor: " + Durum(ph));
             foreach (var c in ph.GetComponentsInChildren<Collider2D>()) Assert.IsFalse(c.enabled, "Düşen oyuncunun çarpışması açık: " + c.name);

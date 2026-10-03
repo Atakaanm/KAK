@@ -60,4 +60,7 @@ public class WorldTheme : ScriptableObject
     public string eventCalmTitleKey = "";
     [Tooltip("Faz 13 F1: kırmızı kart (ve 2 sarı) oyundan atar")]
     public bool redCardEliminates = false;
+    [Tooltip("Faz 13 F2: gol fırsatı — ara sıra serbest top, üst kaleye götür")]
+    public bool goalChance = false;
+    public Sprite goalBallSprite;
 }

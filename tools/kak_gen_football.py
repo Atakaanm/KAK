@@ -227,10 +227,20 @@ def bottle():
     for x in range(2, 8): px[x, 12] = C("tehlike") if x > 2 else WHITE  # etiket
     return outline(img)
 
+def ball_marker():
+    # gol fırsatı topunun üstünde zıplayan altın ok (tehlikeli toplardan ayırt edilsin)
+    img = Image.new("RGBA", (11, 9), (0, 0, 0, 0)); px = img.load()
+    rows = ["XXXXXXXXX", ".XXXXXXX.", "..XXXXX..", "...XXX...", "....X...."]
+    for j, row in enumerate(rows):
+        for i, ch in enumerate(row):
+            if ch == "X": px[1 + i, 1 + j] = GOLD_L if j < 2 else GOLD
+    return outline(img)
+
 def projectiles():
     d = os.path.join(ROOT, "Assets", "Art", "Projectiles")
     ball().save(os.path.join(d, "ball.png"))
     bottle().save(os.path.join(d, "bottle.png"))
+    ball_marker().save(os.path.join(ROOT, "Assets", "Resources", "BallMarker.png"))
     card(GOLD_L, GOLD).save(os.path.join(d, "card_yellow.png"))
     card(RED, RED_D).save(os.path.join(d, "card_red.png"))
     card(GOLD_L, GOLD).save(os.path.join(ROOT, "Assets", "Resources", "StatusYellow.png"))  # baş üstü kart simgesi

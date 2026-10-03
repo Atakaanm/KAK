@@ -4,6 +4,13 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-10-03 — Faz 13 F2: gol fırsatı
+
+- Toplanacak top, fırlatılan toplarla aynı görünüyordu (iyi/kötü ayırt edilemez) → altın hâle + zıplayan altın ok. **Kural:** toplanacak bir şey tehlikeli bir mermiyle aynı sprite'ı kullanıyorsa mutlaka ayrı bir işaret (renk rolü: altın = ödül).
+- Vurulunca düşen top aynı karede tekrar alınıyordu → itme + 0,8 sn alma bekleme.
+- Loc anahtarı çakışması (`goal` Faz 2B'de vardı) statik kurucuda istisna atıyor ve tüm testleri düşürüyor: yeni anahtar eklerken grep.
+- Test sızıntısı: `ResetWorld` artık `DevGodMode` ve `DarkWorld` statiklerini de sıfırlıyor.
+
 ## 2026-10-03 — Faz 13 F1: Futbol Arenası
 
 - Kullanıcı çalışma sırasında kuralı netleştirdi: "tehlike durumu yukarıdan şişe gelsin, iki sarı kart oyunu kaybettirsin, sarı kartlar karakteri bir yere kadar takip etsin, kırmızılar daha yavaş ama tek atsın". Kullanıcı açıkça sert kural isteyince uygulanır; yumuşaklık **uyarıyla** sağlanır (1 sarıdayken baş üstünde kart, unutulma süresi, kırmızı yavaş ve seyrek, takip süreli).
