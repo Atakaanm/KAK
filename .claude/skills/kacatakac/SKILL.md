@@ -20,13 +20,13 @@ Bu skill yaşayan bir belgedir. Her oturumda öğrenilenler buraya eklenir.
 
 **KaçAtaKaç**, mobil (dikey/yatay uyumlu) **2.5D arcade hayatta kalma** oyunu.
 Oyuncu kapalı bir arenada; 4 köşedeki fırlatıcı (spawner) oyuncuya doğru taş atar.
-Amaç: kaç, hayatta kal, skoru büyüt. Skor zamanla artar (saniyede 10 puan × zorluk çarpanı).
+Amaç: kaç, hayatta kal, skoru büyüt. Skor zamanla artar (saniyede 10 puan × kademe skor çarpanı × yakın geçiş/hayatta kalma çarpanı, en fazla ×3).
 
-- **Kontrol:** Sanal joystick (mobil), WASD/ok tuşları (editör).
-- **Can:** 3 kalp, vurulunca kırmızı flaş + kısa ölümsüzlük (0.35 sn).
-- **Güçlendirmeler (5):** Heart (+1 can), Shield (1 vuruş bloklar), Speed (x1.5 hız, 6 sn), SloMo (zaman x0.4, 4 sn — oyuncu normal hızda kalır), Ghost (mermiler içinden geçer, 5 sn).
-- **Modlar:** `Endless` (aktif, skor arttıkça 6 kademeli zorluk, 30-45 sn'de bir olay) ve `Stage` (bölüm: hayatta kal / gol; `LevelModeController`, Faz 2B altyapısı hazır, arayüzü bağlanmadı).
-- **Hedef vizyon:** Sonsuz Mod (sadece taştan kaçış) + Bölüm Modu dünyaları: **Buz** (kaygan, anında duramazsın), **Futbol** (ayağında top, tek tuşla gol; futbolcular sarı/kırmızı kart atar), **Karanlık** (sınırlı görüş, parlayan mermiler) ve daha fazlası. Görsel hedef: "basit ama süper". Ayrıntı: [roadmap.md](roadmap.md).
+- **Kontrol:** Sanal joystick (mobil, boyutu ayarlardan), WASD/ok tuşları (editör). Dash kodu var ama hiçbir karakterde açık değil (ileride karakter yeteneği).
+- **Can:** **tek kalple başlar** (`PlayerData.startHealth`), altınla kalıcı yükseltilir (`maxHealth` üst sınır; Ata 1→3, Tank 2→5). Vurulunca kırmızı flaş + 0,35 sn ölümsüzlük. Dolu canla kalp = o oyunluk +1 kalp.
+- **Güçlendirmeler:** Heart, Shield (1 vuruş), Speed (×1,25, 5 sn), SloMo (zaman ×0,4, 4 sn), Ghost (5 sn); kötü eşya **Pranga** (4 sn ×0,6 hız); Buz Gölü'nde Eldiven, Buz Ayakkabısı, Ateş. Süreler karakterin Güç seviyesiyle uzar.
+- **Modlar:** `Endless` (aktif; **süreye bağlı** 6 kademe 0/30/75/150/240/360 sn, 30-45 sn'de bir olay), **2 kişilik yerel mod**, dünyalar **Zindan** + **Buz Gölü** (DÜNYALAR paneli). `Stage` (bölüm: hayatta kal / gol; `LevelModeController`, Faz 2B altyapısı hazır, arayüzü bağlanmadı).
+- **Hedef vizyon:** Sonsuz Mod (sadece taştan kaçış) + dünyalar: Buz (yapıldı), **Futbol** (ayağında top, tek tuşla gol; futbolcular sarı/kırmızı kart atar), **Boks ringi**, **Karanlık** (sınırlı görüş, parlayan mermiler); kostümler, karakter yetenekleri, online battle royale (`prompts/faz-11-oyuncu-geri-bildirimi.md` notları). Görsel hedef: "basit ama süper". Ayrıntı: [roadmap.md](roadmap.md).
 - **Güncel öncelik: Sonsuz Mod.** Bölümler sonra ve büyük ölçüde reskin + ayarla gelecek. Sonsuz için yazılan sistemler (mermi etkileri, durum efektleri, spawn noktaları, karo tabanlı arena) genel kurulmalı ki bölümlerde yeniden kullanılsın.
 - **Hedef platform:** Google Play / App Store. Monetizasyon/bağlılık planı (Faz 3c): altın toplama, istatistikli ve kilitli karakterler (`PlayerData.isLocked/unlockPrice`), pet'ler, adım adım açılan özellikler (`SaveData.seen`).
 
@@ -124,9 +124,9 @@ Game (oyun sahnesi)
 
 **Önemli singleton'lar:** `GameManager`, `LevelManager`, `DifficultyManager`, `ProjectilePool`, `AudioManager`, `WorldPopup`, `LevelModeController` — `Instance` statik alanı ile. Sahneye özel olanlar OnDestroy'da temizlenir.
 
-**Zorluk nasıl uygulanıyor (DifficultyManager):** skor eşiğine göre stage seçer → her spawner için `shootInterval = orijinal × shootIntervalMultiplier`, `activeSpawnerCount` kadarını aktif eder; mermi hız/boyut, oyuncu hızı ve skor hızı çarpanlarını getter'larla verir (`CornerShooter`, `PlayerMovement2D`, `ScoreManager` okur).
+**Zorluk nasıl uygulanıyor (DifficultyManager):** geçen süreye göre (`minSeconds`, `ScoreManager.ElapsedSeconds`) stage seçer → her spawner için `shootInterval = orijinal × shootIntervalMultiplier`, `activeSpawnerCount` kadarını aktif eder; mermi hız/boyut, oyuncu hızı ve skor hızı çarpanlarını getter'larla verir (`CornerShooter`, `PlayerMovement2D`, `ScoreManager` okur).
 
-**Veri dosyaları (`Assets/Data/`):** `Endless_Level1_LevelData` (tek aktif bölüm), `Boy_/Girl_PlayerData`, `Dungeon_ArenaData`, `RockThrower_SpawnerData` (4 köşede de aynı), `Projectiles/*` (7 taş türü), `Stage1..6` zorluk kademeleri, `Powerups/*Data`.
+**Veri dosyaları (`Assets/Data/`):** `Endless_Level1_LevelData` (Zindan) + `Worlds/Ice/Endless_Ice_LevelData` (Buz Gölü; dünya listesi `Resources/EndlessWorlds`), `Boy_PlayerData` (Ata) + `Characters/*_PlayerData` (Ada, Çevik, Tank, Şanslı; katalog `Resources/CharacterCatalog`), `Pets/*`, `Dungeon_ArenaData`, `RockThrower_SpawnerData` (4 köşede de aynı), `Rock_ProjectileData` + `Projectiles/*` (7 taş türü), `Stage1..6` zorluk kademeleri, `Powerups/*Data` (9 eşya). `Girl_PlayerData` eski (Faz 3c öncesi), kullanılmıyor.
 ⚠ Bazı veri dosyalarında görsel alanları boş (`Dungeon_ArenaData.arenaSprite`, spawner sprite'ları). Kod bu durumda **sahnedeki mevcut ayarları** kullanıyor. Sahnede bilinçli boş bırakılan alanlar `SahneDenetimTests.BilincliBos` listesinde.
 
 ## 4. Editör araçları (üst menü "KacAtaKac")

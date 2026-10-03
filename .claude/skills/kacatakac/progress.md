@@ -1,12 +1,12 @@
 # KaçAtaKaç — İlerleme ve Durum
 
-> Her iş sonunda güncellenir. En son güncelleme: **2026-09-26**
+> Her iş sonunda güncellenir. En son güncelleme: **2026-10-03**
 
 ## Son durum (özet)
 
-Oynanabilir bir **Endless** çekirdek hazır: hareket, 8 yönlü animasyon, 4 köşe fırlatıcı, mermi havuzu, can/kalp arayüzü, 6 kademeli zorluk, 5 güçlendirme, skor ve en iyi skor, duraklatma, ana menü, ses ayarları, sanal joystick.
-Son commit'ler (Temmuz 2026): HD ana menü, altın buton, premium fontlar (Cinzel Decorative, Nunito), joystick.
-**Commit edilmemiş iş:** `Assets/Scenes/SampleScene.unity` üzerinde büyük bir değişiklik var (~1000 satır). Kullanıcının Editor'de süren işi, dokunmadan önce sor.
+**Sonsuz Mod, telefonda oynanan sürüm (Faz 11 sonrası):** Zindan + Buz Gölü dünyaları, 7 taş türü + 5 kartopu türü, süreye bağlı 6 kademe, olaylar, yakın geçiş skor çarpanı, tek canla başlayıp altınla güçlenme (5 karakter, karakter detay ekranı, pet seviyeleri), görevler, günlük ödül, adım adım açılma, 2 kişilik yerel mod, hikâye girişi, TR/EN, prosedürel sesler. Reklam altyapısı var ama kapalı.
+Build: iPhone 15 Pro Max'e kurulu (ücretsiz Apple hesabı → 7 günde bir yeniden kurulum), iOS simülatör ve Android test APK doğrulandı. Testler: PlayMode 95/95 (+1 atlanan denge testi), EditMode 27/27.
+Bekleyen: kullanıcının telefonda oynayıp geri bildirim vermesi (tek can zorluğu, yükseltme hızı, buz kayması).
 
 ## Tamamlananlar
 
@@ -14,9 +14,9 @@ Son commit'ler (Temmuz 2026): HD ana menü, altın buton, premium fontlar (Cinze
 - [x] 8 yönlü oyuncu hareketi + animasyonu, 8 yönlü spawner idle/saldırı animasyonu
 - [x] ProjectilePool (nesne havuzu), arena sınırı dışında havuza iade
 - [x] Can sistemi, vuruş flaşı, ölümsüzlük süresi, kalp kaybetme/kazanma animasyonları
-- [x] Endless zorluk: Başlangıç(0) → Kolay(50) → Orta(150) → Zor(350) → Cehennem(600) → İmkansız(1000)
-- [x] Güçlendirmeler: Heart, Shield, Speed, SloMo, Ghost (ağırlıklı rastgele çıkma)
-- [x] Skor + BestScore (PlayerPrefs), Game Over paneli
+- [x] Endless zorluk süreye bağlı (G2): Başlangıç 0 → Kolay 30 → Orta 75 → Zor 150 → Cehennem 240 → İmkansız 360 sn
+- [x] Güçlendirmeler: Heart, Shield, Speed, SloMo, Ghost + Pranga + buz eşyaları (ağırlıklı rastgele çıkma)
+- [x] Skor + rekor (SaveSystem; dünya başına ve 2 kişilik ayrı), Game Over paneli
 - [x] Duraklatma (uygulama arka plana gidince otomatik)
 - [x] Ana menü sahnesi + AudioManager + ayarlar paneli (kod)
 - [x] Mobil sanal joystick
@@ -25,26 +25,20 @@ Son commit'ler (Temmuz 2026): HD ana menü, altın buton, premium fontlar (Cinze
 
 ## Yarım kalanlar (kodu var, oyuna bağlı değil)
 
-- [ ] **Stage (dalga) modu:** `WaveManager` + `WaveData` hazır, ama hiçbir LevelData Stage tipinde değil. `HandleAllWavesComplete` → `LevelComplete()` çağrısı yorumda.
-- [ ] **Karakter seçimi:** `Girl_PlayerData` var, `MainMenuController.charactersPanel` var; menü sahnesinde sadece **PlayButton** bulunuyor (Characters/Settings/Leaderboard butonları sahnede yok).
-- [ ] **Yetenekler (AbilityData: Dash/Shield/Shockwave):** veri sınıfı var, hiçbir kod kullanmıyor.
-- [ ] **Ekipman (EquipmentData: Head/Body/Feet):** veri sınıfı var, kullanılmıyor.
-- [ ] **LevelData alanları kullanılmıyor:** `targetScore`, `timeLimit`, `hasKey`, `hasCoins`, `hasBoss`, `isLocked/unlockPrice`.
-- [ ] **Kullanılmayan diğerleri:** `PlayerData.powerupSpawnRateMultiplier`, `DifficultyStageData.availableProjectiles` (kademeye göre farklı mermi), `ScoreManager.onMilestoneReached`, `DifficultyManager.onStageChanged` (UI'a bağlı değil).
-- [ ] Ses klipleri AudioManager'a atanmış mı? Kontrol edilmedi.
+- [ ] **Bölüm (Stage) modu (Faz 2B):** `LevelModeController`, `WorldData`/`WorldCatalog` (yıldızlı bölümler) kodda var; sahne/arayüz bağlı değil. (Eski `WaveManager` D2'de silindi.)
+- [ ] **Yetenekler (`AbilityData`) ve ekipman (`EquipmentData`):** `PlayerData.activeAbility/equippedHead/Body/Feet` alanları var, kod kullanmıyor → kostüm sistemi ve karakter yetenekleri gelince.
 
-## Yol haritası (README + kod ipuçları)
+## Yol haritası (2026-10-03)
 
-1. Kritik hataları düzelt (aşağıda, özellikle Retry)
-2. Karakter seçim ekranı (Boy/Girl)
-3. Mağaza / kilit açma sistemi (para birimi: `hasCoins` alanı ipucu)
-4. Yeni arena temaları (zemin sürtünmesi hazır: buz, bataklık)
-5. Yeni mermi tipleri (kademeye özel mermiler)
-6. Yetenek butonu (Dash vb.), ekipman
-7. Stage modu / boss
-8. Mobil build ayarları (Android/iOS), Google Play / App Store yayını
+1. Telefon geri bildirimiyle ince ayar (tek can, yükseltme fiyatları, buz hissi)
+2. Mağazaya çıkış: hesaplar, keystore, reklamın açılması kararı (`Docs/Yayin-Kontrol-Listesi.md`, yayin.md)
+3. Yeni dünyalar: Futbol, Boks ringi, Karanlık (Buz'daki `EndlessWorlds` + tema deseniyle)
+4. Kostümler (karakter detay ekranındaki "yakında" yuvası) ve karakterlere özel yetenekler
+5. Online battle royale (10 kişi; Unity Multiplayer Services araştırması)
 
 ## Aktif faz
+
+**Faz 11 (telefon geri bildirimi) tamamlandı (2026-09-27, PR #26-#32):** ayrıntı aşağıda "Sıradaki adım". Aşağıdaki paragraflar tarihçe.
 
 **Yayın hazırlığı tamamlandı (yayin.md, 2026-09-26):** Y1-Y3 (Play/App Store gereksinimleri, API 36, iPhone-only, gizlilik, reklam altyapısı kapalı), Y4 kız karakter ADA (40 kare, bedava, panel 3×2), Y5 mağaza görselleri + metinleri (`Docs/Magaza`). Kalanların hepsi kullanıcı adımı: `Docs/Yayin-Kontrol-Listesi.md` (modüller, Xcode 26, keystore, konsol hesapları, 12 test kullanıcısı, build). Onay bekleyenler: ADA adı geçici, destek e-postası, hedef kitle (13+ önerisi), reklamın açılıp açılmayacağı.
 **Faz 3c tamamlandı (2026-09-26):** altın, adım adım açılma, karakterler, görevler, petler, günlük ödül, cila (`3c.md`). Denetim D0-D6 da tamam (`denetim.md`). Sıradaki büyük iş: kullanıcının cihaz testi + denge geri bildirimi, sonra Faz 2B'nin bitirilmesi (bölüm seçimi) → Buz / Futbol / Karanlık dünyaları.
@@ -160,12 +154,11 @@ Her alt faz sonunda: testler + bot ölçümü + PR + (kullanıcı kablo takınca
 - [x] (2026-10-03) Dış eklentiler kuruldu: Unity resmi eklentisi + skill-creator (kullanım kuralları SKILL.md §6.7). Faz 11 sürümü telefonda kurulu; kullanıcının oyun geri bildirimi bekleniyor.
 
 ### Onay bekleyenler
-- **Android Build Support modülü** kurulmalı (Unity Hub → 6000.3.8f1 → Add modules). Sonra "Android build al" → cihazda test.
+- **Faz 11 telefon testi:** tek can başlangıcı, yükseltme hızı, Pranga, 2 kişilik, Buz Gölü kayması → kullanıcının geri bildirimi.
+- **Ücretsiz Apple hesabı:** telefondaki uygulama 7 günde bir yeniden kurulmalı (kablo takılınca `xcrun devicectl device install app`).
 - **Sesler** prosedürel üretildi, Claude dinleyemedi. Kulağa hoş gelmeyen varsa söyle (`tools/kak_gen_audio.py` ile yeniden üretilir).
 - **Denge hissi:** telefonda birkaç oyun oyna → "çok zor / çok kolay / tam" + hangi taş/olay haksız hissettirdi. Değerler `KakEndlessSetup.SetStage` ve `KakContentSetup` içinde tek yerde.
 - Palet: Endesga 32 varsayımla uygulandı (kullanıcı değiştirmek isterse: `KakPalette` + `tools/kak_palette.py` + `kak_art_pass.py`).
-- Sanat stili: piksel sanatı (32 px, PPU 32). Varsayım: evet, devam.
-- Hedef platform ve test cihazı (Android/iOS?). Faz 10'a kadar engel değil.
 - Kullanıcı tüm izinleri verdi (2026-09-25): faz dallarına push, PR birleştirme, onaysız plan başlatma, test için Unity'yi kullanma.
 - **ADA** adı geçici (kullanıcı değiştirebilir: `Loc.cs` `char_Ada`).
 - **Destek e-postası** gizlilik politikasına ve mağazaya (kişisel e-posta kendiliğinden yazılmadı).
@@ -177,15 +170,15 @@ Her alt faz sonunda: testler + bot ölçümü + PR + (kullanıcı kablo takınca
 
 - ✅ **Item'lar ekranın yanlış yerinde çıkıyor** — Faz 1: asıl sorun powerup ikonlarının opak siyah kare zemini (5 ikonun hepsi RGB) + Retry sonrası bozuk yönetici yapısı. Konumlar artık `PlayableWorldRect` içinde (42/42 test). (kullanıcı bildirdi, 2026-09-25). Neden henüz bulunamadı. Hesaplanan spawn alanı kağıt üstünde arenanın içinde görünüyor, Play modunda teşhis gerekli (Faz 1.2).
 - ✅ (Faz 1) **Fizik duvarları görselle hizasız.** Sprite dış kenarından 0.15 birim içerideler, görseldeki iç duvar yaklaşık 0.6 birim içeride. Karakter ve mermiler duvar çiziminin üstüne girebiliyor.
-- 🟠 **Görsel kalite:** karışık piksel yoğunluğu (karakter 48px/ölçek 0.8, arena 2048px/ölçek 0.4, spawner ölçek 4), sprite'lar Bilinear (bulanık), arena görselinin sağ alt köşesinde yapay zeka filigranı (✦), URP Universal Renderer (2D Light çalışmaz). Faz 3'te çözülecek.
-- 🟠 Menü sahnesinde sadece Oyna butonu var. Faz 4.
-- 🟠 **Arena ekranın sadece ~%46'sını kaplıyor** (kare arena, 9:19.5 telefon). Üstte ve altta ~%54 ölü alan var. Kullanıcı bunu en büyük görsel sorun olarak görüyor. Çözüm Faz 1.5 (onaylı kompozisyon): üstte HUD bandı (duvar yüzü), ortada kare arena (ekran enine ölçekli), altta koridor ve kontrol alanı (sol joystick, sağ aksiyon).
+- ✅ (Faz 1.5 / 3) **Görsel kalite:** tek piksel yoğunluğu (0,024 birim/piksel), Point filtre import kuralları, filigran temizlendi. 2D Light hâlâ yok (Universal Renderer; Karanlık dünyada karar). Eski kayıt: karışık piksel yoğunluğu (karakter 48px/ölçek 0.8, arena 2048px/ölçek 0.4, spawner ölçek 4), sprite'lar Bilinear (bulanık), arena görselinin sağ alt köşesinde yapay zeka filigranı (✦), URP Universal Renderer (2D Light çalışmaz). Faz 3'te çözülecek.
+- ✅ (Faz 4) Menü sahnesinde sadece Oyna butonu var.
+- ✅ (Faz 1.5) **Arena ekranın sadece ~%46'sını kaplıyor** (kare arena, 9:19.5 telefon). Üstte ve altta ~%54 ölü alan var. Kullanıcı bunu en büyük görsel sorun olarak görüyor. Çözüm Faz 1.5 (onaylı kompozisyon): üstte HUD bandı (duvar yüzü), ortada kare arena (ekran enine ölçekli), altta koridor ve kontrol alanı (sol joystick, sağ aksiyon).
 
 > Durum: 🔴 kritik · 🟠 orta · 🟡 düşük · ✅ düzeltildi. "Doğrulanmadı" = kod okunarak bulundu, Play modunda test edilmedi.
 
 - ✅ (Faz 1) **Retry / menüye dönüp tekrar oynama bozuk (✔ testle doğrulandı: `Retry_IkinciOyunTamamenCalisir`, `GameOver_Menu_TekrarOyna_Calisir`).** `GameManager` `DontDestroyOnLoad` kullanıyor ve `ScoreManager` aynı objede. Sahne yeniden yüklenince eski GameManager `isGameOver = true` ile yaşamaya devam ediyor, yenisi yok ediliyor. Sonuçlar: skor artmaz, ikinci ölümde Game Over açılmaz, powerup çıkmaz, `gameOverPanel/scoreText` referansları ölü. Üstelik `LevelManager/DifficultyManager` sahnede hazır değil, onları GameManager.Awake yaratıyordu, yani LevelData hiç uygulanmaz. **Öneri:** GameManager'dan `DontDestroyOnLoad`'ı kaldır (sahneye özel olsun), `LevelManager` ve `DifficultyManager`'ı sahneye kalıcı obje olarak ekle.
 - ✅ (Faz 1) **SampleScene doğrudan Play'e basılınca LevelData yok** (✔ testle doğrulandı). Runtime'da yaratılan LevelManager'ın `defaultLevel`'ı boş, bu yüzden "HİÇBİR LEVEL DATA" hatası verir. Sadece menüden girince çalışır. **Öneri:** LevelManager sahneye eklenip `defaultLevel = Endless_Level1_LevelData` atanmalı.
-- 🟠 **Joystick scripti `JoystickHandle` üzerinde** (dokümana göre `JoystickBG`'de olmalı). Dokunma alanı sadece küçük topla sınırlı olabilir. Doğrulanmadı.
+- ✅ (Faz 1.5, bileşen artık JoystickZone'da) **Joystick scripti `JoystickHandle` üzerinde** (dokümana göre `JoystickBG`'de olmalı). Dokunma alanı sadece küçük topla sınırlı olabilir. Doğrulanmadı.
 - ✅ (Faz 1) `SceneLoader` `timeScale`'i sıfırlıyor ama `fixedDeltaTime`'ı sıfırlamıyor. SloMo sırasında ölünürse sonraki oyunda fizik adımı 0.008 kalır. `PauseManager` ise `fixedDeltaTime = 0` yapıyor.
 - ✅ (Faz 1) Ghost ve Speed süreleri `WaitForSeconds` kullanıyor, bu yüzden SloMo sırasında uzuyorlar.
 - ✅ (Faz 1) `DifficultyManager` aktif spawner'ları dizideki sıraya göre seçiyor, bu sıra da `FindObjectsByType(None)` ile geliyor ve garanti değil. Hangi köşelerin aktif olacağı öngörülemez.
@@ -196,33 +189,43 @@ Her alt faz sonunda: testler + bot ölçümü + PR + (kullanıcı kablo takınca
 
 - ✅ (Faz 1) **`Wall` etiketi projede tanımlı değil** (✔ test buldu): `PowerupSpawner.SpawnRandomPowerup` içindeki `CompareTag("Wall")` her çağrıldığında hata logluyor.
 - ℹ️ ~~HUD oranlara göre bozuk~~ — yanlış alarm: ekran görüntüsü aracının zamanlama hatasıydı (düzeltildi). HUD yine de Faz 1.5'te yeniden kurulacak.
-- 🟠 **Karakter çok küçük:** arena genişliğinin yaklaşık 1/20'si, taşlardan küçük (ekran görüntüsü). Faz 3'te ölçek standardı.
-- 🟠 **Taşlar zeminle karışıyor** (renk testi): gri tonlama ve bulanık görünümde neredeyse kayboluyor. En belirgin öğe sarı joystick. Faz 3'te renk rolleri.
+- ✅ (Faz 3, tek piksel yoğunluğu; taş 1,0 → 0,67 birim) **Karakter çok küçük:** arena genişliğinin yaklaşık 1/20'si, taşlardan küçük (ekran görüntüsü).
+- ✅ (Faz 3, sıcak taş + kontur + renk rolleri) **Taşlar zeminle karışıyor** (renk testi): gri tonlama ve bulanık görünümde neredeyse kayboluyor. En belirgin öğe sarı joystick. Faz 3'te renk rolleri.
 - ✅ (Faz 1) Ölüm anında invincibility coroutine'i timeScale=0'da donarsa oyuncu sprite'ı gizli kalabilir (ekran görüntüsünde Game Over'da oyuncu görünmedi, doğrulanacak).
 
-- 🟠 **Arka plan Unity varsayılan skybox'ı** (üstte mavi, altta gri). Hem çirkin hem gereksiz render maliyeti. Faz 1.5.
+- ✅ (Faz 1.5, DungeonFrame) **Arka plan Unity varsayılan skybox'ı** (üstte mavi, altta gri). Hem çirkin hem gereksiz render maliyeti. Faz 1.5.
 - 🟡 Sahne ölçekleri tutarsız (TopRightSpawner ölçek 1 + Visual 4, diğerleri ölçek 4 + Visual 1; Player 0.8 + Visual 3). Faz 3 ölçek temizliği.
-- 🟡 Powerup geri bildirim yazısı eski `TextMesh` + her seferinde `new GameObject`. Faz 3 (TMP + havuz).
+- ✅ (Faz 5, `WorldPopup` havuzu) Powerup geri bildirim yazısı eski `TextMesh` + her seferinde `new GameObject`.
 - 🟡 SloMo sırasında ölünce oyuncu kırmızı tonda kalıyor (ölüm göstergesi olarak bırakıldı, Faz 3 ölüm efektiyle değişecek).
 
-## Denge değerleri (referans)
+## Denge değerleri (referans, 2026-10-03)
+
+> Tek kaynak: `KakEndlessSetup.SetupStages` (kademeler), `KakContentSetup` (taş dağılımı), `KakBalance` (güçlendirmeler, Pranga), `KakMetaSetup` (karakterler), `CharacterProgress` (yükseltme fiyatları), `KakIceSetup` (Buz Gölü).
 
 | Parametre | Değer |
 |---|---|
-| Oyuncu hızı / can / ölümsüzlük | 5 / 3 / 0.35 sn |
-| Taş hızı / hasar / ömür | 1.5 / 1 / 5 sn |
-| Fırlatıcı ateş aralığı | 1.5 sn |
-| Skor | 10 / sn × kademe çarpanı |
-| Powerup çıkma aralığı / yerde kalma | 5–10 sn / 8 sn |
-| Powerup ağırlıkları | Heart 1.0, Speed 0.8, Shield 0.6, SloMo 0.5, Ghost 0.4 |
+| Oyuncu hızı / can / ölümsüzlük | Ata 4 / 1 kalp (yükseltmeyle 3) / 0,35 sn |
+| Taş hızı / hasar / fırlatıcı aralığı | 1,5 / 1 / 1,5 sn |
+| Skor | 10 / sn × kademe çarpanı × skor çarpanı (yakın geçiş +0,1, her 20 sn +0,05, en fazla ×3, hasarda yarıya) |
+| Powerup çıkma aralığı | 5–10 sn |
+| Powerup ağırlıkları | Heart 1,0 · Speed 0,8 · Pranga 0,7 (Kolay'dan sonra) · Shield 0,6 · SloMo 0,5 · Ghost 0,4 · Buz: Ateş 1,7, Eldiven 0,8, Buz Ayakkabısı 0,8 |
+| Yükseltme fiyatları | Can 60/250/600/1000 · Hız 80/200/450 (+%4) · Güç 80/200/450 (+%12 süre) · Pet 150/400/800 |
 
-| Kademe | minSkor (~sn) | Spawner | Aralık× | Hız× | Boyut× | Oyuncu× | Skor× | Taş türleri |
-|---|---|---|---|---|---|---|---|---|
-| Başlangıç | 0 | 2 | 1.00 | 1.00 | 1.00 | 1.00 | 1.0 | Taş |
-| Kolay | 200 (~20) | 2 | 0.90 | 1.10 | 1.00 | 1.05 | 1.1 | + Çakıl, Kaya |
-| Orta | 475 (~45) | 3 | 0.82 | 1.20 | 1.08 | 1.08 | 1.2 | + Seken |
-| Zor | 900 (~80) | 3 | 0.72 | 1.30 | 1.15 | 1.12 | 1.3 | + Parçalanan, Göktaşı |
-| Cehennem | 1550 (~130) | 4 | 0.62 | 1.42 | 1.22 | 1.16 | 1.5 | + Güdümlü |
-| İmkansız | 2600 (~200) | 4 | 0.52 | 1.55 | 1.30 | 1.20 | 1.8 | hepsi, özel ağırlıklı |
+| Karakter | Can (başlangıç → üst) | Hız | Gövde | Ek | Fiyat |
+|---|---|---|---|---|---|
+| Ata | 1 → 3 | 4 | 1,0 | | bedava |
+| Ada | 1 → 2 | 4,3 | 0,92 | | bedava |
+| Çevik | 1 → 2 | 4,6 | 0,8 | | 300 |
+| Tank | 2 → 5 | 3,5 | 1,2 | kalkan | 800 |
+| Şanslı | 1 → 3 | 4 | 1,0 | altın ×1,25 | 1500 |
 
-Olaylar: Taş Yağmuru ve Çapraz Ateş kademe 2'den, Sessizlik 3'ten, Yuvarlanan Kaya 4'ten itibaren.
+| Kademe | sn | Spawner | Aralık× | Hız× | Boyut× | Oyuncu× | Skor× |
+|---|---|---|---|---|---|---|---|
+| Başlangıç | 0 | 1 | 1,10 | 0,88 | 1,00 | 1,00 | 1,0 |
+| Kolay | 30 | 2 | 1,05 | 0,96 | 1,00 | 1,02 | 1,1 |
+| Orta | 75 | 3 | 0,95 | 1,05 | 1,04 | 1,04 | 1,2 |
+| Zor | 150 | 3 | 0,84 | 1,15 | 1,08 | 1,06 | 1,35 |
+| Cehennem | 240 | 4 | 0,74 | 1,26 | 1,13 | 1,08 | 1,5 |
+| İmkansız | 360 | 4 | 0,64 | 1,38 | 1,20 | 1,10 | 1,75 |
+
+Buz Gölü: kademeler ×1,5 süre, ×0,93 hız; sürtünme 0,33, dikey ×1,2, soğuk 35 sn. Bot ölçümü (1 can, ortanca): Zindan usta 88 / acemi 78 sn, Buz usta 92 / acemi 64 sn.

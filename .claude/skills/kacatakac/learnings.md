@@ -4,6 +4,11 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-10-03 — Skill temizliği (kullanıcı: "skillimiz nelerde ustalaştı")
+
+- Faz kayıtları eklenirken baştaki özetler eskimişti: SKILL.md §1 "3 kalp, Speed ×1,5, skora bağlı zorluk", progress.md "Son durum" (Temmuz 2026), denge tablosu (skor eşikleri), çözülmüş hatalar hâlâ 🟠. Kod/veriyle karşılaştırılıp düzeltildi. **Kural:** temel bir kuralı değiştiren iş (can, zorluk, hız, yeni dünya) bittiğinde §1 + "Son durum" + denge tablosu da aynı commit'te güncellenir.
+- `git push` bu ortamda anahtar zinciri (osxkeychain) yüzünden "could not read Username" verebilir → `git -c credential.helper= -c credential.helper='!gh auth git-credential' push …` (gh zaten giriş yapmış).
+
 ## 2026-10-03 — Dış skill/eklenti araştırması (kullanıcı: "en saygın Unity skill'leri")
 
 - Kurulanlar (kullanıcı düzeyi, Anthropic'in `claude-plugins-official` pazarından, sürüm sabitli): **Unity resmi eklentisi** (Unity Technologies, 31 skill, hook/MCP yok, her oturuma ~4 bin token) + **skill-creator** (Anthropic). Kurulumdan önce içerik okundu: tek riskli nokta `unity-cli` skill'inin CLI'yi `curl | bash` ile kurmayı önermesi → SKILL.md'de onay kuralı.
