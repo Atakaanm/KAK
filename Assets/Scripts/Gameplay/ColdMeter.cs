@@ -15,8 +15,11 @@ public class ColdMeter : MonoBehaviour
     public float slowStart = 0.5f;
     public float minSpeedMultiplier = 0.55f;
     public float freezeSeconds = 1.3f;
-    [Tooltip("Donma sonrası değer: yüksek kalır, ateş bulunmazsa kısa sürede tekrar donar")]
-    public float afterFreeze = 0.82f;
+    [Tooltip("Donma sonrası değer. Faz 12 H1: donma soğuğu atar (yavaşlama eşiğinin altı) — eskisi 0,82'de kalıp oyuncuyu " +
+             "mavi ve yavaş bırakıyordu, 'donma geçmedi' gibi görünüyordu. Ceza = donukken taşlara açık kalmak.")]
+    public float afterFreeze = 0.45f;
+    /// <summary>Ateş yakındaki arkadaşı da yarı ısıtır (birim).</summary>
+    public const float ShareRadius = 1.5f;
 
     public float Value { get; private set; }
     public bool Warning => Value >= slowStart;
@@ -58,6 +61,8 @@ public class ColdMeter : MonoBehaviour
     {
         if (mv != null) mv.FreezeFor(freezeSeconds);
         Value = afterFreeze;
+        if (mv != null) mv.coldSpeedMultiplier = 1f;
+        if (ph != null) { ph.SetColdTint(0f); lastTint = 0f; }
         WorldPopup.Show(Loc.T("frozen"), transform.position + Vector3.up * 0.6f, KakPalette.CamgobegiParlak, 1f);
         var am = AudioManager.Instance;
         if (am != null) am.PlaySfx(am.crumbleSfx);
@@ -69,6 +74,16 @@ public class ColdMeter : MonoBehaviour
     {
         Value = Mathf.Max(0f, Value - amount);
         lastTint = -1f;
+    }
+
+    /// <summary>Faz 12 H1: tamamen ısıtır (iki kişilikte düşen oyuncu sıcak döner).</summary>
+    public void ResetCold()
+    {
+        Value = 0f;
+        if (mv != null) mv.coldSpeedMultiplier = 1f;
+        if (ph != null) ph.SetColdTint(0f);
+        lastTint = 0f;
+        UpdateBlock(false);
     }
 
     void UpdateBlock(bool frozen)

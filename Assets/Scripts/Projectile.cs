@@ -35,10 +35,12 @@ public class Projectile : MonoBehaviour
     public Vector2 Velocity => motion == ProjectileMotion.Meteor ? Vector2.zero : moveDirection.normalized * speed;
     public ProjectileMotion Motion => motion;
 
-    // Yakın geçiş takibi (NearMissTracker)
-    [System.NonSerialized] public float NearMissEnterTime = -1f;
-    [System.NonSerialized] public bool NearMissAwarded;
-    [System.NonSerialized] public bool NearMissDisqualified;
+    // Yakın geçiş takibi (NearMissTracker). Faz 12 H1: oyuncu başına ayrı (iki kişilikte bir oyuncunun yanından geçen
+    // taş, diğerinin izleyicisi tarafından hemen "geçti" sayılıyordu)
+    public const int NearMissSlots = 2;
+    [System.NonSerialized] public readonly float[] NearMissEnterTime = { -1f, -1f };
+    [System.NonSerialized] public readonly bool[] NearMissAwarded = new bool[NearMissSlots];
+    [System.NonSerialized] public readonly bool[] NearMissDisqualified = new bool[NearMissSlots];
     public ProjectileData Data => data;
     /// <summary>Meteor için yere kalan süre oranı (1 = yeni atıldı, 0 = iniş). Diğerlerinde 0.</summary>
     public float FallRemaining01 => motion == ProjectileMotion.Meteor && data != null ? Mathf.Clamp01(1f - age / data.meteorFallTime) : 0f;
@@ -183,9 +185,12 @@ public class Projectile : MonoBehaviour
         age = 0f;
         rotationSpeed = 0f;
         speed = defaultSpeed;
-        NearMissEnterTime = -1f;
-        NearMissAwarded = false;
-        NearMissDisqualified = false;
+        for (int i = 0; i < NearMissSlots; i++)
+        {
+            NearMissEnterTime[i] = -1f;
+            NearMissAwarded[i] = false;
+            NearMissDisqualified[i] = false;
+        }
         data = null;
         motion = ProjectileMotion.Straight;
         splitDone = false;

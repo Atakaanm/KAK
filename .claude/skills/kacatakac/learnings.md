@@ -4,6 +4,14 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-10-03 — Faz 12 H1: iki kişilik hatalar
+
+- **Görünmez Ada:** ~4 oyunda 1 tekrarlanan hata. Kök neden: `PlayerHealth.originalColor` Start'ta alınıyordu; Buz'da `ColdMeter` ilk karede `SetColdTint → RefreshTint` çağırıp rengi varsayılan (0,0,0,0) yapabiliyor, sonra Start bu saydam rengi "asıl" sanıyordu. Zindan'da görünür kalıp dönüşteki `RefreshTint` ile kayboluyordu. Tek kareli test yakalamadı; **gerçek taş + sık eşya + 5 tur düşür/döndür** dayanıklılık testi 4 koşuda 1 yakaladı. Çözüm: Awake'te yakala + saydam renk savunması.
+- Rastgele görünen hatalarda: önce köprüyle canlı durumu oku (`invoke KakDevMenu ProbePlayers`), sonra hatayı defalarca tekrarlayan bir test yaz, ilk başarısız mesajda tüm renderer durumunu yazdır.
+- Tek karelik "görünüyor mu" kontrolü yanıp sönmeyi (vuruş/kalkan sonrası) hata sanar → kısa pencere boyunca örnekle.
+- İki kişilikte global olaylar (`PlayerDamaged`) her iki oyuncunun bileşenlerine gider: `PlayerJuice` ve `NearMissTracker` konumla kendi olayını ayırıyor. Projectile'daki yakın geçiş bayrakları ortak olduğu için bir oyuncunun yanından geçen taş, diğerinin izleyicisinde hemen "geçti" sayılıyordu → oyuncu başına yuva.
+- Yumuşaklık kararları: dönüş en güvenli noktada + büyüyerek beliriş + ışık halkası; donma soğuğu atar; ateş yakındaki arkadaşı da ısıtır.
+
 ## 2026-10-03 — Skill temizliği (kullanıcı: "skillimiz nelerde ustalaştı")
 
 - Faz kayıtları eklenirken baştaki özetler eskimişti: SKILL.md §1 "3 kalp, Speed ×1,5, skora bağlı zorluk", progress.md "Son durum" (Temmuz 2026), denge tablosu (skor eşikleri), çözülmüş hatalar hâlâ 🟠. Kod/veriyle karşılaştırılıp düzeltildi. **Kural:** temel bir kuralı değiştiren iş (can, zorluk, hız, yeni dünya) bittiğinde §1 + "Son durum" + denge tablosu da aynı commit'te güncellenir.

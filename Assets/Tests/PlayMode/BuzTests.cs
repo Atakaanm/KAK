@@ -117,6 +117,11 @@ public class BuzTests
         Assert.Less(mv.coldSpeedMultiplier, 1f, "Üşüyünce yavaşlamadı");
         yield return KakTestUtil.WaitUntil(() => mv.IceFrozen, 3f, "Tam soğukta donmadı");
         Assert.AreEqual(3, ph.CurrentHealth, "Donma doğrudan can götürmemeli (taşlara açık kalmak yeterli ceza)");
+        // Faz 12 H1: donma soğuğu atar — çözülünce yavaş ve mavi kalmasın ("donma geçmedi" gibi görünüyordu)
+        Assert.Less(cm.Value, cm.slowStart, "Donma sonrası soğuk yavaşlama eşiğinin altına inmeli");
+        cm.coldSeconds = 35f;
+        yield return KakTestUtil.WaitUntil(() => !mv.IceFrozen, 3f, "Donma çözülmedi");
+        Assert.AreEqual(1f, mv.coldSpeedMultiplier, 0.01f, "Çözülünce hâlâ yavaş");
         float v = cm.Value;
         PowerupPickup.Apply(Pu("FireData"), ph.gameObject, ph.transform.position);
         Assert.Less(cm.Value, v - 0.3f, "Ateş ısıtmadı");

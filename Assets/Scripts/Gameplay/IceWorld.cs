@@ -19,7 +19,20 @@ public static class IceWorld
             if (cm == null) cm = mv.gameObject.AddComponent<ColdMeter>();
             cm.coldSeconds = t.coldSeconds;
         }
-        if (t.coldEnabled) { ColdHud.Create(); FireDrops.Create(); }
+        if (t.coldEnabled)
+        {
+            // Faz 12 H1: iki kişilikte her oyuncunun kendi soğuk çubuğu, kalp satırının yanında (tek çubuk "en çok
+            // üşüyeni" gösteriyordu: Ada'nın satırında durduğu için "sadece Ada'da var", Ata ateş alınca azalmıyor sanıldı)
+            bool perPlayer = false;
+            if (GameSettings.TwoPlayer && PlayerRegistry.All.Count > 1)
+                foreach (var ph in PlayerRegistry.All)
+                {
+                    var cm = ph != null ? ph.GetComponent<ColdMeter>() : null;
+                    if (cm != null && ph.healthUI != null && ColdHud.CreateFor(cm, (RectTransform)ph.healthUI.transform) != null) perPlayer = true;
+                }
+            if (!perPlayer) ColdHud.Create();
+            FireDrops.Create();
+        }
         if (t.snowfall) Snowfall.Create();
         if (t.coldEnabled && !SaveSystem.Data.HasSeen(SeenKey))
         {
@@ -31,23 +44,40 @@ public static class IceWorld
     }
 }
 
-/// <summary>G7: HUD'da soğuk çubuğu (kar tanesi + dolum). En çok üşüyen oyuncuyu gösterir; yarıdan sonra yanıp söner.</summary>
+/// <summary>
+/// G7: HUD'da soğuk çubuğu (kar tanesi + dolum); yarıdan sonra yanıp söner. Tek kişilikte HUD bandının altında
+/// (en çok üşüyen oyuncu), iki kişilikte her oyuncunun kalp satırının sağında kendi çubuğu (Faz 12 H1).
+/// </summary>
 public class ColdHud : MonoBehaviour
 {
     Image fill;
+    /// <summary>Gösterilen oyuncu (null: en çok üşüyen).</summary>
+    public ColdMeter target;
 
     public static ColdHud Create()
     {
         var composer = Object.FindAnyObjectByType<ScreenComposer>();
         var parent = composer != null && composer.hudContent != null ? composer.hudContent : null;
         if (parent == null || parent.GetComponentInChildren<ColdHud>() != null) return null;
+        return Build(parent, new Vector2(0.5f, 0f), new Vector2(0.5f, 0.5f), new Vector2(-20f, 46f), null);
+    }
+
+    /// <summary>İki kişilik: oyuncunun kalp satırının sağına kendi çubuğu.</summary>
+    public static ColdHud CreateFor(ColdMeter meter, RectTransform heartRow)
+    {
+        if (meter == null || heartRow == null || heartRow.GetComponentInChildren<ColdHud>() != null) return null;
+        return Build(heartRow, new Vector2(1f, 0.5f), new Vector2(0f, 0.5f), new Vector2(24f, 0f), meter);
+    }
+
+    static ColdHud Build(RectTransform parent, Vector2 anchor, Vector2 pivot, Vector2 pos, ColdMeter meter)
+    {
         var white = Resources.Load<Sprite>("UiWhite");
         var go = new GameObject("ColdHud", typeof(RectTransform));
         var rt = (RectTransform)go.transform;
         rt.SetParent(parent, false);
-        rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0f);
-        rt.pivot = new Vector2(0.5f, 0.5f);
-        rt.anchoredPosition = new Vector2(-20f, 46f);
+        rt.anchorMin = rt.anchorMax = anchor;
+        rt.pivot = pivot;
+        rt.anchoredPosition = pos;
         rt.sizeDelta = new Vector2(320f, 40f);
 
         var icon = NewImage("Icon", rt, Resources.Load<Sprite>("Snowflake"), new Vector2(-150f, 0f), new Vector2(52f, 52f));
@@ -58,6 +88,7 @@ public class ColdHud : MonoBehaviour
         f.type = Image.Type.Filled; f.fillMethod = Image.FillMethod.Horizontal; f.fillAmount = 0f;
         var hud = go.AddComponent<ColdHud>();
         hud.fill = f;
+        hud.target = meter;
         return hud;
     }
 
@@ -75,7 +106,7 @@ public class ColdHud : MonoBehaviour
     void Update()
     {
         if (fill == null) return;
-        float v = ColdMeter.MaxValue();
+        float v = target != null ? target.Value : ColdMeter.MaxValue();
         fill.fillAmount = v;
         Color c = Color.Lerp(KakPalette.CamgobegiParlak, Color.white, v);
         if (v >= 0.5f) c.a = 0.55f + 0.45f * Mathf.Abs(Mathf.Sin(Time.unscaledTime * Mathf.Lerp(3f, 10f, v)));
@@ -147,6 +178,12 @@ public class FireDrops : MonoBehaviour
     void Start()
     {
         spawner = Object.FindAnyObjectByType<PowerupSpawner>();
+        if (GameSettings.TwoPlayer) // Faz 12 H1: iki kişide ateş daha sık
+        {
+            firstDelay /= TwoPlayerMode.ItemRate;
+            intervalWarm /= TwoPlayerMode.ItemRate;
+            intervalCold /= TwoPlayerMode.ItemRate;
+        }
         var level = LevelManager.Instance != null ? LevelManager.Instance.currentLevel : null;
         if (level != null && level.availablePowerups != null)
             foreach (var p in level.availablePowerups) if (p != null && p.type == PowerupType.Fire) fire = p;
