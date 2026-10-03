@@ -41,6 +41,8 @@ public class FeatureButton : MonoBehaviour
 
     public void Refresh()
     {
+        // Faz 14: kapsam dışı özelliğin düğmesi hiç görünmez (kilitli değil, yok)
+        if (!KakScope.Includes(feature)) { gameObject.SetActive(false); return; }
         bool locked = Locked;
         if (tintTargets != null && baseColors != null)
             for (int i = 0; i < tintTargets.Length; i++)

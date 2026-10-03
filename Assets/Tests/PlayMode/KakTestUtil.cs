@@ -27,6 +27,7 @@ public static class KakTestUtil
         KakTime.ResetAll();
         GameSettings.Reset();
         PlayerHealth.DevGodMode = false; // Faz 13: testler arası sızmasın (köprü/ekran görüntüsü açık bırakabilir)
+        KakScope.ResetToProduct();        // Faz 14: her test ürün kapsamıyla başlar; gizli sistem testleri EnableAll çağırır
         DarkWorld.Reset();
         AdService.ResetForTests();
 

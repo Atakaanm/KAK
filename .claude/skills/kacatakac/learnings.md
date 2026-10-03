@@ -4,6 +4,12 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-10-04 — Yön değişikliği: odak ve kalite (kullanıcı: "AI slop, çok fazla")
+
+- Kullanıcı oyunun dağıldığını gördü; kararlar: tek dünya (Zindan) kusursuz, meta = altın + karakter gelişimi, 5 eşya / 3 olay, 2 kişilik ikinci planda. Plan: `prompts/faz-14-odak-kalite.md`.
+- **Ders:** her isteği ayrı bir sistem olarak eklemek genişlik üretti, derinlik değil. Yeni bir özellik istendiğinde önce "çekirdeği (kaçış) güçlendiriyor mu, mevcut bir sistemi derinleştirerek yapılabilir mi?" diye sor; büyük eklemelerden önce kapsamı kullanıcıyla netleştir.
+- Silmek yerine gizle (`KakScope`): kullanıcının emek verdiği içerik kaybolmaz, güncellemeyle cilalı döner.
+
 ## 2026-10-03 — Telefona kurulum (iOS 26.7 sonrası)
 
 - Telefon "unavailable" + `ioreg -p IOUSB`'de XHCI altında cihaz yoksa veri bağlantısı yok (kablo yalnız şarj / gevşek). Kullanıcı kabloyu düzeltince `iPhone@...` göründü.
