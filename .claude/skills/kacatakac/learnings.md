@@ -4,6 +4,12 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-10-03 — Dış skill/eklenti araştırması (kullanıcı: "en saygın Unity skill'leri")
+
+- Kurulanlar (kullanıcı düzeyi, Anthropic'in `claude-plugins-official` pazarından, sürüm sabitli): **Unity resmi eklentisi** (Unity Technologies, 31 skill, hook/MCP yok, her oturuma ~4 bin token) + **skill-creator** (Anthropic). Kurulumdan önce içerik okundu: tek riskli nokta `unity-cli` skill'inin CLI'yi `curl | bash` ile kurmayı önermesi → SKILL.md'de onay kuralı.
+- Kurulmayanlar ve nedeni: MCP köprüleri (CoplayDev 14,7k yıldız, IvanMurzak, CoderGamester) kendi köprümüzle aynı işi yapıyor, iki köprü çakışır. Unity'nin kendi AI MCP'si ücretli abonelik ister. `csharp-lsp` için .NET SDK + .csproj üretimi gerekir (şimdilik değmez). `unity-perf` yalnızca claude.ai dizininde, kaynağı okunamadı (kullanıcı isterse karttan açar). Topluluk paketlerinde (Snyk: %13'ünde kritik açık) ve "49 ajan / 120 skill" türü dev setlerde bağlam şişer.
+- Claude Code CLI makinede PATH'te yok; masaüstü uygulamasının içindeki ikili: `~/Library/Application Support/Claude/claude-code/<sürüm>/claude.app/Contents/MacOS/claude` (`plugin list/install/details`). Yeni eklentiler yeni oturumda yüklenir.
+
 ## 2026-09-27 — Disk temizliği (kullanıcı: "gereksizleri sen boşalt")
 
 - Güvenle silinen, yeniden oluşan önbellekler (14 GB): `~/Library/Caches/com.openai.codex/org.sparkle-project.Sparkle` (eski güncelleme indirmeleri, 3,5 GB), güncelleyici önbellekleri (unityhub-updater, *.ShipIt, antigravity/unicourse-updater), Chrome `Cache/Code Cache/GPUCache`, pip/Homebrew/CocoaPods/`~/.npm/_cacache`, `xcrun simctl delete unavailable`.

@@ -179,6 +179,11 @@ Eski araçlar (SceneAutoWire, Phase4AutoSetup, KacAtaKacSetup, *Generator, AutoA
 4. Kullanıcı Türkçe konuşuyor. Açıklamaları Türkçe, sade ve adım adım yap. Inspector'da ne yapacağını tam söyle.
 5. Kaydedilmemiş sahne değişikliklerini (`git status`) göz önünde tut. Kullanıcının Editor'deki işini ezme.
 6. Git: kullanıcı faz dalları, push ve PR birleştirme için kalıcı izin verdi (2026-09-25). Akış: faz dalı → commit → push → `gh pr create` → `gh pr merge --merge` → `origin/main`'den yeni dal. `.plastic/`, `*.slnx`, dinamik font gürültüsü ve UnityConnectSettings'teki kendiliğinden değişiklikler commit'e girmez.
+7. **Dış eklentiler (2026-10-03, kullanıcı düzeyinde kurulu):** `unity@claude-plugins-official` (Unity Technologies'in resmi 31 skill'i) ve `skill-creator` (Anthropic). Unity skill'leri **bilgi kaynağıdır**, bu skill ve proje kuralları önce gelir:
+   - **Unity CLI (`curl … | bash`) ve `com.unity.pipeline` paketi kullanıcı onayı olmadan kurulmaz.** Editör kontrolü köprüyle (`tools/kak_bridge.py`) yapılır.
+   - `ui-ugui` vb. öneriler editör araçları (`KakUiSetup`, `KakUiKit`) üzerinden uygulanır, sahne YAML'ı elle değil. `localization` skill'i Unity Localization paketine yönlendirir; biz kendi `Loc` sistemimizde kalırız. `new-unity-project` ve `unity-package-management` bu projede kullanılmaz.
+   - İşimize yarayanlar: `2d-pixel-perfect`, `manage-sprite-atlas`, `sprite-editor`, `optimize-text-mesh-pro`, `optimize-audio`, `urp-postprocessing`, `implement-in-app-purchases` + `levelplay-unity-integration` (satın alma/reklam aşamasında), `setup-multiplayer-services` (ileride online).
+   - Bu skill'i büyütürken/düzenlerken `skill-creator` kullanılabilir (açıklama tetiklemesi, ölçüm).
 
 ## 7. Skill'i güncelleme protokolü (ZORUNLU)
 
