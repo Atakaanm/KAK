@@ -75,8 +75,8 @@ public class BuzTests
         Assert.Greater(p.visual.lossyScale.x, g0 * 1.15f, "Kartopu büyümedi");
         // Faz 12 H2: çarpana kadar büyümeye devam eder (eski sınır 1,5 çabuk doluyordu), büyüdükçe yavaşlar
         Assert.GreaterOrEqual(d.maxGrowScale, 1.9f, "Kartopu üst sınırı düşük (çarpana kadar büyümeli)");
-        yield return KakTestUtil.WaitReal(2.2f);
-        Assert.Greater(p.visual.lossyScale.x, g0 * 1.75f, "Kartopu yol aldıkça büyümeye devam etmeli");
+        // Yük altında kare süresi oynar: süre yerine koşulu bekle (büyüme yaşa bağlı)
+        yield return KakTestUtil.WaitUntil(() => p.visual.lossyScale.x > g0 * 1.75f, 5f, "Kartopu yol aldıkça büyümeye devam etmeli");
         Assert.LessOrEqual(p.visual.lossyScale.x, g0 * d.maxGrowScale + 0.001f, "Büyüme sınırı aşıldı");
         // Bağışlayıcı çarpışma: alan görüntüden az büyür
         Assert.Less(p.transform.localScale.x / s0, p.visual.lossyScale.x / g0 - 0.1f, "Çarpışma alanı görüntüyle aynı büyüyor");

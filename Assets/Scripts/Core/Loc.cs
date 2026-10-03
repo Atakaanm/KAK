@@ -59,7 +59,7 @@ public static class Loc
         { "best_short", new[] { "EN İYİ {0}", "BEST {0}" } },
         { "retry", new[] { "TEKRAR", "RETRY" } },
         { "run_stats", new[] { "SÜRE {0}:{1:00}   YAKIN GEÇİŞ {2}", "TIME {0}:{1:00}   CLOSE CALLS {2}" } },
-        { "hud_score", new[] { "SKOR: {0}", "SCORE: {0}" } },
+        { "hud_score", new[] { "{0}", "{0}" } }, // Faz 14 Ö5: arcade gibi yalnız sayı ("SKOR:" etiketi gürültüydü)
         { "near_miss", new[] { "YAKIN!", "CLOSE!" } },
         { "super_dodge", new[] { "SÜPER KAÇIŞ!", "SUPER DODGE!" } },
         // Altın (Faz 3c.1)

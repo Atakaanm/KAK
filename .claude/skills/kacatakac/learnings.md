@@ -4,6 +4,12 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-10-04 — Faz 14 Ö5 + kullanıcı tercihi: ses kapalı
+
+- **Kullanıcı tercihi:** "sesi kullanmıyorsan off halinde çalış" → köprü açılışta editör sesini kapatır (`EditorPrefs kak_mute_audio`, varsayılan açık-kapalı = kapalı); `invoke KakEditorUtil Mute 0/1`. Claude'un Play/test oturumlarında müzik çalmasın.
+- Sayılan döngüyle (n × WaitForSeconds) süre ölçmek kare hızına bağlı uzar; görsel geri bildirim (yanıp sönme) mantık süresiyle (dokunulmazlık) aynı saate bağlanmalı.
+- Ara sıra düşen test → tam çıktıyı dosyaya yaz, mesajı oku: kök neden oyunda küçük bir zamanlama hatasıydı.
+
 ## 2026-10-04 — Faz 14 Ö4: görsel tutarlılık
 
 - "AI slop" görsel belirtisi: aynı ekranda farklı detay düzeyleri (iri piksel kalp + ressamsı parlak kalkan/kum saati/hayalet). Tüm ikonlar tek boru hattından (aynı ızgara, kontur, ışık yönü, hâle) üretilince aile gibi duruyor.

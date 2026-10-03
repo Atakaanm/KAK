@@ -38,6 +38,15 @@ public static class KakEditorUtil
     /// Asset'leri Unity üzerinden siler (.meta ile birlikte). Yollar ';' ile ayrılır.
     /// Köprü: python3 tools/kak_bridge.py invoke KakEditorUtil DeleteAssets "Assets/a.cs;Assets/B"
     /// </summary>
+    /// <summary>Editör sesini aç/kapat (kalıcı tercih). Köprü: invoke KakEditorUtil Mute 1 | Mute 0</summary>
+    public static string Mute(string on)
+    {
+        bool m = on != "0";
+        EditorPrefs.SetBool("kak_mute_audio", m);
+        EditorUtility.audioMasterMute = m;
+        return "[KakEditorUtil] ses " + (m ? "kapalı" : "açık");
+    }
+
     public static string DeleteAssets(string paths)
     {
         var sb = new StringBuilder();

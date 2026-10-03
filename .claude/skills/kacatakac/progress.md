@@ -147,7 +147,7 @@ Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 - [x] Ö2 menü + logo: piksel logo (`tools/kak_gen_logo.py` → `Art/UI/logo_pixel.png`, el yapımı 2 px gövdeli harfler, altın rampa), alt başlık ve istatistik satırı kalktı, tek büyük OYNA, altında KARAKTER + 2 KİŞİ, ayarlar sağ üstte dişli; PET/DÜNYALAR kapsam açılınca geri gelir. (Mağaza görselleri eski logoyla: Ö6'da yenilenecek)
 - [x] Ö3 oyun içi sadelik: yakın geçişte "YAKIN!" yazısı yerine küçük altın "+5" + camgöbeği kıvılcım, eşya adı yalnız ilk alışta (`SaveData.seen` "pu_named_<tür>"), oyun sonu istatistik satırı "SÜRE · YAKIN GEÇİŞ" (COMBO kalktı), görevsiz panel 1370 (sıradaki hedef satırı TEKRAR'a değmiyordu). Kademe ve olay afişleri kaldı. Testler 131/131 + 27/27
 - [x] Ö4 görsel tutarlılık: 5 eşya ikonu tek stilde (`tools/kak_gen_icons.py`: 32 px, aynı kontur ve ışık, renk rolüne göre tek hâle), arayüz ikonları yeniden (oynat, karakter, dişli, duraklat, kilit, onay), karakter kartı sade (büyük karakter, açıklama yalnız detayda, dash çubuğu yok), taş türleri bakışta ayırt edilir (`tools/kak_gen_rocks.py`: güdümlü = kırmızı göz, parçalanan = parlayan çatlak, seken = yuvarlak mor taş `keepUpright`). Testler 131/131 + 27/27
-- [ ] Ö5 his ve akış
+- [x] Ö5 his ve akış: HUD skoru yalnız sayı ("SKOR:" kalktı), ilk oyun ipuçları zaten dash'siz, dokunulmazlık yanıp sönmesi süreye bağlı (yavaş karelerde dokunulmazlıktan uzun sürüyordu), Zindan bot ölçümü usta 91-246 / acemi 135-295 sn (tek dünya, 1-4 dk seans hedefine uygun). Editör sesi kapalı (kullanıcı isteği). Testler 131/131 + 27/27
 - [ ] Ö6 telefon
 
 **Faz 13 — yeni dünyalar TAMAM** (`prompts/faz-13-yeni-dunyalar.md`, PR #41-#44). Faz 13 sürümü **iPhone'a kuruldu** (2026-10-03, iOS 26.7). Sıradaki: kullanıcının 4 dünyayı denemesi ve geri bildirimi; sonra boks ringi, kostümler, karakter yetenekleri, online (Faz 11 notları), 120 FPS ayarı, duraklat menüsünden kontrol düzeni.
@@ -189,7 +189,7 @@ Her alt faz sonunda: testler + bot ölçümü + PR + (kullanıcı kablo takınca
 
 ## Bilinen hatalar ve riskler
 
-- 🟡 **Ara sıra düşen test:** `IkiKisilikTests.DonenOyuncuGorunur_*` tam takımda ~3 koşuda 1 kalıyor, tek başına hep geçiyor. Mesajı yakalanamadı (grep filtresi). Tekrarlarsa tüm çıktıyı dosyaya al (`tests PlayMode > dosya`) ve `-A8 ❌` ile oku.
+- ✅ (Faz 14 Ö5) **Ara sıra düşen test** `IkiKisilikTests.DonenOyuncuGorunur_*`: dönüşte yanıp sönme 25 × 0,1 sn sayıyordu, yük altında dokunulmazlıktan uzun sürüyordu → süreye bağlandı. `BuzTests.Kartopu_YolAldikcaBuyur` süre yerine koşul bekliyor.
 
 - ✅ **Item'lar ekranın yanlış yerinde çıkıyor** — Faz 1: asıl sorun powerup ikonlarının opak siyah kare zemini (5 ikonun hepsi RGB) + Retry sonrası bozuk yönetici yapısı. Konumlar artık `PlayableWorldRect` içinde (42/42 test). (kullanıcı bildirdi, 2026-09-25). Neden henüz bulunamadı. Hesaplanan spawn alanı kağıt üstünde arenanın içinde görünüyor, Play modunda teşhis gerekli (Faz 1.2).
 - ✅ (Faz 1) **Fizik duvarları görselle hizasız.** Sprite dış kenarından 0.15 birim içerideler, görseldeki iç duvar yaklaşık 0.6 birim içeride. Karakter ve mermiler duvar çiziminin üstüne girebiliyor.
