@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60c5cd26cd84649b6adb9b88f4404589, type: 3}
+  m_Name: Endless_Football_LevelData
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  levelName: Endless Football
+  levelIndex: 0
+  levelType: 0
+  arenaData: {fileID: 11400000, guid: cd2cc8d05776b47ec9287b1cbe613a87, type: 2}
+  playerData: {fileID: 11400000, guid: 60036142517bb4918b73c48cda359e13, type: 2}
+  spawnerDataList:
+  - {fileID: 11400000, guid: 21588c02b76ad4d62a9a86dc6e1224f4, type: 2}
+  - {fileID: 11400000, guid: 21588c02b76ad4d62a9a86dc6e1224f4, type: 2}
+  - {fileID: 11400000, guid: 21588c02b76ad4d62a9a86dc6e1224f4, type: 2}
+  - {fileID: 11400000, guid: 21588c02b76ad4d62a9a86dc6e1224f4, type: 2}
+  availablePowerups:
+  - {fileID: 11400000, guid: 10a4c19648d274f04a79ba148802bedc, type: 2}
+  - {fileID: 11400000, guid: 213464e6299a24c56b8d8f8cb89ac5bd, type: 2}
+  - {fileID: 11400000, guid: 6d8600625ded34c08b6eb9e6aa931872, type: 2}
+  - {fileID: 11400000, guid: 17c08a9bd611b48a7bb2eab073e0c815, type: 2}
+  - {fileID: 11400000, guid: d8efc87cfa8e94633aa11e8b4baa13b0, type: 2}
+  - {fileID: 11400000, guid: 78af104578790402b82ca1d67a225ef7, type: 2}
+  - {fileID: 11400000, guid: 30fb98f85a81c451f86fc0b262b3a42f, type: 2}
+  difficultyStages:
+  - {fileID: 11400000, guid: 6cc8ed380b41b468db1860412dc3bd69, type: 2}
+  - {fileID: 11400000, guid: a644979dce1ae4141953ae47c8a9a1dc, type: 2}
+  - {fileID: 11400000, guid: dd216cf001cfe4d98b47350a46619a43, type: 2}
+  - {fileID: 11400000, guid: e403ec9f15f20448f8e90d162ab8a598, type: 2}
+  - {fileID: 11400000, guid: 9a210e67d0d7e466ebea8c852936b0d4, type: 2}
+  - {fileID: 11400000, guid: d4f6cfcca20834a5da4c6143d7b6b52c, type: 2}
+  levelId: 
+  goal: 0
+  surviveSeconds: 45
+  goalsToWin: 3
+  theme: {fileID: 11400000, guid: 585862f4a383148348f11d0cc5766ad9, type: 2}
+  cornerShooters: 0
+  cornerInterval: 2
+  cornerProjectile: {fileID: 0}
+  enemies: []
+  introKeyTR: 
+  enableDifficulty: 1

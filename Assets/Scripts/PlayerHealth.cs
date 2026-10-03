@@ -236,6 +236,22 @@ public class PlayerHealth : MonoBehaviour
 
     float invisibleUntil = -1f;
     bool wasInvisible;
+    /// <summary>
+    /// Faz 13 F1: oyundan atılma (Futbol: kırmızı kart / 2 sarı). Kullanıcı: "iki sarı kart oyunu kaybettirsin… kırmızı tek atsın".
+    /// Kalkan/hayalet kartın kendisini zaten engeller (PlayerStatus.Apply); kart geçtiyse can sayısından bağımsız düşersin.
+    /// </summary>
+    public void Eliminate()
+    {
+        if (isDead) return;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        if (DevGodMode) return;
+#endif
+        isInvincible = false;
+        invulnerableUntil = -1f;
+        currentHealth = 1;
+        TakeDamage(1);
+    }
+
     /// <summary>Faz 12 H4: fırlatıcılar göremez (rastgele atar, güdümlü taş kilidi kaybeder). Taşlar yine çarpar.</summary>
     public bool IsInvisible => !isDead && Time.time < invisibleUntil;
     public float InvisibleRemaining => Mathf.Max(0f, invisibleUntil - Time.time);

@@ -227,7 +227,13 @@ public class LevelManager : MonoBehaviour
         }
 
         // Faz 13 K2: durum etkili taşlar (örümcek ağı, spor) varsa oyunculara durum bileşeni (yavaşlama + baş üstü simge)
-        if (HasEffectProjectiles(level)) foreach (var ph in PlayerRegistry.All) EnsureStatus(ph);
+        if (HasEffectProjectiles(level))
+            foreach (var ph in PlayerRegistry.All)
+            {
+                EnsureStatus(ph);
+                var st = ph.GetComponent<PlayerStatus>();
+                if (st != null) st.redCardEliminates = level.theme != null && level.theme.redCardEliminates; // Faz 13 F1
+            }
 
         // --- GÜÇLENDİRME (POWERUP) SİSTEMİ ---
         if (powerupSpawner != null && level.availablePowerups != null && level.availablePowerups.Length > 0)
@@ -288,6 +294,8 @@ public class LevelManager : MonoBehaviour
         sr.enabled = false;
         st.icon = sr;
         st.slowIcon = Resources.Load<Sprite>("StatusSlow");
+        st.yellowIcon = Resources.Load<Sprite>("StatusYellow"); // Faz 13 F1
+        st.redIcon = Resources.Load<Sprite>("StatusRed");
     }
 
     void ApplyPlayerData(PlayerData data) => ApplyPlayerDataTo(data, playerMovement, playerHealth, playerVisual, true);

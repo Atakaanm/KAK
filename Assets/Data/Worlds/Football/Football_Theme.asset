@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59896f563a97f4934bf05935db4d13dd, type: 3}
+  m_Name: Football_Theme
+  m_EditorClassIdentifier: KacAtaKac::WorldTheme
+  themeId: football
+  arenaSprite: {fileID: 21300000, guid: 0895a47e96d3647ec827037a584ceb42, type: 3}
+  playableAreaNormalized:
+    serializedVersion: 2
+    x: 0.0795
+    y: 0.0795
+    width: 0.841
+    height: 0.841
+  useSpawnerAnchors: 1
+  floorFriction: 1
+  floorSpeedMultiplier: 1
+  backdropTile: {fileID: 21300000, guid: 53b6b0f434f314233944baef29ec6fb2, type: 3}
+  corridorTile: {fileID: 21300000, guid: 2f2daca31734245f29c5610da01b90f6, type: 3}
+  corridorWall: {fileID: 21300000, guid: 76de63a38419f4bfc999bca9bc8bb417, type: 3}
+  ledgeTile: {fileID: 21300000, guid: 24563bb43faf748a480dd0414fe55542, type: 3}
+  cameraBackground: {r: 0.08, g: 0.09, b: 0.15, a: 1}
+  arenaTint: {r: 1, g: 1, b: 1, a: 1}
+  darkness: 0
+  lightRadius: 2.2
+  torches: 0
+  verticalSpeedMultiplier: 1
+  coldEnabled: 0
+  coldSeconds: 35
+  snowfall: 0
+  eventRainData: {fileID: 11400000, guid: fec818d3b69a64936a64fa51854967d8, type: 2}
+  eventRainTitleKey: ev_bottles
+  eventRollingData: {fileID: 11400000, guid: 824f869923e6d4b4782bd2d24eb200df, type: 2}
+  eventRollingTitleKey: ev_bigball
+  eventSwarmData: {fileID: 11400000, guid: d3448791f1b774cb1b5c9a29d87e600b, type: 2}
+  eventSwarmTitleKey: ev_counter
+  eventCalmTitleKey: ev_whistle
+  redCardEliminates: 1
