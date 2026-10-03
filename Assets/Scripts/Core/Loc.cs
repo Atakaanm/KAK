@@ -58,7 +58,7 @@ public static class Loc
         { "new_best", new[] { "YENİ REKOR!", "NEW BEST!" } },
         { "best_short", new[] { "EN İYİ {0}", "BEST {0}" } },
         { "retry", new[] { "TEKRAR", "RETRY" } },
-        { "run_stats", new[] { "SÜRE {0}:{1:00}   YAKIN {2}   COMBO x{3:1}", "TIME {0}:{1:00}   CLOSE {2}   COMBO x{3:1}" } },
+        { "run_stats", new[] { "SÜRE {0}:{1:00}   YAKIN GEÇİŞ {2}", "TIME {0}:{1:00}   CLOSE CALLS {2}" } },
         { "hud_score", new[] { "SKOR: {0}", "SCORE: {0}" } },
         { "near_miss", new[] { "YAKIN!", "CLOSE!" } },
         { "super_dodge", new[] { "SÜPER KAÇIŞ!", "SUPER DODGE!" } },

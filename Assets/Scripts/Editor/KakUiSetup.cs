@@ -123,6 +123,9 @@ public static class KakUiSetup
         var gos = KakUiKit.GetOrAdd<GameOverScreen>(groot.gameObject);
         gos.panel = gpanel; gos.scoreText = scoreT; gos.bestText = bestT; gos.statsText = statsT;
         gos.newBestBadge = badge; gos.buttons = cg; gos.dim = dimGroup;
+        // Faz 14 Ö3: görevler kapsam dışı → panel görevsiz; "sıradaki hedef" satırı TEKRAR'a değmesin
+        gos.heightWithoutMissions = 1370f;
+        gos.heightWithMissions = 1610f;
         BuildCoinsRow(gpanel, gos);
         BuildUnlockBanner(gpanel, gos);
         BuildMissionsBlock(gpanel, gos);

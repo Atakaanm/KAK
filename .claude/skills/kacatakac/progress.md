@@ -145,7 +145,7 @@ Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 **Faz 14 — odak ve kalite** (`prompts/faz-14-odak-kalite.md`, 2026-10-04). Sıra: Ö1 kapsamı daralt → Ö2 menü + piksel logo → Ö3 oyun içi sadelik → Ö4 görsel tutarlılık → Ö5 his/akış → Ö6 telefon.
 - [x] Ö1 kapsam: `KakScope` (Worlds/Pets/Missions/DailyReward/CalmEvent kapalı; FeatureGate hiç açmaz, FeatureButton gizlenir, seçili dünya hep Zindan, Sessizlik olayı yok), Zindan 5 eşya (`KakBalance.ApplyFocusItems`). Gizli sistem testleri `KakScope.EnableAll`, ürün kapsamı `OdakKapsamTests`. Testler 131/131 + 27/27
 - [x] Ö2 menü + logo: piksel logo (`tools/kak_gen_logo.py` → `Art/UI/logo_pixel.png`, el yapımı 2 px gövdeli harfler, altın rampa), alt başlık ve istatistik satırı kalktı, tek büyük OYNA, altında KARAKTER + 2 KİŞİ, ayarlar sağ üstte dişli; PET/DÜNYALAR kapsam açılınca geri gelir. (Mağaza görselleri eski logoyla: Ö6'da yenilenecek)
-- [ ] Ö3 oyun içi sadelik
+- [x] Ö3 oyun içi sadelik: yakın geçişte "YAKIN!" yazısı yerine küçük altın "+5" + camgöbeği kıvılcım, eşya adı yalnız ilk alışta (`SaveData.seen` "pu_named_<tür>"), oyun sonu istatistik satırı "SÜRE · YAKIN GEÇİŞ" (COMBO kalktı), görevsiz panel 1370 (sıradaki hedef satırı TEKRAR'a değmiyordu). Kademe ve olay afişleri kaldı. Testler 131/131 + 27/27
 - [ ] Ö4 görsel tutarlılık
 - [ ] Ö5 his ve akış
 - [ ] Ö6 telefon
