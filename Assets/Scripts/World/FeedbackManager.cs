@@ -92,6 +92,7 @@ public class FeedbackManager : MonoBehaviour
                 case PowerupType.SpeedBoost: a = KakPalette.Altin; b = KakPalette.AltinAcik; break;
                 case PowerupType.TimeSlow: a = KakPalette.CamgobegiKoyu; b = KakPalette.CamgobegiParlak; break;
                 case PowerupType.Ghost: a = KakPalette.Sis; b = KakPalette.Beyaz; break;
+                case PowerupType.Invisible: a = KakPalette.Mor; b = KakPalette.Pembe; break;
             }
         }
         Ring(pos, 18, 2.4f, 0.5f, a, b, 0.08f);

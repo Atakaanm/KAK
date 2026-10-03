@@ -39,5 +39,6 @@ public enum PowerupType
     Shackle,        // G4: Pranga (kötü eşya) — yavaşlatır. Sona eklendi: kayıtlı enum değerleri değişmesin
     Glove,          // G7: Eldiven — kartopunu yakala, geri fırlat
     IceBoots,       // G7: Buz ayakkabısı — kaymadan hareket
-    Fire            // G7: Ateş — ısınırsın (soğuk göstergesi düşer)
+    Fire,           // G7: Ateş — ısınırsın (soğuk göstergesi düşer)
+    Invisible       // Faz 12 H4: Görünmezlik — fırlatıcılar seni göremez, rastgele atar (Hayalet'ten ayrı)
 }

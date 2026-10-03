@@ -42,6 +42,8 @@ public class Projectile : MonoBehaviour
     [System.NonSerialized] public readonly bool[] NearMissAwarded = new bool[NearMissSlots];
     [System.NonSerialized] public readonly bool[] NearMissDisqualified = new bool[NearMissSlots];
     public ProjectileData Data => data;
+    /// <summary>Uçuş yönü (testler, analiz).</summary>
+    public Vector2 MoveDirection => moveDirection;
     /// <summary>Meteor için yere kalan süre oranı (1 = yeni atıldı, 0 = iniş). Diğerlerinde 0.</summary>
     public float FallRemaining01 => motion == ProjectileMotion.Meteor && data != null ? Mathf.Clamp01(1f - age / data.meteorFallTime) : 0f;
 
@@ -291,6 +293,9 @@ public class Projectile : MonoBehaviour
         boundsInitialized = true;
     }
 
+    /// <summary>Faz 12 H4: oynanabilir alan (kör atış, rastgele göktaşı). Kurulmadıysa boş.</summary>
+    public static Rect ArenaRect => boundsInitialized ? new Rect(arenaBounds.min, arenaBounds.size) : new Rect(-3f, 1f, 6f, 6f);
+
     public static void ResetBounds()
     {
         boundsInitialized = false;
@@ -482,7 +487,8 @@ public class Projectile : MonoBehaviour
     }
 
     /// <summary>Güdümlü taş hedefi: en yakın yaşayan oyuncu (tek oyuncuda o oyuncu).</summary>
-    Transform HomingTarget() => PlayerRegistry.All.Count > 1 ? PlayerRegistry.NearestAlive(transform.position) : PlayerTarget;
+    // Faz 12 H4: görünmez oyuncuyu izlemez (kilidi kaybeder, düz devam eder)
+    Transform HomingTarget() => PlayerRegistry.All.Count > 0 ? PlayerRegistry.NearestVisible(transform.position) : PlayerTarget;
 
     void ReturnToPool()
     {

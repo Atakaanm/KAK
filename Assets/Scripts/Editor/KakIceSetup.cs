@@ -128,7 +128,7 @@ public static class KakIceSetup
         level.spawnerDataList = new[] { snowman, snowman, snowman, snowman };
         level.difficultyStages = stages;
         var pu = new List<PowerupData>();
-        foreach (var n in new[] { "HeartData", "ShieldData", "GhostData", "SloMoData", "SpeedData", "ShackleData" })
+        foreach (var n in new[] { "HeartData", "ShieldData", "GhostData", "SloMoData", "SpeedData", "ShackleData", "InvisibleData" })
         {
             var d = AssetDatabase.LoadAssetAtPath<PowerupData>("Assets/Data/Powerups/" + n + ".asset");
             if (d != null) pu.Add(d);

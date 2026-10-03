@@ -37,6 +37,15 @@ public class CornerShooter : MonoBehaviour
 
     private float timer;
 
+    [Header("Görünmezlik (Faz 12 H4)")]
+    [Tooltip("Görünmez oyuncuya doğru atılmayan koni (yarım açı, derece)")]
+    public float blindAvoidAngle = 28f;
+    [Tooltip("Kör atışta arenanın içine doğru yayılma (yarım açı, derece)")]
+    public float blindSpread = 50f;
+    SpriteRenderer confusedMark;
+    /// <summary>Bu fırlatıcı şu an oyuncuyu göremiyor mu (testler ve "?" işareti).</summary>
+    public bool Blind { get; private set; }
+
     void Start()
     {
         if (spawnerData != null)
@@ -57,6 +66,7 @@ public class CornerShooter : MonoBehaviour
     void Update()
     {
         timer += Time.deltaTime;
+        UpdateConfused();
 
         // Atıştan önce sıcak parlama: oyuncu nereden taş geleceğini okur
         if (visualRenderer != null)
@@ -80,6 +90,62 @@ public class CornerShooter : MonoBehaviour
     void OnDisable()
     {
         if (visualRenderer != null) visualRenderer.color = visualBaseColor;
+        if (confusedMark != null) confusedMark.enabled = false;
+    }
+
+    /// <summary>
+    /// Faz 12 H4: görünmez oyuncu → hedef yoksa kör. Fırlatıcının başında sallanan "?" (seni arıyor).
+    /// Görünen başka oyuncu varsa (iki kişilik) ona atar, kör değildir.
+    /// </summary>
+    void UpdateConfused()
+    {
+        Blind = PlayerRegistry.AnyInvisible && PlayerRegistry.RandomVisible() == null;
+        if (!Blind && confusedMark == null) return;
+        if (confusedMark == null)
+        {
+            var sprite = Resources.Load<Sprite>("QuestionMark");
+            if (sprite == null) return;
+            var go = new GameObject("Confused");
+            go.transform.SetParent(transform, false);
+            confusedMark = go.AddComponent<SpriteRenderer>();
+            confusedMark.sprite = sprite;
+            confusedMark.sortingOrder = 120;
+            // Fırlatıcıların kök ölçekleri farklı (1 / 4): dünyada hep aynı boyda, 1,5 kat piksel
+            float ls = Mathf.Max(0.0001f, Mathf.Abs(transform.lossyScale.x));
+            go.transform.localScale = Vector3.one * (1.5f / ls);
+        }
+        confusedMark.enabled = Blind;
+        if (!Blind) return;
+        Transform anchor = spawnerVisual != null ? spawnerVisual.transform : transform;
+        float top = visualRenderer != null ? visualRenderer.bounds.max.y : anchor.position.y + 0.6f;
+        float bob = Mathf.Sin(Time.time * 4f + transform.position.x) * 0.06f;
+        confusedMark.transform.position = new Vector3(anchor.position.x, top + 0.18f + bob, 0f);
+        confusedMark.transform.rotation = Quaternion.Euler(0f, 0f, Mathf.Sin(Time.time * 3f) * 12f);
+    }
+
+    /// <summary>Kör atış yönü: arenanın içine doğru rastgele, görünmez oyuncunun bulunduğu dar koni hariç.</summary>
+    Vector2 BlindDirection(Vector3 from)
+    {
+        Rect r = Projectile.ArenaRect;
+        Vector2 toCenter = (r.width > 0.1f ? r.center : Vector2.zero) - (Vector2)from;
+        float baseAng = Mathf.Atan2(toCenter.y, toCenter.x) * Mathf.Rad2Deg;
+        float avoid = float.NaN;
+        for (int i = 0; i < PlayerRegistry.All.Count; i++)
+        {
+            var p = PlayerRegistry.All[i];
+            if (p == null || p.IsDead) continue;
+            Vector2 tp = (Vector2)p.transform.position - (Vector2)from;
+            avoid = Mathf.Atan2(tp.y, tp.x) * Mathf.Rad2Deg;
+            break;
+        }
+        float ang = baseAng + Random.Range(-blindSpread, blindSpread);
+        if (!float.IsNaN(avoid))
+        {
+            float d = Mathf.DeltaAngle(avoid, ang);
+            if (Mathf.Abs(d) < blindAvoidAngle) ang = avoid + Mathf.Sign(d == 0f ? (Random.value - 0.5f) : d) * (blindAvoidAngle + Random.Range(0f, 15f));
+        }
+        float rad = ang * Mathf.Deg2Rad;
+        return new Vector2(Mathf.Cos(rad), Mathf.Sin(rad));
     }
 
     /// <summary>Zamanlayıcıdan bağımsız hemen ateş (olaylar). angleOffset: hedefe göre sapma (derece).</summary>
@@ -102,6 +168,14 @@ public class CornerShooter : MonoBehaviour
         if (target == null) target = Projectile.PlayerTarget;
         // G5: iki kişilikte düşmüş oyuncuya atış yok; hedef yaşayan oyunculardan
         if (GameSettings.TwoPlayer && (target == null || !IsAlive(target))) target = PlayerRegistry.RandomAlive();
+        // Faz 12 H4: görünmez oyuncu hedef alınmaz; görünen başka oyuncu varsa ona, yoksa kör atış
+        bool blind = false;
+        var th = target != null ? target.GetComponent<PlayerHealth>() : null;
+        if (th != null && th.IsInvisible)
+        {
+            var seen = PlayerRegistry.RandomVisible();
+            if (seen != null) target = seen; else blind = true;
+        }
         if (projectilePrefab == null || target == null) return;
 
         if (AudioManager.Instance != null) AudioManager.Instance.PlayShootSfx();
@@ -120,6 +194,15 @@ public class CornerShooter : MonoBehaviour
         if (data != null && data.motion == ProjectileMotion.Meteor)
         {
             Vector3 ground = target.position + (Vector3)(Random.insideUnitCircle * meteorScatter);
+            if (blind) // görünmezken göktaşı arenada rastgele bir yere (oyuncudan uzak)
+            {
+                Rect ar = Projectile.ArenaRect;
+                for (int k = 0; k < 6; k++)
+                {
+                    ground = new Vector3(Random.Range(ar.xMin + 0.4f, ar.xMax - 0.4f), Random.Range(ar.yMin + 0.4f, ar.yMax - 0.4f), 0f);
+                    if (((Vector2)(ground - target.position)).sqrMagnitude > 1.5f * 1.5f) break;
+                }
+            }
             Projectile.LaunchMeteor(prefab, data, ground, scaleMult);
             NextTarget();
             return;
@@ -127,7 +210,7 @@ public class CornerShooter : MonoBehaviour
 
         Vector3 spawnPos = firePoint != null ? firePoint.position : transform.position;
         Vector3 targetPos = target.position;
-        Vector2 dir = (Vector2)(targetPos - spawnPos);
+        Vector2 dir = blind ? BlindDirection(spawnPos) : (Vector2)(targetPos - spawnPos);
         if (Mathf.Abs(angleOffset) > 0.01f) dir = Quaternion.Euler(0f, 0f, angleOffset) * dir;
         Projectile.Launch(prefab, data, spawnPos, dir, speedMult, scaleMult);
         NextTarget();

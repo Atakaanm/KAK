@@ -4,6 +4,13 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-10-03 — Faz 12 H4: Görünmezlik
+
+- Kullanıcı: "Hayalet unique, boşa götürmeyelim" → Hayalet aynen kaldı, yeni eşya Görünmezlik. Ayrım: hayalet = taş içinden geçer, görünmez = taş sana atılmaz (rastgele, sana doğru dar koni hariç; yine de başıboş taş çarpabilir).
+- Hedef seçimi tek yerde: `PlayerRegistry.RandomVisible/NearestVisible`. Nişan alan her şey (fırlatıcı, güdümlü, olay) bunları kullanmalı; yeni dünyada yeni atıcı eklerken de.
+- Fırlatıcıların kök ölçekleri farklı (1/4): çocuk işaret dünyada sabit boyda olsun diye `1/lossyScale` ile ölçekle.
+- Heredoc içinde C# string'inde kaçışlı tırnak (`\"`) bozuk kod üretti; derleme hatalı test koşusu köprüyü 10 dk asılı bıraktı. Test öncesi `refresh` çıktısında hata varsa durdur (&& zinciri), asılı kalırsa `stop`.
+
 ## 2026-10-03 — Faz 12 H3: serbest kontrol düzeni
 
 - Kullanıcı KÜÇÜK/ORTA/BÜYÜK'ü yetersiz buldu: istediği yere sürükleme (arenanın üstü dahil), boyut, sağ/sol el. Konumlar **ekran oranıyla** saklanıyor; düzen ekranı da tam kanvas olduğu için oyunda birebir aynı yere geliyor.

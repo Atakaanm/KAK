@@ -109,7 +109,7 @@ public class IkiKisilikTests
             sr = ph.playerSpriteRenderer;
             Assert.IsNotNull(sr);
             Assert.IsTrue(sr.transform.IsChildOf(ph.transform), "Renderer başka oyuncunun: " + Durum(ph));
-            Assert.IsTrue(sr.enabled && sr.gameObject.activeInHierarchy && sr.sprite != null && sr.color.a > (ph.IsGhost ? 0.45f : 0.95f), "Dönen oyuncu görünmüyor: " + Durum(ph));
+            Assert.IsTrue(sr.enabled && sr.gameObject.activeInHierarchy && sr.sprite != null && sr.color.a > (ph.IsGhost || ph.IsInvisible ? 0.2f : 0.95f), "Dönen oyuncu görünmüyor: " + Durum(ph));
             foreach (var c in ph.GetComponentsInChildren<Collider2D>()) Assert.IsTrue(c.enabled, "Dönen oyuncunun çarpışması kapalı: " + c.name);
             Assert.IsTrue(ph.GetComponent<Rigidbody2D>().simulated, "Dönen oyuncunun fiziği kapalı");
             Assert.IsTrue(ph.healthUI.GetComponentsInChildren<UnityEngine.UI.Image>().Length > 0);
@@ -171,7 +171,7 @@ public class IkiKisilikTests
                     var sr = ph.playerSpriteRenderer;
                     if (ph.IsDead || sr == null) continue;
                     Assert.IsTrue(sr.sprite != null && sr.transform.lossyScale.x > 1.5f, $"Tur {round}: {Tumu(ph)}");
-                    Assert.Greater(sr.color.a, ph.IsGhost ? 0.45f : 0.95f, $"Tur {round}: oyuncu saydam → {Tumu(ph)}");
+                    Assert.Greater(sr.color.a, ph.IsGhost || ph.IsInvisible ? 0.2f : 0.95f, $"Tur {round}: oyuncu saydam → {Tumu(ph)}");
                     if (sr.enabled && sr.gameObject.activeInHierarchy) { if (ph == p1) seen1 = true; else seen2 = true; }
                 }
                 yield return null;
