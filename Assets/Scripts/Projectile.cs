@@ -209,7 +209,7 @@ public class Projectile : MonoBehaviour
         damage = d.damage;
         lifeTime = d.lifeTime;
         bouncesLeft = d.bounces;
-        rotationSpeed = d.noSpin ? 0f : (Mathf.Abs(d.rotationSpeed) > 0.01f ? d.rotationSpeed : Random.Range(-180f, 180f));
+        rotationSpeed = d.noSpin || d.keepUpright ? 0f : (Mathf.Abs(d.rotationSpeed) > 0.01f ? d.rotationSpeed : Random.Range(-180f, 180f));
         if (d.noSpin && visual != null) visual.localRotation = Quaternion.identity;
 
         if (d.projectileSprite != null && visualRenderer != null) visualRenderer.sprite = d.projectileSprite;

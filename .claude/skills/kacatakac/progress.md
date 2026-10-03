@@ -146,7 +146,7 @@ Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 - [x] Ö1 kapsam: `KakScope` (Worlds/Pets/Missions/DailyReward/CalmEvent kapalı; FeatureGate hiç açmaz, FeatureButton gizlenir, seçili dünya hep Zindan, Sessizlik olayı yok), Zindan 5 eşya (`KakBalance.ApplyFocusItems`). Gizli sistem testleri `KakScope.EnableAll`, ürün kapsamı `OdakKapsamTests`. Testler 131/131 + 27/27
 - [x] Ö2 menü + logo: piksel logo (`tools/kak_gen_logo.py` → `Art/UI/logo_pixel.png`, el yapımı 2 px gövdeli harfler, altın rampa), alt başlık ve istatistik satırı kalktı, tek büyük OYNA, altında KARAKTER + 2 KİŞİ, ayarlar sağ üstte dişli; PET/DÜNYALAR kapsam açılınca geri gelir. (Mağaza görselleri eski logoyla: Ö6'da yenilenecek)
 - [x] Ö3 oyun içi sadelik: yakın geçişte "YAKIN!" yazısı yerine küçük altın "+5" + camgöbeği kıvılcım, eşya adı yalnız ilk alışta (`SaveData.seen` "pu_named_<tür>"), oyun sonu istatistik satırı "SÜRE · YAKIN GEÇİŞ" (COMBO kalktı), görevsiz panel 1370 (sıradaki hedef satırı TEKRAR'a değmiyordu). Kademe ve olay afişleri kaldı. Testler 131/131 + 27/27
-- [ ] Ö4 görsel tutarlılık
+- [x] Ö4 görsel tutarlılık: 5 eşya ikonu tek stilde (`tools/kak_gen_icons.py`: 32 px, aynı kontur ve ışık, renk rolüne göre tek hâle), arayüz ikonları yeniden (oynat, karakter, dişli, duraklat, kilit, onay), karakter kartı sade (büyük karakter, açıklama yalnız detayda, dash çubuğu yok), taş türleri bakışta ayırt edilir (`tools/kak_gen_rocks.py`: güdümlü = kırmızı göz, parçalanan = parlayan çatlak, seken = yuvarlak mor taş `keepUpright`). Testler 131/131 + 27/27
 - [ ] Ö5 his ve akış
 - [ ] Ö6 telefon
 
@@ -188,6 +188,8 @@ Her alt faz sonunda: testler + bot ölçümü + PR + (kullanıcı kablo takınca
 - (İsteğe bağlı) **Metal araç zinciri** indirilsin mi (`xcodebuild -downloadComponent MetalToolchain`, Xcode 26'da ayrı; Unity log'undaki "metal" hatalarını giderir, build'i engellemiyor).
 
 ## Bilinen hatalar ve riskler
+
+- 🟡 **Ara sıra düşen test:** `IkiKisilikTests.DonenOyuncuGorunur_*` tam takımda ~3 koşuda 1 kalıyor, tek başına hep geçiyor. Mesajı yakalanamadı (grep filtresi). Tekrarlarsa tüm çıktıyı dosyaya al (`tests PlayMode > dosya`) ve `-A8 ❌` ile oku.
 
 - ✅ **Item'lar ekranın yanlış yerinde çıkıyor** — Faz 1: asıl sorun powerup ikonlarının opak siyah kare zemini (5 ikonun hepsi RGB) + Retry sonrası bozuk yönetici yapısı. Konumlar artık `PlayableWorldRect` içinde (42/42 test). (kullanıcı bildirdi, 2026-09-25). Neden henüz bulunamadı. Hesaplanan spawn alanı kağıt üstünde arenanın içinde görünüyor, Play modunda teşhis gerekli (Faz 1.2).
 - ✅ (Faz 1) **Fizik duvarları görselle hizasız.** Sprite dış kenarından 0.15 birim içerideler, görseldeki iç duvar yaklaşık 0.6 birim içeride. Karakter ve mermiler duvar çiziminin üstüne girebiliyor.

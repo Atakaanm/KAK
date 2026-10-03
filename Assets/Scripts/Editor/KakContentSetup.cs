@@ -34,14 +34,16 @@ public static class KakContentSetup
         Configure(boulder, "Kaya", ProjectileMotion.Straight, 1.05f, 1.55f, new Color(0.85f, 0.8f, 0.8f), prefab, sprite);
         boulder.rotationSpeed = 45f;
 
+        // Faz 14 Ö4: davranışı farklı taşlar bakışta ayırt edilsin (eskiden aynı sprite + silik renk): tools/kak_gen_rocks.py
+        Sprite Variant(string n) => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Projectiles/" + n + ".png") ?? sprite;
         var bouncer = GetOrCreate("Bouncer_Seken");
-        Configure(bouncer, "Seken Taş", ProjectileMotion.Bounce, 1.7f, 0.9f, new Color(0.8f, 0.9f, 1f), prefab, sprite);
+        Configure(bouncer, "Seken Taş", ProjectileMotion.Bounce, 1.7f, 0.9f, Color.white, prefab, Variant("rock_bounce")); // yuvarlak mor taş
         bouncer.bounces = 2;
         bouncer.lifeTime = 9f;
-        bouncer.rotationSpeed = 540f;
+        bouncer.keepUpright = true; // parlak yay hep sol-üstte kalsın (dönmez)
 
         var splitter = GetOrCreate("Splitter_Parcalanan");
-        Configure(splitter, "Parçalanan Taş", ProjectileMotion.Split, 1.35f, 1.25f, new Color(1f, 0.75f, 0.6f), prefab, sprite);
+        Configure(splitter, "Parçalanan Taş", ProjectileMotion.Split, 1.35f, 1.25f, Color.white, prefab, Variant("rock_split")); // parlayan çatlaklar
         splitter.splitAfter = 0.9f;
         splitter.splitCount = 3;
         splitter.splitSpread = 55f;
@@ -54,7 +56,8 @@ public static class KakContentSetup
         meteor.meteorRadius = 0.55f;
 
         var homing = GetOrCreate("Homing_Gudumlu");
-        Configure(homing, "Güdümlü Taş", ProjectileMotion.Homing, 1.45f, 0.95f, new Color(0.95f, 0.8f, 1f), prefab, sprite);
+        Configure(homing, "Güdümlü Taş", ProjectileMotion.Homing, 1.45f, 0.95f, Color.white, prefab, Variant("rock_homing")); // kırmızı göz
+        homing.noSpin = true; // dönmez, uçtuğu yöne bakar: göz okunur
         homing.homingDuration = 1.1f;
         homing.homingTurnRate = 100f;
 
