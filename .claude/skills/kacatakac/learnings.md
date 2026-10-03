@@ -4,6 +4,12 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-10-04 — Faz 14 Ö4: görsel tutarlılık
+
+- "AI slop" görsel belirtisi: aynı ekranda farklı detay düzeyleri (iri piksel kalp + ressamsı parlak kalkan/kum saati/hayalet). Tüm ikonlar tek boru hattından (aynı ızgara, kontur, ışık yönü, hâle) üretilince aile gibi duruyor.
+- Davranışı farklı mermiler aynı sprite'la haksız sürpriz yaratıyordu; davranışı anlatan tek işaret (göz = takip, çatlak = bölünme, yuvarlak = sekme) okunurluğu çözüyor. Yeni mermi türü eklerken: "oyuncu bakınca ne yapacağını bilir mi?"
+- Mesajlı NUnit hataları için çıktıyı `grep "Expected|But was"` ile süzme: mesaj satırı kaybolur → tam çıktıyı dosyaya yaz.
+
 ## 2026-10-04 — Faz 14 Ö2: menü
 
 - Süslü fantastik yazı tipi (Cinzel) piksel oyunla çelişiyordu; logo el yapımı piksel harflerle çizildi (oyunun rampası, kalın gövde, tek gölge). Menüde tek ana eylem (OYNA) + iki ikincil; geri kalan her şey köşeye ya da panele.

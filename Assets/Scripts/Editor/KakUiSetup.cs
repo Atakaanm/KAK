@@ -563,16 +563,21 @@ public static class KakUiSetup
             float x = (i % Cols - 1) * GapX, y = (i < Cols) ? -505f : -1055f;
             var card = Place(Rect(cpanel, "Card" + i), new Vector2(0.5f, 1f), new Vector2(x, y), new Vector2(CardW, CardH));
             var bg = Img(card, S("btn_stone_9s.png"), true);
-            var portrait = Img(Place(Rect(card, "Portrait"), new Vector2(0.5f, 1f), new Vector2(0f, -105f), new Vector2(144f, 144f)), null, false);
-            var name = Text(Place(Rect(card, "Name"), new Vector2(0.5f, 1f), new Vector2(0f, -205f), new Vector2(280f, 50f)), "ATA", 40, KakPalette.Krem);
-            var trait = Text(Place(Rect(card, "Trait"), new Vector2(0.5f, 1f), new Vector2(0f, -258f), new Vector2(270f, 60f)), "", 22, KakPalette.Sis,
-                             TextAlignmentOptions.Center, false, false);
-            trait.textWrappingMode = TextWrappingModes.Normal;
+            // Faz 14 Ö4: kart sade — büyük karakter (48 px × 4), ad, kalpler, hız çubuğu. Açıklama cümlesi yalnız detay ekranında;
+            // dash çubuğu kalktı (yetenek rafta)
+            foreach (var gone in new[] { "Trait", "Dash", "DashLabel", "DashBar" })
+            {
+                var g = card.Find(gone);
+                if (g != null) Object.DestroyImmediate(g.gameObject);
+            }
+            var portrait = Img(Place(Rect(card, "Portrait"), new Vector2(0.5f, 1f), new Vector2(0f, -140f), new Vector2(192f, 192f)), null, false);
+            var name = Text(Place(Rect(card, "Name"), new Vector2(0.5f, 1f), new Vector2(0f, -268f), new Vector2(280f, 54f)), "ATA", 44, KakPalette.Krem);
+            TMP_Text trait = null;
             var hearts = new Image[5];
             for (int h = 0; h < 5; h++)
-                hearts[h] = Img(Place(Rect(card, "Heart" + h), new Vector2(0.5f, 1f), new Vector2((h - 2) * 40f, -312f), new Vector2(38f, 38f)), heart, false);
-            var speed = Bar(card, "Speed", "@stat_speed", -352f, KakPalette.Camgobegi, white);
-            var dash = Bar(card, "Dash", "@stat_dash", -384f, KakPalette.CamgobegiParlak, white);
+                hearts[h] = Img(Place(Rect(card, "Heart" + h), new Vector2(0.5f, 1f), new Vector2((h - 2) * 42f, -326f), new Vector2(40f, 40f)), heart, false);
+            var speed = Bar(card, "Speed", "@stat_speed", -372f, KakPalette.Camgobegi, white);
+            Image dash = null;
             var btn = Button(Place(Rect(card, "Action"), new Vector2(0.5f, 0f), new Vector2(0f, 56f), new Vector2(250f, 80f)), "SEÇ", Style.Stone, 34);
             var coin = Img(Place(Rect(btn.transform, "Coin"), new Vector2(0.5f, 0.5f), new Vector2(-72f, 0f), new Vector2(36f, 36f)),
                            AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Pickups/coin_0.png"), false);
@@ -591,7 +596,7 @@ public static class KakUiSetup
             cc.speedFill = speed; cc.dashFill = dash; cc.actionButton = btn; cc.actionBackground = btn.GetComponent<Image>();
             cc.actionText = btn.transform.Find("Label").GetComponent<TMP_Text>(); cc.actionCoin = coin;
             cc.goldSprite = S("btn_gold_9s.png"); cc.stoneSprite = S("btn_stone_9s.png");
-            cc.softTexts = new TMP_Text[] { trait, card.Find("SpeedLabel").GetComponent<TMP_Text>(), card.Find("DashLabel").GetComponent<TMP_Text>() };
+            cc.softTexts = new TMP_Text[] { card.Find("SpeedLabel").GetComponent<TMP_Text>() };
             EditorUtility.SetDirty(cc);
             cards[i] = cc;
         }

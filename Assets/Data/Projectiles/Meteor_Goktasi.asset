@@ -29,6 +29,16 @@ MonoBehaviour:
   meteorStartHeight: 7
   meteorRadius: 0.55
   warningSprite: {fileID: 21300000, guid: 2b92185a054d64919bc65c64054e6861, type: 3}
+  growPerSecond: 0
+  maxGrowScale: 1
+  growSlowdown: 1
+  growHitShare: 1
+  keepUpright: 0
+  waveAmplitude: 0.45
+  waveFrequency: 1.4
+  glowColor: {r: 1, g: 0.62, b: 0.3, a: 0.85}
+  glowInDark: 0
+  catchable: 0
   effect: 0
   effectDuration: 1.5
   effectStrength: 0.5

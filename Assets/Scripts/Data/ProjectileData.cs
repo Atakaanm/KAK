@@ -51,6 +51,9 @@ public class ProjectileData : ScriptableObject
     [Tooltip("Faz 12 H2: büyümenin çarpışma alanına yansıyan payı (0-1). Görüntü tam büyür; 0,6 = alan büyümenin %60'ı kadar")]
     public float growHitShare = 1f;
 
+    [Tooltip("Faz 14 Ö4: hiç dönmez (yuvarlak taşın parlaması hep sol-üstte; noSpin ise yöne döner)")]
+    public bool keepUpright = false;
+
     [Header("Dalga (Faz 13 K2, yarasa)")]
     [Tooltip("Yanal salınım genliği (birim)")]
     public float waveAmplitude = 0.45f;

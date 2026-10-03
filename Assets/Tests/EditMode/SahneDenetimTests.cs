@@ -22,6 +22,8 @@ public class SahneDenetimTests
         // Faz 14 odak sürümü: menüde PET/DÜNYALAR düğmeleri ve istatistik satırı yok (KakScope açılınca geri gelir)
         "MainMenuController.levelsButton", "MainMenuController.petsFeature", "MainMenuController.worldsFeature",
         "MainMenuController.statsText",
+        // Faz 14 Ö4: karakter kartı sade — açıklama cümlesi ve dash çubuğu yok (detay ekranında açıklama var)
+        "CharacterCard.traitText", "CharacterCard.dashFill",
     };
 
     [Test]
