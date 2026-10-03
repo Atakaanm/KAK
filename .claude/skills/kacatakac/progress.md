@@ -157,6 +157,7 @@ Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 - [x] G6 Hafif hikâye: Ata ile Ada Taş Zindanı'nda altına dokunur → Taş Muhafızlar uyanır, lanet onları her yerde kovalar (yeni dünyaların gerekçesi). İlk açılışta 3 kart (`IntroStory`, atlanabilir, günlük ödülden önce), ayarlarda HİKÂYE, mağaza metninde. Testler 87/87 + 27/27
 - [x] G7 Buz Gölü: kayma (sürtünme 0,33, dikey ×1,2), 8 yönlü kardan adam (4 kare atış), büyüyen kartopları (5 tür: kartopu, küçük, dev, seken, buz sarkıtı "!"), eldiven (yakala → kartopu ikonlu düğmeyle fırlat, düşman kartopunu parçalar), buz ayakkabısı (tutuş), ateş + soğuk göstergesi (donma: can götürmez, hareketsiz kalırsın; garantili ateş), kar yağışı, DÜNYALAR paneli (3. oyunda açılır, dünya başına rekor). Bot (1 can): usta 92 sn, acemi 64 sn. **Yan bulgu:** iki kişilikte 1. oyuncu taşlardan etkilenmiyordu (statik hurtbox) → düzeltildi + test. Testler 95/95 + 27/27
 Her alt faz sonunda: testler + bot ölçümü + PR + (kullanıcı kablo takınca) telefona kurulum.
+- [x] (2026-10-03) Dış eklentiler kuruldu: Unity resmi eklentisi + skill-creator (kullanım kuralları SKILL.md §6.7). Faz 11 sürümü telefonda kurulu; kullanıcının oyun geri bildirimi bekleniyor.
 
 ### Onay bekleyenler
 - **Android Build Support modülü** kurulmalı (Unity Hub → 6000.3.8f1 → Add modules). Sonra "Android build al" → cihazda test.
