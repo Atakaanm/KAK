@@ -102,6 +102,27 @@ public static class KakBalance
     }
 
     /// <summary>
+    /// Faz 14 Ö1: odak sürümü — Zindan'da 5 eşya: Kalp, Kalkan, Yavaşlat, Hayalet, Pranga (Hız ve Görünmezlik kapsam dışı;
+    /// verileri durur, dünyalarla birlikte döner). Tekrar çalıştırılabilir.
+    /// </summary>
+    [MenuItem("KacAtaKac/Denge/Odak Sürümü Eşyaları")]
+    public static string ApplyFocusItems()
+    {
+        var level = AssetDatabase.LoadAssetAtPath<LevelData>("Assets/Data/Endless_Level1_LevelData.asset");
+        if (level == null) return "HATA: Zindan seviyesi yok";
+        var list = new System.Collections.Generic.List<PowerupData>();
+        foreach (var n in new[] { "HeartData", "ShieldData", "SloMoData", "GhostData", "ShackleData" })
+        {
+            var d = AssetDatabase.LoadAssetAtPath<PowerupData>("Assets/Data/Powerups/" + n + ".asset");
+            if (d != null) list.Add(d);
+        }
+        level.availablePowerups = list.ToArray();
+        EditorUtility.SetDirty(level);
+        AssetDatabase.SaveAssets();
+        return "[KakBalance] Zindan eşyaları: " + list.Count;
+    }
+
+    /// <summary>
     /// Faz 12 H4: Görünmezlik eşyası (fırlatıcılar göremez, rastgele atar). İkon/işaret: tools/kak_gen_invisible.py.
     /// Zindan ve Buz sonsuz bölümlerine eklenir. Hayalet'ten ayrı (o: taşlar içinden geçer).
     /// </summary>

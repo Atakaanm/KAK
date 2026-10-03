@@ -39,6 +39,7 @@ public class EndlessWorlds : ScriptableObject
     {
         var c = Load();
         if (c == null || c.worlds == null || c.worlds.Length == 0) return null;
+        if (!KakScope.Worlds) return c.Find("dungeon") ?? c.worlds[0]; // Faz 14: odak sürümünde tek dünya
         var w = c.Find(SaveSystem.Data.selectedWorld);
         return w != null && Unlocked(w) ? w : c.worlds[0];
     }

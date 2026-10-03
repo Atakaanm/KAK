@@ -7,7 +7,7 @@ using UnityEngine.TestTools;
 public class MagaraTests
 {
     const string CaveLevel = "Assets/Data/Worlds/Cave/Endless_Cave_LevelData.asset";
-    [UnitySetUp] public IEnumerator SetUp() { KakTestUtil.ResetWorld(); yield return null; }
+    [UnitySetUp] public IEnumerator SetUp() { KakTestUtil.ResetWorld(); KakScope.EnableAll(); /* Faz 14: kapsam dışı sistemin kendi testi */ yield return null; }
     [UnityTearDown] public IEnumerator TearDown() { PlayerHealth.DevGodMode = false; KakTestUtil.ResetWorld(); yield return null; }
 
     static ProjectileData Data(string n) => UnityEditor.AssetDatabase.LoadAssetAtPath<ProjectileData>("Assets/Data/Worlds/Cave/" + n + ".asset");

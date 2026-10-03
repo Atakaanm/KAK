@@ -18,6 +18,7 @@ public static class FeatureGate
 
     public static bool IsUnlocked(Feature f)
     {
+        if (!KakScope.Includes(f)) return false; // Faz 14: kapsam dışı (gizli) özellik hiç açılmaz
         var d = SaveSystem.Data;
         switch (f)
         {

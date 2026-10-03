@@ -74,6 +74,10 @@ python3 tools/kak_store_shots.py all       # mağaza görselleri: sahneleri kura
 - **Geliştirici ölümsüzlüğü:** `PlayerHealth.DevGodMode` (menü: KacAtaKac/Dev/Ölümsüzlük Aç-Kapa; `shots` otomatik açar).
 - **Git:** Xcode 26.6 kurulduğundan beri `git` doğrudan çalışıyor (eskiden `DEVELOPER_DIR=/Library/Developer/CommandLineTools` gerekiyordu; sorun çıkarsa yine kullan).
 
+## 2.9 Ürün kapsamı (Faz 14, 2026-10-04)
+
+**Odak sürümü:** tek dünya (Taş Zindanı), meta = altın + karakter gelişimi, 5 eşya (Kalp, Kalkan, Yavaşlat, Hayalet, Pranga), 3 olay (Taş Yağmuru, Çapraz Ateş, Yuvarlanan Kaya), 2 kişilik ikinci planda. Kapsam dışı sistemler **silinmedi**, `KakScope` (Core) ile gizli: Buz/Mağara/Futbol + DÜNYALAR, pet, görev, günlük ödül, Sessizlik olayı. Yeni bir özellik eklemeden önce kimlik ölçütü: "kaçışı daha iyi/okunur yapıyor mu?" (`prompts/faz-14-odak-kalite.md`). Testlerde `KakTestUtil.ResetWorld` ürün kapsamına döner; gizli sistemin testi `KakScope.EnableAll()` çağırır.
+
 ## 3. Mimari haritası
 
 ```

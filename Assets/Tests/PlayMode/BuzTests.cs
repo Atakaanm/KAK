@@ -8,7 +8,7 @@ public class BuzTests
 {
     const string IceLevel = "Assets/Data/Worlds/Ice/Endless_Ice_LevelData.asset";
 
-    [UnitySetUp] public IEnumerator SetUp() { KakTestUtil.ResetWorld(); yield return null; }
+    [UnitySetUp] public IEnumerator SetUp() { KakTestUtil.ResetWorld(); KakScope.EnableAll(); /* Faz 14: kapsam dışı sistemin kendi testi */ yield return null; }
     [UnityTearDown] public IEnumerator TearDown() { PlayerHealth.DevGodMode = false; KakTestUtil.ResetWorld(); yield return null; }
 
     static IEnumerator LoadIce()

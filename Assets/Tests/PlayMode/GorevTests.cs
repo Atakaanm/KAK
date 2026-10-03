@@ -8,7 +8,7 @@ using UnityEngine.TestTools;
 public class GorevTests
 {
     [UnitySetUp]
-    public IEnumerator SetUp() { KakTestUtil.ResetWorld(); yield return null; }
+    public IEnumerator SetUp() { KakTestUtil.ResetWorld(); KakScope.EnableAll(); /* Faz 14: kapsam dışı sistemin kendi testi */ yield return null; }
 
     [UnityTearDown]
     public IEnumerator TearDown() { KakTestUtil.ResetWorld(); yield return null; }

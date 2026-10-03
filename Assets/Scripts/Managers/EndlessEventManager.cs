@@ -94,7 +94,7 @@ public class EndlessEventManager : MonoBehaviour
         options.Clear();
         if (stage >= meteorShowerStage) options.Add(0);
         if (stage >= crossfireStage) options.Add(1);
-        if (stage >= calmStage) options.Add(2);
+        if (stage >= calmStage && KakScope.CalmEvent) options.Add(2); // Faz 14: 3 olay
         if (stage >= rollingStage) options.Add(3);
         if (swarmData != null && stage >= swarmStage) options.Add(4);
         if (options.Count == 0) return;

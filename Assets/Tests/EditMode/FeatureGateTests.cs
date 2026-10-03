@@ -10,6 +10,7 @@ public class FeatureGateTests
     [SetUp]
     public void SetUp()
     {
+        KakScope.EnableAll(); // Faz 14: takvim/ödül mantığının kendi testi (ürün kapsamı ayrıca test edilir)
         path = Path.Combine(Application.temporaryCachePath, "kak_featuregate_test.json");
         if (File.Exists(path)) File.Delete(path);
         SaveSystem.OverridePath = path;
@@ -17,7 +18,7 @@ public class FeatureGateTests
     }
 
     [TearDown]
-    public void TearDown() { SaveSystem.OverridePath = null; SaveSystem.Unload(); if (File.Exists(path)) File.Delete(path); }
+    public void TearDown() { KakScope.ResetToProduct(); SaveSystem.OverridePath = null; SaveSystem.Unload(); if (File.Exists(path)) File.Delete(path); }
 
     [Test]
     public void YeniOyuncu_HerSeyKilitli()

@@ -7,7 +7,7 @@ using UnityEngine.TestTools;
 public class PetTests
 {
     [UnitySetUp]
-    public IEnumerator SetUp() { KakTestUtil.ResetWorld(); yield return null; }
+    public IEnumerator SetUp() { KakTestUtil.ResetWorld(); KakScope.EnableAll(); /* Faz 14: kapsam dışı sistemin kendi testi */ yield return null; }
 
     [UnityTearDown]
     public IEnumerator TearDown() { PlayerHealth.DevGodMode = false; KakTestUtil.ResetWorld(); yield return null; }

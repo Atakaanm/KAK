@@ -10,6 +10,7 @@ public class DailyRewardTests
     [SetUp]
     public void SetUp()
     {
+        KakScope.EnableAll(); // Faz 14: takvim/ödül mantığının kendi testi (ürün kapsamı ayrıca test edilir)
         path = Path.Combine(Application.temporaryCachePath, "kak_daily_test.json");
         if (File.Exists(path)) File.Delete(path);
         SaveSystem.OverridePath = path;
@@ -18,7 +19,7 @@ public class DailyRewardTests
     }
 
     [TearDown]
-    public void TearDown() { DailyReward.TodayOverride = -1; SaveSystem.OverridePath = null; SaveSystem.Unload(); if (File.Exists(path)) File.Delete(path); }
+    public void TearDown() { KakScope.ResetToProduct(); DailyReward.TodayOverride = -1; SaveSystem.OverridePath = null; SaveSystem.Unload(); if (File.Exists(path)) File.Delete(path); }
 
     [Test]
     public void KilitliyseAlinamaz()
