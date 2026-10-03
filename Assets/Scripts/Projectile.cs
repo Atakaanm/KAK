@@ -64,6 +64,8 @@ public class Projectile : MonoBehaviour
     private Vector3 shadowBaseScale = Vector3.one;
     private SpriteRenderer warningRenderer; // göktaşı "!" uyarısı (ilk göktaşında oluşturulur)
     private Vector3 baseScale = Vector3.one; // G7: büyüyen kartopu
+    private float launchSpeed;               // Faz 12 H2: büyüdükçe yavaşlama bu hızdan
+    private Vector3 visualBaseScale = Vector3.one;
     /// <summary>G7: oyuncunun fırlattığı kartopu — oyuncuya değmez, çarptığı düşman mermisini yok eder.</summary>
     [System.NonSerialized] public bool friendly;
     private const float WarningHeight = 0.42f; // yerden yükseklik (dünya birimi)
@@ -89,6 +91,7 @@ public class Projectile : MonoBehaviour
         if (visual != null)
         {
             visualBasePos = visual.localPosition;
+            visualBaseScale = visual.localScale;
             visualRenderer = visual.GetComponent<SpriteRenderer>();
         }
         else visualRenderer = GetComponent<SpriteRenderer>();
@@ -142,6 +145,7 @@ public class Projectile : MonoBehaviour
         p.Init(data);
         p.moveDirection = direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector2.down;
         p.speed *= speedMult;
+        p.launchSpeed = p.speed;
         float vs = data != null ? data.visualScale : 1f;
         obj.transform.localScale = prefab.transform.localScale * scaleMult * vs;
         p.baseScale = obj.transform.localScale;
@@ -196,7 +200,7 @@ public class Projectile : MonoBehaviour
         splitDone = false;
         bouncesLeft = 0;
         if (col != null) col.enabled = true;
-        if (visual != null) { visual.localPosition = visualBasePos; visual.localRotation = Quaternion.identity; }
+        if (visual != null) { visual.localPosition = visualBasePos; visual.localRotation = Quaternion.identity; visual.localScale = visualBaseScale; }
         if (shadow != null) shadow.localScale = shadowBaseScale;
         if (visualRenderer != null) visualRenderer.color = baseTint;
         if (trailRenderer != null) trailRenderer.Clear();
@@ -208,8 +212,17 @@ public class Projectile : MonoBehaviour
     void UpdateGrowth()
     {
         if (data == null || data.growPerSecond <= 0f) return;
-        float k = Mathf.Min(Mathf.Max(1f, data.maxGrowScale), 1f + data.growPerSecond * age);
-        transform.localScale = baseScale * k;
+        // Faz 12 H2: çarpana kadar büyür (üst sınır yüksek); büyüdükçe ağırlaşıp yavaşlar → büyük ama okunur ve kaçılabilir
+        float max = Mathf.Max(1f, data.maxGrowScale);
+        float k = Mathf.Min(max, 1f + data.growPerSecond * age);
+        // Bağışlayıcı: görüntü tam büyür, çarpışma alanı daha az (growHitShare) → "değmedi ki!" hissi yok, oyun zorlaşmaz
+        float kHit = 1f + (k - 1f) * Mathf.Clamp01(data.growHitShare);
+        transform.localScale = baseScale * kHit;
+        float vis = k / kHit;
+        if (visual != null) visual.localScale = visualBaseScale * vis;
+        if (shadow != null) shadow.localScale = shadowBaseScale * vis;
+        if (data.growSlowdown < 0.999f && max > 1.001f)
+            speed = launchSpeed * Mathf.Lerp(1f, data.growSlowdown, (k - 1f) / (max - 1f));
     }
 
     /// <summary>G7: dost kartopu değdiği düşman mermisini (göktaşı hariç) yok eder, kendisi de dağılır.</summary>

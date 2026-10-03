@@ -29,6 +29,19 @@ public class EndlessEventManager : MonoBehaviour
     public int calmStage = 2;
     public int rollingStage = 3;
 
+    // Faz 12 H2: dünyaya özel olay verisi ve başlığı (LevelManager.ApplyTheme → ApplyTheme). Boşsa zindanınki.
+    string rainTitle = "ev_meteor", rollingTitle = "ev_rolling";
+
+    /// <summary>Dünyanın olaylarını ayarlar (Buz: Sarkıt Yağmuru, Dev Kartopu).</summary>
+    public void ApplyTheme(WorldTheme t)
+    {
+        if (t == null) return;
+        if (t.eventRainData != null) meteorData = t.eventRainData;
+        if (!string.IsNullOrEmpty(t.eventRainTitleKey)) rainTitle = t.eventRainTitleKey;
+        if (t.eventRollingData != null) boulderData = t.eventRollingData;
+        if (!string.IsNullOrEmpty(t.eventRollingTitleKey)) rollingTitle = t.eventRollingTitleKey;
+    }
+
     public bool Running { get; private set; }
     public string CurrentEvent { get; private set; }
 
@@ -87,10 +100,10 @@ public class EndlessEventManager : MonoBehaviour
         if (Running) return;
         switch (id)
         {
-            case 0: StartCoroutine(Run("ev_meteor", MeteorShower())); break;
+            case 0: StartCoroutine(Run(rainTitle, MeteorShower())); break;
             case 1: StartCoroutine(Run("ev_crossfire", Crossfire())); break;
             case 2: StartCoroutine(Run("ev_calm", Calm())); break;
-            case 3: StartCoroutine(Run("ev_rolling", Rolling())); break;
+            case 3: StartCoroutine(Run(rollingTitle, Rolling())); break;
         }
     }
 

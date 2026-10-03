@@ -379,6 +379,8 @@ public class LevelManager : MonoBehaviour
         var composer = screenComposer != null ? screenComposer : FindAnyObjectByType<ScreenComposer>();
         if (composer != null) composer.backgroundColor = t.cameraBackground;
         IceWorld.Apply(t); // G7: dikey hız, soğuk göstergesi, kar yağışı (tema kapalıysa etkisiz)
+        var events = FindAnyObjectByType<EndlessEventManager>();
+        if (events != null) events.ApplyTheme(t); // Faz 12 H2: Sarkıt Yağmuru / Dev Kartopu
         ThemeApplied?.Invoke(t);
         KakLog.Info("[LevelManager] Tema: " + t.themeId);
     }

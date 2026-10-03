@@ -31,6 +31,8 @@ MonoBehaviour:
   warningSprite: {fileID: 21300000, guid: 2b92185a054d64919bc65c64054e6861, type: 3}
   growPerSecond: 0
   maxGrowScale: 1
+  growSlowdown: 1
+  growHitShare: 1
   catchable: 0
   effect: 0
   effectDuration: 1.5

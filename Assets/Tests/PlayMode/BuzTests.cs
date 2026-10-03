@@ -69,9 +69,60 @@ public class BuzTests
         Assert.Greater(d.growPerSecond, 0f);
         var p = Projectile.Launch(d.projectilePrefab, d, new Vector3(-2f, 2f, 0f), Vector2.right, 0.2f);
         float s0 = p.transform.localScale.x;
+        float g0 = p.visual.lossyScale.x;
+        float v0 = p.speed;
         yield return KakTestUtil.WaitReal(1f);
-        Assert.Greater(p.transform.localScale.x, s0 * 1.15f, "Kartopu büyümedi");
-        Assert.LessOrEqual(p.transform.localScale.x, s0 * d.maxGrowScale + 0.001f, "Büyüme sınırı aşıldı");
+        Assert.Greater(p.visual.lossyScale.x, g0 * 1.15f, "Kartopu büyümedi");
+        // Faz 12 H2: çarpana kadar büyümeye devam eder (eski sınır 1,5 çabuk doluyordu), büyüdükçe yavaşlar
+        Assert.GreaterOrEqual(d.maxGrowScale, 1.9f, "Kartopu üst sınırı düşük (çarpana kadar büyümeli)");
+        yield return KakTestUtil.WaitReal(2.2f);
+        Assert.Greater(p.visual.lossyScale.x, g0 * 1.75f, "Kartopu yol aldıkça büyümeye devam etmeli");
+        Assert.LessOrEqual(p.visual.lossyScale.x, g0 * d.maxGrowScale + 0.001f, "Büyüme sınırı aşıldı");
+        // Bağışlayıcı çarpışma: alan görüntüden az büyür
+        Assert.Less(p.transform.localScale.x / s0, p.visual.lossyScale.x / g0 - 0.1f, "Çarpışma alanı görüntüyle aynı büyüyor");
+        Assert.LessOrEqual(p.transform.localScale.x, s0 * (1f + (d.maxGrowScale - 1f) * d.growHitShare) + 0.001f);
+        Assert.Less(p.speed, v0 * 0.9f, "Büyüyen kartopu ağırlaşıp yavaşlamalı");
+        Assert.Greater(p.speed, v0 * d.growSlowdown - 0.001f, "Yavaşlama sınırı aşıldı");
+    }
+
+    [UnityTest]
+    public IEnumerator Olaylar_BuzdaSarkitYagmuruVeDevKartopu()
+    {
+        // Faz 12 H2: Buz'da taş yağmuru değil sarkıt yağmuru, yuvarlanan kaya değil dev kartopu
+        yield return LoadIce();
+        KakTestUtil.MakePlayerSafe();
+        var ev = Object.FindAnyObjectByType<EndlessEventManager>();
+        Assert.AreSame(Data("Icicle_BuzSarkiti"), ev.meteorData, "Yağmur olayı buz sarkıtı değil");
+        Assert.AreSame(Data("RollingSnowball_YuvarlananKartopu"), ev.boulderData, "Yuvarlanan olayı kartopu değil");
+        string title = null;
+        System.Action<string> onEv = t => title = t;
+        GameEvents.EndlessEventStarted += onEv;
+        ev.StartEvent(0);
+        GameEvents.EndlessEventStarted -= onEv;
+        Assert.AreEqual("ev_icicle", title);
+        string t = Loc.T("ev_icicle");
+        Assert.IsTrue(t == "SARKIT YAĞMURU!" || t == "ICICLE RAIN!", "Başlık çevirisi yok: " + t);
+        yield return KakTestUtil.WaitUntil(() => Projectile.Active.Exists(p => p.Data == Data("Icicle_BuzSarkiti")), 3f, "Sarkıt düşmedi");
+    }
+
+    [UnityTest]
+    public IEnumerator BuzAyakkabisi_NormalZeminGibi()
+    {
+        // Faz 12 H2: ayakkabı hızlandırmamalı: kayma yok ve dikey hız artışı (×1,2) yok
+        yield return LoadIce();
+        KakTestUtil.MakePlayerSafe();
+        var mv = Object.FindAnyObjectByType<PlayerMovement2D>();
+        var rb = mv.GetComponent<Rigidbody2D>();
+        PowerupPickup.Apply(Pu("IceBootsData"), mv.gameObject, mv.transform.position);
+        Assert.IsTrue(mv.Gripping);
+        mv.InputOverride = Vector2.up;
+        yield return KakTestUtil.WaitReal(0.3f);
+        float vy = rb.linearVelocity.y;
+        mv.InputOverride = Vector2.right;
+        yield return KakTestUtil.WaitReal(0.3f);
+        float vx = rb.linearVelocity.x;
+        mv.InputOverride = null;
+        Assert.AreEqual(vx, vy, vx * 0.03f, "Buz ayakkabısıyla dikey hız yatayla aynı olmalı");
     }
 
     [UnityTest]

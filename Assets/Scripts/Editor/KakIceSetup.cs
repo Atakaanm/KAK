@@ -30,10 +30,14 @@ public static class KakIceSetup
         var warn = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Projectiles/warn_mark.png");
 
         // ── Mermiler: kartopları yol aldıkça büyür, eldivenle yakalanır ──
-        var snow = Proj("Snowball_Kartopu", "Kartopu", ProjectileMotion.Straight, 1.35f, 0.9f, prefab, snowSprite, 0.3f, 1.5f);
-        var small = Proj("SmallSnowball_KucukKartopu", "Küçük Kartopu", ProjectileMotion.Straight, 1.9f, 0.65f, prefab, snowSprite, 0.22f, 1.3f);
-        var big = Proj("BigSnowball_DevKartopu", "Dev Kartopu", ProjectileMotion.Straight, 0.95f, 1.05f, prefab, snowSprite, 0.3f, 1.6f);
-        var bounce = Proj("BounceSnowball_SekenKartopu", "Seken Kartopu", ProjectileMotion.Bounce, 1.55f, 0.8f, prefab, snowSprite, 0.1f, 1.25f);
+        // Faz 12 H2: kartopları çarpana kadar büyür (eski üst sınır 1,25-1,6 çabuk doluyordu), büyüdükçe yavaşlar (growSlowdown)
+        var snow = Proj("Snowball_Kartopu", "Kartopu", ProjectileMotion.Straight, 1.35f, 0.9f, prefab, snowSprite, 0.28f, 2.0f, 0.85f);
+        var small = Proj("SmallSnowball_KucukKartopu", "Küçük Kartopu", ProjectileMotion.Straight, 1.9f, 0.65f, prefab, snowSprite, 0.22f, 1.6f, 0.88f);
+        var big = Proj("BigSnowball_DevKartopu", "Dev Kartopu", ProjectileMotion.Straight, 0.95f, 1.05f, prefab, snowSprite, 0.26f, 2.1f, 0.82f);
+        var bounce = Proj("BounceSnowball_SekenKartopu", "Seken Kartopu", ProjectileMotion.Bounce, 1.55f, 0.8f, prefab, snowSprite, 0.12f, 1.6f, 0.9f);
+        // Yuvarlanan olayı: şeridi tarayan dev kartopu (eldivenle yakalanmaz, az büyür)
+        var rolling = Proj("RollingSnowball_YuvarlananKartopu", "Yuvarlanan Kartopu", ProjectileMotion.Straight, 1.05f, 1.1f, prefab, snowSprite, 0.1f, 1.3f, 1f);
+        rolling.catchable = false;
         bounce.bounces = 2; bounce.lifeTime = 9f;
         var icicle = Proj("Icicle_BuzSarkiti", "Buz Sarkıtı", ProjectileMotion.Meteor, 0f, 1.1f, prefab, icicleSprite, 0f, 1f);
         icicle.catchable = false; icicle.meteorFallTime = 1.2f; icicle.meteorStartHeight = 7f; icicle.meteorRadius = 0.5f; icicle.warningSprite = warn;
@@ -106,6 +110,11 @@ public static class KakIceSetup
         theme.coldEnabled = true;
         theme.coldSeconds = 35f;
         theme.snowfall = true;
+        // Faz 12 H2: olaylar dünyaya göre — taş yağmuru yerine sarkıt yağmuru, yuvarlanan kaya yerine dev kartopu
+        theme.eventRainData = icicle;
+        theme.eventRainTitleKey = "ev_icicle";
+        theme.eventRollingData = rolling;
+        theme.eventRollingTitleKey = "ev_snowroll";
         EditorUtility.SetDirty(theme);
 
         // ── Seviye ──
@@ -202,7 +211,7 @@ public static class KakIceSetup
     }
 
     static ProjectileData Proj(string file, string name, ProjectileMotion motion, float speed, float scale, GameObject prefab, Sprite sprite,
-                               float grow, float maxGrow)
+                               float grow, float maxGrow, float slowdown = 1f)
     {
         var d = LoadOrCreate<ProjectileData>(Dir + file + ".asset");
         d.projectileName = name;
@@ -217,6 +226,8 @@ public static class KakIceSetup
         d.projectileSprite = sprite;
         d.growPerSecond = grow;
         d.maxGrowScale = maxGrow;
+        d.growSlowdown = slowdown;
+        d.growHitShare = grow > 0f ? 0.5f : 1f; // görüntü tam büyür, çarpışma alanı %50 (bot ölçümü: tam büyüme usta süresini 92 → 67 sn düşürdü)
         d.catchable = motion != ProjectileMotion.Meteor;
         EditorUtility.SetDirty(d);
         return d;
