@@ -4,6 +4,12 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-10-03 — Faz 13 K1: karanlık + meşale
+
+- Karanlık = tek karanlık sprite (`VisibleOutsideMask`) + oyuncu başına SpriteMask deliği. Yumuşak kenar için maskenin içinde biten siyah halka; **128 px daire büyütülünce sınır noktalı/tırtıklıydı → 512 px**; halka deliğin dışına taşınca çift kararma çizgisi oluyordu.
+- `Camera.main` güvenilmez çıktı: ScreenComposer'ın kamerası kullanılır. Küçültülmüş ekran görüntüsünde karanlık soluk görünebilir; **piksel ölçümü** (ışık dışı 52 → 11 parlaklık) doğrular.
+- Karanlıkta haksız vuruş olmasın: her taşın parıltısı, fırlatıcı gözleri atıştan önce yanar, "!" ve eşyalar karanlığın üstünde. Statik `DarkMode`/`Active` bayrakları her bölüm başında sıfırlanır (test: sonraki bölüme taşınmaz).
+
 ## 2026-10-03 — Faz 12 H5: akıcılık
 
 - Oyuncunun Rigidbody2D'sinde **ara değerleme kapalıydı** (taşlarda açıktı): 50 Hz fizik / 60 Hz ekranda birkaç karede bir takılma. Kodda (Awake) açıldı. Yan etkisi: ölünce görüntü fiziğin bir adım gerisinden yetişip ~0,04 kayıyordu → `StopImmediately` gövdeyi görünen yere sabitliyor (HisTests yakaladı).

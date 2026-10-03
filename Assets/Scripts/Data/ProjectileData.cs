@@ -50,6 +50,12 @@ public class ProjectileData : ScriptableObject
     public float growSlowdown = 1f;
     [Tooltip("Faz 12 H2: büyümenin çarpışma alanına yansıyan payı (0-1). Görüntü tam büyür; 0,6 = alan büyümenin %60'ı kadar")]
     public float growHitShare = 1f;
+
+    [Header("Karanlık dünya (Faz 13 K1)")]
+    [Tooltip("Karanlıkta taşın parıltı rengi (yönü okunsun)")]
+    public Color glowColor = new Color(1f, 0.62f, 0.3f, 0.85f);
+    [Tooltip("Karanlıkta tamamen görünür (parlayan spor gibi)")]
+    public bool glowInDark = false;
     [Tooltip("Eldivenle yakalanabilir (kartopu)")]
     public bool catchable = false;
 

@@ -142,6 +142,12 @@ Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 - Varsayım: Kalkan "vurulana kadar" sürer (`ShieldData.duration` kullanılmıyor, davranış korunuyor)
 
 ### Sıradaki adım
+**Faz 13 — yeni dünyalar** (`prompts/faz-13-yeni-dunyalar.md`, kullanıcı önerileri onayladı 2026-10-03). Sıra: K1 karanlık + meşale → K2 Karanlık Mağara → F1 Futbol Arenası → F2 gol fırsatı → telefona kurulum (telefon USB'de görünmüyordu; build hazır bekliyor).
+- [x] K1 karanlık sistemi (`DarkWorld`: tema `darkness` → karanlık katmanı SpriteMask dışında, `PlayerLight` meşale deliği + yumuşak kenar + hâle + elde meşale, `TorchProgress` Sv1-4 yarıçap 1,7/2,1/2,5/2,9, fiyat 250/600/1200, ipuçları: taş parıltısı, fırlatıcı gözleri (atıştan önce yanar), "!", altın, eşya). Testler 115/115 + 27/27
+- [ ] K2 Karanlık Mağara (sanat, yarasa/sarkıt/spor/ağ/kaya, GÖÇÜK, DÜNYALAR 4 kart + meşale satın alma)
+- [ ] F1 Futbol Arenası
+- [ ] F2 gol fırsatı
+
 **Faz 12 — yumuşak oynanış** (`prompts/faz-12-yumusak-oynanis.md`, 2026-10-03). Sıra: H1 iki kişilik hatalar → H2 Buz ayarları → H3 serbest kontrol düzeni → H4 Görünmezlik → H5 akıcılık turu → telefona kurulum. Karanlık Mağara ve Futbol: kullanıcı ne atılacağına karar verince.
 - [x] H1 iki kişilik: görünmez dönüş hatası (asıl renk Start'ta alınıyordu, soğuk göstergesi ilk karede rengi boşaltıyordu → Awake), düşen sahadan kalkar + güvenli nokta + yumuşak beliriş, yakın geçiş oyuncu başına, soğuk çubuğu oyuncu başına + ateş arkadaşı yarı ısıtır, donma soğuğu atar (0,45), eşya ×1,5. Testler 100/100 + 27/27
 - [x] H2 Buz: olaylar dünyaya göre (`WorldTheme.eventRain*/eventRolling*` → `EndlessEventManager.ApplyTheme`; Buz: SARKIT YAĞMURU + DEV KARTOPU), kartopu çarpana kadar büyür (üst sınır 1,6-2,1) + büyüdükçe yavaşlar (`growSlowdown` 0,82-0,9) + bağışlayıcı çarpışma (`growHitShare` 0,5: görüntü tam, alan yarısı), buz ayakkabısı dikey artışı da kaldırır. Bot (bugünkü taban usta 75 / acemi 57 sn ile aynı aralıkta). Testler 102/102 + 27/27

@@ -21,6 +21,7 @@ public class Coin : MonoBehaviour
     public float bobHeight = 0.05f;
 
     float age, phase;
+    int baseOrder = int.MinValue;
     bool collected;
 
     void OnEnable()
@@ -30,6 +31,8 @@ public class Coin : MonoBehaviour
         phase = Random.value * 10f;
         if (visual != null)
         {
+            if (baseOrder == int.MinValue) baseOrder = visual.sortingOrder;
+            visual.sortingOrder = DarkWorld.Active ? DarkWorld.GlowOrder - 1 : baseOrder; // Faz 13 K1: karanlıkta altın parlar
             visual.enabled = true;
             visual.color = Color.white;
             visual.transform.localScale = Vector3.zero; // beliriş animasyonu
