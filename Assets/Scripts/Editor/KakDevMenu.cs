@@ -245,6 +245,16 @@ public static class KakDevMenu
     /// <summary>G5: iki kişilik oyunu başlatır. Köprü: invoke KakDevMenu PlayTwoPlayer</summary>
     public static void PlayTwoPlayer() { GameSettings.TwoPlayer = true; SceneLoader.LoadGame(); }
 
+    /// <summary>Faz 12 H3: KONTROLLERİ DÜZENLE ekranını açar. Köprü: invoke KakDevMenu OpenControlEditor</summary>
+    public static void OpenControlEditor() { ControlLayoutEditor.Open(Object.FindAnyObjectByType<Canvas>()?.transform); }
+
+    /// <summary>Faz 12 H3: açık düzen ekranında TAMAM. Köprü: invoke KakDevMenu ControlEditorDone</summary>
+    public static void ControlEditorDone()
+    {
+        var e = Object.FindAnyObjectByType<ControlLayoutEditor>();
+        if (e != null && e.doneButton != null) e.doneButton.onClick.Invoke();
+    }
+
     /// <summary>Faz 12: sonsuz mod olayını başlatır (0 yağmur, 1 çapraz, 2 sessizlik, 3 yuvarlanan). Köprü: invoke KakDevMenu StartEvent 0</summary>
     public static void StartEvent(string id)
     {

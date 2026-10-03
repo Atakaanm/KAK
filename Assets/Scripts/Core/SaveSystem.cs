@@ -220,5 +220,10 @@ public class SettingsData
     public bool vibration = true;
     public bool screenShake = true;
     public string language = ""; // "" = cihaz dili, "TR" / "EN"
-    public int controlSize = 1;  // G1: 0 küçük, 1 orta, 2 büyük (joystick ve aksiyon düğmesi)
+    public int controlSize = 1;  // G1: 0 küçük, 1 orta, 2 büyük (eski; Faz 12 H3'te joyScale/btnScale yoksa bundan okunur)
+    // Faz 12 H3: serbest kontrol düzeni (KONTROLLERİ DÜZENLE). Konumlar ekranın oranı (0-1), merkez noktası.
+    public bool controlCustom;   // false: oyunun kendi yerleşimi (joystick sol-alt, düğme sağ-alt)
+    public bool controlMirror;   // varsayılan yerleşimi aynala (sağ el: joystick sağda)
+    public float joyX, joyY, btnX, btnY;
+    public float joyScale, btnScale; // 0 = eski controlSize'dan
 }

@@ -110,11 +110,11 @@ public class HisTests
         yield return KakTestUtil.LoadGameWithLevel();
         var joy = Object.FindAnyObjectByType<VirtualJoystick>();
         Assert.IsNotNull(joy);
-        ControlSettings.Set(2);
+        ControlSettings.SetLayout(false, Vector2.zero, Vector2.zero, false, 1.25f, 1f);
         Assert.AreEqual(1.25f, joy.background.localScale.x, 0.001f);
-        ControlSettings.Set(0);
+        ControlSettings.SetLayout(false, Vector2.zero, Vector2.zero, false, 0.8f, 1f);
         Assert.AreEqual(0.8f, joy.background.localScale.x, 0.001f);
-        ControlSettings.Set(1);
+        ControlSettings.ResetLayout();
         Assert.AreEqual(1f, joy.background.localScale.x, 0.001f);
     }
 

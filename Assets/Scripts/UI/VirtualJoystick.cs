@@ -57,17 +57,90 @@ public class VirtualJoystick : MonoBehaviour, IDragHandler, IPointerDownHandler,
         if (img != null) img.raycastTarget = true;
     }
 
-    void OnEnable() { ControlSettings.Changed += ApplySize; ApplySize(); }
+    void OnEnable() { ControlSettings.Changed += ApplyLayout; ApplyLayout(); }
 
-    /// <summary>Kontrol boyutu ayarı (G1). Sürükleme hesabı tabanın yerel uzayında: ölçek girdiyi bozmaz.</summary>
-    void ApplySize()
+    // Faz 12 H3: sahnedeki ilk yerleşim (varsayılana dönüş ve aynalama bundan hesaplanır)
+    bool homeSaved;
+    Transform homeParent;
+    int homeSibling;
+    Vector2 homeAnchorMin, homeAnchorMax, homeOffsetMin, homeOffsetMax, homePivot;
+    Vector2 bgHomeAnchorMin, bgHomeAnchorMax, bgHomePos;
+    /// <summary>İki kişilik modda bölge ikiye bölünür; serbest düzen uygulanmaz (yalnız boyut).</summary>
+    public bool layoutManaged = true;
+    /// <summary>Serbest düzende dokunma alanı joystick çapının bu katı (bağışlayıcı: parmak biraz kaysa da tutar).</summary>
+    public float customCatchFactor = 2.1f;
+
+    void SaveHome()
     {
-        if (background != null && background != zone) background.localScale = Vector3.one * ControlSettings.Scale;
+        if (homeSaved || zone == null) return;
+        homeSaved = true;
+        homeParent = zone.parent;
+        homeSibling = zone.GetSiblingIndex();
+        homeAnchorMin = zone.anchorMin; homeAnchorMax = zone.anchorMax;
+        homeOffsetMin = zone.offsetMin; homeOffsetMax = zone.offsetMax; homePivot = zone.pivot;
+        if (background != null && background != zone)
+        {
+            bgHomeAnchorMin = background.anchorMin; bgHomeAnchorMax = background.anchorMax; bgHomePos = background.anchoredPosition;
+        }
+    }
+
+    /// <summary>
+    /// Kontrol düzeni (G1 boyut + Faz 12 H3 serbest yer / aynalama). Sürükleme hesabı tabanın yerel uzayında: ölçek
+    /// girdiyi bozmaz. Serbest düzende bölge kök kanvasa taşınır (arenanın üstü dahil her yer), joystick orada dinlenir.
+    /// </summary>
+    public void ApplyLayout()
+    {
+        if (zone == null) zone = transform as RectTransform;
+        bool hasBg = background != null && background != zone;
+        if (hasBg) background.localScale = Vector3.one * ControlSettings.JoyScale;
+        if (!layoutManaged || GameSettings.TwoPlayer) return;
+        SaveHome();
+        var canvas = zone.GetComponentInParent<Canvas>();
+        var root = canvas != null ? canvas.rootCanvas.transform as RectTransform : null;
+        if (ControlSettings.Custom && root != null && hasBg)
+        {
+            if (zone.parent != root)
+            {
+                zone.SetParent(root, false);
+                // Kontrol alanının hemen üstünde: paneller (duraklat, oyun sonu) hâlâ üstte kalır
+                int idx = homeParent != null && homeParent.parent != null && homeParent.parent.parent == root
+                    ? homeParent.parent.GetSiblingIndex() + 1 : 0;
+                zone.SetSiblingIndex(Mathf.Clamp(idx, 0, root.childCount - 1));
+            }
+            Vector2 p = ControlSettings.JoyPos;
+            zone.anchorMin = zone.anchorMax = p;
+            zone.pivot = new Vector2(0.5f, 0.5f);
+            float d = background.rect.width * ControlSettings.JoyScale * customCatchFactor;
+            zone.sizeDelta = new Vector2(d, d);
+            zone.anchoredPosition = Vector2.zero;
+            background.anchorMin = background.anchorMax = new Vector2(0.5f, 0.5f);
+            background.anchoredPosition = Vector2.zero;
+        }
+        else
+        {
+            if (homeParent != null && zone.parent != homeParent)
+            {
+                zone.SetParent(homeParent, false);
+                zone.SetSiblingIndex(Mathf.Min(homeSibling, homeParent.childCount - 1));
+            }
+            bool m = ControlSettings.Mirrored;
+            zone.anchorMin = m ? new Vector2(1f - homeAnchorMax.x, homeAnchorMin.y) : homeAnchorMin;
+            zone.anchorMax = m ? new Vector2(1f - homeAnchorMin.x, homeAnchorMax.y) : homeAnchorMax;
+            zone.pivot = homePivot;
+            zone.offsetMin = homeOffsetMin; zone.offsetMax = homeOffsetMax;
+            if (hasBg)
+            {
+                background.anchorMin = m ? new Vector2(1f - bgHomeAnchorMax.x, bgHomeAnchorMin.y) : bgHomeAnchorMin;
+                background.anchorMax = m ? new Vector2(1f - bgHomeAnchorMin.x, bgHomeAnchorMax.y) : bgHomeAnchorMax;
+                background.anchoredPosition = m ? new Vector2(-bgHomePos.x, bgHomePos.y) : bgHomePos;
+            }
+        }
+        if (hasBg && !IsHeld) restPosition = background.anchoredPosition;
     }
 
     void Start()
     {
-        if (background != null) restPosition = background.anchoredPosition;
+        if (background != null && !IsHeld) restPosition = background.anchoredPosition;
         if (handle != null) handle.anchoredPosition = Vector2.zero;
     }
 
@@ -131,7 +204,7 @@ public class VirtualJoystick : MonoBehaviour, IDragHandler, IPointerDownHandler,
 
     void OnDisable()
     {
-        ControlSettings.Changed -= ApplySize;
+        ControlSettings.Changed -= ApplyLayout;
         activePointer = int.MinValue;
         inputDirection = Vector2.zero;
     }

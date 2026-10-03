@@ -17485,6 +17485,8 @@ MonoBehaviour:
   idleAlpha: 0.22
   activeAlpha: 0.85
   fadeSpeed: 10
+  layoutManaged: 1
+  customCatchFactor: 2.1
 --- !u!224 &1757647773
 RectTransform:
   m_ObjectHideFlags: 0
