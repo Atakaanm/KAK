@@ -226,6 +226,9 @@ public class LevelManager : MonoBehaviour
             SetupDifficulty(level.difficultyStages);
         }
 
+        // Faz 13 K2: durum etkili taşlar (örümcek ağı, spor) varsa oyunculara durum bileşeni (yavaşlama + baş üstü simge)
+        if (HasEffectProjectiles(level)) foreach (var ph in PlayerRegistry.All) EnsureStatus(ph);
+
         // --- GÜÇLENDİRME (POWERUP) SİSTEMİ ---
         if (powerupSpawner != null && level.availablePowerups != null && level.availablePowerups.Length > 0)
         {
@@ -261,6 +264,30 @@ public class LevelManager : MonoBehaviour
             ProjectilePool.Instance.Prewarm(spawners[0].projectilePrefab, 40);
 
         KakLog.Info("[LevelManager] Level hazirlandi: " + level.levelName);
+    }
+
+    static bool HasEffectProjectiles(LevelData level)
+    {
+        if (level == null || level.difficultyStages == null) return false;
+        foreach (var st in level.difficultyStages)
+            if (st != null && st.availableProjectiles != null)
+                foreach (var p in st.availableProjectiles)
+                    if (p != null && p.effect != ProjectileEffect.Damage) return true;
+        return false;
+    }
+
+    static void EnsureStatus(PlayerHealth ph)
+    {
+        if (ph == null || ph.GetComponent<PlayerStatus>() != null) return;
+        var st = ph.gameObject.AddComponent<PlayerStatus>();
+        var go = new GameObject("StatusIcon");
+        go.transform.SetParent(ph.transform, false);
+        var sr = go.AddComponent<SpriteRenderer>();
+        DarkWorld.UseGameMaterial(sr);
+        sr.sortingOrder = DarkWorld.GlowOrder + 2; // karanlıkta da görünsün
+        sr.enabled = false;
+        st.icon = sr;
+        st.slowIcon = Resources.Load<Sprite>("StatusSlow");
     }
 
     void ApplyPlayerData(PlayerData data) => ApplyPlayerDataTo(data, playerMovement, playerHealth, playerVisual, true);

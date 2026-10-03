@@ -53,4 +53,7 @@ public class WorldTheme : ScriptableObject
     [Tooltip("Yuvarlanan olayında şeridi tarayan şey (Buz: dev kartopu)")]
     public ProjectileData eventRollingData;
     public string eventRollingTitleKey = "";
+    [Tooltip("Faz 13 K2: sürü olayı (Mağara: yarasa sürüsü) — boşsa olay yok")]
+    public ProjectileData eventSwarmData;
+    public string eventSwarmTitleKey = "";
 }

@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9295def7be6ae44459c01893fb5a6b0a, type: 3}
+  m_Name: Cave_Stage6_Imkansiz
+  m_EditorClassIdentifier: Assembly-CSharp::DifficultyStageData
+  stageName: Imkansiz
+  minSeconds: 540
+  minScore: 0
+  maxScore: -1
+  activeSpawnerCount: 4
+  shootIntervalMultiplier: 0.64
+  projectileSpeedMultiplier: 1.242
+  projectileScaleMultiplier: 1.2
+  playerSpeedMultiplier: 1.1
+  scoreSpeedMultiplier: 1.75
+  availableProjectiles:
+  - {fileID: 11400000, guid: c2e7e644fcf354e079d42082c04a0732, type: 2}
+  - {fileID: 11400000, guid: f49f73d93fc034a6c83fae936351c7d7, type: 2}
+  - {fileID: 11400000, guid: 883af77f2fbdb4d1a9acab5c1acf0767, type: 2}
+  - {fileID: 11400000, guid: 59e18f016cd174c5bb1b2c26d01d90c4, type: 2}
+  - {fileID: 11400000, guid: b199da002aa3643638e0cca9b89715f1, type: 2}
+  - {fileID: 11400000, guid: 5d86f6155978a44ef9fbfa89bb440c99, type: 2}
+  - {fileID: 11400000, guid: ab9757d4429b144d6931579d16af25f2, type: 2}
+  projectileWeights:
+  - 1.1
+  - 1.8
+  - 1
+  - 1
+  - 1.2
+  - 1
+  - 0.7

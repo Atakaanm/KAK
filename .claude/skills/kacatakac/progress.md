@@ -144,7 +144,7 @@ Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 ### Sıradaki adım
 **Faz 13 — yeni dünyalar** (`prompts/faz-13-yeni-dunyalar.md`, kullanıcı önerileri onayladı 2026-10-03). Sıra: K1 karanlık + meşale → K2 Karanlık Mağara → F1 Futbol Arenası → F2 gol fırsatı → telefona kurulum (telefon USB'de görünmüyordu; build hazır bekliyor).
 - [x] K1 karanlık sistemi (`DarkWorld`: tema `darkness` → karanlık katmanı SpriteMask dışında, `PlayerLight` meşale deliği + yumuşak kenar + hâle + elde meşale, `TorchProgress` Sv1-4 yarıçap 1,7/2,1/2,5/2,9, fiyat 250/600/1200, ipuçları: taş parıltısı, fırlatıcı gözleri (atıştan önce yanar), "!", altın, eşya). Testler 115/115 + 27/27
-- [ ] K2 Karanlık Mağara (sanat, yarasa/sarkıt/spor/ağ/kaya, GÖÇÜK, DÜNYALAR 4 kart + meşale satın alma)
+- [x] K2 Karanlık Mağara (`tools/kak_gen_cave.py`, `KakCaveSetup.Setup`): mağara arenası/karoları, Taş Muhafız (mağara, mor taş), yarasa (`ProjectileMotion.Wave`), sarkıt (göktaşı + "!"), spor ve örümcek ağı (yavaşlatır, can götürmez; oyunculara `PlayerStatus` + baş üstü simge), zindan taşları; GÖÇÜK! (sarkıt yağmuru) ve YARASA SÜRÜSÜ! (yeni 5. olay, şerit uyarısı + kaçış boşluğu); karanlık 0,95, duvar meşalesi yok; 6. oyunda açılır; dünya başına genel rekor (`SaveData.worldBests`, `EndlessWorlds.Best/SetBest`); DÜNYALAR 4 kart + mağara kartında MEŞALE yükseltme. Bot: usta 63 / acemi 90 sn (oynak), sonra yarasa yumuşatıldı. Testler 120/120 + 27/27
 - [ ] F1 Futbol Arenası
 - [ ] F2 gol fırsatı
 

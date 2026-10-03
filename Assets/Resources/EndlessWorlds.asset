@@ -25,3 +25,9 @@ MonoBehaviour:
     level: {fileID: 11400000, guid: 7331b4ff5449f48d7bbd946e5f4ace93, type: 2}
     preview: {fileID: 21300000, guid: 5f46d2c1a8168475ea07bf80c9f9afb7, type: 3}
     unlockGames: 3
+  - id: cave
+    nameKey: world_cave
+    descKey: worlddesc_cave
+    level: {fileID: 11400000, guid: ef20878921e644f9b958ac4c81070e40, type: 2}
+    preview: {fileID: 21300000, guid: 0e02e718f225a434da8ba7ef0b103276, type: 3}
+    unlockGames: 6

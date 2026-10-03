@@ -16,6 +16,10 @@ public class WorldsPanel : MonoBehaviour
         public TMP_Text nameText, descText, bestText, actionText;
         public Button actionButton;
         public Image actionBackground;
+        // Faz 13 K2: karanlık dünyada meşale yükseltmesi (TorchProgress)
+        public Button torchButton;
+        public Image torchBackground;
+        public TMP_Text torchText;
     }
 
     public Card[] cards;
@@ -30,6 +34,7 @@ public class WorldsPanel : MonoBehaviour
         {
             int k = i;
             if (cards[i].actionButton != null) cards[i].actionButton.onClick.AddListener(() => OnSelect(k));
+            if (cards[i].torchButton != null) cards[i].torchButton.onClick.AddListener(OnTorch);
         }
     }
 
@@ -62,7 +67,33 @@ public class WorldsPanel : MonoBehaviour
             c.actionButton.interactable = open && !selected;
             c.actionBackground.sprite = open && !selected ? goldSprite : stoneSprite;
             c.actionText.color = open && !selected ? KakPalette.Murekkep : KakPalette.Krem;
+            BindTorch(c, w, open);
         }
+    }
+
+    /// <summary>Faz 13 K2: karanlık dünyanın kartında meşale düğmesi: "MEŞALE 1/4" + sonraki fiyat; altın yetince altın renkli.</summary>
+    void BindTorch(Card c, EndlessWorlds.World w, bool open)
+    {
+        if (c.torchButton == null) return;
+        bool dark = w.level != null && w.level.theme != null && w.level.theme.darkness > 0.01f;
+        c.torchButton.gameObject.SetActive(dark && open);
+        if (!dark || !open) return;
+        int lv = TorchProgress.Level + 1, max = TorchProgress.MaxLevel + 1, cost = TorchProgress.NextCost;
+        string head = string.Format(Loc.T("torch_level"), lv + "/" + max);
+        c.torchText.text = cost < 0 ? Loc.T("torch_max") : "<size=22>" + head + "</size>\n" + cost + " " + Loc.T("coins_word");
+        bool can = TorchProgress.CanUpgrade;
+        c.torchButton.interactable = cost > 0;
+        if (c.torchBackground != null) c.torchBackground.sprite = can ? goldSprite : stoneSprite;
+        c.torchText.color = can ? KakPalette.Murekkep : KakPalette.Krem;
+    }
+
+    public void OnTorch()
+    {
+        var am = AudioManager.Instance;
+        if (TorchProgress.TryUpgrade()) { if (am != null) am.PlaySfx(am.stageSfx); }
+        else if (am != null) am.PlayButtonClick();
+        Refresh();
+        foreach (var wh in FindObjectsByType<WalletHud>(FindObjectsSortMode.None)) wh.Refresh();
     }
 
     static string FeatureGateHint(EndlessWorlds.World w)

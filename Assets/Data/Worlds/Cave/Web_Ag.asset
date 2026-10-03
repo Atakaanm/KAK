@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d59a3b8c38e54d5aa9aacaeae0297e8, type: 3}
+  m_Name: Web_Ag
+  m_EditorClassIdentifier: KacAtaKac::ProjectileData
+  projectileName: "\xD6r\xFCmcek A\u011F\u0131"
+  speed: 1.25
+  damage: 0
+  lifeTime: 7
+  rotationSpeed: 0
+  motion: 0
+  bounces: 2
+  homingTurnRate: 110
+  homingDuration: 1.2
+  splitAfter: 0.9
+  splitCount: 3
+  splitSpread: 50
+  splitInto: {fileID: 0}
+  meteorFallTime: 1.1
+  meteorStartHeight: 7
+  meteorRadius: 0.55
+  warningSprite: {fileID: 0}
+  growPerSecond: 0
+  maxGrowScale: 1
+  growSlowdown: 1
+  growHitShare: 1
+  waveAmplitude: 0.45
+  waveFrequency: 1.4
+  glowColor: {r: 0.85, g: 0.9, b: 1, a: 0.8}
+  glowInDark: 0
+  catchable: 0
+  effect: 1
+  effectDuration: 1.4
+  effectStrength: 0.4
+  noSpin: 0
+  visualScale: 1
+  tint: {r: 1, g: 1, b: 1, a: 1}
+  projectilePrefab: {fileID: 8748514831740309198, guid: ea2cad80380b74603b2cbf6f4f02c450, type: 3}
+  projectileSprite: {fileID: 21300000, guid: 0f7bd55e0ad87415b8f2cd2c16e6ca13, type: 3}

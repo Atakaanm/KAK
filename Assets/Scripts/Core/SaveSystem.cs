@@ -136,6 +136,8 @@ public class SaveData
     public int bestScore2P;    // G5: iki kişilik mod rekoru (tek kişilik rekordan ayrı)
     public int bestScoreIce;   // G7: Buz Gölü rekoru
     public int torchLevel;     // Faz 13 K1: meşale seviyesi (karanlık dünyada ışık yarıçapı, TorchProgress)
+    /// <summary>Faz 13 K2: yeni dünyaların rekorları (zindan ve buz eski alanlarında kalır).</summary>
+    public List<WorldBest> worldBests = new List<WorldBest>();
     public string selectedWorld = "dungeon"; // G7: seçili dünya (WorldCatalog)
     public int totalCoins;     // şimdiye kadar kazanılan toplam (istatistik, açılma koşulları)
     public List<string> unlockedPets = new List<string>();
@@ -212,6 +214,9 @@ public class LevelProgress
     public float bestTime;
     public bool completed;
 }
+
+[Serializable]
+public class WorldBest { public string id; public int best; }
 
 [Serializable]
 public class SettingsData

@@ -53,6 +53,7 @@ SpriteAtlas:
     - {fileID: 21300000, guid: 96c602f49ead145f988eb5f9231ca690, type: 3}
     - {fileID: 21300000, guid: aaa07a5de920b4005bd0deeecefc3019, type: 3}
     - {fileID: 21300000, guid: ace2402f308814a50aee08a183c96b67, type: 3}
+    - {fileID: 21300000, guid: 1617529d34191492d85e8aaf6f8090ee, type: 3}
     - {fileID: 21300000, guid: d34ae8c142831443daec5e0a3bac8f8f, type: 3}
     - {fileID: 21300000, guid: ebad9f5509af440c4a41869662b5093e, type: 3}
     - {fileID: 21300000, guid: 60e47a6058e1748b8b238b55abe13986, type: 3}
@@ -72,6 +73,7 @@ SpriteAtlas:
     - ebad9f5509af440c4a41869662b5093e: 21300000
     - ff6a994760b5043c08bcf81231e66ccc: 21300000
     - aaa07a5de920b4005bd0deeecefc3019: 21300000
+    - 1617529d34191492d85e8aaf6f8090ee: 21300000
     - ace2402f308814a50aee08a183c96b67: 21300000
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -86,6 +88,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: ebad9f5509af440c4a41869662b5093e, type: 3}
   - {fileID: 21300000, guid: ff6a994760b5043c08bcf81231e66ccc, type: 3}
   - {fileID: 21300000, guid: aaa07a5de920b4005bd0deeecefc3019, type: 3}
+  - {fileID: 21300000, guid: 1617529d34191492d85e8aaf6f8090ee, type: 3}
   - {fileID: 21300000, guid: ace2402f308814a50aee08a183c96b67, type: 3}
   m_PackedSpriteNamesToIndex:
   - SpeedIcon
@@ -99,6 +102,7 @@ SpriteAtlas:
   - ShieldIcon
   - Black
   - HeartIcon
+  - InvisibleIcon
   - IceBootsIcon
   m_RenderDataMap: {}
   m_Tag: KAK_Soft

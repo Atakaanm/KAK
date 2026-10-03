@@ -44,9 +44,10 @@ public class DengeTests
         KakTestUtil.ResetWorld();
         // G7: bayrak dosyasındaki dünya (denge ice → Buz Gölü)
         string world = File.Exists(".claude-bridge/run_denge") ? File.ReadAllText(".claude-bridge/run_denge").Trim() : "dungeon";
-        if (world == "ice")
+        var catWorld = world != "dungeon" ? EndlessWorlds.Load()?.Find(world) : null; // G7 / Faz 13: herhangi bir dünya (ice, cave...)
+        if (catWorld != null && catWorld.level != null)
         {
-            GameSettings.SelectedLevel = UnityEditor.AssetDatabase.LoadAssetAtPath<LevelData>("Assets/Data/Worlds/Ice/Endless_Ice_LevelData.asset");
+            GameSettings.SelectedLevel = catWorld.level;
             yield return KakTestUtil.LoadScene(KakTestUtil.GameScene);
         }
         else yield return KakTestUtil.LoadGameWithLevel();
