@@ -144,7 +144,7 @@ Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 ### Sıradaki adım
 **Faz 12 — yumuşak oynanış** (`prompts/faz-12-yumusak-oynanis.md`, 2026-10-03). Sıra: H1 iki kişilik hatalar → H2 Buz ayarları → H3 serbest kontrol düzeni → H4 Görünmezlik → H5 akıcılık turu → telefona kurulum. Karanlık Mağara ve Futbol: kullanıcı ne atılacağına karar verince.
 - [x] H1 iki kişilik: görünmez dönüş hatası (asıl renk Start'ta alınıyordu, soğuk göstergesi ilk karede rengi boşaltıyordu → Awake), düşen sahadan kalkar + güvenli nokta + yumuşak beliriş, yakın geçiş oyuncu başına, soğuk çubuğu oyuncu başına + ateş arkadaşı yarı ısıtır, donma soğuğu atar (0,45), eşya ×1,5. Testler 100/100 + 27/27
-- [ ] H2 Buz (Sarkıt Yağmuru, kartopu çarpana kadar büyür, buz ayakkabısı = normal zemin)
+- [ ] H2 Buz (dal `faz-12-h2-buz`): ✅ buz ayakkabısı dikey hız artışını da kaldırır · kalan: Sarkıt Yağmuru (EndlessEventManager olayları dünyaya göre), kartopu çarpana kadar büyür (büyüdükçe yavaşlar)
 - [ ] H3 kontrol düzeni (sürükle, boyut, sağ/sol el)
 - [ ] H4 Görünmezlik eşyası
 - [ ] H5 akıcılık turu

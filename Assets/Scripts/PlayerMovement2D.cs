@@ -196,7 +196,8 @@ public class PlayerMovement2D : MonoBehaviour
         }
 
         Vector2 targetVelocity = movementInput * currentSpeed;
-        targetVelocity.y *= verticalSpeedMultiplier;
+        // Faz 12 H2: buz ayakkabısı normal zemin gibi: kayma da dikey hız artışı da yok (hızlandırıyor gibi geliyordu)
+        if (!Gripping) targetVelocity.y *= verticalSpeedMultiplier;
         float friction = Gripping ? 1f : arenaFriction;
 
         if (friction >= 0.99f)
