@@ -66,7 +66,8 @@ public class PlayerDirectionSprite : MonoBehaviour
             {
                 animationTimer += Time.deltaTime;
                 // Kare hızı gerçek koşu hızına bağlı (hız güçlendirmesi, zemin, yavaşlama)
-                float speedRatio = Mathf.Clamp(movement.CurrentSpeed / Mathf.Max(0.1f, referenceSpeed), 0.6f, 1.6f);
+                float push = Mathf.Clamp01(input.magnitude); // Faz 12 H5: joystick az itilince yavaş yürür, bacaklar da yavaş
+                float speedRatio = Mathf.Clamp(movement.CurrentSpeed * push / Mathf.Max(0.1f, referenceSpeed), 0.45f, 1.6f);
                 float frameTime = runFrameRate / speedRatio;
 
                 if (animationTimer >= frameTime)

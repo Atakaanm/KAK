@@ -122,6 +122,34 @@ public class KontrolDuzeniTests
     }
 
     [UnityTest]
+    public IEnumerator Yumusak_JoystickRampasi_VeFizikAraDegerleme()
+    {
+        // Faz 12 H5: küçük itiş yavaş ve hassas, yarı yolda tam hız; oyuncu fiziği ara değerlemeli (takılma yok)
+        yield return KakTestUtil.LoadGameWithLevel();
+        var mv = Object.FindAnyObjectByType<PlayerMovement2D>();
+        Assert.AreEqual(RigidbodyInterpolation2D.Interpolate, mv.GetComponent<Rigidbody2D>().interpolation);
+        var joy = Object.FindAnyObjectByType<VirtualJoystick>();
+        Canvas.ForceUpdateCanvases();
+        Vector2 c = ScreenCenter(joy.background);
+        var e = Pointer(c);
+        joy.OnPointerDown(e);
+        // Taban yarıçapı (ekran pikseli)
+        Vector3[] corners = new Vector3[4];
+        joy.background.GetWorldCorners(corners);
+        float radius = (RectTransformUtility.WorldToScreenPoint(null, corners[2]).x - RectTransformUtility.WorldToScreenPoint(null, corners[0]).x) * 0.5f;
+        Vector2 center = ScreenCenter(joy.background);
+        e.position = center + new Vector2(radius * 0.2f, 0f);
+        joy.OnDrag(e);
+        float small = joy.Direction.magnitude;
+        Assert.Greater(small, 0.25f, "Küçük itiş hiç yürütmüyor");
+        Assert.Less(small, 0.75f, "Küçük itiş tam hız (rampa yok)");
+        e.position = center + new Vector2(radius * 0.9f, 0f);
+        joy.OnDrag(e);
+        Assert.AreEqual(1f, joy.Direction.magnitude, 0.01f, "Tam itişte tam hız olmalı");
+        joy.OnPointerUp(e);
+    }
+
+    [UnityTest]
     public IEnumerator IkiKisilikte_SerbestDuzenUygulanmaz()
     {
         ControlSettings.SetLayout(true, new Vector2(0.5f, 0.6f), new Vector2(0.2f, 0.25f), false, 1.2f, 1f);

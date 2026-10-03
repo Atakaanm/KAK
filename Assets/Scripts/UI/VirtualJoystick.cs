@@ -20,6 +20,10 @@ public class VirtualJoystick : MonoBehaviour, IDragHandler, IPointerDownHandler,
     [Range(0f, 1f)]
     public float handleRange = 0.45f;      // Tutamağın tabandan ne kadar uzağa gidebileceği (0-1)
     public float deadZone = 0.12f;         // Bu kadar küçük hareketleri yoksay
+    [Tooltip("Faz 12 H5: bu sapmada tam hız (altında yumuşak artış: küçük itiş = hassas, yavaş adım)")]
+    public float fullSpeedAt = 0.5f;
+    [Tooltip("Ölü bölgenin hemen dışındaki en düşük hız oranı")]
+    public float minSpeed = 0.3f;
     [Tooltip("Açık: dokunulan yerde belirir. Kapalı: sabit konumda durur.")]
     public bool floating = true;
 
@@ -190,7 +194,14 @@ public class VirtualJoystick : MonoBehaviour, IDragHandler, IPointerDownHandler,
         float maxOffset = bgSize.x * 0.5f * handleRange;
         handle.anchoredPosition = normalizedInput * maxOffset;
 
-        inputDirection = normalizedInput.magnitude < deadZone ? Vector2.zero : normalizedInput.normalized;
+        float mag = normalizedInput.magnitude;
+        if (mag < deadZone) inputDirection = Vector2.zero;
+        else
+        {
+            // Yumuşak rampa: tam hıza yarı yolda ulaşır; çok küçük itiş yavaş ama net bir adım
+            float t = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(deadZone, Mathf.Max(deadZone + 0.01f, fullSpeedAt), mag));
+            inputDirection = normalizedInput.normalized * Mathf.Lerp(minSpeed, 1f, t);
+        }
     }
 
     public void OnPointerUp(PointerEventData eventData)
