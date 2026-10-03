@@ -164,6 +164,8 @@ public class IkiKisilikTests
             // Tek kare yetmez: vuruş sonrası yanıp sönme (kalkan patlayınca da) meşru. 0,6 sn boyunca en az bir kez
             // görünür ve hiçbir karede saydam olmamalı.
             bool seen1 = false, seen2 = false;
+            if (p2.IsDead) continue; // gerçek taşla yeniden düştüyse bu turu atla (dönüş beliriş/yanıp sönme meşru)
+            p2.SetInvulnerable(1f);  // gözlem penceresinde yeniden düşmesin
             for (float t = 0f; t < 0.6f; t += Time.deltaTime)
             {
                 foreach (var ph in new[] { p1, p2 })

@@ -211,8 +211,20 @@ public class Projectile : MonoBehaviour
     }
 
     /// <summary>G7: kartopu yol aldıkça büyür (collider da ölçekle büyür).</summary>
+    const float AppearTime = 0.1f;
+
+    /// <summary>Faz 12 H5: taş fırlatıcıdan küçükten büyüyerek çıkar (birden belirmez). Yalnız görsel.</summary>
+    void UpdateAppear()
+    {
+        if (visual == null || age > AppearTime + 0.05f) return;
+        if (data != null && data.growPerSecond > 0f) return; // büyüyen taşta UpdateGrowth uygular
+        float a = age < AppearTime ? Mathf.Lerp(0.55f, 1f, age / AppearTime) : 1f;
+        visual.localScale = visualBaseScale * a;
+    }
+
     void UpdateGrowth()
     {
+        UpdateAppear();
         if (data == null || data.growPerSecond <= 0f) return;
         // Faz 12 H2: çarpana kadar büyür (üst sınır yüksek); büyüdükçe ağırlaşıp yavaşlar → büyük ama okunur ve kaçılabilir
         float max = Mathf.Max(1f, data.maxGrowScale);
@@ -221,7 +233,8 @@ public class Projectile : MonoBehaviour
         float kHit = 1f + (k - 1f) * Mathf.Clamp01(data.growHitShare);
         transform.localScale = baseScale * kHit;
         float vis = k / kHit;
-        if (visual != null) visual.localScale = visualBaseScale * vis;
+        float appear = age < AppearTime ? Mathf.Lerp(0.55f, 1f, age / AppearTime) : 1f;
+        if (visual != null) visual.localScale = visualBaseScale * vis * appear;
         if (shadow != null) shadow.localScale = shadowBaseScale * vis;
         if (data.growSlowdown < 0.999f && max > 1.001f)
             speed = launchSpeed * Mathf.Lerp(1f, data.growSlowdown, (k - 1f) / (max - 1f));

@@ -64,6 +64,8 @@ public class PlayerMovement2D : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        // Faz 12 H5: fizik 50 Hz, ekran 60/120 Hz → ara değerleme olmadan karakter birkaç karede bir "takılıyordu"
+        if (rb != null) rb.interpolation = RigidbodyInterpolation2D.Interpolate;
         status = GetComponent<PlayerStatus>();
         health = GetComponent<PlayerHealth>();
     }
@@ -73,7 +75,15 @@ public class PlayerMovement2D : MonoBehaviour
     {
         movementInput = Vector2.zero;
         dashTimer = 0f;
-        if (rb != null) rb.linearVelocity = Vector2.zero;
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+            // Faz 12 H5: ara değerleme açıkken görüntü fiziğin bir adım gerisinde; gövdeyi görünen yere sabitle,
+            // yoksa ölümden sonra karakter ~0,04 birim kayıyor (G1'de istenmeyen "kıpırdama")
+            Vector2 shown = transform.position;
+            rb.position = shown;
+            transform.position = shown;
+        }
     }
 
     /// <summary>PlayerStatus sonradan eklenirse kendini bağlar (bölüm modu).</summary>

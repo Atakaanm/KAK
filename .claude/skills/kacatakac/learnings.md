@@ -4,6 +4,12 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-10-03 — Faz 12 H5: akıcılık
+
+- Oyuncunun Rigidbody2D'sinde **ara değerleme kapalıydı** (taşlarda açıktı): 50 Hz fizik / 60 Hz ekranda birkaç karede bir takılma. Kodda (Awake) açıldı. Yan etkisi: ölünce görüntü fiziğin bir adım gerisinden yetişip ~0,04 kayıyordu → `StopImmediately` gövdeyi görünen yere sabitliyor (HisTests yakaladı).
+- Joystick tam/sıfır yerine yumuşak rampa (küçük itiş %30, %50 sapmada tam hız); koşu animasyonu itişle yavaşlar. Bot `InputOverride` kullandığı için denge ölçümü etkilenmez.
+- Gerçek taşlı dayanıklılık testinde gözlem penceresinde oyuncu yeniden düşüp beliriş/yanıp sönmeye girebiliyor → pencerede dokunulmaz yap. Testte 12 koşuda 1 açıklanamayan başarısızlık görüldü, sonra tam takım 111/111; tekrarlarsa mesajı yakala.
+
 ## 2026-10-03 — Faz 12 H4: Görünmezlik
 
 - Kullanıcı: "Hayalet unique, boşa götürmeyelim" → Hayalet aynen kaldı, yeni eşya Görünmezlik. Ayrım: hayalet = taş içinden geçer, görünmez = taş sana atılmaz (rastgele, sana doğru dar koni hariç; yine de başıboş taş çarpabilir).
