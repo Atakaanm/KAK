@@ -52,7 +52,25 @@ public class EndlessWorlds : ScriptableObject
     }
 
     /// <summary>Dünyanın rekoru (tek kişilik).</summary>
-    public static int Best(string worldId) => worldId == "ice" ? SaveSystem.Data.bestScoreIce : SaveSystem.Data.bestScoreEndless;
+    public static int Best(string worldId)
+    {
+        var d = SaveSystem.Data;
+        if (worldId == "ice") return d.bestScoreIce;
+        if (string.IsNullOrEmpty(worldId) || worldId == "dungeon") return d.bestScoreEndless;
+        if (d.worldBests != null) foreach (var w in d.worldBests) if (w != null && w.id == worldId) return w.best;
+        return 0;
+    }
+
+    /// <summary>Faz 13 K2: dünyanın rekorunu yazar (zindan/buz eski alanlarına, diğerleri worldBests listesine).</summary>
+    public static void SetBest(string worldId, int score)
+    {
+        var d = SaveSystem.Data;
+        if (worldId == "ice") { d.bestScoreIce = score; return; }
+        if (string.IsNullOrEmpty(worldId) || worldId == "dungeon") { d.bestScoreEndless = score; return; }
+        if (d.worldBests == null) d.worldBests = new System.Collections.Generic.List<WorldBest>();
+        foreach (var w in d.worldBests) if (w != null && w.id == worldId) { w.best = score; return; }
+        d.worldBests.Add(new WorldBest { id = worldId, best = score });
+    }
 
     /// <summary>Bir seviyenin ait olduğu dünya (tema kimliğinden; teması olmayan = zindan).</summary>
     public static string WorldIdOf(LevelData level) => level != null && level.theme != null ? level.theme.themeId : "dungeon";

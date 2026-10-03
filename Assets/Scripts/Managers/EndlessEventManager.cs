@@ -30,7 +30,10 @@ public class EndlessEventManager : MonoBehaviour
     public int rollingStage = 3;
 
     // Faz 12 H2: dünyaya özel olay verisi ve başlığı (LevelManager.ApplyTheme → ApplyTheme). Boşsa zindanınki.
-    string rainTitle = "ev_meteor", rollingTitle = "ev_rolling";
+    string rainTitle = "ev_meteor", rollingTitle = "ev_rolling", swarmTitle = "ev_swarm";
+    /// <summary>Faz 13 K2: sürü olayının mermisi (Mağara: yarasa). Boşsa olay seçilmez.</summary>
+    [System.NonSerialized] public ProjectileData swarmData;
+    public int swarmStage = 2;
 
     /// <summary>Dünyanın olaylarını ayarlar (Buz: Sarkıt Yağmuru, Dev Kartopu).</summary>
     public void ApplyTheme(WorldTheme t)
@@ -40,6 +43,8 @@ public class EndlessEventManager : MonoBehaviour
         if (!string.IsNullOrEmpty(t.eventRainTitleKey)) rainTitle = t.eventRainTitleKey;
         if (t.eventRollingData != null) boulderData = t.eventRollingData;
         if (!string.IsNullOrEmpty(t.eventRollingTitleKey)) rollingTitle = t.eventRollingTitleKey;
+        swarmData = t.eventSwarmData;
+        if (!string.IsNullOrEmpty(t.eventSwarmTitleKey)) swarmTitle = t.eventSwarmTitleKey;
     }
 
     public bool Running { get; private set; }
@@ -90,6 +95,7 @@ public class EndlessEventManager : MonoBehaviour
         if (stage >= crossfireStage) options.Add(1);
         if (stage >= calmStage) options.Add(2);
         if (stage >= rollingStage) options.Add(3);
+        if (swarmData != null && stage >= swarmStage) options.Add(4);
         if (options.Count == 0) return;
         StartEvent(options[Random.Range(0, options.Count)]);
     }
@@ -104,6 +110,7 @@ public class EndlessEventManager : MonoBehaviour
             case 1: StartCoroutine(Run("ev_crossfire", Crossfire())); break;
             case 2: StartCoroutine(Run("ev_calm", Calm())); break;
             case 3: StartCoroutine(Run(rollingTitle, Rolling())); break;
+            case 4: if (swarmData != null) StartCoroutine(Run(swarmTitle, Swarm())); break;
         }
     }
 
@@ -214,6 +221,43 @@ public class EndlessEventManager : MonoBehaviour
             Projectile.Launch(projectilePrefab, boulderData, from, fromLeft ? Vector2.right : Vector2.left, 2.4f, 1.3f);
             yield return Wait1_4;
         }
+    }
+
+    /// <summary>
+    /// Faz 13 K2: sürü — bir yandan arka arkaya 7 yarasa geçer, yükseklikleri oyuncunun çevresinde dağılır. Önce şerit uyarısı
+    /// (yumuşak: nereden geleceği okunur), aralarında kaçış boşluğu kalır.
+    /// </summary>
+    IEnumerator Swarm()
+    {
+        Rect r = Play;
+        bool fromLeft = Random.value < 0.5f;
+        var seen = PlayerRegistry.All.Count > 0 ? PlayerRegistry.RandomVisible() : Projectile.PlayerTarget;
+        float cy = seen != null ? seen.position.y : r.center.y;
+        if (laneWarning != null)
+        {
+            laneWarning.transform.position = new Vector3(r.center.x, Mathf.Clamp(cy, r.yMin + 1f, r.yMax - 1f), 0f);
+            laneWarning.size = new Vector2(r.width, 2f);
+            laneWarning.enabled = true;
+        }
+        float warnEnd = Time.time + 1f;
+        while (Time.time < warnEnd)
+        {
+            if (laneWarning != null) { Color c = KakPalette.Mor; c.a = 0.16f + 0.16f * Mathf.Abs(Mathf.Sin(Time.time * 12f)); laneWarning.color = c; }
+            yield return null;
+        }
+        if (laneWarning != null) laneWarning.enabled = false;
+        int gap = Random.Range(1, 6); // bir yarasa atlanır: kaçış boşluğu
+        for (int i = 0; i < 7 && !Over; i++)
+        {
+            if (i != gap)
+            {
+                float y = Mathf.Clamp(cy + (i - 3) * 0.32f + Random.Range(-0.1f, 0.1f), r.yMin + 0.3f, r.yMax - 0.3f);
+                Vector3 from = new Vector3(fromLeft ? r.xMin - 0.1f : r.xMax + 0.1f, y, 0f);
+                Projectile.Launch(projectilePrefab, swarmData, from, fromLeft ? Vector2.right : Vector2.left, 1.1f, ScaleMult);
+            }
+            yield return Wait0_35;
+        }
+        yield return Wait1;
     }
 
     float ScaleMult => DifficultyManager.Instance != null ? DifficultyManager.Instance.GetProjectileScaleMultiplier() : 1f;

@@ -51,6 +51,12 @@ public class ProjectileData : ScriptableObject
     [Tooltip("Faz 12 H2: büyümenin çarpışma alanına yansıyan payı (0-1). Görüntü tam büyür; 0,6 = alan büyümenin %60'ı kadar")]
     public float growHitShare = 1f;
 
+    [Header("Dalga (Faz 13 K2, yarasa)")]
+    [Tooltip("Yanal salınım genliği (birim)")]
+    public float waveAmplitude = 0.45f;
+    [Tooltip("Saniyedeki salınım")]
+    public float waveFrequency = 1.4f;
+
     [Header("Karanlık dünya (Faz 13 K1)")]
     [Tooltip("Karanlıkta taşın parıltı rengi (yönü okunsun)")]
     public Color glowColor = new Color(1f, 0.62f, 0.3f, 0.85f);
@@ -84,5 +90,6 @@ public enum ProjectileMotion
     Bounce,   // duvarlardan seker
     Homing,   // kısa süre oyuncuyu takip eder, sonra düz gider
     Split,    // yolun ortasında parçalara bölünür
-    Meteor    // gökten düşer: yerde büyüyen gölge uyarısı, inişte alan hasarı
+    Meteor,   // gökten düşer: yerde büyüyen gölge uyarısı, inişte alan hasarı
+    Wave      // Faz 13 K2: dalgalanarak uçar (yarasa); sona eklendi
 }

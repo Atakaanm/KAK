@@ -391,33 +391,40 @@ public static class KakUiSetup
     /// <summary>G7: DÜNYALAR paneli — dünya kartları (önizleme, ad, açıklama, rekor, seç / kilit).</summary>
     static (RectTransform root, Button close) BuildWorldsPanel(Transform canvas, MainMenuController mmc)
     {
+        // Faz 13 K2: 4 dünya (Zindan, Buz, Mağara, Futbol) için kompakt kartlar; karanlık dünyada MEŞALE yükseltmesi
+        const int Count = 4;
         var old = canvas.Find("WorldsPanel");
         if (old != null) Object.DestroyImmediate(old.gameObject);
-        var (root, panel) = Modal(canvas, "WorldsPanel", new Vector2(900f, 1400f));
-        Text(Place(Rect(panel, "Title"), new Vector2(0.5f, 1f), new Vector2(0f, -100f), new Vector2(800f, 110f)), "@worlds", 76, KakPalette.Altin);
-        var cards = new WorldsPanel.Card[2];
-        for (int i = 0; i < 2; i++)
+        var (root, panel) = Modal(canvas, "WorldsPanel", new Vector2(900f, 1680f));
+        Text(Place(Rect(panel, "Title"), new Vector2(0.5f, 1f), new Vector2(0f, -90f), new Vector2(800f, 100f)), "@worlds", 72, KakPalette.Altin);
+        var cards = new WorldsPanel.Card[Count];
+        for (int i = 0; i < Count; i++)
         {
-            var card = Place(Rect(panel, "Card" + i), new Vector2(0.5f, 1f), new Vector2(0f, i == 0 ? -420f : -850f), new Vector2(820f, 400f));
+            var card = Place(Rect(panel, "Card" + i), new Vector2(0.5f, 1f), new Vector2(0f, -165f - i * 325f), new Vector2(820f, 310f), new Vector2(0.5f, 1f));
             var bg = Img(card, S("btn_stone_9s.png"), true);
-            var frame = Img(Place(Rect(card, "Frame"), new Vector2(0f, 0.5f), new Vector2(40f, 0f), new Vector2(320f, 320f), new Vector2(0f, 0.5f)),
+            var frame = Img(Place(Rect(card, "Frame"), new Vector2(0f, 0.5f), new Vector2(28f, 0f), new Vector2(254f, 254f), new Vector2(0f, 0.5f)),
                             S("white_ui.png"), false, KakPalette.Murekkep);
-            var prev = Img(Place(Rect(frame.rectTransform, "Preview"), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(308f, 308f)), null, false);
-            var name = Text(Place(Rect(card, "Name"), new Vector2(0f, 1f), new Vector2(390f, -60f), new Vector2(410f, 60f), new Vector2(0f, 0.5f)), "", 44,
+            var prev = Img(Place(Rect(frame.rectTransform, "Preview"), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(244f, 244f)), null, false);
+            var name = Text(Place(Rect(card, "Name"), new Vector2(0f, 1f), new Vector2(305f, -46f), new Vector2(490f, 56f), new Vector2(0f, 0.5f)), "", 40,
                             KakPalette.Altin, TextAlignmentOptions.MidlineLeft);
-            var desc = Text(Place(Rect(card, "Desc"), new Vector2(0f, 1f), new Vector2(390f, -140f), new Vector2(400f, 100f), new Vector2(0f, 0.5f)), "", 26,
+            var desc = Text(Place(Rect(card, "Desc"), new Vector2(0f, 1f), new Vector2(305f, -110f), new Vector2(490f, 76f), new Vector2(0f, 0.5f)), "", 24,
                             KakPalette.Sis, TextAlignmentOptions.MidlineLeft, false, false);
             desc.textWrappingMode = TextWrappingModes.Normal;
-            var best = Text(Place(Rect(card, "Best"), new Vector2(0f, 1f), new Vector2(390f, -222f), new Vector2(400f, 44f), new Vector2(0f, 0.5f)), "", 30,
+            var best = Text(Place(Rect(card, "Best"), new Vector2(0f, 1f), new Vector2(305f, -172f), new Vector2(490f, 40f), new Vector2(0f, 0.5f)), "", 28,
                             KakPalette.AltinAcik, TextAlignmentOptions.MidlineLeft, false, false);
-            var btn = Button(Place(Rect(card, "Action"), new Vector2(0f, 0f), new Vector2(390f, 50f), new Vector2(300f, 90f), new Vector2(0f, 0f)), "SEÇ", Style.Gold, 38);
+            var btn = Button(Place(Rect(card, "Action"), new Vector2(0f, 0f), new Vector2(305f, 22f), new Vector2(225f, 80f), new Vector2(0f, 0f)), "SEÇ", Style.Gold, 34);
+            var torch = Button(Place(Rect(card, "Torch"), new Vector2(0f, 0f), new Vector2(545f, 22f), new Vector2(250f, 80f), new Vector2(0f, 0f)), "", Style.Stone, 26);
+            var torchText = torch.transform.Find("Label").GetComponent<TMP_Text>();
+            torchText.richText = true;
+            torchText.textWrappingMode = TextWrappingModes.NoWrap;
             cards[i] = new WorldsPanel.Card
             {
                 root = card, background = bg, preview = prev, nameText = name, descText = desc, bestText = best,
-                actionButton = btn, actionBackground = btn.GetComponent<Image>(), actionText = btn.transform.Find("Label").GetComponent<TMP_Text>()
+                actionButton = btn, actionBackground = btn.GetComponent<Image>(), actionText = btn.transform.Find("Label").GetComponent<TMP_Text>(),
+                torchButton = torch, torchBackground = torch.GetComponent<Image>(), torchText = torchText
             };
         }
-        var close = Button(Place(Rect(panel, "CloseButton"), new Vector2(0.5f, 0f), new Vector2(0f, 95f), new Vector2(560f, 120f)), "@close", Style.Gold, 58);
+        var close = Button(Place(Rect(panel, "CloseButton"), new Vector2(0.5f, 0f), new Vector2(0f, 85f), new Vector2(560f, 110f)), "@close", Style.Gold, 56);
         var wp = GetOrAdd<WorldsPanel>(root.gameObject);
         wp.cards = cards; wp.menu = mmc;
         wp.goldSprite = S("btn_gold_9s.png"); wp.stoneSprite = S("btn_stone_9s.png");

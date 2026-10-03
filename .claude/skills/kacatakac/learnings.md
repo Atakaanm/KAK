@@ -4,6 +4,15 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-10-03 — Faz 13 K2: Karanlık Mağara
+
+- Kullanıcı ne atılacağını bize bıraktı → öneriler: yarasa (dalga), sarkıt, spor, ağ, kaya. Taş Muhafızlar'ın mağara hali hikâyeye uyuyor ve zindan sprite'larını boyayarak 48 kare ücretsiz geldi (adlar tutarsızdı: `Throw`/`Attack`, `south-east`, `west 1` → klasörden oku).
+- Voronoi zemin: 70 tohumla iri ve düz göründü; 230 tohum + sol-üst açık/sağ-alt koyu kenar = taş döşeme. numpy ile 0,5 sn.
+- Durum etkili taşlar (ağ/spor) `PlayerStatus` yoksa sessizce can götürüyordu → seviye bu taşları içeriyorsa oyunculara ekle.
+- Dünya kataloğunu kuran araçlar üzerine yazmasın (Buz kurulumu Mağara'yı silerdi) → `RegisterWorld` ekle/güncelle + sabit sıra.
+- Çalışma anında temadan dolan alanlar `[NonSerialized]` olmalı; yoksa `SahneDenetimTests` "beklenmedik boş alan" der.
+- Bot karanlığı görmez (her şeyi bilir) → ölçüm iyimser; karanlıkta insan için zor olan (yarasa) ayrıca yumuşatıldı.
+
 ## 2026-10-03 — Faz 13 K1: karanlık + meşale
 
 - Karanlık = tek karanlık sprite (`VisibleOutsideMask`) + oyuncu başına SpriteMask deliği. Yumuşak kenar için maskenin içinde biten siyah halka; **128 px daire büyütülünce sınır noktalı/tırtıklıydı → 512 px**; halka deliğin dışına taşınca çift kararma çizgisi oluyordu.

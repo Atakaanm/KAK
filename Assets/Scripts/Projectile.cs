@@ -423,10 +423,25 @@ public class Projectile : MonoBehaviour
         }
 
         Vector2 delta = moveDirection.normalized * speed * Time.fixedDeltaTime;
+        if (motion == ProjectileMotion.Wave && data != null)
+        {
+            // Faz 13 K2: yanal salınım (konum türevi: A·2πf·cos) — ana yön değişmez, yol okunur
+            Vector2 perp = new Vector2(-moveDirection.y, moveDirection.x).normalized;
+            float w = 2f * Mathf.PI * data.waveFrequency;
+            delta += perp * (data.waveAmplitude * w * Mathf.Cos(w * age) * Time.fixedDeltaTime);
+        }
         if (rb != null) rb.MovePosition(rb.position + delta);
         else transform.position += (Vector3)delta;
 
-        if (data != null && data.noSpin && visual != null)
+        if (motion == ProjectileMotion.Wave && visual != null)
+        {
+            // yarasa: dik durur, sola gidiyorsa ayna, kanat çırpması (dikey ölçek)
+            visual.localRotation = Quaternion.identity;
+            float flap = 0.75f + 0.25f * Mathf.Abs(Mathf.Sin(age * 14f));
+            var sx = visualBaseScale.x * (moveDirection.x < 0f ? -1f : 1f);
+            if (age > AppearTime) visual.localScale = new Vector3(sx, visualBaseScale.y * flap, visualBaseScale.z);
+        }
+        else if (data != null && data.noSpin && visual != null)
             visual.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg);
         else if (visual != null) visual.Rotate(0f, 0f, rotationSpeed * Time.fixedDeltaTime);
         else if (rb != null) rb.rotation += rotationSpeed * Time.fixedDeltaTime;

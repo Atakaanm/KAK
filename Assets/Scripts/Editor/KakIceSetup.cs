@@ -138,15 +138,11 @@ public static class KakIceSetup
         EditorUtility.SetDirty(level);
 
         // ── Dünya kataloğu ──
-        var cat = LoadOrCreate<EndlessWorlds>("Assets/Resources/EndlessWorlds.asset");
-        cat.worlds = new[]
-        {
-            new EndlessWorlds.World { id = "dungeon", nameKey = "world_dungeon", descKey = "worlddesc_dungeon", level = dungeonLevel,
-                                     preview = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Arena/Dungeon_arena_01.png"), unlockGames = 0 },
-            new EndlessWorlds.World { id = "ice", nameKey = "world_ice", descKey = "worlddesc_ice", level = level,
-                                     preview = theme.arenaSprite, unlockGames = 3 },
-        };
-        EditorUtility.SetDirty(cat);
+        // Faz 13: katalog üzerine yazılmaz, dünya eklenir/güncellenir (Mağara, Futbol kaybolmasın)
+        RegisterWorld(new EndlessWorlds.World { id = "dungeon", nameKey = "world_dungeon", descKey = "worlddesc_dungeon", level = dungeonLevel,
+                                     preview = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Arena/Dungeon_arena_01.png"), unlockGames = 0 });
+        RegisterWorld(new EndlessWorlds.World { id = "ice", nameKey = "world_ice", descKey = "worlddesc_ice", level = level,
+                                     preview = theme.arenaSprite, unlockGames = 3 });
         AssetDatabase.SaveAssets();
         return "[KakIceSetup] Buz Gölü: 5 mermi, 6 kademe, kardan adam, 3 eşya, tema, seviye, dünya kataloğu";
     }
@@ -176,7 +172,7 @@ public static class KakIceSetup
         SpriteImport("Assets/Resources/UiWhite.png", 100f, false);
     }
 
-    static void CopyImport(TextureImporter from, string path)
+    public static void CopyImport(TextureImporter from, string path)
     {
         var ti = AssetImporter.GetAtPath(path) as TextureImporter;
         if (ti == null || from == null) return;
@@ -255,14 +251,31 @@ public static class KakIceSetup
         return d;
     }
 
-    static T LoadOrCreate<T>(string path) where T : ScriptableObject
+    /// <summary>Faz 13: dünyayı kataloğa ekler ya da günceller; sıra: zindan, buz, mağara, futbol (bilinmeyen sona).</summary>
+    public static void RegisterWorld(EndlessWorlds.World w)
+    {
+        var cat = LoadOrCreate<EndlessWorlds>("Assets/Resources/EndlessWorlds.asset");
+        var list = new List<EndlessWorlds.World>(cat.worlds ?? new EndlessWorlds.World[0]);
+        list.RemoveAll(x => x == null || x.id == w.id);
+        list.Add(w);
+        string[] order = { "dungeon", "ice", "cave", "football" };
+        list.Sort((a, b) =>
+        {
+            int ia = System.Array.IndexOf(order, a.id), ib = System.Array.IndexOf(order, b.id);
+            return (ia < 0 ? 99 : ia).CompareTo(ib < 0 ? 99 : ib);
+        });
+        cat.worlds = list.ToArray();
+        EditorUtility.SetDirty(cat);
+    }
+
+    public static T LoadOrCreate<T>(string path) where T : ScriptableObject
     {
         var a = AssetDatabase.LoadAssetAtPath<T>(path);
         if (a == null) { a = ScriptableObject.CreateInstance<T>(); AssetDatabase.CreateAsset(a, path); }
         return a;
     }
 
-    static void EnsureFolder(string parent, string name)
+    public static void EnsureFolder(string parent, string name)
     {
         if (!AssetDatabase.IsValidFolder(parent + "/" + name)) AssetDatabase.CreateFolder(parent, name);
     }
