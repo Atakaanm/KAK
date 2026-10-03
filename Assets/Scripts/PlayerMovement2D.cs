@@ -125,6 +125,16 @@ public class PlayerMovement2D : MonoBehaviour
         }
     }
 
+    /// <summary>Faz 12 H1: süreli hareket etkilerini sıfırlar (iki kişilikte düşen oyuncu temiz döner).</summary>
+    public void ClearEffects()
+    {
+        if (speedBoostCoroutine != null) { StopCoroutine(speedBoostCoroutine); speedBoostCoroutine = null; }
+        currentSpeedBoostMult = 1f;
+        gripUntil = -1f;
+        iceFrozenUntil = -1f;
+        coldSpeedMultiplier = 1f;
+    }
+
     public void ApplySpeedBoost(float multiplier, float duration)
     {
         if (speedBoostCoroutine != null) StopCoroutine(speedBoostCoroutine);

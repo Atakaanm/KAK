@@ -35,6 +35,15 @@ public class SnowballCatcher : MonoBehaviour
         return true;
     }
 
+    /// <summary>Faz 12 H1: düşen oyuncu eldiveni ve eldeki kartopunu bırakır.</summary>
+    public void Drop()
+    {
+        gloveUntil = -1f;
+        if (!Holding) return;
+        held = null;
+        ShowButton(false);
+    }
+
     public void Throw()
     {
         if (!Holding) return;

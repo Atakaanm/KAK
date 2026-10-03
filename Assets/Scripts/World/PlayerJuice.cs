@@ -37,7 +37,19 @@ public class PlayerJuice : MonoBehaviour
     void OnEnable() { GameEvents.PlayerDamaged += OnDamaged; }
     void OnDisable() { GameEvents.PlayerDamaged -= OnDamaged; }
 
-    void OnDamaged(int hp, Vector3 pos) { squash = -hurtSquash; }
+    // İki kişilikte yalnız kendi hasarımız (olay oyuncu konumuyla gelir)
+    void OnDamaged(int hp, Vector3 pos) { if (((Vector2)pos - (Vector2)transform.position).sqrMagnitude < 0.04f) squash = -hurtSquash; }
+
+    float appear = 1f;
+    /// <summary>Faz 12 H1: yumuşak beliriş (küçükten hafif taşarak büyür; iki kişilikte dönüş, canlanma).</summary>
+    public void Appear() { appear = 0f; }
+
+    static float EaseOutBack(float t)
+    {
+        const float c1 = 1.70158f, c3 = c1 + 1f;
+        float u = t - 1f;
+        return 1f + c3 * u * u * u + c1 * u * u;
+    }
 
     void Update()
     {
@@ -51,8 +63,10 @@ public class PlayerJuice : MonoBehaviour
 
         squash = Mathf.Lerp(squash, 0f, 1f - Mathf.Exp(-recover * dt));
         float bob = moving ? Mathf.Abs(Mathf.Sin(phase)) * bobHeight : 0f;
+        if (appear < 1f) appear = Mathf.Min(1f, appear + dt / 0.3f);
+        float a = appear < 1f ? EaseOutBack(appear) : 1f;
         // squash > 0: yere basma (yassı-geniş), < 0: büzülme (dar-uzun)
-        visual.localScale = new Vector3(baseScale.x * (1f + squash), baseScale.y * (1f - squash), baseScale.z);
+        visual.localScale = new Vector3(baseScale.x * (1f + squash) * a, baseScale.y * (1f - squash) * a, baseScale.z);
         visual.localPosition = basePos + new Vector3(0f, bob, 0f);
 
         if (moving && dust != null)

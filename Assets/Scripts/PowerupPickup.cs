@@ -160,6 +160,14 @@ public class PowerupPickup : MonoBehaviour
             {
                 var cold = player.GetComponent<ColdMeter>();
                 if (cold != null) cold.Warm(powerupData.powerMultiplier);
+                // Faz 12 H1: ateş yakındaki arkadaşı da yarı ısıtır (iki kişilikte birlikte oynamayı ödüllendirir)
+                for (int i = 0; i < ColdMeter.All.Count; i++)
+                {
+                    var other = ColdMeter.All[i];
+                    if (other == null || other == cold) continue;
+                    if (((Vector2)other.transform.position - (Vector2)player.transform.position).sqrMagnitude <= ColdMeter.ShareRadius * ColdMeter.ShareRadius)
+                        other.Warm(powerupData.powerMultiplier * 0.5f);
+                }
                 break;
             }
         }

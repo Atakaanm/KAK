@@ -230,6 +230,10 @@ public class LevelManager : MonoBehaviour
         {
             powerupSpawner.Init(level.availablePowerups);
             // RefreshArenaBounds() Init içinde çağrılıyor — gerçek sprite bounds kullanılıyor
+            // Faz 12 H1: iki kişilikte eşyalar daha sık (iki kişi paylaşıyor; ateş vb. bulup kurtulabilsinler)
+            if (twoPlayer)
+                powerupSpawner.SetSpawnInterval(powerupSpawner.spawnIntervalMin / TwoPlayerMode.ItemRate,
+                                                powerupSpawner.spawnIntervalMax / TwoPlayerMode.ItemRate);
         }
 
         // ── KURULUM SIRASI GARANTİSİ ──

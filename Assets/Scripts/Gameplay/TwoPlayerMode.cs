@@ -10,6 +10,8 @@ using UnityEngine.UI;
 public static class TwoPlayerMode
 {
     const float RowScale = 0.72f;
+    /// <summary>Faz 12 H1: iki kişilikte eşya çıkma sıklığı çarpanı (eşya aralığı ve garantili ateş bu kadar kısalır).</summary>
+    public const float ItemRate = 1.5f;
 
     public static PlayerMovement2D SpawnSecond(PlayerMovement2D p1, PlayerData data2, LevelManager lm)
     {

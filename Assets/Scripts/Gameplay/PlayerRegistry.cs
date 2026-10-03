@@ -23,6 +23,9 @@ public static class PlayerRegistry
         }
     }
 
+    /// <summary>Faz 12 H1: oyuncu hedef alınabilir mi (düşmüş/sahadan kalkmış oyuncu hedef değildir).</summary>
+    public static bool IsTargetable(PlayerHealth p) => p != null && !p.IsDead && p.isActiveAndEnabled;
+
     /// <summary>Konuma en yakın yaşayan oyuncu (yoksa null).</summary>
     public static Transform NearestAlive(Vector2 from)
     {

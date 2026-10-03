@@ -35,6 +35,7 @@ public class FeedbackManager : MonoBehaviour
         GameEvents.ProjectileHitWall += OnWallHit;
         GameEvents.StageChanged += OnStageChanged;
         GameEvents.MeteorLanded += OnMeteorLanded;
+        GameEvents.PlayerRevived += OnPlayerRevived;
     }
 
     void OnDisable()
@@ -48,7 +49,11 @@ public class FeedbackManager : MonoBehaviour
         GameEvents.ProjectileHitWall -= OnWallHit;
         GameEvents.StageChanged -= OnStageChanged;
         GameEvents.MeteorLanded -= OnMeteorLanded;
+        GameEvents.PlayerRevived -= OnPlayerRevived;
     }
+
+    // Faz 12 H1: dönüş/canlanma yumuşak bir ışık halkasıyla belli olsun (sarsıntı yok)
+    void OnPlayerRevived(Vector3 pos) => Ring(pos, 16, 2f, 0.5f, KakPalette.AltinAcik, KakPalette.Beyaz, 0.07f);
 
     void OnMeteorLanded(Vector3 pos)
     {

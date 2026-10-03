@@ -56,6 +56,16 @@ public class PlayerHealth : MonoBehaviour
     public void SetInvulnerable(float seconds) { invulnerableUntil = Mathf.Max(invulnerableUntil, Time.time + seconds); }
     public bool IsInvulnerable => Time.time < invulnerableUntil;
 
+    void Awake()
+    {
+        // Faz 12 H1: asıl renk Awake'te alınır (Start'ta alınıyordu). Buz dünyasında soğuk göstergesi ilk karede rengi
+        // yenileyebiliyordu; Start ondan sonra çalışınca boş (0,0,0,0) renk "asıl renk" sanılıyor, iki kişilikte Ada
+        // ilk düşüşten dönünce görünmez oluyordu.
+        if (playerSpriteRenderer != null) { originalColor = playerSpriteRenderer.color; colorCaptured = true; }
+    }
+
+    bool colorCaptured;
+
     void Start()
     {
         if (playerData != null)
@@ -67,9 +77,10 @@ public class PlayerHealth : MonoBehaviour
 
         currentHealth = maxHealth;
 
-        if (playerSpriteRenderer != null)
+        if (playerSpriteRenderer != null && !colorCaptured)
         {
             originalColor = playerSpriteRenderer.color;
+            colorCaptured = true;
         }
 
         if (healthUI != null)
@@ -84,12 +95,39 @@ public class PlayerHealth : MonoBehaviour
     /// <summary>G5: düşmüşken dönüşe kalan saniye (HUD sayacı); 0 = düşmüş değil.</summary>
     [System.NonSerialized] public float RespawnRemaining;
 
-    /// <summary>G5: iki kişilikte düşmüş oyuncu yarı saydam ve gri; gövdesi taşlara çarpmaz.</summary>
+    readonly System.Collections.Generic.List<Renderer> downHidden = new System.Collections.Generic.List<Renderer>(8);
+    readonly System.Collections.Generic.List<Collider2D> downColliders = new System.Collections.Generic.List<Collider2D>(3);
+
+    /// <summary>
+    /// G5 / Faz 12 H1: iki kişilikte düşen oyuncu sahadan kalkar: görüntü ve gölge gizlenir, çarpışma ve fizik kapanır
+    /// (yakın geçiş, altın, eşya, hedeflenme yok). Eski hali vurulduğu yerde soluk kalıyor, ayak izi açık kaldığı için
+    /// altın topluyor ve yanından geçen taşlarla puan kazanıyordu. Dönüşte gizlenen her şey geri açılır, durumlar sıfırlanır.
+    /// </summary>
     public void SetDownVisual(bool down)
     {
-        if (playerSpriteRenderer != null) playerSpriteRenderer.color = down ? new Color(0.55f, 0.55f, 0.65f, 0.35f) : originalColor;
-        foreach (var c in GetComponentsInChildren<Collider2D>(true)) if (c.isTrigger) c.enabled = !down;
-        if (!down) RefreshTint();
+        var rb = GetComponent<Rigidbody2D>();
+        if (down)
+        {
+            downHidden.Clear();
+            downColliders.Clear();
+            foreach (var r in GetComponentsInChildren<Renderer>()) if (r.enabled) { r.enabled = false; downHidden.Add(r); }
+            foreach (var c in GetComponentsInChildren<Collider2D>()) if (c.enabled) { c.enabled = false; downColliders.Add(c); }
+            if (rb != null) { rb.linearVelocity = Vector2.zero; rb.simulated = false; }
+            var cm = GetComponent<ColdMeter>();
+            if (cm != null) cm.ResetCold(); // dönüşte sıcak başlar
+            var catcher = GetComponent<SnowballCatcher>();
+            if (catcher != null) catcher.Drop();
+            var mv = GetComponent<PlayerMovement2D>();
+            if (mv != null) mv.ClearEffects();
+            return;
+        }
+        for (int i = 0; i < downHidden.Count; i++) if (downHidden[i] != null) downHidden[i].enabled = true;
+        for (int i = 0; i < downColliders.Count; i++) if (downColliders[i] != null) downColliders[i].enabled = true;
+        downHidden.Clear();
+        downColliders.Clear();
+        if (rb != null) { rb.simulated = true; rb.linearVelocity = Vector2.zero; }
+        if (playerSpriteRenderer != null) playerSpriteRenderer.enabled = true;
+        RefreshTint();
     }
 
     /// <summary>G3: can doluyken kalp toplayınca bu oyunluk kalp sayısı büyür (HealthCap'e kadar).</summary>
@@ -175,7 +213,9 @@ public class PlayerHealth : MonoBehaviour
     void RefreshTint()
     {
         if (playerSpriteRenderer == null) return;
+        if (!colorCaptured) { originalColor = playerSpriteRenderer.color; colorCaptured = true; }
         Color c = originalColor;
+        if (c.a < 0.05f) c = Color.white; // savunma: oyuncu asla tamamen saydam boyanmaz
         if (coldTint > 0.01f) c = Color.Lerp(c, new Color(0.62f, 0.85f, 1f, c.a), coldTint); // G7: üşüyen oyuncu mavileşir
         if (isGhost) c.a = GhostAlpha;
         playerSpriteRenderer.color = c;

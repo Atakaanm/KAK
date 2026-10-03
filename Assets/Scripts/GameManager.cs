@@ -202,18 +202,54 @@ public class GameManager : MonoBehaviour
         }
         ph.RespawnRemaining = 0f;
         if (isGameOver || ph == null) yield break;
-        // Arenanın ortasında, kısa dokunulmazlıkla döner (başlangıç canıyla)
+        // Faz 12 H1: taşlardan en uzak güvenli noktada, yumuşak belirerek ve kısa dokunulmazlıkla döner (başlangıç canıyla)
         var arena = FindAnyObjectByType<ArenaAutoLayout>();
         if (arena != null)
         {
-            Vector2 c = arena.PlayableWorldRect.center;
+            Vector2 c = SafeRespawnPoint(arena.PlayableWorldRect, ph);
             var rb = ph.GetComponent<Rigidbody2D>();
             if (rb != null) rb.position = c;
             ph.transform.position = c;
         }
         ph.SetDownVisual(false);
         ph.Revive(Mathf.Max(1, ph.StartHearts), respawnInvulnerable);
+        var juice = ph.GetComponent<PlayerJuice>();
+        if (juice != null) juice.Appear();
         GameEvents.RaisePlayerRevived(ph.transform.position);
+    }
+
+    static readonly float[] RespawnGrid = { 0.25f, 0.5f, 0.75f };
+
+    /// <summary>
+    /// Faz 12 H1: dönüş noktası — arenada 3×3 aday nokta, o an uçan taşlara (ve diğer oyuncuya) en uzak olan; eşitlikte
+    /// ortaya yakın olan. Eskisi her zaman tam ortaydı: ortada taş varsa dönen oyuncu taşın içine doğuyordu.
+    /// </summary>
+    static Vector2 SafeRespawnPoint(Rect r, PlayerHealth self)
+    {
+        Vector2 best = r.center;
+        float bestScore = float.MinValue;
+        var list = Projectile.Active;
+        foreach (float fx in RespawnGrid)
+            foreach (float fy in RespawnGrid)
+            {
+                var p = new Vector2(Mathf.Lerp(r.xMin, r.xMax, fx), Mathf.Lerp(r.yMin, r.yMax, fy));
+                float minD = 99f;
+                for (int i = 0; i < list.Count; i++)
+                {
+                    var pr = list[i];
+                    if (pr == null || pr.friendly) continue;
+                    minD = Mathf.Min(minD, Vector2.Distance(p, pr.transform.position));
+                }
+                for (int i = 0; i < PlayerRegistry.All.Count; i++)
+                {
+                    var o = PlayerRegistry.All[i];
+                    if (o == null || o == self || o.IsDead) continue;
+                    if (Vector2.Distance(p, o.transform.position) < 0.8f) minD = Mathf.Min(minD, 0.5f); // üst üste doğmasın
+                }
+                float score = Mathf.Min(minD, 3f) - 0.15f * Vector2.Distance(p, r.center);
+                if (score > bestScore) { bestScore = score; best = p; }
+            }
+        return best;
     }
     /// <summary>Bu oyunda reklamla canlanıldı mı (testler, analitik).</summary>
     public int Revives { get; private set; }

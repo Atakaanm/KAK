@@ -245,6 +245,30 @@ public static class KakDevMenu
     /// <summary>G5: iki kişilik oyunu başlatır. Köprü: invoke KakDevMenu PlayTwoPlayer</summary>
     public static void PlayTwoPlayer() { GameSettings.TwoPlayer = true; SceneLoader.LoadGame(); }
 
+    /// <summary>Faz 12: oyuncuların görüntü durumunu döndürür (görünmezlik teşhisi). Köprü: invoke KakDevMenu ProbePlayers</summary>
+    public static string ProbePlayers()
+    {
+        var sb = new System.Text.StringBuilder();
+        foreach (var ph in PlayerRegistry.All)
+        {
+            if (ph == null) continue;
+            sb.Append(ph.name).Append(" dead=").Append(ph.IsDead).Append(" pos=").Append(ph.transform.position).Append('\n');
+            foreach (var r in ph.GetComponentsInChildren<Renderer>(true))
+            {
+                var sr = r as SpriteRenderer;
+                sb.Append("  ").Append(r.name).Append(" en=").Append(r.enabled).Append(" act=").Append(r.gameObject.activeInHierarchy)
+                  .Append(" vis=").Append(r.isVisible).Append(" layer=").Append(r.sortingLayerName).Append('/').Append(r.sortingOrder)
+                  .Append(" scale=").Append(r.transform.lossyScale);
+                if (sr != null) sb.Append(" spr=").Append(sr.sprite != null ? sr.sprite.name : "null").Append(" col=").Append(sr.color);
+                sb.Append('\n');
+            }
+        }
+        return sb.ToString();
+    }
+
+    /// <summary>Faz 12: iki kişilik oyunu bir dünyada başlatır. Köprü: invoke KakDevMenu PlayTwoPlayerIn ice</summary>
+    public static void PlayTwoPlayerIn(string id) { GameSettings.TwoPlayer = true; PlayWorld(id); }
+
     /// <summary>G5: 1. (0) ya da 2. (1) oyuncuya ölümcül hasar (dönüş sayacını görmek için). Köprü: invoke KakDevMenu DownPlayer 0</summary>
     public static void DownPlayer(string index)
     {
@@ -252,7 +276,10 @@ public static class KakDevMenu
         var ph = PlayerRegistry.All[i];
         ph.currentHealth = 1;
         typeof(PlayerHealth).GetField("invulnerableUntil", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(ph, -1f);
+        bool god = PlayerHealth.DevGodMode; // ölümsüzlük açıkken de yalnız bu oyuncu düşsün
+        PlayerHealth.DevGodMode = false;
         ph.TakeDamage(1);
+        PlayerHealth.DevGodMode = god;
     }
 
     /// <summary>G4: oyuncunun yanına Pranga bırakır (görsel kontrol). Köprü: invoke KakDevMenu DropShackle</summary>

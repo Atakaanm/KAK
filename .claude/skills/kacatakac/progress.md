@@ -142,6 +142,13 @@ Sonra: 6 (Buz) → 7 (Futbol) → 8 (Karanlık) → 9 (Meta).
 - Varsayım: Kalkan "vurulana kadar" sürer (`ShieldData.duration` kullanılmıyor, davranış korunuyor)
 
 ### Sıradaki adım
+**Faz 12 — yumuşak oynanış** (`prompts/faz-12-yumusak-oynanis.md`, 2026-10-03). Sıra: H1 iki kişilik hatalar → H2 Buz ayarları → H3 serbest kontrol düzeni → H4 Görünmezlik → H5 akıcılık turu → telefona kurulum. Karanlık Mağara ve Futbol: kullanıcı ne atılacağına karar verince.
+- [x] H1 iki kişilik: görünmez dönüş hatası (asıl renk Start'ta alınıyordu, soğuk göstergesi ilk karede rengi boşaltıyordu → Awake), düşen sahadan kalkar + güvenli nokta + yumuşak beliriş, yakın geçiş oyuncu başına, soğuk çubuğu oyuncu başına + ateş arkadaşı yarı ısıtır, donma soğuğu atar (0,45), eşya ×1,5. Testler 100/100 + 27/27
+- [ ] H2 Buz (Sarkıt Yağmuru, kartopu çarpana kadar büyür, buz ayakkabısı = normal zemin)
+- [ ] H3 kontrol düzeni (sürükle, boyut, sağ/sol el)
+- [ ] H4 Görünmezlik eşyası
+- [ ] H5 akıcılık turu
+
 **Faz 11 — telefon geri bildirimi TAMAM** (`prompts/faz-11-oyuncu-geri-bildirimi.md`). Sıradaki: kullanıcı telefonda dener (kablo takınca kurulum), geri bildirime göre ince ayar; sonra Futbol / Boks ringi dünyaları, kostüm, karakter yetenekleri, online (notlar prompt dosyasında).
 - [x] G1 His ve kontrol (ölümde donma, çapraz koşu histerezisi, hız 5→4 + hız güçlendirmesi ×1,25, göktaşı "!", altın tek tek + aralıklı, dash rafa, kontrol boyutu ayarı). Testler 81/81 + 23/23
 - [x] G2 Zorluk süreye bağlı (0/30/75/150/240/360 sn, `KakEndlessSetup.SetupStages`) + taş dağılımı yumuşak + ekranda en fazla 2 büyük taş + yakın geçiş skor çarpanı (+0,1, en fazla ×3, hasarda yarıya). Bot (3 can): usta 232 sn ortanca, acemi 135 sn → G3 tek canla yeniden ölç
