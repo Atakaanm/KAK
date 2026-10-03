@@ -46,6 +46,10 @@ public class ProjectileData : ScriptableObject
     public float growPerSecond = 0f;
     [Tooltip("Büyümenin üst sınırı (başlangıç ölçeğinin katı)")]
     public float maxGrowScale = 1f;
+    [Tooltip("Faz 12 H2: en büyük boyda hız çarpanı (büyüdükçe ağırlaşır; 1 = yavaşlamaz). Büyük ama yavaş = okunur, kaçılabilir")]
+    public float growSlowdown = 1f;
+    [Tooltip("Faz 12 H2: büyümenin çarpışma alanına yansıyan payı (0-1). Görüntü tam büyür; 0,6 = alan büyümenin %60'ı kadar")]
+    public float growHitShare = 1f;
     [Tooltip("Eldivenle yakalanabilir (kartopu)")]
     public bool catchable = false;
 

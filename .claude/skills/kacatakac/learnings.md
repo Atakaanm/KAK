@@ -4,6 +4,13 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-10-03 — Faz 12 H2: Buz ayarları
+
+- "Çarpana kadar büyüsün" isteği tam büyüyen çarpışma alanıyla usta botu 92 → 67 sn düşürdü. Yumuşak çözüm: **görüntü tam büyür, çarpışma alanı yarısı kadar** (`growHitShare` 0,5) — görsel büyüklük > alan bağışlayıcıdır (tersi haksızdır). Büyüdükçe yavaşlama fazla olunca (0,7) yavaş kartoplar sahada birikip yoğunluğu artırdı → 0,82-0,9.
+- Bot ölçümü 3 koşuda çok oynak (aynı ayarla usta 55-198 sn). Karşılaştırma için **aynı gün eski ayarlarla taban ölç**; eski kayıttaki sayıyla kıyaslama yanıltır.
+- Test ortamı İngilizce çalışıyor: başlık çevirisini dile bağlı test etme.
+- Telefon "unavailable" ve USB'de hiç görünmüyorsa (system_profiler'da iPhone yok) kurulum olmaz: kilit açık + kabloyu çıkar-tak + "Güven". Kurulumu bekleyen arka plan döngüsü 15 dk bekledi, telefon gelmedi.
+
 ## 2026-10-03 — Faz 12 H1: iki kişilik hatalar
 
 - **Görünmez Ada:** ~4 oyunda 1 tekrarlanan hata. Kök neden: `PlayerHealth.originalColor` Start'ta alınıyordu; Buz'da `ColdMeter` ilk karede `SetColdTint → RefreshTint` çağırıp rengi varsayılan (0,0,0,0) yapabiliyor, sonra Start bu saydam rengi "asıl" sanıyordu. Zindan'da görünür kalıp dönüşteki `RefreshTint` ile kayboluyordu. Tek kareli test yakalamadı; **gerçek taş + sık eşya + 5 tur düşür/döndür** dayanıklılık testi 4 koşuda 1 yakaladı. Çözüm: Awake'te yakala + saydam renk savunması.

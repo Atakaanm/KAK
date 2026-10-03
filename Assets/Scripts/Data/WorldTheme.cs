@@ -45,4 +45,12 @@ public class WorldTheme : ScriptableObject
     public float coldSeconds = 35f;
     [Tooltip("Ortamda hafif kar yağışı")]
     public bool snowfall = false;
+
+    [Header("Olaylar (Faz 12 H2; boşsa zindanın taşları)")]
+    [Tooltip("Yağmur olayında düşen şey (Buz: buz sarkıtı)")]
+    public ProjectileData eventRainData;
+    public string eventRainTitleKey = "";
+    [Tooltip("Yuvarlanan olayında şeridi tarayan şey (Buz: dev kartopu)")]
+    public ProjectileData eventRollingData;
+    public string eventRollingTitleKey = "";
 }

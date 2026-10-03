@@ -245,6 +245,13 @@ public static class KakDevMenu
     /// <summary>G5: iki kişilik oyunu başlatır. Köprü: invoke KakDevMenu PlayTwoPlayer</summary>
     public static void PlayTwoPlayer() { GameSettings.TwoPlayer = true; SceneLoader.LoadGame(); }
 
+    /// <summary>Faz 12: sonsuz mod olayını başlatır (0 yağmur, 1 çapraz, 2 sessizlik, 3 yuvarlanan). Köprü: invoke KakDevMenu StartEvent 0</summary>
+    public static void StartEvent(string id)
+    {
+        var ev = Object.FindAnyObjectByType<EndlessEventManager>();
+        if (ev != null && int.TryParse(id, out int i)) ev.StartEvent(i);
+    }
+
     /// <summary>Faz 12: oyuncuların görüntü durumunu döndürür (görünmezlik teşhisi). Köprü: invoke KakDevMenu ProbePlayers</summary>
     public static string ProbePlayers()
     {

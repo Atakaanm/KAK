@@ -36,3 +36,7 @@ MonoBehaviour:
   coldEnabled: 1
   coldSeconds: 35
   snowfall: 1
+  eventRainData: {fileID: 11400000, guid: e6ecd0ce8ff574410bd951a96224e04f, type: 2}
+  eventRainTitleKey: ev_icicle
+  eventRollingData: {fileID: 11400000, guid: 927e6b684b5714604a0118def11e443d, type: 2}
+  eventRollingTitleKey: ev_snowroll

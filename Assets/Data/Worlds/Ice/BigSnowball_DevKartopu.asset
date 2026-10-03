@@ -29,8 +29,10 @@ MonoBehaviour:
   meteorStartHeight: 7
   meteorRadius: 0.55
   warningSprite: {fileID: 0}
-  growPerSecond: 0.3
-  maxGrowScale: 1.6
+  growPerSecond: 0.26
+  maxGrowScale: 2.1
+  growSlowdown: 0.82
+  growHitShare: 0.5
   catchable: 1
   effect: 0
   effectDuration: 1.5
