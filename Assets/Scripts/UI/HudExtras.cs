@@ -56,14 +56,23 @@ public class HudExtras : MonoBehaviour
         ShowBanner(Loc.Has(key) ? Loc.T(key) : name.ToUpperInvariant() + "!", KakPalette.Altin);
     }
 
+    // Faz 14 Ö3: yakın geçişte kelime yok ("YAKIN!" her birkaç saniyede ekranı dolduruyordu) — küçük altın "+5"; kıvılcımı
+    // FeedbackManager çıkarır. Dash'li (yetenek dönerse) hâlâ "SÜPER KAÇIŞ!"
     void OnNearMiss(Vector3 pos, bool dashing)
     {
-        WorldPopup.Show(Loc.T(dashing ? "super_dodge" : "near_miss"), pos, dashing ? KakPalette.CamgobegiParlak : KakPalette.Krem, dashing ? 1.1f : 0.85f);
+        if (dashing) { WorldPopup.Show(Loc.T("super_dodge"), pos, KakPalette.CamgobegiParlak, 1.1f); return; }
+        var sm = GameManager.Instance != null ? GameManager.Instance.scoreManager : null;
+        int bonus = sm != null ? Mathf.RoundToInt(sm.nearMissBonus * sm.ComboMultiplier) : 5;
+        WorldPopup.Show("+" + bonus, pos + new Vector3(0f, 0.25f, 0f), KakPalette.AltinAcik, 0.65f);
     }
 
     void OnPowerup(PowerupData data, Vector3 pos)
     {
         if (data == null) return;
+        // Faz 14 Ö3: eşyanın adı yalnız ilk kez (öğrenme); sonra HUD ikonu ve ışık halkası yeter
+        string seenKey = "pu_named_" + data.type;
+        if (SaveSystem.Data.HasSeen(seenKey)) return;
+        SaveSystem.Data.MarkSeen(seenKey);
         string name = data.type switch
         {
             PowerupType.Heal => Loc.T("pu_heal"),

@@ -36,6 +36,7 @@ public class FeedbackManager : MonoBehaviour
         GameEvents.StageChanged += OnStageChanged;
         GameEvents.MeteorLanded += OnMeteorLanded;
         GameEvents.PlayerRevived += OnPlayerRevived;
+        GameEvents.NearMiss += OnNearMiss;
     }
 
     void OnDisable()
@@ -50,7 +51,11 @@ public class FeedbackManager : MonoBehaviour
         GameEvents.StageChanged -= OnStageChanged;
         GameEvents.MeteorLanded -= OnMeteorLanded;
         GameEvents.PlayerRevived -= OnPlayerRevived;
+        GameEvents.NearMiss -= OnNearMiss;
     }
+
+    // Faz 14 Ö3: yakın geçiş = küçük camgöbeği kıvılcım (yazı yerine; sarsıntı yok)
+    void OnNearMiss(Vector3 pos, bool dashing) => Burst(pos, 7, 1.8f, 0.28f, KakPalette.CamgobegiParlak, KakPalette.Beyaz, 0.05f);
 
     // Faz 12 H1: dönüş/canlanma yumuşak bir ışık halkasıyla belli olsun (sarsıntı yok)
     void OnPlayerRevived(Vector3 pos) => Ring(pos, 16, 2f, 0.5f, KakPalette.AltinAcik, KakPalette.Beyaz, 0.07f);
