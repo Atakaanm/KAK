@@ -13,6 +13,11 @@ public class PlayerStatus : MonoBehaviour
     PlayerHealth health;
 
     public int YellowCards { get; private set; }
+    /// <summary>Faz 13 F1 (yumuşak): bu kadar saniye yeni sarı kart görmezsen sayaç sıfırlanır (2 sarı = kırmızı bir anda gelmesin).</summary>
+    public float yellowForgetSeconds = 15f;
+    /// <summary>Faz 13 F1: kırmızı kart (ve 2 sarı) oyundan atar (Futbol teması). Kapalıysa eskisi gibi 1 can.</summary>
+    [System.NonSerialized] public bool redCardEliminates;
+    float lastYellow = -99f;
     public bool Frozen => Time.time < freezeUntil;
     public bool Slowed => Time.time < slowUntil;
 
@@ -53,6 +58,8 @@ public class PlayerStatus : MonoBehaviour
                 WorldPopup.Show(Loc.T("st_frozen"), transform.position, KakPalette.CamgobegiParlak, 0.9f);
                 break;
             case ProjectileEffect.YellowCard:
+                if (Time.time - lastYellow > yellowForgetSeconds) YellowCards = 0;
+                lastYellow = Time.time;
                 YellowCards++;
                 Slow(strength, duration, yellowIcon);
                 if (YellowCards >= 2)
@@ -79,9 +86,11 @@ public class PlayerStatus : MonoBehaviour
     void RedCard(int damage)
     {
         ShowIcon(redIcon, 1.2f);
-        WorldPopup.Show(Loc.T("st_red"), transform.position, KakPalette.Tehlike, 1.1f);
+        WorldPopup.Show(Loc.T(redCardEliminates ? "st_out" : "st_red"), transform.position, KakPalette.Tehlike, 1.1f);
         GameEvents.RaiseRedCard(transform.position);
-        if (health != null) health.TakeDamage(Mathf.Max(1, damage));
+        if (health == null) return;
+        if (redCardEliminates) health.Eliminate();
+        else health.TakeDamage(Mathf.Max(1, damage));
     }
 
     void ShowIcon(Sprite s, float duration)
@@ -94,7 +103,20 @@ public class PlayerStatus : MonoBehaviour
 
     void Update()
     {
-        if (icon != null && icon.enabled && Time.time >= iconUntil) icon.enabled = false;
+        // Faz 13 F1 (yumuşak): bir sarı kartın varken başının üstünde sarı kart durur ("bir daha = atılırsın"),
+        // unutulmadan önceki son 3 sn yanıp söner; 15 sn yeni kart görmezsen sayaç sıfırlanır
+        bool warnYellow = YellowCards > 0 && Time.time - lastYellow <= yellowForgetSeconds;
+        if (YellowCards > 0 && !warnYellow) YellowCards = 0;
+        if (icon != null && Time.time >= iconUntil)
+        {
+            if (warnYellow && yellowIcon != null)
+            {
+                icon.sprite = yellowIcon;
+                float left = yellowForgetSeconds - (Time.time - lastYellow);
+                icon.enabled = left > 3f || Mathf.Sin(Time.time * 12f) > 0f;
+            }
+            else if (icon.enabled) icon.enabled = false;
+        }
         if (icon != null && icon.enabled)
             icon.transform.localPosition = new Vector3(0f, 0.75f + Mathf.Sin(Time.time * 6f) * 0.04f, 0f);
     }

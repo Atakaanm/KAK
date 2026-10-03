@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8146d5ddf21e48be90ef03cf43844a3, type: 3}
+  m_Name: Referee_SpawnerData
+  m_EditorClassIdentifier: Assembly-CSharp::SpawnerData
+  spawnerName: Referee
+  shootInterval: 1.5
+  projectileData: {fileID: 11400000, guid: d3448791f1b774cb1b5c9a29d87e600b, type: 2}
+  idleNorth: {fileID: 21300000, guid: 58efb1ce77bcc491d87bc55a18a505c9, type: 3}
+  idleSouth: {fileID: 21300000, guid: aff4c231d1e7e47d78d64eaff175147e, type: 3}
+  idleEast: {fileID: 21300000, guid: f617d90590e4041bf8e779f3e4bcccc6, type: 3}
+  idleWest: {fileID: 21300000, guid: 9ce77fde243e549d19ea33979f631bb0, type: 3}
+  idleNorthEast: {fileID: 21300000, guid: 818e79530158f4a2c8cfafe41d41ca30, type: 3}
+  idleNorthWest: {fileID: 21300000, guid: 16e39f5743f95431c899e9b01d087438, type: 3}
+  idleSouthEast: {fileID: 21300000, guid: fb49438b4c4954749a838178516e9fc1, type: 3}
+  idleSouthWest: {fileID: 21300000, guid: b592e473067a54744bc8b838ce9a9ba9, type: 3}
+  attackNorth:
+  - {fileID: 21300000, guid: 347f3edd8455a4b559581fcc50b18e57, type: 3}
+  - {fileID: 21300000, guid: 953b92c94ce404fc6a92bdafd2e48c56, type: 3}
+  - {fileID: 21300000, guid: f59308ad7a5e643a2b3ddefd35c29e30, type: 3}
+  - {fileID: 21300000, guid: 644ae3ccd35f44559b3437bb0a52d190, type: 3}
+  attackSouth:
+  - {fileID: 21300000, guid: 6cbbe638a3e504b738f07ba009c0f397, type: 3}
+  - {fileID: 21300000, guid: a2c7557d26c4649149bcd9950f471e6c, type: 3}
+  - {fileID: 21300000, guid: b0c624a69284e4677b03931cab218f51, type: 3}
+  - {fileID: 21300000, guid: 119d836bdc1374fb9a0b915ca132e3df, type: 3}
+  attackEast:
+  - {fileID: 21300000, guid: c2c144110cca7471181fefe2e8029582, type: 3}
+  - {fileID: 21300000, guid: 01928afb2b54b4e78843561728d9666a, type: 3}
+  - {fileID: 21300000, guid: f708dd6db72bc4e52aa05c44ee5ebf2f, type: 3}
+  - {fileID: 21300000, guid: 5e83348d105ca4b3c825cd02dc1ad730, type: 3}
+  attackWest:
+  - {fileID: 21300000, guid: 8c9dde51878e741adac3eef7902a800c, type: 3}
+  - {fileID: 21300000, guid: 8e618873ce8a04c3eb4bc49effb36209, type: 3}
+  - {fileID: 21300000, guid: 12386c9f0b0fd4259936ee14470d814e, type: 3}
+  - {fileID: 21300000, guid: 4eb1349e05ffc40949dc2acf3257a76f, type: 3}
+  attackNorthEast:
+  - {fileID: 21300000, guid: a6bd659975f2944b995f9f98a4e24573, type: 3}
+  - {fileID: 21300000, guid: ebd39f3fcd0d74762bfac823378355d8, type: 3}
+  - {fileID: 21300000, guid: 99172bb63abc046f7b33c1953dae888b, type: 3}
+  - {fileID: 21300000, guid: 9b95abd33ec2e45e8b7463cc102a21af, type: 3}
+  attackNorthWest:
+  - {fileID: 21300000, guid: 98a6be01e52b94ec090ad1268dc6162b, type: 3}
+  - {fileID: 21300000, guid: 46f3d5c50927544a195057a254c87ea4, type: 3}
+  - {fileID: 21300000, guid: b0826e3d15710417aa8644b522433ca6, type: 3}
+  - {fileID: 21300000, guid: 7a875c8e44e894ea6b8adb9bc33ec32f, type: 3}
+  attackSouthEast:
+  - {fileID: 21300000, guid: 8b30c2ac04c334ef09ac451d5291055c, type: 3}
+  - {fileID: 21300000, guid: 90e22c07886a64cbfb6f765c625e62dd, type: 3}
+  - {fileID: 21300000, guid: f32ca601362fa4abab13395e920af059, type: 3}
+  - {fileID: 21300000, guid: e8d4f3a5a5cac4ebc890f4e7b8cf2185, type: 3}
+  attackSouthWest:
+  - {fileID: 21300000, guid: aa2994746ecdf429eaad5d0e57b89ac1, type: 3}
+  - {fileID: 21300000, guid: aa3984423bf2d4536998547ed22b0c8e, type: 3}
+  - {fileID: 21300000, guid: be96eae5298e44b998fd651f0c4e72ff, type: 3}
+  - {fileID: 21300000, guid: 785180855f43048b4bc4e1bbed732cfe, type: 3}
+  spawnerPrefab: {fileID: 0}

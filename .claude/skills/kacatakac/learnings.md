@@ -4,6 +4,13 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-10-03 — Faz 13 F1: Futbol Arenası
+
+- Kullanıcı çalışma sırasında kuralı netleştirdi: "tehlike durumu yukarıdan şişe gelsin, iki sarı kart oyunu kaybettirsin, sarı kartlar karakteri bir yere kadar takip etsin, kırmızılar daha yavaş ama tek atsın". Kullanıcı açıkça sert kural isteyince uygulanır; yumuşaklık **uyarıyla** sağlanır (1 sarıdayken baş üstünde kart, unutulma süresi, kırmızı yavaş ve seyrek, takip süreli).
+- Takip eden sarı kartı sürü olayında kullanmak kaçılmaz olurdu → sürü = top (KONTRA ATAK!).
+- Hakem için yeni çizim yerine Ata'nın 8 yön karelerini forma boyamak: insan figürü, tutarlı piksel yoğunluğu; koşu kareleri atış animasyonu olarak yeterli.
+- Tribün/çim için rastgele piksel serpmek "TV parazitı" gibi duruyor: tohumlu bloklar (koltuk sırası, 2 px baş + forma) ve seyrek çim tanesi.
+
 ## 2026-10-03 — Faz 13 K2: Karanlık Mağara
 
 - Kullanıcı ne atılacağını bize bıraktı → öneriler: yarasa (dalga), sarkıt, spor, ağ, kaya. Taş Muhafızlar'ın mağara hali hikâyeye uyuyor ve zindan sprite'larını boyayarak 48 kare ücretsiz geldi (adlar tutarsızdı: `Throw`/`Attack`, `south-east`, `west 1` → klasörden oku).

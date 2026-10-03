@@ -56,4 +56,8 @@ public class WorldTheme : ScriptableObject
     [Tooltip("Faz 13 K2: sürü olayı (Mağara: yarasa sürüsü) — boşsa olay yok")]
     public ProjectileData eventSwarmData;
     public string eventSwarmTitleKey = "";
+    [Tooltip("Faz 13 F1: sessizlik olayının başlığı (Futbol: HAKEM DÜDÜĞÜ!)")]
+    public string eventCalmTitleKey = "";
+    [Tooltip("Faz 13 F1: kırmızı kart (ve 2 sarı) oyundan atar")]
+    public bool redCardEliminates = false;
 }

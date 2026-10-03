@@ -34,6 +34,8 @@ public static class KakAtlasSetup
         pixel.AddRange(Sprites("Assets/Art/Tiles/Ice"));           // buz çerçeve karoları
         pixel.AddRange(Sprites("Assets/Sprites/Spawner_Cave"));    // mağara Taş Muhafızı (Faz 13 K2)
         pixel.AddRange(Sprites("Assets/Art/Tiles/Cave"));          // mağara çerçeve karoları
+        pixel.AddRange(Sprites("Assets/Sprites/Spawner_Football")); // hakem (Faz 13 F1)
+        pixel.AddRange(Sprites("Assets/Art/Tiles/Football"));      // tribün, tünel, panolar
         pixel.AddRange(Sprites("Assets/Sprites/Characters"));   // karakter varyantları (Faz 3c.3)
         pixel.AddRange(Sprites("Assets/Art/Pickups"));          // altın (Faz 3c.1)
         pixel.AddRange(Sprites("Assets/Art/Pets"));             // petler (Faz 3c.5)

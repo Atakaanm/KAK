@@ -30,7 +30,7 @@ public class EndlessEventManager : MonoBehaviour
     public int rollingStage = 3;
 
     // Faz 12 H2: dünyaya özel olay verisi ve başlığı (LevelManager.ApplyTheme → ApplyTheme). Boşsa zindanınki.
-    string rainTitle = "ev_meteor", rollingTitle = "ev_rolling", swarmTitle = "ev_swarm";
+    string rainTitle = "ev_meteor", rollingTitle = "ev_rolling", swarmTitle = "ev_swarm", calmTitle = "ev_calm";
     /// <summary>Faz 13 K2: sürü olayının mermisi (Mağara: yarasa). Boşsa olay seçilmez.</summary>
     [System.NonSerialized] public ProjectileData swarmData;
     public int swarmStage = 2;
@@ -44,6 +44,7 @@ public class EndlessEventManager : MonoBehaviour
         if (t.eventRollingData != null) boulderData = t.eventRollingData;
         if (!string.IsNullOrEmpty(t.eventRollingTitleKey)) rollingTitle = t.eventRollingTitleKey;
         swarmData = t.eventSwarmData;
+        if (!string.IsNullOrEmpty(t.eventCalmTitleKey)) calmTitle = t.eventCalmTitleKey;
         if (!string.IsNullOrEmpty(t.eventSwarmTitleKey)) swarmTitle = t.eventSwarmTitleKey;
     }
 
@@ -108,7 +109,7 @@ public class EndlessEventManager : MonoBehaviour
         {
             case 0: StartCoroutine(Run(rainTitle, MeteorShower())); break;
             case 1: StartCoroutine(Run("ev_crossfire", Crossfire())); break;
-            case 2: StartCoroutine(Run("ev_calm", Calm())); break;
+            case 2: StartCoroutine(Run(calmTitle, Calm())); break;
             case 3: StartCoroutine(Run(rollingTitle, Rolling())); break;
             case 4: if (swarmData != null) StartCoroutine(Run(swarmTitle, Swarm())); break;
         }
