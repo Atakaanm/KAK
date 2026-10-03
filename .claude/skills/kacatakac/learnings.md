@@ -4,6 +4,13 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-10-03 — Telefona kurulum (iOS 26.7 sonrası)
+
+- Telefon "unavailable" + `ioreg -p IOUSB`'de XHCI altında cihaz yoksa veri bağlantısı yok (kablo yalnız şarj / gevşek). Kullanıcı kabloyu düzeltince `iPhone@...` göründü.
+- iOS güncellemesinden sonra ilk bağlantıda durum **"connected (no DDI)"**: ilk `devicectl device install` geliştirici disk görüntüsünü kendisi yükler, sonra "available (paired)".
+- `devicectl device install app` çıktısının son satırları "App installed" içermiyor (ayrıntılı alanlarla bitiyor) → `tail -2 | grep "App installed"` başarıyı kaçırıp döngüde tekrar tekrar kurdu. Başarıyı `xcrun devicectl device info apps --device <id> | grep kacatakac` ya da tüm çıktıda grep ile doğrula.
+- Bekleme: ön planda `sleep` yasak → arka plan döngüsü (`run_in_background`), bitince bildirim gelir.
+
 ## 2026-10-03 — Faz 13 F2: gol fırsatı
 
 - Toplanacak top, fırlatılan toplarla aynı görünüyordu (iyi/kötü ayırt edilemez) → altın hâle + zıplayan altın ok. **Kural:** toplanacak bir şey tehlikeli bir mermiyle aynı sprite'ı kullanıyorsa mutlaka ayrı bir işaret (renk rolü: altın = ödül).
