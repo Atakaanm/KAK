@@ -218,6 +218,11 @@ public class PlayerHealth : MonoBehaviour
         if (c.a < 0.05f) c = Color.white; // savunma: oyuncu asla tamamen saydam boyanmaz
         if (coldTint > 0.01f) c = Color.Lerp(c, new Color(0.62f, 0.85f, 1f, c.a), coldTint); // G7: üşüyen oyuncu mavileşir
         if (isGhost) c.a = GhostAlpha;
+        if (IsInvisible)
+        {
+            c = Color.Lerp(c, new Color(0.85f, 0.75f, 1f, c.a), 0.35f);
+            c.a = Mathf.Min(c.a, 0.26f + 0.16f * (0.5f + 0.5f * Mathf.Sin(Time.time * 9f)));
+        }
         playerSpriteRenderer.color = c;
     }
 
@@ -227,6 +232,26 @@ public class PlayerHealth : MonoBehaviour
     {
         coldTint = Mathf.Clamp01(v);
         if (hitFlashCoroutine == null && invincibilityCoroutine == null && !isDead) RefreshTint();
+    }
+
+    float invisibleUntil = -1f;
+    bool wasInvisible;
+    /// <summary>Faz 12 H4: fırlatıcılar göremez (rastgele atar, güdümlü taş kilidi kaybeder). Taşlar yine çarpar.</summary>
+    public bool IsInvisible => !isDead && Time.time < invisibleUntil;
+    public float InvisibleRemaining => Mathf.Max(0f, invisibleUntil - Time.time);
+
+    public void MakeInvisible(float duration)
+    {
+        invisibleUntil = Mathf.Max(invisibleUntil, Time.time + duration);
+        RefreshTint();
+    }
+
+    void Update()
+    {
+        // Görünmezken titreşen saydamlık (ısı dalgası gibi); bitince eski renk
+        bool inv = IsInvisible;
+        if ((inv || wasInvisible) && hitFlashCoroutine == null) RefreshTint();
+        wasInvisible = inv;
     }
 
     /// <summary>Mermilerin içinden geçmesini sağlayan hayalet formu.</summary>

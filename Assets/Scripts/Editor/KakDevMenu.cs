@@ -245,6 +245,14 @@ public static class KakDevMenu
     /// <summary>G5: iki kişilik oyunu başlatır. Köprü: invoke KakDevMenu PlayTwoPlayer</summary>
     public static void PlayTwoPlayer() { GameSettings.TwoPlayer = true; SceneLoader.LoadGame(); }
 
+    /// <summary>Faz 12: bir eşyayı oyuncuya verir (Assets/Data/Powerups/&lt;ad&gt;.asset). Köprü: invoke KakDevMenu GivePowerup InvisibleData</summary>
+    public static void GivePowerup(string file)
+    {
+        var d = AssetDatabase.LoadAssetAtPath<PowerupData>("Assets/Data/Powerups/" + file + ".asset");
+        var ph = Object.FindAnyObjectByType<PlayerHealth>();
+        if (d != null && ph != null) PowerupPickup.Apply(d, ph.gameObject, ph.transform.position);
+    }
+
     /// <summary>Faz 12 H3: KONTROLLERİ DÜZENLE ekranını açar. Köprü: invoke KakDevMenu OpenControlEditor</summary>
     public static void OpenControlEditor() { ControlLayoutEditor.Open(Object.FindAnyObjectByType<Canvas>()?.transform); }
 

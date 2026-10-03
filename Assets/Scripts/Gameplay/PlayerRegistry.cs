@@ -23,6 +23,42 @@ public static class PlayerRegistry
         }
     }
 
+    /// <summary>Faz 12 H4: fırlatıcılar görebilir mi (yaşıyor ve görünmez değil).</summary>
+    public static bool IsVisible(PlayerHealth p) => p != null && !p.IsDead && !p.IsInvisible && p.isActiveAndEnabled;
+
+    /// <summary>Rastgele görünen oyuncu (yoksa null: herkes görünmez ya da düşmüş).</summary>
+    public static Transform RandomVisible()
+    {
+        int n = 0;
+        for (int i = 0; i < All.Count; i++) if (IsVisible(All[i])) n++;
+        if (n == 0) return null;
+        int k = Random.Range(0, n);
+        for (int i = 0; i < All.Count; i++)
+            if (IsVisible(All[i]) && k-- == 0) return All[i].transform;
+        return null;
+    }
+
+    /// <summary>Konuma en yakın görünen oyuncu (güdümlü taş).</summary>
+    public static Transform NearestVisible(Vector2 from)
+    {
+        Transform best = null;
+        float bd = float.MaxValue;
+        for (int i = 0; i < All.Count; i++)
+        {
+            var p = All[i];
+            if (!IsVisible(p)) continue;
+            float d = ((Vector2)p.transform.position - from).sqrMagnitude;
+            if (d < bd) { bd = d; best = p.transform; }
+        }
+        return best;
+    }
+
+    /// <summary>Herhangi bir oyuncu görünmez mi (fırlatıcıların "?" işareti).</summary>
+    public static bool AnyInvisible
+    {
+        get { for (int i = 0; i < All.Count; i++) if (All[i] != null && All[i].IsInvisible) return true; return false; }
+    }
+
     /// <summary>Faz 12 H1: oyuncu hedef alınabilir mi (düşmüş/sahadan kalkmış oyuncu hedef değildir).</summary>
     public static bool IsTargetable(PlayerHealth p) => p != null && !p.IsDead && p.isActiveAndEnabled;
 

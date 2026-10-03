@@ -156,6 +156,10 @@ public class PowerupPickup : MonoBehaviour
                 if (movement != null) movement.Grip(finalDuration);
                 break;
 
+            case PowerupType.Invisible: // Faz 12 H4: fırlatıcılar göremez
+                if (health != null) health.MakeInvisible(finalDuration);
+                break;
+
             case PowerupType.Fire: // G7: ısın (soğuk göstergesi düşer)
             {
                 var cold = player.GetComponent<ColdMeter>();

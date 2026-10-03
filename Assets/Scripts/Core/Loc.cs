@@ -169,6 +169,7 @@ public static class Loc
         { "pu_speed", new[] { "HIZ!", "SPEED!" } },
         { "pu_slow", new[] { "YAVAŞ ÇEKİM", "SLOW-MO" } },
         { "pu_ghost", new[] { "HAYALET", "GHOST" } },
+        { "pu_invisible", new[] { "GÖRÜNMEZ!", "INVISIBLE!" } },
         { "ev_meteor", new[] { "TAŞ YAĞMURU!", "ROCK RAIN!" } },
         { "ev_icicle", new[] { "SARKIT YAĞMURU!", "ICICLE RAIN!" } },
         { "ev_snowroll", new[] { "DEV KARTOPU!", "GIANT SNOWBALL!" } },

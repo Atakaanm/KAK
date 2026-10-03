@@ -129,7 +129,7 @@ public class EndlessEventManager : MonoBehaviour
             Rect r = Play;
             Vector3 pos;
             nearTimer -= 0.35f;
-            var near = GameSettings.TwoPlayer ? PlayerRegistry.RandomAlive() : Projectile.PlayerTarget;
+            var near = PlayerRegistry.All.Count > 0 ? PlayerRegistry.RandomVisible() : Projectile.PlayerTarget; // H4: görünmeze nişan yok
             if (nearTimer <= 0f && near != null)
             {
                 pos = near.position + (Vector3)(Random.insideUnitCircle * 1.2f);
@@ -188,8 +188,9 @@ public class EndlessEventManager : MonoBehaviour
         {
             Rect r = Play;
             // Şerit: oyuncunun yakınından geçen yatay bir hat
-            float y = Projectile.PlayerTarget != null ? Mathf.Clamp(Projectile.PlayerTarget.position.y + Random.Range(-0.6f, 0.6f), r.yMin + 0.6f, r.yMax - 0.6f)
-                                                      : Random.Range(r.yMin + 0.6f, r.yMax - 0.6f);
+            var seen = PlayerRegistry.All.Count > 0 ? PlayerRegistry.RandomVisible() : Projectile.PlayerTarget;
+            float y = seen != null ? Mathf.Clamp(seen.position.y + Random.Range(-0.6f, 0.6f), r.yMin + 0.6f, r.yMax - 0.6f)
+                                   : Random.Range(r.yMin + 0.6f, r.yMax - 0.6f);
             bool fromLeft = Random.value < 0.5f;
             if (laneWarning != null)
             {
