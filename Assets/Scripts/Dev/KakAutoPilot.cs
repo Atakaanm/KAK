@@ -171,7 +171,7 @@ public class KakAutoPilot : MonoBehaviour
                 {
                     // Gökten düşen: iniş noktası sabit; iniş anına yakın tahminler daha önemli
                     q = pr.transform.position;
-                    float landIn = pr.FallRemaining01 * (pr.Data != null ? pr.Data.meteorFallTime : 1f);
+                    float landIn = pr.FallRemaining01 * (pr.Data != null ? pr.Data.meteorFallTime * Projectile.WarningMult : 1f);
                     if (Mathf.Abs(landIn - t) > 0.35f) continue;
                     r = playerRadius + (pr.Data != null ? pr.Data.meteorRadius : 0.55f) + 0.1f;
                 }

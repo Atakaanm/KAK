@@ -125,7 +125,14 @@ public class AudioManager : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        SetMusicPitch(1f);
         PlayMusic(scene.name == SceneLoader.GAME_SCENE ? gameMusic : menuMusic);
+    }
+
+    /// <summary>Faz 15 K1: tempo yükseldikçe müzik çok hafif hızlanır (DifficultyManager her kare çağırır).</summary>
+    public void SetMusicPitch(float pitch)
+    {
+        if (musicSource != null && !Mathf.Approximately(musicSource.pitch, pitch)) musicSource.pitch = pitch;
     }
 
     // ── Olaylar ─────────────────────────────────────────

@@ -14,6 +14,14 @@ public class NearMissTracker : MonoBehaviour
 
     PlayerMovement2D movement;
     PlayerHealth health;
+    float baseRadius = -1f;
+
+    /// <summary>Faz 15 K3: kıl payı mesafesi gelişimi (taban yarıçap × çarpan; tekrar çağrılınca katlanmaz).</summary>
+    public void SetRadiusMult(float m)
+    {
+        if (baseRadius < 0f) baseRadius = radius;
+        radius = baseRadius * m;
+    }
     float lastDamageTime = -99f;
 
     void Awake() { movement = GetComponent<PlayerMovement2D>(); health = GetComponent<PlayerHealth>(); }

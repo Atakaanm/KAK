@@ -27,6 +27,9 @@ public class MainMenuController : MonoBehaviour
     [Header("Paneller")]
     public GameObject settingsPanel;
     public GameObject charactersPanel;
+    [Header("Gelişim merkezi (Faz 15 K4)")]
+    public MenuTabs hubTabs;   // KAHRAMAN · GELİŞİM sekmeleri (charactersPanel = 0. sekme)
+    public InfoToast toast;
 
     [Header("Skor Gosterimi")]
     public TMP_Text bestScoreText;
@@ -50,6 +53,15 @@ public class MainMenuController : MonoBehaviour
         UpdateStats();
         if (settingsPanel != null) settingsPanel.SetActive(false);
         if (charactersPanel != null) charactersPanel.SetActive(false);
+        if (hubTabs != null) hubTabs.CloseAll();
+        // Faz 15 K3: eski karakter yükseltmeleri ortak gelişime taşındı → iade bir kez söylenir
+        var save = SaveSystem.Data;
+        if (toast != null && save.legacyRefund > 0 && !save.HasSeen("legacy_refund"))
+        {
+            toast.Show(string.Format(Loc.T("legacy_refund"), save.legacyRefund), KakPalette.Altin);
+            save.MarkSeen("legacy_refund");
+            SaveSystem.Save();
+        }
         if (petsPanel != null) petsPanel.SetActive(false);
         if (dailyPanel != null) dailyPanel.gameObject.SetActive(false);
         // G6: ilk açılışta hikâye; günlük ödül ondan sonra
@@ -105,6 +117,7 @@ public class MainMenuController : MonoBehaviour
     {
         PlayButtonSound();
         if (charactersFeature != null && !charactersFeature.TryUse()) return; // kilitli: buton sallanır
+        if (hubTabs != null) { hubTabs.OpenLast(); return; } // Faz 15 K4: son sekme (ilk kez GELİŞİM)
         Open(charactersPanel);
     }
     /// <summary>Ayarlar → Gizlilik Politikası (Apple 5.1.1: uygulama içinden erişilebilir olmalı).</summary>
@@ -140,7 +153,12 @@ public class MainMenuController : MonoBehaviour
     }
 
     public void CloseSettingsPanel() { PlayButtonSound(); Close(settingsPanel); }
-    public void CloseCharactersPanel() { PlayButtonSound(); Close(charactersPanel); RefreshFeatures(); }
+    public void CloseCharactersPanel()
+    {
+        PlayButtonSound();
+        if (hubTabs != null) hubTabs.CloseAll(); else Close(charactersPanel);
+        RefreshFeatures();
+    }
 
     /// <summary>Satın alma sonrası menü butonlarının kilit/YENİ/alınabilir durumları.</summary>
     void RefreshFeatures()

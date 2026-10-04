@@ -223,7 +223,7 @@ public class LevelManager : MonoBehaviour
         if (level.levelType == LevelType.Endless && level.enableDifficulty)
         {
             System.Array.Sort(level.difficultyStages, (a, b) => a.minSeconds.CompareTo(b.minSeconds));
-            SetupDifficulty(level.difficultyStages);
+            SetupDifficulty(level.difficultyStages, level.tempoProfile);
         }
 
         // Faz 13 K2: durum etkili taşlar (örümcek ağı, spor) varsa oyunculara durum bileşeni (yavaşlama + baş üstü simge)
@@ -306,20 +306,41 @@ public class LevelManager : MonoBehaviour
     {
         if (data == null) return;
 
+        // Faz 15 K3: özellik sayfası (karakter tabanı + pasif + ortak gelişim) — oyuncu başına
+        PlayerStats stats = null;
         if (mv != null)
         {
-            mv.SetMoveSpeed(data.moveSpeed * CharacterProgress.SpeedMult(data)); // G3: hız yükseltmesi
+            stats = mv.GetComponent<PlayerStats>();
+            if (stats == null) stats = mv.gameObject.AddComponent<PlayerStats>();
+            stats.Build(data, global);
         }
+        var sheet = stats != null ? stats.Sheet : StatBuilder.Build(data);
 
-        if (mv != null) mv.playerData = data; // powerup süre çarpanı buradan okunur
+        if (mv != null)
+        {
+            mv.SetMoveSpeed(StatBuilder.MoveSpeed(data, sheet));
+            mv.playerData = data;
+            var nm = mv.GetComponent<NearMissTracker>();
+            if (nm != null) nm.SetRadiusMult(StatBuilder.NearRadiusMult(sheet));
+        }
 
         if (ph != null)
         {
-            ph.SetMaxHealth(CharacterProgress.Hearts(data)); // G3: tek canla başla, yükselttikçe artar
+            int hearts = StatBuilder.Hearts(data, sheet); // G3: tek canla başla, geliştirdikçe artar (karakterin üst sınırına kadar)
+            ph.SetMaxHealth(hearts);
             ph.HealthCap = data.maxHealth;
-            ph.StartHearts = CharacterProgress.Hearts(data);
-            ph.invincibilityDuration = data.invincibilityDuration;
-            if (data.startWithShield) ph.ActivateShield();
+            ph.StartHearts = hearts;
+            ph.invincibilityDuration = StatBuilder.Invuln(data, sheet);
+            if (StatBuilder.StartShield(data, sheet)) ph.ActivateShield();
+        }
+
+        if (global)
+        {
+            ItemProgress.Snapshot(); // K5: eşya geliştirmeleri bu oyunluk
+            var sm = GameManager.Instance != null ? GameManager.Instance.scoreManager : null;
+            if (sm != null) sm.ApplyStats(sheet);
+            Projectile.WarningMult = StatBuilder.WarningMult(sheet);
+            if (powerupSpawner != null) powerupSpawner.groundTimeMult = StatBuilder.ItemGroundTime(sheet);
         }
 
         // Karakter istatistikleri (Faz 3c.3): dash, gövde, powerup sıklığı
@@ -338,15 +359,16 @@ public class LevelManager : MonoBehaviour
                 if (dashButton != null) dashButton.gameObject.SetActive(data.hasDash);
             }
             var hb = player.GetComponent<PlayerHitbox>();
-            if (hb != null && !Mathf.Approximately(data.hurtboxScale, 1f))
+            float hurt = StatBuilder.HurtScale(data, sheet);
+            if (hb != null && !Mathf.Approximately(hurt, 1f))
             {
-                hb.hurtSize *= data.hurtboxScale;
+                hb.hurtSize *= hurt;
                 hb.Apply();
             }
         }
-        if (global && powerupSpawner != null && data.powerupSpawnRateMultiplier > 0f && !Mathf.Approximately(data.powerupSpawnRateMultiplier, 1f))
-            powerupSpawner.SetSpawnInterval(powerupSpawner.spawnIntervalMin / data.powerupSpawnRateMultiplier,
-                                            powerupSpawner.spawnIntervalMax / data.powerupSpawnRateMultiplier);
+        float freq = StatBuilder.ItemFrequency(data, sheet);
+        if (global && powerupSpawner != null && !Mathf.Approximately(freq, 1f))
+            powerupSpawner.SetSpawnInterval(powerupSpawner.spawnIntervalMin / freq, powerupSpawner.spawnIntervalMax / freq);
 
         if (vis != null)
         {
@@ -531,13 +553,13 @@ public class LevelManager : MonoBehaviour
     /// Zorluk asamalarini DifficultyManager'a aktarir.
     /// Tüm gerekli referansları da bağlar.
     /// </summary>
-    void SetupDifficulty(DifficultyStageData[] stages)
+    void SetupDifficulty(DifficultyStageData[] stages, TempoProfile tempo)
     {
         if (difficultyManager == null || stages == null || stages.Length == 0) return;
 
         // Spawner'lar LevelData ile ayarlandıktan SONRA başlat: orijinal aralıklar doğru kaydedilir
         ScoreManager score = GameManager.Instance != null ? GameManager.Instance.scoreManager : null;
-        difficultyManager.Init(stages, spawners, score);
+        difficultyManager.Init(stages, spawners, score, tempo);
 
         KakLog.Info("[LevelManager] Zorluk sistemi kuruldu: " + stages.Length + " asama.");
     }

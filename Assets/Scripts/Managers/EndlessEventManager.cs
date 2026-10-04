@@ -83,7 +83,8 @@ public class EndlessEventManager : MonoBehaviour
     {
         if (Running || Over || LevelManager.Instance == null) return;
         if (Elapsed < nextAt) return;
-        nextAt = Elapsed + Random.Range(intervalMin, intervalMax);
+        float mult = DifficultyManager.Instance != null ? DifficultyManager.Instance.EventIntervalMultiplier : 1f; // Faz 15 K1: tempo yükseldikçe sık
+        nextAt = Elapsed + Random.Range(intervalMin, intervalMax) * mult;
         StartRandomEvent();
     }
 
@@ -123,6 +124,7 @@ public class EndlessEventManager : MonoBehaviour
         yield return body;
         CurrentEvent = null;
         Running = false;
+        if (DifficultyManager.Instance != null) DifficultyManager.Instance.Breathe(); // Faz 15 K1: gerilimden sonra kısa rahatlama
     }
 
     Rect Play => arena != null ? arena.PlayableWorldRect : new Rect(-3f, 1f, 6f, 6f);

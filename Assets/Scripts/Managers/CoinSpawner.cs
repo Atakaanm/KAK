@@ -83,6 +83,14 @@ public class CoinSpawner : MonoBehaviour
         return 0;
     }
 
+    /// <summary>Faz 15: belirli noktaya tek altın (testler, olaylar, sandık anahtarı vb.).</summary>
+    public Coin SpawnCoinAt(Vector2 c)
+    {
+        if (coinPrefab == null) return null;
+        var go = ProjectilePool.Instance != null ? ProjectilePool.Instance.Get(coinPrefab, c, Quaternion.identity) : Instantiate(coinPrefab, c, Quaternion.identity);
+        return go != null ? go.GetComponent<Coin>() : null;
+    }
+
     bool FarFromCoins(Vector2 p)
     {
         float min2 = minCoinSpacing * minCoinSpacing;

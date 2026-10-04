@@ -24,6 +24,8 @@ public class SahneDenetimTests
         "MainMenuController.statsText",
         // Faz 14 Ö4: karakter kartı sade — açıklama cümlesi ve dash çubuğu yok (detay ekranında açıklama var)
         "CharacterCard.traitText", "CharacterCard.dashFill",
+        "ProgressPanel.scrollText",
+        "DifficultyManager.tempo",           // Faz 15 K1: tempo profili oyun başında LevelData'dan gelir          // Faz 15 K5: parşömen sayacı yalnız EŞYA sayfasında (GELİŞİM sayfasında yok)
     };
 
     [Test]

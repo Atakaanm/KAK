@@ -35,6 +35,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1ca2b7ea1392a46458b5ed1846784173, type: 2}
   - {fileID: 11400000, guid: f51b8af597fce469eae3b533a5e17e02, type: 2}
   - {fileID: 11400000, guid: 1a8d7b4912c524aca87d401feb891df0, type: 2}
+  tempoProfile: {fileID: 11400000, guid: e4d3cddc4913642549ef601206c333c4, type: 2}
   levelId: 
   goal: 0
   surviveSeconds: 45

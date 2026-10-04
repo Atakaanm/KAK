@@ -19,9 +19,9 @@ public class PetLevel
 }
 
 /// <summary>
-/// G3 (Faz 11): oyuncu adım adım güçlenir. Karakter başına kalıcı yükseltmeler (altınla, seviye seviye):
-/// Can (+1 kalp, karakterin üst sınırına kadar), Hız (+%4/seviye), Güçlendirme süresi (+%12/seviye).
-/// Petler: seviye başına daha güçlü etki. Kayıt: SaveData.charLevels / petLevels.
+/// G3 (Faz 11): oyuncu adım adım güçlenir. Faz 15 K3'ten beri Can/Hız/Güç ortak gelişim izleridir (Progression);
+/// bu sınıf eski ekranlar için yönlendirir ve pet seviyelerini tutar. Eski karakter başına seviyeler (SaveData.charLevels)
+/// yalnız altın iadesi için okunur.
 /// </summary>
 public static class CharacterProgress
 {
@@ -29,10 +29,7 @@ public static class CharacterProgress
     public const float PowerPerLevel = 0.12f;
     public const int SpeedLevels = 3, PowerLevels = 3, PetLevels = 3;
 
-    // İlk yükseltme 1-2 oyunda, sonrakiler giderek pahalı (denge: tools/kak_bridge.py denge + oyuncu geri bildirimi)
-    static readonly int[] HealthCosts = { 60, 250, 600, 1000 };
-    static readonly int[] SpeedCosts = { 80, 200, 450 };
-    static readonly int[] PowerCosts = { 80, 200, 450 };
+    // Pet fiyatları (karakter Can/Hız/Güç fiyatları Faz 15 K3'te gelişim izlerine taşındı: Assets/Data/Upgrades)
     static readonly int[] PetCosts = { 150, 400, 800 };
 
     public static event Action Changed;
@@ -56,51 +53,28 @@ public static class CharacterProgress
         return n;
     }
 
-    public static int Level(PlayerData p, CharStat s)
-    {
-        if (p == null) return 0;
-        var l = Get(p.id);
-        if (l == null) return 0;
-        int v = s == CharStat.Health ? l.health : s == CharStat.Speed ? l.speed : l.power;
-        return Mathf.Clamp(v, 0, MaxLevel(p, s));
-    }
+    // ── Faz 15 K3: Can/Hız/Güç artık ortak gelişim izleri (Progression); bu API eski ekranlar için yönlendirir ──
+    public static string TrackId(CharStat s) => s == CharStat.Health ? "hearts" : s == CharStat.Speed ? "speed" : "power";
+    static UpgradeTrackData Track(CharStat s) => Progression.Track(TrackId(s));
+
+    public static int Level(PlayerData p, CharStat s) => Mathf.Min(Progression.Level(Track(s)), MaxLevel(p, s));
 
     public static int MaxLevel(PlayerData p, CharStat s)
     {
-        if (p == null) return 0;
-        switch (s)
-        {
-            case CharStat.Health: return Mathf.Clamp(p.maxHealth - StartHealth(p), 0, HealthCosts.Length);
-            case CharStat.Speed: return SpeedLevels;
-            default: return PowerLevels;
-        }
+        var t = Track(s);
+        if (t == null) return 0;
+        if (s == CharStat.Health && p != null) return Mathf.Clamp(p.maxHealth - StartHealth(p), 0, t.maxLevel);
+        return t.maxLevel;
     }
 
     /// <summary>Sonraki seviyenin fiyatı; en üst seviyedeyse -1.</summary>
-    public static int Cost(PlayerData p, CharStat s)
-    {
-        int lvl = Level(p, s);
-        if (lvl >= MaxLevel(p, s)) return -1;
-        var t = s == CharStat.Health ? HealthCosts : s == CharStat.Speed ? SpeedCosts : PowerCosts;
-        return t[Mathf.Clamp(lvl, 0, t.Length - 1)];
-    }
+    public static int Cost(PlayerData p, CharStat s) => Level(p, s) >= MaxLevel(p, s) ? -1 : Progression.Cost(Track(s));
 
-    public static bool CanUpgrade(PlayerData p, CharStat s)
-    {
-        int c = Cost(p, s);
-        return c >= 0 && CharacterCatalog.Owned(p) && SaveSystem.Data.coins >= c;
-    }
+    public static bool CanUpgrade(PlayerData p, CharStat s) => Cost(p, s) >= 0 && CharacterCatalog.Owned(p) && Progression.CanUpgrade(Track(s));
 
     public static bool TryUpgrade(PlayerData p, CharStat s)
     {
-        if (!CanUpgrade(p, s)) return false;
-        var d = SaveSystem.Data;
-        d.coins -= Cost(p, s);
-        var l = Get(p.id, true);
-        if (s == CharStat.Health) l.health++;
-        else if (s == CharStat.Speed) l.speed++;
-        else l.power++;
-        SaveSystem.Save();
+        if (!CanUpgrade(p, s) || !Progression.TryUpgrade(Track(s))) return false;
         Changed?.Invoke();
         return true;
     }
@@ -110,11 +84,11 @@ public static class CharacterProgress
         return CanUpgrade(p, CharStat.Health) || CanUpgrade(p, CharStat.Speed) || CanUpgrade(p, CharStat.Power);
     }
 
-    public static int StartHealth(PlayerData p) => p == null ? 1 : Mathf.Clamp(p.startHealth, 1, Mathf.Max(1, p.maxHealth));
-    /// <summary>Oyuna başlarken can (başlangıç + yükseltme).</summary>
-    public static int Hearts(PlayerData p) => p == null ? 1 : Mathf.Min(p.maxHealth, StartHealth(p) + Level(p, CharStat.Health));
-    public static float SpeedMult(PlayerData p) => 1f + SpeedPerLevel * Level(p, CharStat.Speed);
-    public static float PowerMult(PlayerData p) => 1f + PowerPerLevel * Level(p, CharStat.Power);
+    public static int StartHealth(PlayerData p) => StatBuilder.StartHealth(p);
+    /// <summary>Oyuna başlarken can (taban + pasif + gelişim).</summary>
+    public static int Hearts(PlayerData p) => p == null ? 1 : StatBuilder.Hearts(p, StatBuilder.Build(p));
+    public static float SpeedMult(PlayerData p) => p == null || p.moveSpeed <= 0f ? 1f : StatBuilder.MoveSpeed(p, StatBuilder.Build(p)) / p.moveSpeed;
+    public static float PowerMult(PlayerData p) => p == null || p.powerupDurationMultiplier <= 0f ? 1f : StatBuilder.PowerDuration(p, StatBuilder.Build(p)) / p.powerupDurationMultiplier;
 
     // ── Petler ──
     public static int PetLevelOf(string petId)

@@ -92,3 +92,8 @@ MonoBehaviour:
   coinMultiplier: 1.25
   startWithShield: 0
   portrait: {fileID: 0}
+  passive:
+  - stat: 4
+    flat: 0.3
+    percent: 0
+  passiveKey: pas_lucky

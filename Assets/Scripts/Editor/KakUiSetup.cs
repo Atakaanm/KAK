@@ -302,6 +302,7 @@ public static class KakUiSetup
             OnClick(closeW, mmc.CloseWorldsPanel);
             mmc.intro = BuildIntroPanel(canvas, mmc);
             OnClick(closeC, mmc.CloseCharactersPanel);
+            KakGelisimUi.Build(canvas, wallet, croot, mmc, chars); // Faz 15 K4: GELİŞİM merkezi
             EditorUtility.SetDirty(mmc);
         }
 
@@ -628,13 +629,25 @@ public static class KakUiSetup
         var portrait = Img(Place(Rect(panel, "Portrait"), new Vector2(0.5f, 1f), new Vector2(0f, -370f), new Vector2(240f, 240f)), null, false);
         var trait = Text(Place(Rect(panel, "Trait"), new Vector2(0.5f, 1f), new Vector2(0f, -540f), new Vector2(800f, 50f)), "", 32, KakPalette.Krem,
                          TextAlignmentOptions.Center, false, false);
-        Text(Place(Rect(panel, "Hint"), new Vector2(0.5f, 1f), new Vector2(0f, -592f), new Vector2(800f, 40f)), "@upgrade_hint", 24, KakPalette.Sis,
+        Text(Place(Rect(panel, "Hint"), new Vector2(0.5f, 1f), new Vector2(0f, -592f), new Vector2(800f, 40f)), "@progress_shared", 24, KakPalette.Sis,
              TextAlignmentOptions.Center, false, false);
 
+        // Faz 15 K4: gelişim ortak (GELİŞİM sekmesi); burada yalnız can göstergesi (salt okunur) + GELİŞİM düğmesi
         var d = GetOrAdd<CharacterDetailPanel>(root.gameObject);
         d.healthRow = StatRowUi(panel, "Health", "@stat_health", -700f, heart, 5, 58f, 52f, Color.white, coinSprite, d.OnUpgradeHealth);
-        d.speedRow = StatRowUi(panel, "Speed", "@stat_speed", -850f, white, CharacterProgress.SpeedLevels, 58f, 40f, KakPalette.Camgobegi, coinSprite, d.OnUpgradeSpeed);
-        d.powerRow = StatRowUi(panel, "Power", "@stat_power", -1000f, white, CharacterProgress.PowerLevels, 58f, 40f, KakPalette.Altin, coinSprite, d.OnUpgradePower);
+        var hUp = panel.Find("HealthRow/Upgrade");
+        if (hUp != null) Object.DestroyImmediate(hUp.gameObject);
+        d.healthRow.button = null; d.healthRow.buttonBackground = null; d.healthRow.priceText = null; d.healthRow.coin = null;
+        foreach (var gone in new[] { "SpeedRow", "PowerRow" })
+        {
+            var g = panel.Find(gone);
+            if (g != null) Object.DestroyImmediate(g.gameObject);
+        }
+        d.speedRow = new CharacterDetailPanel.StatRow();
+        d.powerRow = new CharacterDetailPanel.StatRow();
+        var prog = Button(Place(Rect(panel, "ProgressButton"), new Vector2(0.5f, 1f), new Vector2(0f, -880f), new Vector2(560f, 116f)),
+                          "@tab_progress", Style.Gold, 46, "icon_upgrade.png");
+        OnClick(prog, d.OpenProgress);
 
         // Kostüm yuvası (ileride kıyafet giydirme)
         var costume = Img(Place(Rect(panel, "Costume"), new Vector2(0.5f, 1f), new Vector2(0f, -1140f), new Vector2(780f, 96f)), S("btn_stone_9s.png"), true,

@@ -75,6 +75,7 @@ public class GameManager : MonoBehaviour
     public void GameOver()
     {
         if (isGameOver) return;
+        if (TrySecondChance()) return; // Faz 15 K3: İkinci şans (gelişim) — oyun bitmez
 
         isGameOver = true;
         if (timeSlowCoroutine != null) StopCoroutine(timeSlowCoroutine);
@@ -127,7 +128,8 @@ public class GameManager : MonoBehaviour
         {
             RunCoins = scoreManager != null ? scoreManager.Coins : 0;
             var ch = levelManager != null ? levelManager.CurrentCharacter : null;
-            if (ch != null && ch.coinMultiplier > 1f) RunCoins = Mathf.RoundToInt(RunCoins * ch.coinMultiplier);
+            float coinMult = PlayerStats.Primary != null && PlayerStats.Primary.Data != null ? PlayerStats.Primary.CoinMult : (ch != null ? ch.coinMultiplier : 1f);
+            if (coinMult > 1f) RunCoins = Mathf.RoundToInt(RunCoins * coinMult); // Faz 15 K3: Altın bereketi + karakter
             RunCoinBonus = finalScore / 100;
             save.coins += RunCoins + RunCoinBonus;
             save.totalCoins += RunCoins + RunCoinBonus;
@@ -293,6 +295,26 @@ public class GameManager : MonoBehaviour
         if (continuePanel != null) continuePanel.Hide();
         FinalizeRun();
         ShowGameOverScreen();
+    }
+
+    [Header("İkinci şans (Faz 15 K3)")]
+    public float secondChanceInvulnerable = 2.5f;
+    public int SecondChancesUsed { get; private set; }
+
+    /// <summary>Gelişimden gelen ikinci şans hakkı varsa oyuncu yerinde 1 canla kalkar, taşlar temizlenir (tek kişilik, sonsuz).</summary>
+    bool TrySecondChance()
+    {
+        if (IsLevelMode || GameSettings.TwoPlayer) return false;
+        var st = PlayerStats.Primary;
+        if (st == null || !st.UseRevive()) return false;
+        SecondChancesUsed++;
+        foreach (var p in Projectile.Active.ToArray())
+            if (ProjectilePool.Instance != null) ProjectilePool.Instance.Return(p.gameObject);
+        var ph = st.GetComponent<PlayerHealth>();
+        if (ph != null) ph.Revive(1, secondChanceInvulnerable);
+        WorldPopup.Show(Loc.T("second_chance"), (ph != null ? ph.transform.position : Vector3.zero) + Vector3.up * 0.8f, KakPalette.CamgobegiParlak, 1.3f);
+        GameEvents.RaisePlayerRevived(ph != null ? ph.transform.position : Vector3.zero);
+        return true;
     }
 
     /// <summary>Reklam izlendi: oyuncu 1 canla ve kısa dokunulmazlıkla devam eder; yakındaki taşlar temizlenir.</summary>

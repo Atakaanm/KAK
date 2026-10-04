@@ -24,7 +24,8 @@ public class OzellikKapisiTests
         StringAssert.Contains(FeatureGate.CharactersGames.ToString(), fb.lockHint.text);
         menu.OnCharactersClicked();
         yield return null;
-        Assert.IsFalse(menu.charactersPanel.activeSelf, "Kilitliyken karakter paneli açıldı");
+        Assert.IsFalse(menu.charactersPanel.activeSelf || (menu.hubTabs != null && menu.hubTabs.Current != null && menu.hubTabs.Current.activeSelf),
+                       "Kilitliyken GELİŞİM merkezi açıldı");
 
         SaveSystem.Data.gamesPlayed = FeatureGate.CharactersGames;
         fb.Refresh();
@@ -32,7 +33,7 @@ public class OzellikKapisiTests
         Assert.IsTrue(fb.newBadge.gameObject.activeSelf, "YENİ! rozeti görünmüyor");
         menu.OnCharactersClicked();
         yield return KakTestUtil.WaitReal(0.3f);
-        Assert.IsTrue(menu.charactersPanel.activeSelf, "Açıkken karakter paneli açılmadı");
+        Assert.IsTrue(menu.hubTabs != null ? menu.hubTabs.Current.activeSelf : menu.charactersPanel.activeSelf, "Açıkken GELİŞİM merkezi açılmadı");
         Assert.IsFalse(fb.newBadge.gameObject.activeSelf, "Tanıtıldıktan sonra rozet kalktı mı");
         Assert.IsTrue(FeatureGate.Introduced(Feature.Characters));
     }

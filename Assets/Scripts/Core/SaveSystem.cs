@@ -152,6 +152,10 @@ public class SaveData
     public List<string> unlockedCharacters = new List<string> { "Boy" };
     public List<CharLevels> charLevels = new List<CharLevels>(); // G3: kalıcı yükseltmeler
     public List<PetLevel> petLevels = new List<PetLevel>();       // G3: pet seviyeleri
+    public List<IdLevel> upgrades = new List<IdLevel>();          // Faz 15 K3: ortak gelişim seviyeleri (Progression)
+    public bool upgradesMigrated;  // eski karakter başına yükseltmeler altın iadesiyle taşındı mı
+    public int legacyRefund;       // taşımada iade edilen altın (menüde bir kez gösterilir)
+    public int scrolls;            // Faz 15 K5: parşömen (sandıktan; eşya geliştirmenin üst seviyeleri)
 
     public List<LevelProgress> levels = new List<LevelProgress>();
 
@@ -202,6 +206,14 @@ public class SaveData
         if (levels == null) levels = new List<LevelProgress>();
         if (unlockedCharacters == null || unlockedCharacters.Count == 0) unlockedCharacters = new List<string> { "Boy" };
         if (string.IsNullOrEmpty(selectedCharacter)) selectedCharacter = "Boy";
+        if (upgrades == null) upgrades = new List<IdLevel>();
+        if (!upgradesMigrated)
+        {
+            // Faz 15 K3: karakter başına Can/Hız/Güç yükseltmeleri ortak gelişime geçti: harcanan altın iade edilir (eski liste durur)
+            legacyRefund = Progression.LegacyRefund(charLevels);
+            coins += legacyRefund;
+            upgradesMigrated = true;
+        }
         version = SaveSystem.CurrentVersion;
     }
 }
