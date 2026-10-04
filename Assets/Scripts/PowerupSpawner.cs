@@ -32,6 +32,10 @@ public class PowerupSpawner : MonoBehaviour
     [Tooltip("Powerup sprite'ının arena ve karakter üzerinde çıkması için sorting order")]
     public int powerupSortingOrder = 20;
 
+    [Header("Gelişim (Faz 15 K3)")]
+    [Tooltip("Eşyanın yerde kalma süresi çarpanı (oyun başında PlayerStats'tan)")]
+    public float groundTimeMult = 1f;
+
     private PowerupData[] availablePowerups;
     private readonly Collider2D[] overlapBuffer = new Collider2D[8];
     private readonly System.Collections.Generic.List<Vector3> spawnerPositions = new System.Collections.Generic.List<Vector3>(4);
@@ -82,6 +86,16 @@ public class PowerupSpawner : MonoBehaviour
         spawnIntervalMax = max;
         timer = 0f;
         currentInterval = Random.Range(min, max);
+    }
+
+    float baseMin = -1f, baseMax = -1f;
+
+    /// <summary>Faz 15: eşya sıklığı çarpanı (taban aralık / çarpan; tekrar çağrılınca katlanmaz).</summary>
+    public void SetFrequencyMult(float f)
+    {
+        if (baseMin < 0f) { baseMin = spawnIntervalMin; baseMax = spawnIntervalMax; }
+        f = Mathf.Max(0.1f, f);
+        SetSpawnInterval(baseMin / f, baseMax / f);
     }
 
     public void RefreshArenaBounds()
@@ -144,7 +158,7 @@ public class PowerupSpawner : MonoBehaviour
         int stage = DifficultyManager.Instance != null ? DifficultyManager.Instance.CurrentStageIndex : 0;
         float totalWeight = 0f;
         foreach (var p in availablePowerups)
-            if (p != null && stage >= p.minStage) totalWeight += p.spawnChanceWeight;
+            if (p != null && stage >= p.minStage) totalWeight += Weight(p);
 
         float randomVal = Random.Range(0f, totalWeight);
         PowerupData selectedPowerup = null;
@@ -152,16 +166,20 @@ public class PowerupSpawner : MonoBehaviour
         foreach (var p in availablePowerups)
         {
             if (p == null || stage < p.minStage) continue;
-            if (randomVal <= p.spawnChanceWeight)
+            float w = Weight(p);
+            if (randomVal <= w)
             {
                 selectedPowerup = p;
                 break;
             }
-            randomVal -= p.spawnChanceWeight;
+            randomVal -= w;
         }
 
         SpawnSpecific(selectedPowerup);
     }
+
+    /// <summary>Faz 15 K5: eşyanın çıkma ağırlığı × sıklık geliştirmesi (Pranga'da eksi: daha seyrek).</summary>
+    static float Weight(PowerupData p) => p.spawnChanceWeight * ItemProgress.FrequencyMult(p.type);
 
     /// <summary>Belirli bir eşyayı uygun bir yerde doğurur (G7: Buz Gölü'nde garantili ateş). Doğarsa true.</summary>
     public bool SpawnSpecific(PowerupData selectedPowerup)
@@ -246,6 +264,7 @@ public class PowerupSpawner : MonoBehaviour
         col.radius = itemWorldSize * 0.5f / scaleX;
 
         pickup.powerupData = selectedPowerup;
+        pickup.SetLifetimeMult(groundTimeMult * ItemProgress.GroundMult(selectedPowerup.type));
 
         // ── FLOATING BİLEŞENİ ──
         FloatingItem floater = obj.GetComponent<FloatingItem>();

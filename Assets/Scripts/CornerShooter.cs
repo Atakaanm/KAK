@@ -36,6 +36,7 @@ public class CornerShooter : MonoBehaviour
     public float meteorScatter = 0.9f;
 
     private float timer;
+    private float burstIn = -1f; // Faz 15 K1: çift atışın ikincisi (sn sonra)
 
     [Header("Görünmezlik (Faz 12 H4)")]
     [Tooltip("Görünmez oyuncuya doğru atılmayan koni (yarım açı, derece)")]
@@ -44,7 +45,7 @@ public class CornerShooter : MonoBehaviour
     public float blindSpread = 50f;
     SpriteRenderer confusedMark;
     /// <summary>Faz 13 K1: atış uyarısı (0 sakin → 1 atış anı); karanlıkta gözler buna göre yanar.</summary>
-    public float Telegraph01 => telegraphTime > 0f ? Mathf.Clamp01(1f - (shootInterval - timer) / telegraphTime) : 0f;
+    public float Telegraph01 => telegraphTime > 0f ? Mathf.Clamp01(1f - (shootInterval - timer) / (telegraphTime * Projectile.WarningMult)) : 0f;
     /// <summary>Bu fırlatıcı şu an oyuncuyu göremiyor mu (testler ve "?" işareti).</summary>
     public bool Blind { get; private set; }
 
@@ -74,23 +75,38 @@ public class CornerShooter : MonoBehaviour
         if (visualRenderer != null)
         {
             float t = shootInterval - timer;
-            if (t < telegraphTime)
+            float tele = telegraphTime * Projectile.WarningMult; // Faz 15 K3: Sezgi
+            if (t < tele)
             {
-                float k = 1f - Mathf.Clamp01(t / telegraphTime);
+                float k = 1f - Mathf.Clamp01(t / tele);
                 visualRenderer.color = Color.Lerp(visualBaseColor, KakPalette.Turuncu, k * 0.75f);
             }
             else if (visualRenderer.color != visualBaseColor) visualRenderer.color = visualBaseColor;
         }
 
+        if (burstIn >= 0f)
+        {
+            burstIn -= Time.deltaTime;
+            if (burstIn < 0f) Shoot(0f, false);
+        }
+
         if (timer >= shootInterval)
         {
-            Shoot();
+            Shoot(0f, true);
             timer = 0f;
         }
     }
 
+    /// <summary>Faz 15 K1: oyunda yeni uyanan fırlatıcı: sayaç baştan (ilk atış hemen gelmez).</summary>
+    public void Wake()
+    {
+        timer = 0f;
+        burstIn = -1f;
+    }
+
     void OnDisable()
     {
+        burstIn = -1f;
         if (visualRenderer != null) visualRenderer.color = visualBaseColor;
         if (confusedMark != null) confusedMark.enabled = false;
     }
@@ -153,7 +169,7 @@ public class CornerShooter : MonoBehaviour
     /// <summary>Zamanlayıcıdan bağımsız hemen ateş (olaylar). angleOffset: hedefe göre sapma (derece).</summary>
     public void FireNow(float angleOffset = 0f)
     {
-        Shoot(angleOffset);
+        Shoot(angleOffset, false);
         timer = 0f;
     }
 
@@ -165,8 +181,13 @@ public class CornerShooter : MonoBehaviour
         return d;
     }
 
-    void Shoot(float angleOffset = 0f)
+    void Shoot(float angleOffset, bool allowBurst)
     {
+        // Faz 15 K1: yüksek tempoda ara sıra hemen ardından ikinci atış (olay atışlarında yok)
+        var dm = DifficultyManager.Instance;
+        if (allowBurst && dm != null && dm.DoubleShotChance > 0f && Random.value < dm.DoubleShotChance)
+            burstIn = dm.DoubleShotDelay;
+
         if (target == null) target = Projectile.PlayerTarget;
         // G5: iki kişilikte düşmüş oyuncuya atış yok; hedef yaşayan oyunculardan
         if (GameSettings.TwoPlayer && (target == null || !IsAlive(target))) target = PlayerRegistry.RandomAlive();

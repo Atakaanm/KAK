@@ -72,6 +72,7 @@ public class KarakterTests
         yield return KakTestUtil.LoadScene(KakTestUtil.MenuScene);
         var menu = Object.FindAnyObjectByType<MainMenuController>();
         menu.OnCharactersClicked();
+        if (menu.hubTabs != null) menu.hubTabs.ShowHeroes(); // Faz 15 K4: GELİŞİM merkezinde KAHRAMAN sekmesi
         yield return KakTestUtil.WaitReal(0.3f);
         var panel = Object.FindAnyObjectByType<CharacterPanel>();
         Assert.IsNotNull(panel, "Karakter paneli açılmadı");

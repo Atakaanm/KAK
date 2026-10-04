@@ -79,6 +79,16 @@ public class PlayerData : ScriptableObject
     [Tooltip("Menüde karakter kartındaki portre (boşsa güney idle)")]
     public Sprite portrait;
 
+    [Header("Pasif (Faz 15 K3)")]
+    [Tooltip("Karaktere özgü kalıcı özellikler (ortak gelişimin üstüne eklenir)")]
+    public StatModifier[] passive;
+    [Tooltip("Pasifin tek satırlık açıklaması (Loc anahtarı)")]
+    public string passiveKey = "";
+
+    [Header("El noktaları (Faz 15 K7)")]
+    [Tooltip("Her karede sağ el (eşya ele otursun); KakHandAnchorSetup kurar")]
+    public HandAnchorSet hands;
+
     public Sprite Portrait => portrait != null ? portrait : (south != null ? south.idle : null);
 }
 

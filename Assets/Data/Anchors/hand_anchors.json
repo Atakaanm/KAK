@@ -1,0 +1,1429 @@
+{
+ "chars": [
+  {
+   "name": "Boy",
+   "frames": [
+    {
+     "path": "Assets/Sprites/Player/South/south.png",
+     "dx": -5.25,
+     "dy": 6.75,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Player/South/South_Run_1.gif",
+     "dx": -5.75,
+     "dy": 8.75,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Player/South/South_Run_2.gif",
+     "dx": -4.75,
+     "dy": 7.75,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Player/South/South_Run_3.gif",
+     "dx": -5.25,
+     "dy": 7.75,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Player/South/South_Run_4.gif",
+     "dx": -5.75,
+     "dy": 7.75,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Player/South_East/south-east.png",
+     "dx": -3.21,
+     "dy": 7.93,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Player/South_East/South_East_Run_1.gif",
+     "dx": -0.71,
+     "dy": 9.93,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Player/South_East/South_East_Run_2.gif",
+     "dx": -0.21,
+     "dy": 8.93,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Player/South_East/South_East_Run_3.gif",
+     "dx": -0.21,
+     "dy": 8.93,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Player/South_East/South_East_Run_4.gif",
+     "dx": -1.21,
+     "dy": 8.93,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Player/East/east.png",
+     "dx": 0.21,
+     "dy": 8.64,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Player/East/East_Run_1.png",
+     "dx": 2.71,
+     "dy": 9.64,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Player/East/East_Run_2.png",
+     "dx": 1.71,
+     "dy": 9.64,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Player/East/East_Run_3.png",
+     "dx": 1.71,
+     "dy": 9.64,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Player/East/East_Run_4.png",
+     "dx": 1.71,
+     "dy": 9.64,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Player/North_East/north-east.png",
+     "dx": 4.0,
+     "dy": 8.0,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Player/North_East/North_East_Run_1.gif",
+     "dx": 6.0,
+     "dy": 7.0,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Player/North_East/North_East_Run_2.gif",
+     "dx": 5.0,
+     "dy": 7.0,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Player/North_East/North_East_Run_3.gif",
+     "dx": 6.0,
+     "dy": 7.0,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Player/North_East/North_East_Run_4.gif",
+     "dx": 6.0,
+     "dy": 7.0,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Player/North/north.png",
+     "dx": 5.3,
+     "dy": 6.9,
+     "front": false,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Player/North/North_Run_1.gif",
+     "dx": 5.8,
+     "dy": 6.9,
+     "front": false,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Player/North/North_Run_2.gif",
+     "dx": 5.3,
+     "dy": 7.9,
+     "front": false,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Player/North/North_Run_3.gif",
+     "dx": 6.3,
+     "dy": 6.9,
+     "front": false,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Player/North/North_Run_4.gif",
+     "dx": 6.3,
+     "dy": 6.9,
+     "front": false,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Player/North_West/north-west.png",
+     "dx": 5.06,
+     "dy": 7.93,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Player/North_West/North_West_Run_1.gif",
+     "dx": 2.06,
+     "dy": 6.93,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Player/North_West/North_West_Run_2.gif",
+     "dx": 3.06,
+     "dy": 6.93,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Player/North_West/North_West_Run_3.gif",
+     "dx": 2.06,
+     "dy": 6.93,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Player/North_West/North_West_Run_4.gif",
+     "dx": 2.06,
+     "dy": 6.93,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Player/West/west.png",
+     "dx": 0.5,
+     "dy": 8.75,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Player/West/West_Run_1.gif",
+     "dx": -2.5,
+     "dy": 9.75,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Player/West/West_Run_2.gif",
+     "dx": -1.5,
+     "dy": 9.75,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Player/West/West_Run_3.gif",
+     "dx": -1.5,
+     "dy": 9.75,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Player/West/West_Run_4.gif",
+     "dx": -1.5,
+     "dy": 9.75,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Player/South_West/south-west.png",
+     "dx": -1.91,
+     "dy": 7.83,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Player/South_West/South_West_Run_1.gif",
+     "dx": -3.91,
+     "dy": 8.83,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Player/South_West/South_West_Run_2.gif",
+     "dx": -1.91,
+     "dy": 8.83,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Player/South_West/South_West_Run_3.gif",
+     "dx": -3.91,
+     "dy": 8.83,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Player/South_West/South_West_Run_4.gif",
+     "dx": -3.41,
+     "dy": 8.83,
+     "front": false,
+     "mirror": true
+    }
+   ]
+  },
+  {
+   "name": "Ada",
+   "frames": [
+    {
+     "path": "Assets/Sprites/Characters/Ada/South/south.png",
+     "dx": -5.3,
+     "dy": 6.9,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/South/South_Run_1.png",
+     "dx": -5.8,
+     "dy": 8.9,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/South/South_Run_2.png",
+     "dx": -4.8,
+     "dy": 7.9,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/South/South_Run_3.png",
+     "dx": -5.3,
+     "dy": 7.9,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/South/South_Run_4.png",
+     "dx": -5.8,
+     "dy": 7.9,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/South_East/south-east.png",
+     "dx": -3.21,
+     "dy": 7.93,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/South_East/South_East_Run_1.png",
+     "dx": -0.71,
+     "dy": 9.93,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/South_East/South_East_Run_2.png",
+     "dx": -0.21,
+     "dy": 8.93,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/South_East/South_East_Run_3.png",
+     "dx": -0.21,
+     "dy": 8.93,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/South_East/South_East_Run_4.png",
+     "dx": -1.21,
+     "dy": 8.93,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/East/east.png",
+     "dx": -0.5,
+     "dy": 8.75,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/East/East_Run_1.png",
+     "dx": 2.0,
+     "dy": 9.75,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/East/East_Run_2.png",
+     "dx": 1.0,
+     "dy": 9.75,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/East/East_Run_3.png",
+     "dx": 1.0,
+     "dy": 9.75,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/East/East_Run_4.png",
+     "dx": 1.0,
+     "dy": 9.75,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/North_East/north-east.png",
+     "dx": 3.0,
+     "dy": 8.0,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/North_East/North_East_Run_1.png",
+     "dx": 5.0,
+     "dy": 7.0,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/North_East/North_East_Run_2.png",
+     "dx": 4.0,
+     "dy": 7.0,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/North_East/North_East_Run_3.png",
+     "dx": 5.0,
+     "dy": 7.0,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/North_East/North_East_Run_4.png",
+     "dx": 5.0,
+     "dy": 7.0,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/North/north.png",
+     "dx": 4.3,
+     "dy": 6.9,
+     "front": false,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/North/North_Run_1.png",
+     "dx": 4.8,
+     "dy": 6.9,
+     "front": false,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/North/North_Run_2.png",
+     "dx": 4.3,
+     "dy": 7.9,
+     "front": false,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/North/North_Run_3.png",
+     "dx": 5.3,
+     "dy": 6.9,
+     "front": false,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/North/North_Run_4.png",
+     "dx": 5.3,
+     "dy": 6.9,
+     "front": false,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/North_West/north-west.png",
+     "dx": 3.5,
+     "dy": 1.0,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/North_West/North_West_Run_1.png",
+     "dx": 0.5,
+     "dy": 0.0,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/North_West/North_West_Run_2.png",
+     "dx": 1.5,
+     "dy": 0.0,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/North_West/North_West_Run_3.png",
+     "dx": 0.5,
+     "dy": 0.0,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/North_West/North_West_Run_4.png",
+     "dx": 0.5,
+     "dy": 0.0,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/West/west.png",
+     "dx": 0.0,
+     "dy": 8.0,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/West/West_Run_1.png",
+     "dx": -3.0,
+     "dy": 9.0,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/West/West_Run_2.png",
+     "dx": -2.0,
+     "dy": 9.0,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/West/West_Run_3.png",
+     "dx": -2.0,
+     "dy": 9.0,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/West/West_Run_4.png",
+     "dx": -2.0,
+     "dy": 9.0,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/South_West/south-west.png",
+     "dx": -4.0,
+     "dy": 6.0,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/South_West/South_West_Run_1.png",
+     "dx": -6.0,
+     "dy": 7.0,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/South_West/South_West_Run_2.png",
+     "dx": -4.0,
+     "dy": 7.0,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/South_West/South_West_Run_3.png",
+     "dx": -6.0,
+     "dy": 7.0,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Ada/South_West/South_West_Run_4.png",
+     "dx": -5.5,
+     "dy": 7.0,
+     "front": false,
+     "mirror": true
+    }
+   ]
+  },
+  {
+   "name": "Swift",
+   "frames": [
+    {
+     "path": "Assets/Sprites/Characters/Swift/South/south.png",
+     "dx": -5.25,
+     "dy": 6.75,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/South/South_Run_1.png",
+     "dx": -5.75,
+     "dy": 8.75,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/South/South_Run_2.png",
+     "dx": -4.75,
+     "dy": 7.75,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/South/South_Run_3.png",
+     "dx": -5.25,
+     "dy": 7.75,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/South/South_Run_4.png",
+     "dx": -5.75,
+     "dy": 7.75,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/South_East/south-east.png",
+     "dx": -3.21,
+     "dy": 7.93,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/South_East/South_East_Run_1.png",
+     "dx": -0.71,
+     "dy": 9.93,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/South_East/South_East_Run_2.png",
+     "dx": -0.21,
+     "dy": 8.93,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/South_East/South_East_Run_3.png",
+     "dx": -0.21,
+     "dy": 8.93,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/South_East/South_East_Run_4.png",
+     "dx": -1.21,
+     "dy": 8.93,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/East/east.png",
+     "dx": 0.21,
+     "dy": 8.64,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/East/East_Run_1.png",
+     "dx": 2.71,
+     "dy": 9.64,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/East/East_Run_2.png",
+     "dx": 1.71,
+     "dy": 9.64,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/East/East_Run_3.png",
+     "dx": 1.71,
+     "dy": 9.64,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/East/East_Run_4.png",
+     "dx": 1.71,
+     "dy": 9.64,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/North_East/north-east.png",
+     "dx": 4.0,
+     "dy": 8.0,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/North_East/North_East_Run_1.png",
+     "dx": 6.0,
+     "dy": 7.0,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/North_East/North_East_Run_2.png",
+     "dx": 5.0,
+     "dy": 7.0,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/North_East/North_East_Run_3.png",
+     "dx": 6.0,
+     "dy": 7.0,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/North_East/North_East_Run_4.png",
+     "dx": 6.0,
+     "dy": 7.0,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/North/north.png",
+     "dx": 5.3,
+     "dy": 6.9,
+     "front": false,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/North/North_Run_1.png",
+     "dx": 5.8,
+     "dy": 6.9,
+     "front": false,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/North/North_Run_2.png",
+     "dx": 5.3,
+     "dy": 7.9,
+     "front": false,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/North/North_Run_3.png",
+     "dx": 6.3,
+     "dy": 6.9,
+     "front": false,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/North/North_Run_4.png",
+     "dx": 6.3,
+     "dy": 6.9,
+     "front": false,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/North_West/north-west.png",
+     "dx": 5.06,
+     "dy": 7.93,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/North_West/North_West_Run_1.png",
+     "dx": 2.06,
+     "dy": 6.93,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/North_West/North_West_Run_2.png",
+     "dx": 3.06,
+     "dy": 6.93,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/North_West/North_West_Run_3.png",
+     "dx": 2.06,
+     "dy": 6.93,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/North_West/North_West_Run_4.png",
+     "dx": 2.06,
+     "dy": 6.93,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/West/west.png",
+     "dx": 0.5,
+     "dy": 8.75,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/West/West_Run_1.png",
+     "dx": -2.5,
+     "dy": 9.75,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/West/West_Run_2.png",
+     "dx": -1.5,
+     "dy": 9.75,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/West/West_Run_3.png",
+     "dx": -1.5,
+     "dy": 9.75,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/West/West_Run_4.png",
+     "dx": -1.5,
+     "dy": 9.75,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/South_West/south-west.png",
+     "dx": -1.91,
+     "dy": 7.83,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/South_West/South_West_Run_1.png",
+     "dx": -3.91,
+     "dy": 8.83,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/South_West/South_West_Run_2.png",
+     "dx": -1.91,
+     "dy": 8.83,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/South_West/South_West_Run_3.png",
+     "dx": -3.91,
+     "dy": 8.83,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Swift/South_West/South_West_Run_4.png",
+     "dx": -3.41,
+     "dy": 8.83,
+     "front": false,
+     "mirror": true
+    }
+   ]
+  },
+  {
+   "name": "Tank",
+   "frames": [
+    {
+     "path": "Assets/Sprites/Characters/Tank/South/south.png",
+     "dx": -5.25,
+     "dy": 6.75,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/South/South_Run_1.png",
+     "dx": -5.75,
+     "dy": 8.75,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/South/South_Run_2.png",
+     "dx": -4.75,
+     "dy": 7.75,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/South/South_Run_3.png",
+     "dx": -5.25,
+     "dy": 7.75,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/South/South_Run_4.png",
+     "dx": -5.75,
+     "dy": 7.75,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/South_East/south-east.png",
+     "dx": -3.21,
+     "dy": 7.93,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/South_East/South_East_Run_1.png",
+     "dx": -0.71,
+     "dy": 9.93,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/South_East/South_East_Run_2.png",
+     "dx": -0.21,
+     "dy": 8.93,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/South_East/South_East_Run_3.png",
+     "dx": -0.21,
+     "dy": 8.93,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/South_East/South_East_Run_4.png",
+     "dx": -1.21,
+     "dy": 8.93,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/East/east.png",
+     "dx": 0.21,
+     "dy": 8.64,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/East/East_Run_1.png",
+     "dx": 2.71,
+     "dy": 9.64,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/East/East_Run_2.png",
+     "dx": 1.71,
+     "dy": 9.64,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/East/East_Run_3.png",
+     "dx": 1.71,
+     "dy": 9.64,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/East/East_Run_4.png",
+     "dx": 1.71,
+     "dy": 9.64,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/North_East/north-east.png",
+     "dx": 4.0,
+     "dy": 8.0,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/North_East/North_East_Run_1.png",
+     "dx": 6.0,
+     "dy": 7.0,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/North_East/North_East_Run_2.png",
+     "dx": 5.0,
+     "dy": 7.0,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/North_East/North_East_Run_3.png",
+     "dx": 6.0,
+     "dy": 7.0,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/North_East/North_East_Run_4.png",
+     "dx": 6.0,
+     "dy": 7.0,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/North/north.png",
+     "dx": 5.3,
+     "dy": 6.9,
+     "front": false,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/North/North_Run_1.png",
+     "dx": 5.8,
+     "dy": 6.9,
+     "front": false,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/North/North_Run_2.png",
+     "dx": 5.3,
+     "dy": 7.9,
+     "front": false,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/North/North_Run_3.png",
+     "dx": 6.3,
+     "dy": 6.9,
+     "front": false,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/North/North_Run_4.png",
+     "dx": 6.3,
+     "dy": 6.9,
+     "front": false,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/North_West/north-west.png",
+     "dx": 5.06,
+     "dy": 7.93,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/North_West/North_West_Run_1.png",
+     "dx": 2.06,
+     "dy": 6.93,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/North_West/North_West_Run_2.png",
+     "dx": 3.06,
+     "dy": 6.93,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/North_West/North_West_Run_3.png",
+     "dx": 2.06,
+     "dy": 6.93,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/North_West/North_West_Run_4.png",
+     "dx": 2.06,
+     "dy": 6.93,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/West/west.png",
+     "dx": 0.5,
+     "dy": 8.75,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/West/West_Run_1.png",
+     "dx": -2.5,
+     "dy": 9.75,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/West/West_Run_2.png",
+     "dx": -1.5,
+     "dy": 9.75,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/West/West_Run_3.png",
+     "dx": -1.5,
+     "dy": 9.75,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/West/West_Run_4.png",
+     "dx": -1.5,
+     "dy": 9.75,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/South_West/south-west.png",
+     "dx": -1.91,
+     "dy": 7.83,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/South_West/South_West_Run_1.png",
+     "dx": -3.91,
+     "dy": 8.83,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/South_West/South_West_Run_2.png",
+     "dx": -1.91,
+     "dy": 8.83,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/South_West/South_West_Run_3.png",
+     "dx": -3.91,
+     "dy": 8.83,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Tank/South_West/South_West_Run_4.png",
+     "dx": -3.41,
+     "dy": 8.83,
+     "front": false,
+     "mirror": true
+    }
+   ]
+  },
+  {
+   "name": "Lucky",
+   "frames": [
+    {
+     "path": "Assets/Sprites/Characters/Lucky/South/south.png",
+     "dx": -5.25,
+     "dy": 6.75,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/South/South_Run_1.png",
+     "dx": -5.75,
+     "dy": 8.75,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/South/South_Run_2.png",
+     "dx": -4.75,
+     "dy": 7.75,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/South/South_Run_3.png",
+     "dx": -5.25,
+     "dy": 7.75,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/South/South_Run_4.png",
+     "dx": -5.75,
+     "dy": 7.75,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/South_East/south-east.png",
+     "dx": -3.21,
+     "dy": 7.93,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/South_East/South_East_Run_1.png",
+     "dx": -0.71,
+     "dy": 9.93,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/South_East/South_East_Run_2.png",
+     "dx": -0.21,
+     "dy": 8.93,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/South_East/South_East_Run_3.png",
+     "dx": -0.21,
+     "dy": 8.93,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/South_East/South_East_Run_4.png",
+     "dx": -1.21,
+     "dy": 8.93,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/East/east.png",
+     "dx": 0.21,
+     "dy": 8.64,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/East/East_Run_1.png",
+     "dx": 2.71,
+     "dy": 9.64,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/East/East_Run_2.png",
+     "dx": 1.71,
+     "dy": 9.64,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/East/East_Run_3.png",
+     "dx": 1.71,
+     "dy": 9.64,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/East/East_Run_4.png",
+     "dx": 1.71,
+     "dy": 9.64,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/North_East/north-east.png",
+     "dx": 4.0,
+     "dy": 8.0,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/North_East/North_East_Run_1.png",
+     "dx": 6.0,
+     "dy": 7.0,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/North_East/North_East_Run_2.png",
+     "dx": 5.0,
+     "dy": 7.0,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/North_East/North_East_Run_3.png",
+     "dx": 6.0,
+     "dy": 7.0,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/North_East/North_East_Run_4.png",
+     "dx": 6.0,
+     "dy": 7.0,
+     "front": true,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/North/north.png",
+     "dx": 5.3,
+     "dy": 6.9,
+     "front": false,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/North/North_Run_1.png",
+     "dx": 5.8,
+     "dy": 6.9,
+     "front": false,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/North/North_Run_2.png",
+     "dx": 5.3,
+     "dy": 7.9,
+     "front": false,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/North/North_Run_3.png",
+     "dx": 6.3,
+     "dy": 6.9,
+     "front": false,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/North/North_Run_4.png",
+     "dx": 6.3,
+     "dy": 6.9,
+     "front": false,
+     "mirror": false
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/North_West/north-west.png",
+     "dx": 5.06,
+     "dy": 7.93,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/North_West/North_West_Run_1.png",
+     "dx": 2.06,
+     "dy": 6.93,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/North_West/North_West_Run_2.png",
+     "dx": 3.06,
+     "dy": 6.93,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/North_West/North_West_Run_3.png",
+     "dx": 2.06,
+     "dy": 6.93,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/North_West/North_West_Run_4.png",
+     "dx": 2.06,
+     "dy": 6.93,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/West/west.png",
+     "dx": 0.5,
+     "dy": 8.75,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/West/West_Run_1.png",
+     "dx": -2.5,
+     "dy": 9.75,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/West/West_Run_2.png",
+     "dx": -1.5,
+     "dy": 9.75,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/West/West_Run_3.png",
+     "dx": -1.5,
+     "dy": 9.75,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/West/West_Run_4.png",
+     "dx": -1.5,
+     "dy": 9.75,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/South_West/south-west.png",
+     "dx": -1.91,
+     "dy": 7.83,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/South_West/South_West_Run_1.png",
+     "dx": -3.91,
+     "dy": 8.83,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/South_West/South_West_Run_2.png",
+     "dx": -1.91,
+     "dy": 8.83,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/South_West/South_West_Run_3.png",
+     "dx": -3.91,
+     "dy": 8.83,
+     "front": false,
+     "mirror": true
+    },
+    {
+     "path": "Assets/Sprites/Characters/Lucky/South_West/South_West_Run_4.png",
+     "dx": -3.41,
+     "dy": 8.83,
+     "front": false,
+     "mirror": true
+    }
+   ]
+  }
+ ]
+}

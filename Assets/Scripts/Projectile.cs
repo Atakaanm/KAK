@@ -30,6 +30,8 @@ public class Projectile : MonoBehaviour
 
     /// <summary>Oyuncu (Homing ve Meteor için; LevelManager/oyuncu kendini kaydeder).</summary>
     public static Transform PlayerTarget;
+    /// <summary>Faz 15 K3: "Sezgi" gelişimi — uyarı süreleri (göktaşı düşüşü, fırlatıcı parlaması) bu çarpanla uzar. Oyun başında PlayerStats'tan.</summary>
+    public static float WarningMult = 1f;
 
     /// <summary>Merminin anlık hız vektörü (dünya birimi/sn).</summary>
     public Vector2 Velocity => motion == ProjectileMotion.Meteor ? Vector2.zero : moveDirection.normalized * speed;
@@ -45,7 +47,7 @@ public class Projectile : MonoBehaviour
     /// <summary>Uçuş yönü (testler, analiz).</summary>
     public Vector2 MoveDirection => moveDirection;
     /// <summary>Meteor için yere kalan süre oranı (1 = yeni atıldı, 0 = iniş). Diğerlerinde 0.</summary>
-    public float FallRemaining01 => motion == ProjectileMotion.Meteor && data != null ? Mathf.Clamp01(1f - age / data.meteorFallTime) : 0f;
+    public float FallRemaining01 => motion == ProjectileMotion.Meteor && data != null ? Mathf.Clamp01(1f - age / (data.meteorFallTime * WarningMult)) : 0f;
 
     // Arena sınırları — LevelManager tarafından statik olarak set edilir (oynanabilir alan)
     private static Bounds arenaBounds;
@@ -495,7 +497,7 @@ public class Projectile : MonoBehaviour
     void UpdateMeteor()
     {
         if (data == null) { ReturnToPool(); return; }
-        float fall = Mathf.Max(0.05f, data.meteorFallTime);
+        float fall = Mathf.Max(0.05f, data.meteorFallTime * WarningMult);
         float k = Mathf.Clamp01(age / fall);           // 0 → 1
         float height = data.meteorStartHeight * (1f - k * k); // hızlanarak düşer
         if (col != null) col.enabled = false;

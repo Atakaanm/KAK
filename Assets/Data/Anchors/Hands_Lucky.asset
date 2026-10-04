@@ -1,0 +1,175 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c540d7b17572e4c0c990aa3fb2709b55, type: 3}
+  m_Name: Hands_Lucky
+  m_EditorClassIdentifier: KacAtaKac::HandAnchorSet
+  entries:
+  - sprite: {fileID: 21300000, guid: 213234f0bbe07439c9deb65e808c16d7, type: 3}
+    offsetPx: {x: -5.25, y: 6.75}
+    front: 1
+    mirror: 0
+  - sprite: {fileID: 21300000, guid: 381e1292381324c6fa07830ed5bbd028, type: 3}
+    offsetPx: {x: -5.75, y: 8.75}
+    front: 1
+    mirror: 0
+  - sprite: {fileID: 21300000, guid: bf93f9bc290bb40ae80e4a171f61689b, type: 3}
+    offsetPx: {x: -4.75, y: 7.75}
+    front: 1
+    mirror: 0
+  - sprite: {fileID: 21300000, guid: cfb55e1ec810647e999fc264004d28ef, type: 3}
+    offsetPx: {x: -5.25, y: 7.75}
+    front: 1
+    mirror: 0
+  - sprite: {fileID: 21300000, guid: 87e4b2ca76c4f446ea6c765992b16911, type: 3}
+    offsetPx: {x: -5.75, y: 7.75}
+    front: 1
+    mirror: 0
+  - sprite: {fileID: 21300000, guid: 0c2f599a928f24b4aa88d2e369be83ec, type: 3}
+    offsetPx: {x: -3.21, y: 7.93}
+    front: 1
+    mirror: 0
+  - sprite: {fileID: 21300000, guid: ffb90a7319b3a43379911944cbefb9a3, type: 3}
+    offsetPx: {x: -0.71, y: 9.93}
+    front: 1
+    mirror: 0
+  - sprite: {fileID: 21300000, guid: 1a44357b6cfb34a399dd3210faf0f918, type: 3}
+    offsetPx: {x: -0.21, y: 8.93}
+    front: 1
+    mirror: 0
+  - sprite: {fileID: 21300000, guid: d8c7d9c8f0e0840d7ba79c929f3510a5, type: 3}
+    offsetPx: {x: -0.21, y: 8.93}
+    front: 1
+    mirror: 0
+  - sprite: {fileID: 21300000, guid: 35c6e07a8e94049a59fc75d9fe0c071d, type: 3}
+    offsetPx: {x: -1.21, y: 8.93}
+    front: 1
+    mirror: 0
+  - sprite: {fileID: 21300000, guid: 976f4530bfd5240138dc922a0fd7ca64, type: 3}
+    offsetPx: {x: 0.21, y: 8.64}
+    front: 1
+    mirror: 0
+  - sprite: {fileID: 21300000, guid: 83883310852094a56a399ba0eeb09ab8, type: 3}
+    offsetPx: {x: 2.71, y: 9.64}
+    front: 1
+    mirror: 0
+  - sprite: {fileID: 21300000, guid: d3bb90d3e266741879b7d9beff3a3523, type: 3}
+    offsetPx: {x: 1.71, y: 9.64}
+    front: 1
+    mirror: 0
+  - sprite: {fileID: 21300000, guid: be9113bc8f6b2438b9b5b883371e71d0, type: 3}
+    offsetPx: {x: 1.71, y: 9.64}
+    front: 1
+    mirror: 0
+  - sprite: {fileID: 21300000, guid: 8432ca5fef5c245a5be5486c1045bce5, type: 3}
+    offsetPx: {x: 1.71, y: 9.64}
+    front: 1
+    mirror: 0
+  - sprite: {fileID: 21300000, guid: 0033b13be71474a309fe4493577e660d, type: 3}
+    offsetPx: {x: 4, y: 8}
+    front: 1
+    mirror: 0
+  - sprite: {fileID: 21300000, guid: f0a32ab250ef943cea617d3684b522f8, type: 3}
+    offsetPx: {x: 6, y: 7}
+    front: 1
+    mirror: 0
+  - sprite: {fileID: 21300000, guid: 6ed6a3393f10643399a52ab3cb3f96b3, type: 3}
+    offsetPx: {x: 5, y: 7}
+    front: 1
+    mirror: 0
+  - sprite: {fileID: 21300000, guid: a814cf69be2df468292815d3ff705fca, type: 3}
+    offsetPx: {x: 6, y: 7}
+    front: 1
+    mirror: 0
+  - sprite: {fileID: 21300000, guid: 40b815db8168c4ec5ade377e68835644, type: 3}
+    offsetPx: {x: 6, y: 7}
+    front: 1
+    mirror: 0
+  - sprite: {fileID: 21300000, guid: 5d20db528c38941ce9d4135c20df4021, type: 3}
+    offsetPx: {x: 5.3, y: 6.9}
+    front: 0
+    mirror: 0
+  - sprite: {fileID: 21300000, guid: 3092958712ac848e4b037695938294a8, type: 3}
+    offsetPx: {x: 5.8, y: 6.9}
+    front: 0
+    mirror: 0
+  - sprite: {fileID: 21300000, guid: 8ea122af77b614db3b6be137bed4d04b, type: 3}
+    offsetPx: {x: 5.3, y: 7.9}
+    front: 0
+    mirror: 0
+  - sprite: {fileID: 21300000, guid: a4e7d2e890008457cb87827baac87f8b, type: 3}
+    offsetPx: {x: 6.3, y: 6.9}
+    front: 0
+    mirror: 0
+  - sprite: {fileID: 21300000, guid: a69fe8e8a447447babaab12903757183, type: 3}
+    offsetPx: {x: 6.3, y: 6.9}
+    front: 0
+    mirror: 0
+  - sprite: {fileID: 21300000, guid: ccdb1d277f5194a1b99c91b1ba1ce9a6, type: 3}
+    offsetPx: {x: 5.06, y: 7.93}
+    front: 0
+    mirror: 1
+  - sprite: {fileID: 21300000, guid: b8e87a9eaf6f04bc5b862d705d242875, type: 3}
+    offsetPx: {x: 2.06, y: 6.93}
+    front: 0
+    mirror: 1
+  - sprite: {fileID: 21300000, guid: c7650de757321480ba402ad27fe5eb16, type: 3}
+    offsetPx: {x: 3.06, y: 6.93}
+    front: 0
+    mirror: 1
+  - sprite: {fileID: 21300000, guid: 07a1923eebb274c84a38a42dac4968d5, type: 3}
+    offsetPx: {x: 2.06, y: 6.93}
+    front: 0
+    mirror: 1
+  - sprite: {fileID: 21300000, guid: ac6a158d10fd8408aae1c7d49d00b13e, type: 3}
+    offsetPx: {x: 2.06, y: 6.93}
+    front: 0
+    mirror: 1
+  - sprite: {fileID: 21300000, guid: 122c52450a7464ca4981d105ffb888ea, type: 3}
+    offsetPx: {x: 0.5, y: 8.75}
+    front: 0
+    mirror: 1
+  - sprite: {fileID: 21300000, guid: 30a27bf1241ba4634b193b2c988f2f89, type: 3}
+    offsetPx: {x: -2.5, y: 9.75}
+    front: 0
+    mirror: 1
+  - sprite: {fileID: 21300000, guid: 688c210684f4648c1970082e4169f5dc, type: 3}
+    offsetPx: {x: -1.5, y: 9.75}
+    front: 0
+    mirror: 1
+  - sprite: {fileID: 21300000, guid: a0d5e724a1b774fd396983513a601654, type: 3}
+    offsetPx: {x: -1.5, y: 9.75}
+    front: 0
+    mirror: 1
+  - sprite: {fileID: 21300000, guid: 5655c57b99e6b4ccab08673837cdf339, type: 3}
+    offsetPx: {x: -1.5, y: 9.75}
+    front: 0
+    mirror: 1
+  - sprite: {fileID: 21300000, guid: 4ec97160fb97f4ccf86e909a135d4e6b, type: 3}
+    offsetPx: {x: -1.91, y: 7.83}
+    front: 0
+    mirror: 1
+  - sprite: {fileID: 21300000, guid: 1b5c0813656ee4c07a4a4d87e2c0fe67, type: 3}
+    offsetPx: {x: -3.91, y: 8.83}
+    front: 0
+    mirror: 1
+  - sprite: {fileID: 21300000, guid: 0b71d7a70ceb34cd4861f447a36545f2, type: 3}
+    offsetPx: {x: -1.91, y: 8.83}
+    front: 0
+    mirror: 1
+  - sprite: {fileID: 21300000, guid: ad44bebc293d94054ae753244d143c9a, type: 3}
+    offsetPx: {x: -3.91, y: 8.83}
+    front: 0
+    mirror: 1
+  - sprite: {fileID: 21300000, guid: eb987dd1058da4522981c4f5513b78d5, type: 3}
+    offsetPx: {x: -3.41, y: 8.83}
+    front: 0
+    mirror: 1

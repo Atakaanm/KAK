@@ -62,7 +62,7 @@ public class HudExtras : MonoBehaviour
     {
         if (dashing) { WorldPopup.Show(Loc.T("super_dodge"), pos, KakPalette.CamgobegiParlak, 1.1f); return; }
         var sm = GameManager.Instance != null ? GameManager.Instance.scoreManager : null;
-        int bonus = sm != null ? Mathf.RoundToInt(sm.nearMissBonus * sm.ComboMultiplier) : 5;
+        int bonus = sm != null ? sm.NearMissBonusNow() : 5;
         WorldPopup.Show("+" + bonus, pos + new Vector3(0f, 0.25f, 0f), KakPalette.AltinAcik, 0.65f);
     }
 

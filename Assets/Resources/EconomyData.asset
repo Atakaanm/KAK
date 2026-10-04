@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9844ddcb45f2f4c7cbb70702f98f8fc2, type: 3}
+  m_Name: EconomyData
+  m_EditorClassIdentifier: KacAtaKac::EconomyData
+  keyMilestones:
+  - 60
+  - 120
+  - 180
+  keyOnRecord: 1
+  chests:
+  - id: wood
+    nameKey: chest_wood
+    keyCost: 1
+    goldMin: 60
+    goldMax: 120
+    scrollMin: 1
+    scrollMax: 2
+    scrollChance: 0.7
+    bonusKeyChance: 0
+    closed: {fileID: 21300000, guid: fe5ab2817c66c489ca6dde4393a963a7, type: 3}
+    open: {fileID: 21300000, guid: 911e29365141a4d2bab6cdd8429e0c52, type: 3}
+    glow: {r: 0.99607843, g: 0.90588236, b: 0.38039216, a: 1}
+  - id: silver
+    nameKey: chest_silver
+    keyCost: 3
+    goldMin: 220
+    goldMax: 360
+    scrollMin: 3
+    scrollMax: 5
+    scrollChance: 1
+    bonusKeyChance: 0.2
+    closed: {fileID: 21300000, guid: 49cac93e3599a4dada79a7b3e01bc833, type: 3}
+    open: {fileID: 21300000, guid: 29cf7680f9f4d49fda50279fec200bbc, type: 3}
+    glow: {r: 0.17254902, g: 0.9098039, b: 0.9607843, a: 1}
+  - id: gold
+    nameKey: chest_gold
+    keyCost: 10
+    goldMin: 900
+    goldMax: 1300
+    scrollMin: 10
+    scrollMax: 14
+    scrollChance: 1
+    bonusKeyChance: 0.5
+    closed: {fileID: 21300000, guid: a241ee304395e46d995bd0947d238eb7, type: 3}
+    open: {fileID: 21300000, guid: 8d6b4c2ad6bc04fbca7c43fe9bf59b2a, type: 3}
+    glow: {r: 0.99607843, g: 0.68235296, b: 0.20392157, a: 1}
+  pityEvery: 10
+  bestScoreForDouble: 10000
+  bestScoreCap: 1

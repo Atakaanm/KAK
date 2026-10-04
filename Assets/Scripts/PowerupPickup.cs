@@ -12,6 +12,14 @@ public class PowerupPickup : MonoBehaviour
 
     [Header("Ömür Ayarları")]
     public float lifetime = 8f;           // Toplam yerde kalma süresi
+    float baseLifetime = -1f;
+
+    /// <summary>Faz 15 K3: yerde kalma gelişimi (havuzdan her çıkışta; taban süre × çarpan).</summary>
+    public void SetLifetimeMult(float m)
+    {
+        if (baseLifetime < 0f) baseLifetime = lifetime;
+        lifetime = baseLifetime * Mathf.Max(0.3f, m);
+    }
     public float warningTime = 3f;        // Son kaç saniye yanıp sönecek
 
     [Header("Yanıp Sönme Ayarları")]
@@ -94,15 +102,17 @@ public class PowerupPickup : MonoBehaviour
         PlayerHealth health = player.GetComponent<PlayerHealth>();
         PlayerMovement2D movement = player.GetComponent<PlayerMovement2D>();
 
-        // PlayerData içerisinde tanımladığımız katsayı
+        // Faz 15 K3: güç süresi karakter tabanı + pasif + gelişimden (PlayerStats); yoksa karakter verisi
+        var stats = player.GetComponent<PlayerStats>();
         float durationMultiplier = 1.0f;
-        if (movement != null && movement.playerData != null)
-        {
-            durationMultiplier = movement.playerData.powerupDurationMultiplier * CharacterProgress.PowerMult(movement.playerData);
-        }
+        if (stats != null && stats.Data != null) durationMultiplier = stats.PowerDuration;
+        else if (movement != null && movement.playerData != null) durationMultiplier = movement.playerData.powerupDurationMultiplier;
 
-        // Kötü eşyayı güç süresi yükseltmesi uzatmaz
-        float finalDuration = powerupData.harmful ? powerupData.duration : powerupData.duration * durationMultiplier;
+        // Kötü eşyayı güç süresi yükseltmesi uzatmaz; pranga direnci kısaltır
+        float finalDuration = powerupData.harmful
+            ? powerupData.duration * (1f - (stats != null ? stats.ShackleResist : 0f))
+            : powerupData.duration * durationMultiplier * ItemProgress.DurationMult(powerupData.type); // K5: eşya süresi geliştirmesi
+        int itemPower = ItemProgress.Power(powerupData.type);
 
         var am = AudioManager.Instance;
         if (am != null)
@@ -121,10 +131,11 @@ public class PowerupPickup : MonoBehaviour
                 if (health != null && health.CurrentHealth >= health.MaxHealth && health.MaxHealth < health.HealthCap)
                     health.GrowMaxHealth(1);
                 else if (health != null) health.Heal(powerupData.healthAmount);
+                if (health != null && itemPower > 0) health.SetInvulnerable(0.8f * itemPower); // K5: şifa ışığı
                 break;
 
             case PowerupType.Shield:
-                if (health != null) health.ActivateShield();
+                if (health != null) health.ActivateShield(1 + itemPower); // K5: güçlü kalkan (2 vuruş)
                 break;
 
             case PowerupType.SpeedBoost:
@@ -136,7 +147,8 @@ public class PowerupPickup : MonoBehaviour
                 break;
 
             case PowerupType.TimeSlow:
-                if (GameManager.Instance != null) GameManager.Instance.TimeSlow(powerupData.powerMultiplier, finalDuration);
+                // K5: geliştirilen yavaşlatma daha güçlü (0,05/seviye, en az 0,25)
+                if (GameManager.Instance != null) GameManager.Instance.TimeSlow(Mathf.Max(0.25f, powerupData.powerMultiplier - 0.05f * itemPower), finalDuration);
                 break;
 
             case PowerupType.Shackle:

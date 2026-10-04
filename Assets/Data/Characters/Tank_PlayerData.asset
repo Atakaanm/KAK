@@ -92,3 +92,9 @@ MonoBehaviour:
   coinMultiplier: 1
   startWithShield: 1
   portrait: {fileID: 0}
+  passive:
+  - stat: 3
+    flat: 0.15
+    percent: 0
+  passiveKey: pas_tank
+  hands: {fileID: 11400000, guid: 9fe08c60925cd4c6bae053cf425daac3, type: 2}

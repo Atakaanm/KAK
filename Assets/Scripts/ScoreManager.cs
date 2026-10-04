@@ -94,11 +94,30 @@ public class ScoreManager : MonoBehaviour
         if (ComboMultiplier > before + 0.0001f) GameEvents.RaiseComboChanged(ComboMultiplier);
     }
 
+    [Header("Gelişim (Faz 15 K3, oyun başında PlayerStats'tan)")]
+    public float scoreGain = 1f;
+    public float nearMissGain = 1f;
+    float baseKeep = -1f, baseMax = -1f;
+
+    /// <summary>Skor ustası, kıl payı ustası, çarpan hafızası ve tavanı (LevelManager oyun başında çağırır).</summary>
+    public void ApplyStats(StatSheet s)
+    {
+        if (s == null) return;
+        if (baseKeep < 0f) { baseKeep = multKeepOnHit; baseMax = multMax; }
+        scoreGain = StatBuilder.ScoreMult(s);
+        nearMissGain = StatBuilder.NearBonusMult(s);
+        multKeepOnHit = StatBuilder.ComboKeep(s, baseKeep);
+        multMax = StatBuilder.ComboMax(s, baseMax);
+    }
+
+    /// <summary>Bir kıl payının skor bonusu (HUD da aynı hesabı gösterir).</summary>
+    public int NearMissBonusNow(bool dashing = false) => Mathf.RoundToInt(nearMissBonus * nearMissGain * ComboMultiplier * (dashing ? dashNearMissMultiplier : 1f));
+
     void OnNearMiss(Vector3 pos, bool dashing)
     {
         if (GameManager.Instance != null && GameManager.Instance.IsGameOver) return;
         NearMissCount++;
-        float bonus = nearMissBonus * ComboMultiplier * (dashing ? dashNearMissMultiplier : 1f);
+        float bonus = NearMissBonusNow(dashing);
         AddScore(Mathf.RoundToInt(bonus));
         AddMult(nearMissMultStep); // G2: yakın geçiş skor hızını artırır
     }
@@ -130,7 +149,7 @@ public class ScoreManager : MonoBehaviour
             AddMult(survivalMultStep);
         }
 
-        float currentScoreMult = ComboMultiplier;
+        float currentScoreMult = ComboMultiplier * scoreGain;
         if (DifficultyManager.Instance != null && DifficultyManager.Instance.isActiveAndEnabled)
         {
             currentScoreMult *= DifficultyManager.Instance.GetScoreSpeedMultiplier();

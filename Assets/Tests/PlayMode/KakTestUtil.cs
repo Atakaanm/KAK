@@ -29,6 +29,9 @@ public static class KakTestUtil
         PlayerHealth.DevGodMode = false; // Faz 13: testler arası sızmasın (köprü/ekran görüntüsü açık bırakabilir)
         KakScope.ResetToProduct();        // Faz 14: her test ürün kapsamıyla başlar; gizli sistem testleri EnableAll çağırır
         DarkWorld.Reset();
+        DifficultyManager.ApprenticeOff = true; // Faz 15 K1: testler standart tempoyla (çırak testi kendisi açar)
+        PlayerPower.TestOverride = -1f;
+        MenuTabs.Last = 1;                 // Faz 15 K4: sekme hafızası testler arası sızmasın
         AdService.ResetForTests();
 
         foreach (var gm in Object.FindObjectsByType<GameManager>(FindObjectsInactive.Include, FindObjectsSortMode.None))

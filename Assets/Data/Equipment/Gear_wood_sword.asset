@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8a13ff4adc56418ab6e310c1b27f012, type: 3}
+  m_Name: Gear_wood_sword
+  m_EditorClassIdentifier: KacAtaKac::EquipmentData
+  equipmentName: wood_sword
+  slot: 3
+  id: wood_sword
+  nameKey: gear_wood_sword
+  modifiers:
+  - stat: 9
+    flat: 0.05
+    percent: 0
+  healthBonus: 0
+  moveSpeedBonus: 0
+  powerupDurationBonus: 0
+  inventoryIcon: {fileID: 0}
+  heldSprite: {fileID: 0}
+  gripOffsetPx: {x: 0, y: 0}

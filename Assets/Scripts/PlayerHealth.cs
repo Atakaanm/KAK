@@ -18,6 +18,7 @@ public class PlayerHealth : MonoBehaviour
     private Color originalColor;
     private bool isInvincible = false;
     private bool hasShield = false;
+    private int shieldCharges; // Faz 15 K5: güçlü kalkan birden fazla vuruş emer
     public bool HasShield => hasShield;
     private ShieldBubble shieldBubble;
     private bool isGhost = false;
@@ -197,9 +198,13 @@ public class PlayerHealth : MonoBehaviour
     }
 
     /// <summary>1 vuruşluk bloklayan kalkan verir.</summary>
-    public void ActivateShield()
+    public void ActivateShield() => ActivateShield(1);
+
+    /// <summary>Faz 15 K5: "charges" vuruş emen kalkan (var olanı azaltmaz).</summary>
+    public void ActivateShield(int charges)
     {
         hasShield = true;
+        shieldCharges = Mathf.Max(shieldCharges, Mathf.Max(1, charges));
         // Karakteri boyamak ya da büyütmek yerine balon: çarpışma alanı değişmez, karakter okunur kalır
         if (shieldBubble == null)
         {
@@ -299,8 +304,9 @@ public class PlayerHealth : MonoBehaviour
     {
         if (!hasShield) return false;
         GameEvents.RaiseShieldBlocked(transform.position);
-        hasShield = false;
-        if (shieldBubble != null) shieldBubble.Pop();
+        shieldCharges = Mathf.Max(0, shieldCharges - 1);
+        hasShield = shieldCharges > 0;
+        if (shieldBubble != null) { shieldBubble.Pop(); if (hasShield) shieldBubble.Show(); } // güçlü kalkan: patlar, yeniden belirir
         if (invincibilityCoroutine != null) StopCoroutine(invincibilityCoroutine);
         invincibilityCoroutine = StartCoroutine(InvincibilityRoutine());
         return true;

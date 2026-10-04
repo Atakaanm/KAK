@@ -4,6 +4,33 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-10-04 — Faz 15 K6-K8: sandık, el noktaları, kaçış kartları
+
+- Yana koşan sprite'larda iki kol sürekli yer değiştirir; kare başına "yakın kol" tespiti eşyayı eller arasında zıplatır. Eşyayı tutan kol sallanmaz: duruş elinin noktası + gövde salınımı (baş tepesinin kayması) sabit ve doğal duruyor.
+- Aynalama/derinlik gibi kararlar hareket yönüne değil **görünen kareye** bağlanmalı (karede bilgi: front, mirror); test ve gerçek oyunda tutarlı.
+- Oyun içi değer değişikliklerinde (kart) bileşenlere "taban × çarpan" ile uygula (SetHurtScale, SetRadiusMult, SetFrequencyMult): tekrar uygulama katlanmasın.
+- Yalnız editör/dev build'de derlenen sınıfa (KakAutoPilot) oyun kodundan başvururken `#if UNITY_EDITOR || DEVELOPMENT_BUILD` şart (release build kırılır).
+- zsh'de `$c` gibi değişken komut argümanlarına bölünmez; köprü komutlarını tek tek ya da Python'dan çağır.
+- Animasyonlu UI'da konumu ezme (anchoredPosition = sallanma): taban konumu sakla, ofset ekle (sandık kartı kenara kaymıştı).
+
+## 2026-10-04 — Faz 15 K1-K5: tempo, ortak gelişim, eşya geliştirme
+
+- Sürekli tempo + taş türü harmanı: bir sonraki kademenin türlerini önceki kademenin başından itibaren karıştırmak yeni türleri **erken** getirdi (usta bot 60-90 sn'de seken taştan öldü). Kural: yeni tür kendi zamanından önce gelmez, sonra yumuşakça çoğalır.
+- Fırlatıcı sayısı artınca toplam atış hızı sıçramasın: hızı toplam eğri olarak tanımla, uyanık fırlatıcılara ağırlıkla paylaştır (yeni gelenin ağırlığı 0 → 1).
+- Güce göre tempo: güçlü oyuncuyu doğrudan τ 0,3'ten başlatmak 3 fırlatıcıyla açılış demek (yükseltmesiz bot 7-16 sn). Güç başlangıcı ilk 20 sn'de yumuşak gelir.
+- Denge ölçümünde güç = gerçek yükseltmeler olmalı (`denge dungeon g=0.5` izleri doldurur); yalnız tempo yükseltmek yanıltır. Bot "skill" ters: uzak öngörü yön değiştiren taşlarda yanılıyor, yalnız aynı gün kıyas anlamlı.
+- AnimationCurve ClampedAuto iki uçlu eğride S-eğrisi yapar (doğrusal isteniyorsa `AnimationCurve.Linear`).
+- JsonUtility: kayıtta olmayan alan, sınıftaki başlangıç değerini alır → göç bayrağını `false` başlat (yoksa eski kayıtlar göçü atlar).
+- Türkçe Loc metninde sayıya ek ("{0}'da") yanlış çıkar (8'de, 19'da): eksiz cümle kur ("{0} olunca").
+- Gelişim ekranında 6 kilitli "???" satırı boğucuydu: açık izler + sıradaki 2 kilitli iz yeterli merak.
+
+## 2026-10-04 — Faz 15 yönü: kıvam ve gelişim (kullanıcı)
+
+- Kullanıcı Faz 14 odağından sonra derinlik istedi: "çaktırmadan kaos artan" sonsuz mod (ilk oyunlar yavaş, güçlendikçe oyun da hızlanır; Subway Surfers gibi ne hemen bitir ne hep yavaş), çok özellikli gelişim (3 özellik az), eşya geliştirme (süre/sıklık/yerde kalma, mini animasyonlu), sandık, meşale ele tam otursun, ileride ayakkabı/şapka/kalkan/kılıç. İlham survivor.io (fark: biz kaçıyoruz). Ardından bölümler (level).
+- Kararlar (hepsi önerilen): ortak gelişim + karakter pasifi; oyun içi 3 karttan 1 seçme Faz 15 sonunda; sandık = altın + oyunda düşen anahtar (gerçek para yok).
+- Kullanıcı tercihi: renkler "biraz daha cafcaflı" (kullanıcıyı yakalamak için); piksel taş stili beğenildi.
+- Tasarım ilkesi: zorluk tek sürekli tempo değeriyle; düğmeler sırayla ve küçük adımlarla; görünür kademe afişi yok. Güç arttıkça tempo başı yükselir ama tam telafi etmez (yükseltme hissedilsin).
+
 ## 2026-10-04 — Faz 14 Ö6a: mağaza
 
 - Kapsam daralınca mağaza metni ve görselleri de daralmalı: gizlenen özelliği (pet, görev, günlük ödül, dash) vaat etmek oyuncuyu yanıltır ve inceleme reddine yol açabilir. Her kapsam değişikliğinde `listing.md` + `kak_store_shots.py` birlikte gözden geçirilir.

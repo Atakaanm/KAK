@@ -2,9 +2,11 @@ using UnityEngine;
 using UnityEngine.Events;
 
 /// <summary>
-/// Sonsuz (Endless) modda skora gore zorlugu yoneten manager.
-/// Skoru dinler, esik degerlerine gore aktif DifficultyStageData'yi secer,
-/// spawner hizlarini ve mermi hizlarini carpanla gunceller.
+/// Sonsuz (Endless) modda zorluğu yöneten manager.
+/// Faz 15 K1: TempoProfile atanmışsa sürekli tempo (τ) modu: tüm kaos düğmeleri τ'nun eğrisi, kademe afişi yok,
+/// yeni fırlatıcı payını yavaş alır, olay sonrası nefes payı, hasar sonrası merhamet, ilk oyunlar yavaş (çırak),
+/// güçlenen oyuncuya daha hızlı başlangıç. Profil yoksa eski kademe sistemi: süreye göre DifficultyStageData seçilir,
+/// spawner ve mermi hızları kademe çarpanlarıyla güncellenir.
 /// </summary>
 public class DifficultyManager : MonoBehaviour
 {
@@ -21,6 +23,33 @@ public class DifficultyManager : MonoBehaviour
 
     [Header("Etkinlikler (Events)")]
     public UnityEvent<string> onStageChanged;
+
+    [Header("Tempo (Faz 15 K1)")]
+    [Tooltip("Atanırsa sürekli tempo eğrisi (kademe afişi yok); boşsa eski kademe sistemi")]
+    public TempoProfile tempo;
+
+    /// <summary>Testler: çırak yavaşlığını kapatır (KakTestUtil.ResetWorld açar, çırak testi kapatır).</summary>
+    public static bool ApprenticeOff;
+
+    public bool TempoMode => tempo != null;
+    /// <summary>τ: 0 (oyun başı) → 1 (tavan).</summary>
+    public float Tempo { get; private set; }
+    /// <summary>Nefes payı (0-1): olay bitince yumuşakça 1'e çıkar, sonra söner.</summary>
+    public float Relax { get; private set; }
+    public int ActiveThrowers { get; private set; }
+    /// <summary>Toplam atış hızı (fırlatıcının kendi aralığı başına atış).</summary>
+    public float FireRate { get; private set; } = 1f;
+    public float DoubleShotChance { get; private set; }
+    public float DoubleShotDelay => tempo != null ? tempo.doubleShotDelay : 0.2f;
+    public float EventIntervalMultiplier { get; private set; } = 1f;
+    /// <summary>Bu oyunun gücü (0-1) ve oyun sayısı (çırak); Init'te bir kez.</summary>
+    public float RunPower { get; private set; }
+    public int RunGames { get; private set; }
+
+    float tRamp = 360f, tStart;
+    float mercyUntil, mercyPaused, relaxUntil;
+    float[] wakeAt;
+    float tSpeed = 1f, tScale = 1f, tPlayer = 1f, tScore = 1f;
 
     private DifficultyStageData currentStage;
     private int currentStageIndex = -1;
@@ -47,6 +76,22 @@ public class DifficultyManager : MonoBehaviour
     void OnDestroy()
     {
         if (Instance == this) Instance = null;
+        if (tempo != null && AudioManager.Instance != null) AudioManager.Instance.SetMusicPitch(1f);
+    }
+
+    void OnEnable() => GameEvents.PlayerDamaged += OnDamaged;
+    void OnDisable() => GameEvents.PlayerDamaged -= OnDamaged;
+
+    void OnDamaged(int hp, Vector3 pos)
+    {
+        // Merhamet (görünmez): vurulan oyuncu toparlanırken tempo artışı durur
+        if (tempo != null) mercyUntil = Time.time + tempo.mercySeconds;
+    }
+
+    /// <summary>Olay bitince çağrılır: kısa sakinlik (gerilim → rahatlama).</summary>
+    public void Breathe()
+    {
+        if (tempo != null) relaxUntil = Time.time + tempo.breatherSeconds;
     }
 
     void Start()
@@ -64,8 +109,11 @@ public class DifficultyManager : MonoBehaviour
     /// orijinal ateş aralıklarını kaydeder ve ilk aşamayı uygular.
     /// LevelManager tarafından spawner'lar LevelData ile ayarlandıktan SONRA çağrılır.
     /// </summary>
-    public void Init(DifficultyStageData[] stageList, CornerShooter[] spawners, ScoreManager score)
+    public void Init(DifficultyStageData[] stageList, CornerShooter[] spawners, ScoreManager score) => Init(stageList, spawners, score, null);
+
+    public void Init(DifficultyStageData[] stageList, CornerShooter[] spawners, ScoreManager score, TempoProfile tempoProfile)
     {
+        if (tempoProfile != null) tempo = tempoProfile;
         stages = stageList;
         if (spawners != null && spawners.Length > 0) allSpawners = spawners;
         if (score != null) scoreManager = score;
@@ -77,8 +125,127 @@ public class DifficultyManager : MonoBehaviour
         currentStage = null;
 
         RecordOriginalIntervals();
+        if (tempo != null) { InitTempo(); return; }
         if (stages != null && stages.Length > 0)
             ApplyStage(0);
+    }
+
+    // ── Tempo modu (Faz 15 K1) ─────────────────────────────
+
+    void InitTempo()
+    {
+        var ch = LevelManager.Instance != null ? LevelManager.Instance.CurrentCharacter : null;
+        RunPower = PlayerPower.Normalized(ch);
+        RunGames = ApprenticeOff ? 999 : SaveSystem.Data.gamesPlayed;
+        tRamp = tempo.RampFor(RunPower, RunGames);
+        tStart = tempo.StartTempoFor(RunPower);
+        mercyPaused = 0f; mercyUntil = 0f; relaxUntil = 0f; Relax = 0f;
+        ActiveThrowers = 0;
+        currentStageIndex = -1;
+        int n = allSpawners != null ? allSpawners.Length : 0;
+        wakeAt = new float[n];
+        UpdateTempo(true);
+        KakLog.Info("[DifficultyManager] Tempo modu: güç " + RunPower.ToString("F2") + ", oyun " + RunGames
+            + ", rampa " + tRamp.ToString("F0") + " sn, başlangıç τ " + tStart.ToString("F2"));
+    }
+
+    void UpdateTempo(bool initial)
+    {
+        float t = scoreManager != null ? scoreManager.ElapsedSeconds : 0f;
+        float dt = initial ? 0f : Time.deltaTime;
+        if (Time.time < mercyUntil) mercyPaused += dt;
+        float clock = Mathf.Max(0f, t - mercyPaused);
+        // Güç başlangıcı ısınmada yumuşakça gelir: güçlü oyuncu da tek fırlatıcıyla başlar, ~20 sn'de hızlı ısınır
+        float warm = tempo.powerWarmupSeconds > 0f ? Mathf.Clamp01(t / tempo.powerWarmupSeconds) : 1f;
+        float start = tStart * warm * warm * (3f - 2f * warm);
+        Tempo = Mathf.Clamp01(start + (1f - tStart) * clock / Mathf.Max(1f, tRamp));
+        float relaxTarget = Time.time < relaxUntil ? 1f : 0f;
+        Relax = initial ? relaxTarget : Mathf.MoveTowards(Relax, relaxTarget, dt); // ~1 sn'de yumuşak giriş/çıkış
+
+        float tau = Tempo;
+        float app = tempo.ApprenticeSpeed(RunGames, t);
+        tSpeed = tempo.projectileSpeed.Evaluate(tau) * app * (1f - tempo.breatherSpeedDrop * Relax);
+        tScale = tempo.projectileScale.Evaluate(tau);
+        tPlayer = tempo.playerSpeed.Evaluate(tau);
+        tScore = tempo.scoreSpeed.Evaluate(tau);
+        FireRate = Mathf.Max(0.05f, tempo.fireRate.Evaluate(tau) * app * (1f - tempo.breatherRateDrop * Relax));
+        DoubleShotChance = Relax > 0.01f ? 0f : Mathf.Max(0f, tempo.doubleShot.Evaluate(tau));
+        EventIntervalMultiplier = Mathf.Max(0.3f, tempo.eventInterval.Evaluate(tau));
+
+        if (allSpawners != null && originalShootIntervals != null)
+        {
+            int want = Mathf.Min(tempo.ThrowersAt(tau), allSpawners.Length);
+            if (want != ActiveThrowers) SetThrowers(want, initial, t);
+            // Toplam atış hızı uyanık fırlatıcılara ağırlıkla paylaşılır: yeni gelen payını yavaş alır, toplam sıçramaz
+            float sumW = 0f;
+            for (int i = 0; i < ActiveThrowers; i++) sumW += WakeWeight(i, t);
+            for (int i = 0; i < ActiveThrowers && i < originalShootIntervals.Length; i++)
+            {
+                var s = allSpawners[i];
+                if (s == null) continue;
+                float w = Mathf.Max(0.04f, WakeWeight(i, t));
+                s.shootInterval = originalShootIntervals[i] * Mathf.Max(w, sumW) / (w * FireRate);
+            }
+        }
+
+        // Eski kademe dizini uyumluluk için τ'dan türer (eşya minStage, olaylar, istatistik); afiş yok
+        int st = StageIndexAt(tau);
+        if (st != currentStageIndex && stages != null && st >= 0 && st < stages.Length)
+        {
+            currentStageIndex = st;
+            currentStage = stages[st];
+            KakLog.Info("[DifficultyManager] Tempo " + tau.ToString("F2") + " → kademe dizini " + st);
+        }
+
+        if (AudioManager.Instance != null) AudioManager.Instance.SetMusicPitch(1f + (tempo.musicPitchAtMax - 1f) * tau);
+    }
+
+    float WakeWeight(int i, float t)
+    {
+        if (wakeAt == null || i >= wakeAt.Length) return 1f;
+        return Mathf.Clamp01((t - wakeAt[i]) / Mathf.Max(0.01f, tempo.wakeSeconds));
+    }
+
+    void SetThrowers(int want, bool initial, float t)
+    {
+        for (int i = 0; i < allSpawners.Length; i++)
+        {
+            var s = allSpawners[i];
+            if (s == null) continue;
+            bool on = i < want;
+            if (on && i >= ActiveThrowers)
+            {
+                // Başta uyanık olanlar tam payla, oyunda uyananlar yavaşça (ilk atış seyrek, ~wakeSeconds'ta tam)
+                if (i < wakeAt.Length) wakeAt[i] = initial ? -99999f : t;
+                if (!s.gameObject.activeSelf) s.gameObject.SetActive(true);
+                if (!initial) s.Wake();
+            }
+            else if (!on && s.gameObject.activeSelf) s.gameObject.SetActive(false);
+        }
+        ActiveThrowers = want;
+    }
+
+    int StageIndexAt(float tau)
+    {
+        if (stages == null) return 0;
+        int idx = 0;
+        for (int i = 0; i < stages.Length; i++)
+            if (stages[i] != null && tau >= tempo.StageTempo(stages[i])) idx = i;
+        return idx;
+    }
+
+    /// <summary>Taş türü karışımı: yeni kademenin türleri kendi zamanından ÖNCE gelmez; o andan sonra kademe aralığının
+    /// typeBlend payı içinde yavaşça çoğalır (önceki kademenin listesiyle harmanlanır).</summary>
+    DifficultyStageData MixStage()
+    {
+        if (tempo == null || stages == null || currentStageIndex <= 0) return currentStage;
+        int k = currentStageIndex;
+        if (stages[k - 1] == null) return currentStage;
+        float a = tempo.StageTempo(stages[k]);
+        float b = k + 1 < stages.Length && stages[k + 1] != null ? tempo.StageTempo(stages[k + 1]) : a + 0.2f;
+        float w = Mathf.Max(0.005f, (b - a) * tempo.typeBlend);
+        float blend = Mathf.Clamp01((Tempo - a) / w);
+        return Random.value < blend ? stages[k] : stages[k - 1];
     }
 
     /// <summary>
@@ -126,6 +293,7 @@ public class DifficultyManager : MonoBehaviour
     {
         if (!isActive || scoreManager == null || stages == null || stages.Length == 0)
             return;
+        if (tempo != null) { UpdateTempo(false); return; }
 
         // G2: kademe oyun süresine bağlı (skora değil): yakın geçiş skor çarpanı zorluğu hızlandırmasın
         float t = scoreManager.ElapsedSeconds;
@@ -230,10 +398,11 @@ public class DifficultyManager : MonoBehaviour
 
     ProjectileData PickWeighted()
     {
-        if (currentStage == null || currentStage.availableProjectiles == null || currentStage.availableProjectiles.Length == 0)
+        var stage = MixStage();
+        if (stage == null || stage.availableProjectiles == null || stage.availableProjectiles.Length == 0)
             return null;
-        var list = currentStage.availableProjectiles;
-        var w = currentStage.projectileWeights;
+        var list = stage.availableProjectiles;
+        var w = stage.projectileWeights;
         float total = 0f;
         for (int i = 0; i < list.Length; i++) total += (w != null && i < w.Length) ? Mathf.Max(0f, w[i]) : 1f;
         float r = Random.value * total;
@@ -250,6 +419,7 @@ public class DifficultyManager : MonoBehaviour
     /// </summary>
     public float GetProjectileSpeedMultiplier()
     {
+        if (tempo != null) return tSpeed;
         if (currentStage != null)
             return currentStage.projectileSpeedMultiplier;
         return 1.0f;
@@ -260,13 +430,21 @@ public class DifficultyManager : MonoBehaviour
     /// <summary>Mevcut kademenin aktif spawner sayısını yeniden uygular (olaylar spawner'ları geçici açıp kapattıktan sonra).</summary>
     public void RefreshSpawnerActivation()
     {
-        if (currentStage == null || allSpawners == null) return;
+        if (allSpawners == null) return;
+        if (tempo != null)
+        {
+            for (int i = 0; i < allSpawners.Length; i++)
+                if (allSpawners[i] != null) allSpawners[i].gameObject.SetActive(i < ActiveThrowers);
+            return;
+        }
+        if (currentStage == null) return;
         for (int i = 0; i < allSpawners.Length; i++)
             if (allSpawners[i] != null) allSpawners[i].gameObject.SetActive(i < currentStage.activeSpawnerCount);
     }
 
     public float GetProjectileScaleMultiplier()
     {
+        if (tempo != null) return tScale;
         if (currentStage != null)
             return currentStage.projectileScaleMultiplier;
         return 1.0f;
@@ -274,6 +452,7 @@ public class DifficultyManager : MonoBehaviour
 
     public float GetPlayerSpeedMultiplier()
     {
+        if (tempo != null) return tPlayer;
         if (currentStage != null)
             return currentStage.playerSpeedMultiplier;
         return 1.0f;
@@ -281,6 +460,7 @@ public class DifficultyManager : MonoBehaviour
 
     public float GetScoreSpeedMultiplier()
     {
+        if (tempo != null) return tScore;
         if (currentStage != null)
             return currentStage.scoreSpeedMultiplier;
         return 1.0f;

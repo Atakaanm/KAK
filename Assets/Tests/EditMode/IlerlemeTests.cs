@@ -2,7 +2,7 @@ using System.IO;
 using NUnit.Framework;
 using UnityEngine;
 
-/// <summary>Faz 11 G3: adım adım güçlenme — kalıcı karakter ve pet yükseltmeleri.</summary>
+/// <summary>Faz 11 G3: adım adım güçlenme — kalıcı yükseltmeler (Faz 15 K3: Can/Hız/Güç ortak gelişim izi) ve pet yükseltmeleri.</summary>
 public class IlerlemeTests
 {
     string path;
@@ -50,7 +50,7 @@ public class IlerlemeTests
         SaveSystem.Data.coins = c1 + 5;
         Assert.IsTrue(CharacterProgress.TryUpgrade(ata, CharStat.Speed));
         Assert.AreEqual(5, SaveSystem.Data.coins);
-        Assert.AreEqual(1f + CharacterProgress.SpeedPerLevel, CharacterProgress.SpeedMult(ata), 1e-5f);
+        Assert.AreEqual(1f + Progression.Track("speed").percentPerLevel, CharacterProgress.SpeedMult(ata), 1e-5f); // Faz 15 K3: ortak iz
         Assert.Greater(CharacterProgress.Cost(ata, CharStat.Speed), c1, "sonraki seviye daha pahalı olmalı");
         SaveSystem.Unload(); // diskten tekrar oku
         Assert.AreEqual(1, CharacterProgress.Level(ata, CharStat.Speed), "yükseltme kaydedilmedi");

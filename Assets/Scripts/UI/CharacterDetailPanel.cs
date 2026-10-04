@@ -29,6 +29,7 @@ public class CharacterDetailPanel : MonoBehaviour
     public Image actionCoin;
     public Sprite goldSprite, stoneSprite;
     public CharacterPanel panel;
+    public MenuTabs tabs; // Faz 15 K4: "GELİŞİM" düğmesi ortak gelişim sekmesine geçer
     public RectTransform body; // "pop" animasyonu
 
     CharacterCatalog catalog;
@@ -75,6 +76,13 @@ public class CharacterDetailPanel : MonoBehaviour
         if (panel != null) panel.Refresh();
     }
 
+    /// <summary>Faz 15 K4: gelişim artık ortak — detaydan GELİŞİM sekmesine.</summary>
+    public void OpenProgress()
+    {
+        gameObject.SetActive(false);
+        if (tabs != null) tabs.ShowProgress();
+    }
+
     public void OnAction()
     {
         if (panel != null) panel.OnCardAction(index);
@@ -89,7 +97,9 @@ public class CharacterDetailPanel : MonoBehaviour
         bool selected = SaveSystem.Data.selectedCharacter == p.id;
 
         if (nameText != null) nameText.text = Loc.T(p.nameKey);
-        if (traitText != null) traitText.text = string.IsNullOrEmpty(p.traitKey) ? "" : Loc.T(p.traitKey);
+        // Faz 15 K3: karakterin pasifi (yoksa eski özellik metni)
+        string tk = !string.IsNullOrEmpty(p.passiveKey) ? p.passiveKey : p.traitKey;
+        if (traitText != null) traitText.text = string.IsNullOrEmpty(tk) ? "" : Loc.T(tk);
         if (portrait != null) { portrait.sprite = p.Portrait; portrait.color = owned ? Color.white : new Color(0.35f, 0.35f, 0.45f, 1f); }
         if (walletText != null) walletText.SetText("{0}", SaveSystem.Data.coins);
 

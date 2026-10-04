@@ -379,6 +379,57 @@ public static class KakDevMenu
         if (s != null && float.TryParse(seconds, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float v)) s.AdvanceTime(v);
     }
 
+    /// <summary>Faz 15 K3: bütün gelişim izlerini oranla doldurur (0-1; Play'deki geçici kayıt). Köprü: invoke KakDevMenu SetAllUpgrades 0.3</summary>
+    public static string SetAllUpgrades(string frac)
+    {
+        float f = float.Parse(frac, System.Globalization.CultureInfo.InvariantCulture);
+        var cat = UpgradeCatalog.Load();
+        if (cat == null) return "katalog yok";
+        foreach (var t in cat.tracks) if (t != null) Progression.SetLevel(t.id, Mathf.RoundToInt(t.maxLevel * Mathf.Clamp01(f)));
+        SaveSystem.Save();
+        Progression.RaiseChanged();
+        foreach (var pp in Object.FindObjectsByType<ProgressPanel>(FindObjectsInactive.Include, FindObjectsSortMode.None)) pp.Refresh();
+        return "toplam gelişim " + Progression.TotalLevels() + "/" + Progression.MaxTotal();
+    }
+
+    /// <summary>Faz 15 K5: parşömen sayısı. Köprü: invoke KakDevMenu SetScrolls 12</summary>
+    public static void SetScrolls(string n) { SaveSystem.Data.scrolls = int.Parse(n); SaveSystem.Save(); }
+
+    /// <summary>Faz 15 K4: GELİŞİM merkezinde sekme aç (0 kahraman, 1 gelişim, 2 eşya). Köprü: invoke KakDevMenu OpenHubTab 2</summary>
+    public static void OpenHubTab(string i)
+    {
+        var tabs = Object.FindAnyObjectByType<MenuTabs>(FindObjectsInactive.Include);
+        if (tabs != null) tabs.Show(int.Parse(i));
+    }
+
+    /// <summary>Faz 15 K6: anahtar sayısı. Köprü: invoke KakDevMenu SetKeys 12</summary>
+    public static void SetKeys(string n) { SaveSystem.Data.keys = int.Parse(n); SaveSystem.Save(); ChestSystem.RaiseChanged(); }
+
+    /// <summary>Faz 15 K6: menüde sandık panelini aç. Köprü: invoke KakDevMenu OpenChests</summary>
+    public static void OpenChests() { var m = Object.FindAnyObjectByType<MainMenuController>(); if (m != null) m.OnChestsClicked(); }
+
+    /// <summary>Faz 15 K6: sandık aç (0 ahşap, 1 gümüş, 2 altın). Köprü: invoke KakDevMenu OpenChest 1</summary>
+    public static void OpenChest(string i) { var p = Object.FindAnyObjectByType<ChestPanel>(); if (p != null) p.Open(int.Parse(i)); }
+
+    /// <summary>Faz 15 K8: cesaret çubuğunu doldur (kart seçimi). Köprü: invoke KakDevMenu PerkNow</summary>
+    public static void PerkNow() { var r = RunPerks.Instance; if (r != null) r.Add(r.Need + 0.1f); }
+
+    /// <summary>Faz 15 K1: tempo durumu (τ, atış hızı, fırlatıcılar, çarpanlar). Köprü: invoke KakDevMenu ProbeTempo</summary>
+    public static string ProbeTempo()
+    {
+        var dm = DifficultyManager.Instance;
+        var sm = Object.FindAnyObjectByType<ScoreManager>();
+        if (dm == null) return "DifficultyManager yok";
+        var inv = System.Globalization.CultureInfo.InvariantCulture;
+        string iv = "";
+        if (dm.allSpawners != null)
+            foreach (var s in dm.allSpawners) if (s != null) iv += (s.gameObject.activeSelf ? s.shootInterval.ToString("F2", inv) : "-") + " ";
+        return string.Format(inv, "t={0:F0}s tempoModu={1} τ={2:F3} atış={3:F2} fırlatıcı={4} [{5}] taşHız={6:F2} boyut={7:F2} oyuncu={8:F2} skor={9:F2} çift={10:F2} olay×{11:F2} nefes={12:F2} kademe={13} güç={14:F2} oyun={15}",
+            sm != null ? sm.ElapsedSeconds : 0f, dm.TempoMode, dm.Tempo, dm.FireRate, dm.ActiveThrowers, iv.Trim(),
+            dm.GetProjectileSpeedMultiplier(), dm.GetProjectileScaleMultiplier(), dm.GetPlayerSpeedMultiplier(), dm.GetScoreSpeedMultiplier(),
+            dm.DoubleShotChance, dm.EventIntervalMultiplier, dm.Relax, dm.CurrentStageIndex, dm.RunPower, dm.RunGames);
+    }
+
     /// <summary>Oyun zamanını dondurur/çözer (aynı anı farklı dil ve boyutlarda çekmek için). Köprü: invoke KakDevMenu Freeze 1</summary>
     public static void Freeze(string on) { Time.timeScale = on == "1" ? 0f : 1f; }
 

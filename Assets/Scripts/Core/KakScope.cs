@@ -12,6 +12,8 @@ public static class KakScope
     public static bool DailyReward = false;
     /// <summary>Sonsuz modun "Sessizlik" olayı (3 olay kalır: Taş Yağmuru, Çapraz Ateş, Yuvarlanan Kaya).</summary>
     public static bool CalmEvent = false;
+    /// <summary>Faz 15 K7: ekipman (şapka, ayakkabı, kılıç, kalkan) — altyapı hazır, içerik ve ekran gelince açılır.</summary>
+    public static bool Equipment = false;
 
     /// <summary>Özellik ürün kapsamında mı (kapsam dışıysa hiç açılmaz, menüde görünmez).</summary>
     public static bool Includes(Feature f)
@@ -27,8 +29,8 @@ public static class KakScope
     }
 
     /// <summary>Gizli sistemlerin kendi testleri için: her şeyi aç.</summary>
-    public static void EnableAll() { Worlds = Pets = Missions = DailyReward = CalmEvent = true; }
+    public static void EnableAll() { Worlds = Pets = Missions = DailyReward = CalmEvent = Equipment = true; }
 
     /// <summary>Ürün kapsamına dön (test sıfırlaması).</summary>
-    public static void ResetToProduct() { Worlds = Pets = Missions = DailyReward = CalmEvent = false; }
+    public static void ResetToProduct() { Worlds = Pets = Missions = DailyReward = CalmEvent = Equipment = false; }
 }

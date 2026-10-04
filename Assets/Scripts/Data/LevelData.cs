@@ -29,6 +29,8 @@ public class LevelData : ScriptableObject
 
     [Header("Zorluk Asamalari (Endless mod)")]
     public DifficultyStageData[] difficultyStages;
+    [Tooltip("Faz 15 K1: sürekli tempo eğrisi (boşsa kademe sistemi; kademeler taş türü karışımı için yine kullanılır)")]
+    public TempoProfile tempoProfile;
 
     [Header("Bölüm (Stage)")]
     public string levelId = "";

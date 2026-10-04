@@ -223,7 +223,7 @@ public class LevelManager : MonoBehaviour
         if (level.levelType == LevelType.Endless && level.enableDifficulty)
         {
             System.Array.Sort(level.difficultyStages, (a, b) => a.minSeconds.CompareTo(b.minSeconds));
-            SetupDifficulty(level.difficultyStages);
+            SetupDifficulty(level.difficultyStages, level.tempoProfile);
         }
 
         // Faz 13 K2: durum etkili taşlar (örümcek ağı, spor) varsa oyunculara durum bileşeni (yavaşlama + baş üstü simge)
@@ -306,21 +306,37 @@ public class LevelManager : MonoBehaviour
     {
         if (data == null) return;
 
+        // Faz 15 K3: özellik sayfası (karakter tabanı + pasif + ortak gelişim) — oyuncu başına
+        PlayerStats stats = null;
         if (mv != null)
         {
-            mv.SetMoveSpeed(data.moveSpeed * CharacterProgress.SpeedMult(data)); // G3: hız yükseltmesi
+            stats = mv.GetComponent<PlayerStats>();
+            if (stats == null) stats = mv.gameObject.AddComponent<PlayerStats>();
+            stats.Build(data, global);
         }
+        var sheet = stats != null ? stats.Sheet : StatBuilder.Build(data);
 
-        if (mv != null) mv.playerData = data; // powerup süre çarpanı buradan okunur
+        if (mv != null) GearVisuals(mv.gameObject); // K7: ana eldeki ekipman ele oturur
+
+        if (mv != null) mv.playerData = data;
 
         if (ph != null)
         {
-            ph.SetMaxHealth(CharacterProgress.Hearts(data)); // G3: tek canla başla, yükselttikçe artar
+            int hearts = StatBuilder.Hearts(data, sheet); // G3: tek canla başla, geliştirdikçe artar (karakterin üst sınırına kadar)
+            ph.SetMaxHealth(hearts);
             ph.HealthCap = data.maxHealth;
-            ph.StartHearts = CharacterProgress.Hearts(data);
-            ph.invincibilityDuration = data.invincibilityDuration;
-            if (data.startWithShield) ph.ActivateShield();
+            ph.StartHearts = hearts;
+            if (StatBuilder.StartShield(data, sheet)) ph.ActivateShield();
         }
+
+        if (global)
+        {
+            ItemProgress.Snapshot(); // K5: eşya geliştirmeleri bu oyunluk
+            KeyMilestones.Ensure();  // K6: süre eşiklerinde anahtar
+            RunPerks.Ensure();       // K8: cesaret çubuğu ve kaçış kartları
+        }
+        // Hız, toparlanma, gövde, kıl payı; 1. oyuncuda skor, uyarı, eşya sıklığı ve yerde kalma (oyun içi kartlar da aynı yolu kullanır)
+        if (stats != null) stats.ApplyLive();
 
         // Karakter istatistikleri (Faz 3c.3): dash, gövde, powerup sıklığı
         var player = mv != null ? mv.gameObject : null;
@@ -337,16 +353,7 @@ public class LevelManager : MonoBehaviour
                 var dashButton = FindAnyObjectByType<DashButton>(FindObjectsInactive.Include);
                 if (dashButton != null) dashButton.gameObject.SetActive(data.hasDash);
             }
-            var hb = player.GetComponent<PlayerHitbox>();
-            if (hb != null && !Mathf.Approximately(data.hurtboxScale, 1f))
-            {
-                hb.hurtSize *= data.hurtboxScale;
-                hb.Apply();
-            }
         }
-        if (global && powerupSpawner != null && data.powerupSpawnRateMultiplier > 0f && !Mathf.Approximately(data.powerupSpawnRateMultiplier, 1f))
-            powerupSpawner.SetSpawnInterval(powerupSpawner.spawnIntervalMin / data.powerupSpawnRateMultiplier,
-                                            powerupSpawner.spawnIntervalMax / data.powerupSpawnRateMultiplier);
 
         if (vis != null)
         {
@@ -527,17 +534,30 @@ public class LevelManager : MonoBehaviour
         KakLog.Info("[LevelManager] " + count + " spawner ayarlandi.");
     }
 
+    /// <summary>Faz 15 K7: ana eldeki ekipman (kılıç, meşale...) elde görünür (KakScope.Equipment; karanlıkta meşale zaten elde).</summary>
+    static void GearVisuals(GameObject player)
+    {
+        var old = player.transform.Find("MainHand");
+        if (old != null) Destroy(old.gameObject);
+        if (!KakScope.Equipment || DarkWorld.Active) return;
+        var g = Equipment.Equipped(EquipmentSlot.MainHand);
+        var def = g != null ? Equipment.Def(g.id) : null;
+        if (def == null || def.heldSprite == null) return;
+        var h = HeldItem.Attach(player, def.heldSprite, "MainHand");
+        h.gripOffsetPx = def.gripOffsetPx;
+    }
+
     /// <summary>
     /// Zorluk asamalarini DifficultyManager'a aktarir.
     /// Tüm gerekli referansları da bağlar.
     /// </summary>
-    void SetupDifficulty(DifficultyStageData[] stages)
+    void SetupDifficulty(DifficultyStageData[] stages, TempoProfile tempo)
     {
         if (difficultyManager == null || stages == null || stages.Length == 0) return;
 
         // Spawner'lar LevelData ile ayarlandıktan SONRA başlat: orijinal aralıklar doğru kaydedilir
         ScoreManager score = GameManager.Instance != null ? GameManager.Instance.scoreManager : null;
-        difficultyManager.Init(stages, spawners, score);
+        difficultyManager.Init(stages, spawners, score, tempo);
 
         KakLog.Info("[LevelManager] Zorluk sistemi kuruldu: " + stages.Length + " asama.");
     }
