@@ -17,6 +17,7 @@ public static class StatBuilder
         if (p != null) s.AddAll(p.passive);
         Progression.AddModifiers(s);
         ItemProgress.AddModifiers(s); // K5: Pranga direnci
+        Equipment.AddModifiers(s);    // K7: takılı ekipman (KakScope.Equipment)
         return s;
     }
 

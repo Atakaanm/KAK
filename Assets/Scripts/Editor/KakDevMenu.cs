@@ -402,6 +402,18 @@ public static class KakDevMenu
         if (tabs != null) tabs.Show(int.Parse(i));
     }
 
+    /// <summary>Faz 15 K6: anahtar sayısı. Köprü: invoke KakDevMenu SetKeys 12</summary>
+    public static void SetKeys(string n) { SaveSystem.Data.keys = int.Parse(n); SaveSystem.Save(); ChestSystem.RaiseChanged(); }
+
+    /// <summary>Faz 15 K6: menüde sandık panelini aç. Köprü: invoke KakDevMenu OpenChests</summary>
+    public static void OpenChests() { var m = Object.FindAnyObjectByType<MainMenuController>(); if (m != null) m.OnChestsClicked(); }
+
+    /// <summary>Faz 15 K6: sandık aç (0 ahşap, 1 gümüş, 2 altın). Köprü: invoke KakDevMenu OpenChest 1</summary>
+    public static void OpenChest(string i) { var p = Object.FindAnyObjectByType<ChestPanel>(); if (p != null) p.Open(int.Parse(i)); }
+
+    /// <summary>Faz 15 K8: cesaret çubuğunu doldur (kart seçimi). Köprü: invoke KakDevMenu PerkNow</summary>
+    public static void PerkNow() { var r = RunPerks.Instance; if (r != null) r.Add(r.Need + 0.1f); }
+
     /// <summary>Faz 15 K1: tempo durumu (τ, atış hızı, fırlatıcılar, çarpanlar). Köprü: invoke KakDevMenu ProbeTempo</summary>
     public static string ProbeTempo()
     {

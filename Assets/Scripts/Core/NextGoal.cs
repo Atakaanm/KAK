@@ -1,6 +1,6 @@
 /// <summary>
 /// Oyuncunun bir sonraki satın alma hedefi (Faz 3c.7, "hedefe yaklaşma" etkisi): açık özelliklerdeki en ucuz
-/// sahip olunmayan karakter ya da pet. Yoksa null.
+/// gelişim/eşya izi, sahip olunmayan karakter ya da pet. Yoksa null.
 /// </summary>
 public static class NextGoal
 {
@@ -12,14 +12,15 @@ public static class NextGoal
         if (FeatureGate.IsUnlocked(Feature.Characters))
         {
             var cat = CharacterCatalog.Load();
-            // G3: seçili karakterin en ucuz kalıcı yükseltmesi de hedef olabilir (adım adım güçlenme)
-            var sel = CharacterCatalog.Selected();
-            if (sel != null)
-                foreach (var s in new[] { CharStat.Health, CharStat.Speed, CharStat.Power })
+            // Faz 15 K3/K5: açık gelişim ve eşya izlerinin en ucuzu (parşömeni yetiyorsa) — adım adım güçlenme
+            var ucat = UpgradeCatalog.Load();
+            if (ucat != null && ucat.tracks != null)
+                foreach (var t in ucat.tracks)
                 {
-                    int c = CharacterProgress.Cost(sel, s);
+                    if (t == null || !Progression.Unlocked(t) || SaveSystem.Data.scrolls < Progression.ScrollCost(t)) continue;
+                    int c = Progression.Cost(t);
                     if (c >= 0 && (best == null || c < best.Value.price))
-                        best = new Goal { name = string.Format(Loc.T(s == CharStat.Health ? "goal_hp" : s == CharStat.Speed ? "goal_speed" : "goal_power"), Loc.T(sel.nameKey)), price = c };
+                        best = new Goal { name = ProgressPanel.TrackTitle(t) + " " + (Progression.Level(t) + 1), price = c };
                 }
             if (cat != null && cat.characters != null)
                 foreach (var c in cat.characters)
@@ -45,7 +46,7 @@ public static class NextGoal
         {
             var cat = CharacterCatalog.Load();
             if (cat != null && cat.characters != null)
-                foreach (var c in cat.characters) if (c != null && CharacterCatalog.Owned(c) && CharacterProgress.AnyUpgradeAffordable(c)) return true;
+                if (Progression.AnyAffordable()) return true; // Faz 15: ortak gelişim
             if (cat != null && cat.characters != null)
                 foreach (var c in cat.characters) if (c != null && !CharacterCatalog.Owned(c) && CharacterCatalog.CanAfford(c)) return true;
         }

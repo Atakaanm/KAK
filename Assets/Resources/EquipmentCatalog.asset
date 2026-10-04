@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bdfe0e073b274a958d51023418c2643, type: 3}
+  m_Name: EquipmentCatalog
+  m_EditorClassIdentifier: KacAtaKac::EquipmentCatalog
+  items:
+  - {fileID: 11400000, guid: 546906c11e02142e6b9cb8f51da30599, type: 2}
+  - {fileID: 11400000, guid: 6661b70fcda664327b9444283d5e8dd1, type: 2}
+  - {fileID: 11400000, guid: 13d476788ab9447859fdcc52815ecc35, type: 2}
+  - {fileID: 11400000, guid: 8b801a0602015425dbea34cbb48fba6c, type: 2}
+  - {fileID: 11400000, guid: 209f56c6373734f3d94e0dec9323dc63, type: 2}

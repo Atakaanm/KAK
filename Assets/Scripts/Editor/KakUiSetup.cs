@@ -127,6 +127,8 @@ public static class KakUiSetup
         gos.heightWithoutMissions = 1370f;
         gos.heightWithMissions = 1610f;
         BuildCoinsRow(gpanel, gos);
+        KakChestUi.BuildKeysBadge(gpanel, gos); // Faz 15 K6
+        KakPerkSetup.BuildUi(canvas);            // Faz 15 K8: cesaret çubuğu + kart seçimi
         BuildUnlockBanner(gpanel, gos);
         BuildMissionsBlock(gpanel, gos);
         BuildPolish(gpanel, gos);
@@ -227,9 +229,10 @@ public static class KakUiSetup
         TMP_Text statsT = null;
 
         var play = Button(Place(Rect(safe, "PlayButton"), new Vector2(0.5f, 0f), new Vector2(0f, 470f), new Vector2(680f, 210f)), "@play", Style.Gold, 96, "icon_play.png");
-        var chars = Button(Place(Rect(safe, "CharactersButton"), new Vector2(0.5f, 0f), new Vector2(-175f, 285f), new Vector2(330f, 130f)), "@character", Style.Stone, 38, "icon_character.png");
+        // Faz 15 K6: GELİŞİM · SANDIK · 2 KİŞİ (SANDIK ortada, KakChestUi kurar)
+        var chars = Button(Place(Rect(safe, "CharactersButton"), new Vector2(0.5f, 0f), new Vector2(-330f, 285f), new Vector2(300f, 130f)), "@character", Style.Stone, 38, "icon_character.png");
         // G5: iki kişilik mod (tek telefon, Ata + Ada) — Faz 14: ikinci planda, KARAKTER ile aynı boyda
-        var two = Button(Place(Rect(safe, "TwoPlayerButton"), new Vector2(0.5f, 0f), new Vector2(175f, 285f), new Vector2(330f, 130f)), "@two_player", Style.Stone, 38);
+        var two = Button(Place(Rect(safe, "TwoPlayerButton"), new Vector2(0.5f, 0f), new Vector2(330f, 285f), new Vector2(300f, 130f)), "@two_player", Style.Stone, 38);
         var sett = Button(Place(Rect(safe, "SettingsButton"), new Vector2(1f, 1f), new Vector2(-82f, -66f), new Vector2(112f, 112f)), "", Style.Stone, 38, "icon_settings.png");
         var settIcon = sett.transform.Find("Icon") as RectTransform;
         if (settIcon != null) Place(settIcon, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(64f, 64f));
@@ -303,6 +306,7 @@ public static class KakUiSetup
             mmc.intro = BuildIntroPanel(canvas, mmc);
             OnClick(closeC, mmc.CloseCharactersPanel);
             KakGelisimUi.Build(canvas, wallet, croot, mmc, chars); // Faz 15 K4: GELİŞİM merkezi
+            KakChestUi.BuildMenu(canvas, safe, wallet, mmc);       // Faz 15 K6: SANDIK
             EditorUtility.SetDirty(mmc);
         }
 

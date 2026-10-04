@@ -97,3 +97,4 @@ MonoBehaviour:
     flat: 0.3
     percent: 0
   passiveKey: pas_lucky
+  hands: {fileID: 11400000, guid: 2c2826952a1a24d68b5134fe25bf2827, type: 2}

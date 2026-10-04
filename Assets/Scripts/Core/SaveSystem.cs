@@ -156,6 +156,10 @@ public class SaveData
     public bool upgradesMigrated;  // eski karakter başına yükseltmeler altın iadesiyle taşındı mı
     public int legacyRefund;       // taşımada iade edilen altın (menüde bir kez gösterilir)
     public int scrolls;            // Faz 15 K5: parşömen (sandıktan; eşya geliştirmenin üst seviyeleri)
+    public int keys;               // Faz 15 K6: sandık anahtarı (oyunda süre eşikleri, rekor)
+    public int chestsOpened;       // garanti sayacı
+    public List<OwnedGear> gear = new List<OwnedGear>();       // Faz 15 K7: ekipman envanteri (altyapı)
+    public List<SlotGear> equipped = new List<SlotGear>();     // takılı yuvalar
 
     public List<LevelProgress> levels = new List<LevelProgress>();
 

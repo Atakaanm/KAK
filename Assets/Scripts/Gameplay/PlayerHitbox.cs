@@ -34,6 +34,15 @@ public class PlayerHitbox : MonoBehaviour
     public static bool IsHurtbox(Collider2D c) => c != null && hurtboxes.Contains(c);
 
     public CapsuleCollider2D HurtCollider { get; private set; }
+    Vector2 baseHurt = new Vector2(-1f, -1f);
+
+    /// <summary>Faz 15: gövde ölçeği (ince yapı; taban × ölçek, tekrar çağrılınca katlanmaz).</summary>
+    public void SetHurtScale(float s)
+    {
+        if (baseHurt.x < 0f) baseHurt = hurtSize;
+        hurtSize = baseHurt * s;
+        Apply();
+    }
 
     /// <summary>Kaçış hesapları için gövdeyi temsil eden yaklaşık daire yarıçapı (bot, analiz).</summary>
     public float ApproxHurtRadius => (hurtSize.x + hurtSize.y) * 0.25f;

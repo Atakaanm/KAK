@@ -16,6 +16,9 @@ public class GameOverScreen : MonoBehaviour
     [Tooltip("Altın satırı: '+12' ve cüzdan toplamı (altın kilitliyse gizli)")]
     public RectTransform coinsRow;
     public TMP_Text coinsText;
+    [Header("Anahtar (Faz 15 K6)")]
+    public RectTransform keysRow;
+    public TMP_Text keysText;
     [Tooltip("Ödüllü reklamla bu oyunun altınını 2 katına çıkar (Faz Y3; reklam hazırsa görünür)")]
     public Button doubleCoinsButton;
     [Tooltip("Bu oyunla yeni açılan özellik afişi (panelin üstünde)")]
@@ -119,6 +122,7 @@ public class GameOverScreen : MonoBehaviour
     IEnumerator Run(int score, int best, bool newBest, float seconds, int nearMiss, float maxCombo, int coins = -1, int wallet = 0, string unlock = null)
     {
         if (coinsRow != null) coinsRow.gameObject.SetActive(false);
+        if (keysRow != null) keysRow.gameObject.SetActive(false);
         if (doubleCoinsButton != null) doubleCoinsButton.gameObject.SetActive(false);
         if (unlockBanner != null) unlockBanner.gameObject.SetActive(false);
         if (goalRow != null) goalRow.gameObject.SetActive(false);
@@ -193,6 +197,21 @@ public class GameOverScreen : MonoBehaviour
             coinsText.SetText(Loc.T("coins_run"), coins, wallet);
             coinsRow.localScale = Vector3.one;
             lastCoins = coins;
+            // Faz 15 K6: kazanılan anahtar zıplayarak belirir
+            int keys = GameManager.Instance != null ? GameManager.Instance.RunKeys : 0;
+            if (keys > 0 && keysRow != null && keysText != null)
+            {
+                keysRow.gameObject.SetActive(true);
+                keysText.SetText("+{0}", keys);
+                for (float t = 0f; t < 0.3f; t += Time.unscaledDeltaTime)
+                {
+                    float k = t / 0.3f;
+                    keysRow.localScale = Vector3.one * (k < 0.6f ? Mathf.Lerp(0.3f, 1.2f, k / 0.6f) : Mathf.Lerp(1.2f, 1f, (k - 0.6f) / 0.4f));
+                    yield return null;
+                }
+                keysRow.localScale = Vector3.one;
+                if (AudioManager.Instance != null) AudioManager.Instance.PlaySfx(AudioManager.Instance.stageSfx, 1.25f);
+            }
             if (doubleCoinsButton != null) doubleCoinsButton.gameObject.SetActive(coins > 0 && AdService.CanShow(AdPlacement.DoubleCoins));
         }
 

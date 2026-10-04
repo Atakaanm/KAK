@@ -97,3 +97,4 @@ MonoBehaviour:
     flat: 0
     percent: 0.25
   passiveKey: pas_ada
+  hands: {fileID: 11400000, guid: f348e5e0b7b7f4d879421a973e716dbf, type: 2}

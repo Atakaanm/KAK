@@ -134,6 +134,15 @@ public class GameManager : MonoBehaviour
             save.coins += RunCoins + RunCoinBonus;
             save.totalCoins += RunCoins + RunCoinBonus;
         }
+        // Faz 15 K6: anahtar — süre eşikleri + yeni rekor
+        RunKeys = 0;
+        if (!IsLevelMode)
+        {
+            if (KeyMilestones.Instance != null) RunKeys += KeyMilestones.Instance.RunKeys;
+            var eco = EconomyData.Load();
+            if (IsNewBest && eco != null) RunKeys += eco.keyOnRecord;
+            save.keys += RunKeys;
+        }
         // Görevler (bu oyun başında açıksa): oyunu işle, ödülü cüzdana ekle
         MissionReward = 0;
         LastMissions = null;
@@ -260,6 +269,8 @@ public class GameManager : MonoBehaviour
     /// <summary>Son oyunda toplanan altın ve hayatta kalma bonusu (oyun sonu ekranı).</summary>
     public int RunCoins { get; private set; }
     public int RunCoinBonus { get; private set; }
+    /// <summary>Faz 15 K6: bu oyunda kazanılan anahtar (süre eşikleri + rekor).</summary>
+    public int RunKeys { get; private set; }
     private bool coinsActiveThisRun;
     private int unlockMaskAtStart;
     /// <summary>Oyun sonu görev durumu (null: görevler kapalı), bu oyunla tamamlananlar ve toplam ödül.</summary>

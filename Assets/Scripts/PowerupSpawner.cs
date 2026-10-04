@@ -88,6 +88,16 @@ public class PowerupSpawner : MonoBehaviour
         currentInterval = Random.Range(min, max);
     }
 
+    float baseMin = -1f, baseMax = -1f;
+
+    /// <summary>Faz 15: eşya sıklığı çarpanı (taban aralık / çarpan; tekrar çağrılınca katlanmaz).</summary>
+    public void SetFrequencyMult(float f)
+    {
+        if (baseMin < 0f) { baseMin = spawnIntervalMin; baseMax = spawnIntervalMax; }
+        f = Mathf.Max(0.1f, f);
+        SetSpawnInterval(baseMin / f, baseMax / f);
+    }
+
     public void RefreshArenaBounds()
     {
         var arena = FindAnyObjectByType<ArenaAutoLayout>();

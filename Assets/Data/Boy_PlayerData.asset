@@ -97,3 +97,4 @@ MonoBehaviour:
     flat: 0
     percent: 0.1
   passiveKey: pas_boy
+  hands: {fileID: 11400000, guid: 103fcebd7b53247b6b83ab6f10046423, type: 2}

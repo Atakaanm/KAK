@@ -105,6 +105,7 @@ public class PlayerLight : MonoBehaviour
 {
     SpriteMask mask;
     SpriteRenderer edge, glow, torch;
+    HeldItem held; // Faz 15 K7: meşale her karede sağ ele oturur (HandAnchorSet)
     PlayerMovement2D mv;
     float seed;
     /// <summary>Şu anki ışık yarıçapı (dünya birimi, titreme dahil).</summary>
@@ -128,6 +129,10 @@ public class PlayerLight : MonoBehaviour
         edge = Renderer("LightEdge", "LightEdge", DarkWorld.DarkOrder + 1, new Color(0.02f, 0.02f, 0.04f, DarkWorld.Darkness));
         glow = Renderer("LightGlow", "LightGlow", DarkWorld.DarkOrder + 2, new Color(1f, 0.62f, 0.25f, 0.14f));
         torch = Renderer("Torch", "Torch", DarkWorld.GlowOrder + 1, Color.white);
+        held = torch.GetComponent<HeldItem>();
+        if (held == null) held = torch.gameObject.AddComponent<HeldItem>();
+        held.sprite = torch.sprite;
+        held.gripOffsetPx = new Vector2(0f, -4f); // sap: merkezin 4 piksel altı elde
     }
 
     Transform Child(string n)
@@ -172,14 +177,7 @@ public class PlayerLight : MonoBehaviour
             SetWorldSize(glow.transform, glow.sprite, Radius * 2.4f, ps);
             var g = glow.color; g.a = 0.12f + 0.03f * Mathf.Sin(tt * 9f); glow.color = g;
         }
-        if (torch != null)
-        {
-            bool left = mv != null && mv.LastDirection.x < -0.1f;
-            torch.flipX = left;
-            torch.transform.localPosition = new Vector3((left ? -0.2f : 0.2f) / Mathf.Max(0.0001f, ps), 0.02f / Mathf.Max(0.0001f, ps), 0f);
-            float f = 1f + 0.06f * Mathf.Sin(tt * 17f);
-            torch.transform.localScale = new Vector3(1f / ps, f / ps, 1f);
-        }
+        // Meşalenin konumu, ölçeği ve önde/arkada sıralaması HeldItem'da (el noktası)
     }
 }
 

@@ -53,6 +53,11 @@ ICONS = {
     "kind_freq": lambda x, y: ring(x, y, 4.0, 11.0, 0, 2.6) or ring(x, y, 11.5, 11.0, 0, 2.6) or ring(x, y, 7.7, 4.6, 0, 2.6) or plus(x, y, 13.0, 3.0, 2),
     "kind_ground": lambda x, y: (ring(x, y, 7.5, 6.0, 0, 4.6) and not ring(x, y, 7.5, 6.0, 0, 1.7)) or (abs(x - 7.5) <= max(0.0, (13.5 - y) * 0.55) and 8 <= y <= 13.5) or (2 <= x <= 13 and y == 15),
     "kind_power": lambda x, y: seg(x, y, 9.5, 1, 4.5, 8.5, 1.2) or seg(x, y, 4.5, 8.5, 10.5, 7.5, 1.0) or seg(x, y, 10.5, 7.5, 5.5, 15, 1.2),
+    # K8 kaçış kartları: taş kırıcı (kırılan taş + kıvılcım), hayalet anı (hayalet)
+    "breaker": lambda x, y: ((x - 6.5) ** 2 / 25 + (y - 9.5) ** 2 / 20 <= 1 and not (seg(x, y, 6.5, 5, 5, 9, 0.5) or seg(x, y, 5, 9, 8, 12, 0.5) or seg(x, y, 8, 12, 6, 15, 0.5)))
+                            or seg(x, y, 12, 1, 12, 5, 0.6) or seg(x, y, 10, 3, 14, 3, 0.6) or seg(x, y, 14.5, 6.5, 15, 7, 0.5),
+    "ghostmoment": lambda x, y: (y >= 3 + 6 * (1 - math.sqrt(max(0.0, 1 - ((x - 7.5) / 6.0) ** 2))) and y <= 13 + 1.5 * math.sin(x * 1.3) and 2 <= x <= 13)
+                                and not ((x, y) in ((5, 7), (5, 8), (10, 7), (10, 8))),
     "power": lambda x, y: (2 <= y <= 3 or 12 <= y <= 13) and 3 <= x <= 12 or (4 <= y <= 11 and abs(x - 7.5) <= 0.6 + abs(y - 7.5) * 0.75),
 }
 

@@ -97,3 +97,4 @@ MonoBehaviour:
     flat: 0
     percent: 0.15
   passiveKey: pas_swift
+  hands: {fileID: 11400000, guid: c70254527c4174f1b9bd208473cff7e6, type: 2}

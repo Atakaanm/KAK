@@ -97,3 +97,4 @@ MonoBehaviour:
     flat: 0.15
     percent: 0
   passiveKey: pas_tank
+  hands: {fileID: 11400000, guid: 9fe08c60925cd4c6bae053cf425daac3, type: 2}

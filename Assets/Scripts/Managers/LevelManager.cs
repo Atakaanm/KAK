@@ -316,13 +316,9 @@ public class LevelManager : MonoBehaviour
         }
         var sheet = stats != null ? stats.Sheet : StatBuilder.Build(data);
 
-        if (mv != null)
-        {
-            mv.SetMoveSpeed(StatBuilder.MoveSpeed(data, sheet));
-            mv.playerData = data;
-            var nm = mv.GetComponent<NearMissTracker>();
-            if (nm != null) nm.SetRadiusMult(StatBuilder.NearRadiusMult(sheet));
-        }
+        if (mv != null) GearVisuals(mv.gameObject); // K7: ana eldeki ekipman ele oturur
+
+        if (mv != null) mv.playerData = data;
 
         if (ph != null)
         {
@@ -330,18 +326,17 @@ public class LevelManager : MonoBehaviour
             ph.SetMaxHealth(hearts);
             ph.HealthCap = data.maxHealth;
             ph.StartHearts = hearts;
-            ph.invincibilityDuration = StatBuilder.Invuln(data, sheet);
             if (StatBuilder.StartShield(data, sheet)) ph.ActivateShield();
         }
 
         if (global)
         {
             ItemProgress.Snapshot(); // K5: eşya geliştirmeleri bu oyunluk
-            var sm = GameManager.Instance != null ? GameManager.Instance.scoreManager : null;
-            if (sm != null) sm.ApplyStats(sheet);
-            Projectile.WarningMult = StatBuilder.WarningMult(sheet);
-            if (powerupSpawner != null) powerupSpawner.groundTimeMult = StatBuilder.ItemGroundTime(sheet);
+            KeyMilestones.Ensure();  // K6: süre eşiklerinde anahtar
+            RunPerks.Ensure();       // K8: cesaret çubuğu ve kaçış kartları
         }
+        // Hız, toparlanma, gövde, kıl payı; 1. oyuncuda skor, uyarı, eşya sıklığı ve yerde kalma (oyun içi kartlar da aynı yolu kullanır)
+        if (stats != null) stats.ApplyLive();
 
         // Karakter istatistikleri (Faz 3c.3): dash, gövde, powerup sıklığı
         var player = mv != null ? mv.gameObject : null;
@@ -358,17 +353,7 @@ public class LevelManager : MonoBehaviour
                 var dashButton = FindAnyObjectByType<DashButton>(FindObjectsInactive.Include);
                 if (dashButton != null) dashButton.gameObject.SetActive(data.hasDash);
             }
-            var hb = player.GetComponent<PlayerHitbox>();
-            float hurt = StatBuilder.HurtScale(data, sheet);
-            if (hb != null && !Mathf.Approximately(hurt, 1f))
-            {
-                hb.hurtSize *= hurt;
-                hb.Apply();
-            }
         }
-        float freq = StatBuilder.ItemFrequency(data, sheet);
-        if (global && powerupSpawner != null && !Mathf.Approximately(freq, 1f))
-            powerupSpawner.SetSpawnInterval(powerupSpawner.spawnIntervalMin / freq, powerupSpawner.spawnIntervalMax / freq);
 
         if (vis != null)
         {
@@ -547,6 +532,19 @@ public class LevelManager : MonoBehaviour
         }
 
         KakLog.Info("[LevelManager] " + count + " spawner ayarlandi.");
+    }
+
+    /// <summary>Faz 15 K7: ana eldeki ekipman (kılıç, meşale...) elde görünür (KakScope.Equipment; karanlıkta meşale zaten elde).</summary>
+    static void GearVisuals(GameObject player)
+    {
+        var old = player.transform.Find("MainHand");
+        if (old != null) Destroy(old.gameObject);
+        if (!KakScope.Equipment || DarkWorld.Active) return;
+        var g = Equipment.Equipped(EquipmentSlot.MainHand);
+        var def = g != null ? Equipment.Def(g.id) : null;
+        if (def == null || def.heldSprite == null) return;
+        var h = HeldItem.Attach(player, def.heldSprite, "MainHand");
+        h.gripOffsetPx = def.gripOffsetPx;
     }
 
     /// <summary>

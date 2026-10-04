@@ -85,6 +85,10 @@ public class PlayerData : ScriptableObject
     [Tooltip("Pasifin tek satırlık açıklaması (Loc anahtarı)")]
     public string passiveKey = "";
 
+    [Header("El noktaları (Faz 15 K7)")]
+    [Tooltip("Her karede sağ el (eşya ele otursun); KakHandAnchorSetup kurar")]
+    public HandAnchorSet hands;
+
     public Sprite Portrait => portrait != null ? portrait : (south != null ? south.idle : null);
 }
 

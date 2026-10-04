@@ -30,6 +30,7 @@ public class MainMenuController : MonoBehaviour
     [Header("Gelişim merkezi (Faz 15 K4)")]
     public MenuTabs hubTabs;   // KAHRAMAN · GELİŞİM sekmeleri (charactersPanel = 0. sekme)
     public InfoToast toast;
+    public GameObject chestPanel; // Faz 15 K6
 
     [Header("Skor Gosterimi")]
     public TMP_Text bestScoreText;
@@ -54,6 +55,7 @@ public class MainMenuController : MonoBehaviour
         if (settingsPanel != null) settingsPanel.SetActive(false);
         if (charactersPanel != null) charactersPanel.SetActive(false);
         if (hubTabs != null) hubTabs.CloseAll();
+        if (chestPanel != null) chestPanel.SetActive(false);
         // Faz 15 K3: eski karakter yükseltmeleri ortak gelişime taşındı → iade bir kez söylenir
         var save = SaveSystem.Data;
         if (toast != null && save.legacyRefund > 0 && !save.HasSeen("legacy_refund"))
@@ -153,6 +155,9 @@ public class MainMenuController : MonoBehaviour
     }
 
     public void CloseSettingsPanel() { PlayButtonSound(); Close(settingsPanel); }
+    public void OnChestsClicked() { PlayButtonSound(); Open(chestPanel); }
+    public void CloseChestPanel() { PlayButtonSound(); Close(chestPanel); RefreshFeatures(); }
+
     public void CloseCharactersPanel()
     {
         PlayButtonSound();

@@ -38,6 +38,33 @@ public class PlayerStats : MonoBehaviour
         ShieldRegenEvery = StatBuilder.ShieldRegenInterval(Sheet);
     }
 
+    /// <summary>
+    /// Sayfadan türeyen değerleri bileşenlere uygular (oyun başı ve oyun içi kart sonrası; katlanmaz):
+    /// hız, toparlanma, gövde, kıl payı mesafesi; 1. oyuncuda ayrıca skor, uyarı süresi, eşya sıklığı ve yerde kalma.
+    /// </summary>
+    public void ApplyLive()
+    {
+        Refresh();
+        if (Data == null) return;
+        var mv = GetComponent<PlayerMovement2D>();
+        if (mv != null) mv.SetMoveSpeed(StatBuilder.MoveSpeed(Data, Sheet));
+        if (health != null) health.invincibilityDuration = StatBuilder.Invuln(Data, Sheet);
+        var hb = GetComponent<PlayerHitbox>();
+        if (hb != null) hb.SetHurtScale(StatBuilder.HurtScale(Data, Sheet));
+        var nm = GetComponent<NearMissTracker>();
+        if (nm != null) nm.SetRadiusMult(StatBuilder.NearRadiusMult(Sheet));
+        if (Primary != this) return;
+        var sm = GameManager.Instance != null ? GameManager.Instance.scoreManager : null;
+        if (sm != null) sm.ApplyStats(Sheet);
+        Projectile.WarningMult = StatBuilder.WarningMult(Sheet);
+        var ps = Object.FindAnyObjectByType<PowerupSpawner>();
+        if (ps != null)
+        {
+            ps.groundTimeMult = StatBuilder.ItemGroundTime(Sheet);
+            ps.SetFrequencyMult(StatBuilder.ItemFrequency(Data, Sheet));
+        }
+    }
+
     public float PowerDuration => StatBuilder.PowerDuration(Data, Sheet);
     public float ShackleResist => StatBuilder.ShackleResist(Sheet);
     public float CoinMult => StatBuilder.CoinMult(Data, Sheet);

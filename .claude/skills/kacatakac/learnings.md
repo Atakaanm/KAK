@@ -4,6 +4,15 @@
 > Kaydedilecekler: kararlar ve gerekçeleri, keşfedilen tuzaklar, kullanıcının tercihleri/geri bildirimleri, işe yarayan/yaramayan yaklaşımlar.
 > Kod veya git geçmişinden zaten okunabilecek şeyleri tekrar yazma.
 
+## 2026-10-04 — Faz 15 K6-K8: sandık, el noktaları, kaçış kartları
+
+- Yana koşan sprite'larda iki kol sürekli yer değiştirir; kare başına "yakın kol" tespiti eşyayı eller arasında zıplatır. Eşyayı tutan kol sallanmaz: duruş elinin noktası + gövde salınımı (baş tepesinin kayması) sabit ve doğal duruyor.
+- Aynalama/derinlik gibi kararlar hareket yönüne değil **görünen kareye** bağlanmalı (karede bilgi: front, mirror); test ve gerçek oyunda tutarlı.
+- Oyun içi değer değişikliklerinde (kart) bileşenlere "taban × çarpan" ile uygula (SetHurtScale, SetRadiusMult, SetFrequencyMult): tekrar uygulama katlanmasın.
+- Yalnız editör/dev build'de derlenen sınıfa (KakAutoPilot) oyun kodundan başvururken `#if UNITY_EDITOR || DEVELOPMENT_BUILD` şart (release build kırılır).
+- zsh'de `$c` gibi değişken komut argümanlarına bölünmez; köprü komutlarını tek tek ya da Python'dan çağır.
+- Animasyonlu UI'da konumu ezme (anchoredPosition = sallanma): taban konumu sakla, ofset ekle (sandık kartı kenara kaymıştı).
+
 ## 2026-10-04 — Faz 15 K1-K5: tempo, ortak gelişim, eşya geliştirme
 
 - Sürekli tempo + taş türü harmanı: bir sonraki kademenin türlerini önceki kademenin başından itibaren karıştırmak yeni türleri **erken** getirdi (usta bot 60-90 sn'de seken taştan öldü). Kural: yeni tür kendi zamanından önce gelmez, sonra yumuşakça çoğalır.
